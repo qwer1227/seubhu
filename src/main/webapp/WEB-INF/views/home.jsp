@@ -7,7 +7,7 @@
 </head>
 <body>
 <%@include file="/WEB-INF/common/nav.jsp" %>
-
+ 홈페이지
 <%@include file="/WEB-INF/common/footer.jsp" %>
 </body>
 </html>
