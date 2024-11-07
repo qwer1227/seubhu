@@ -7,7 +7,7 @@ var ctx = document.getElementById("myPieChart");
 var myPieChart = new Chart(ctx, {
   type: 'doughnut',
   data: {
-    labels: ["Direct", "Referral", "Social"],
+    labels: ["런닝화", "런닝복", "런닝용품"],
     datasets: [{
       
       data: [55, 30, 15],
