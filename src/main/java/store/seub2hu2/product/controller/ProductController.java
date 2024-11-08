@@ -1,4 +1,4 @@
-package store.seub2hu2.product;
+package store.seub2hu2.product.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
