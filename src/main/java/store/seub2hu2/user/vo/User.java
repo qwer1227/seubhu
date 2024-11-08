@@ -18,6 +18,7 @@ public class User {
     private String id;          // 유저 ID (아이디로 로그인 시 사용)
     private String username;    // 사용자 고유 이름
     private String password;    // 비밀번호 (암호화되어 저장됨)
+    private String passwordConfirm;
     private String email;       // 이메일 (로그인용)
     private String nickname;    // 닉네임
     private String tel;         // 전화번호
