@@ -29,7 +29,7 @@
 <div id="wrapper">
 
   <!-- Sidebar -->
-  <%@include file="/WEB-INF/admincommon/sidebar.jsp" %>
+  <%@include file="/WEB-INF/views/admincommon/sidebar.jsp" %>
   <!-- End of Sidebar -->
 
   <!-- Content Wrapper -->
@@ -39,7 +39,7 @@
     <div id="content">
 
       <!-- Topbar -->
-      <%@include file="/WEB-INF/admincommon/topbar.jsp" %>
+      <%@include file="/WEB-INF/views/admincommon/topbar.jsp" %>
       <!-- End of Topbar -->
 
       <!-- Begin Page Content -->
@@ -49,17 +49,17 @@
           <h1 class="h3 mb-0 text-gray-800">공지사항</h1>
         </div>
         <!-- Search -->
-        <%@include file="/WEB-INF/admincommon/searchbar.jsp" %>
+        <%@include file="/WEB-INF/views/admincommon/searchbar.jsp" %>
       </div>
       <!-- end Page Content -->
     </div>
   </div>
 </div>
 <!-- Footer -->
-<%@include file="/WEB-INF/admincommon/footer.jsp" %>
+<%@include file="/WEB-INF/views/admincommon/footer.jsp" %>
 <!-- End of Footer -->
 
-<%@include file="/WEB-INF/admincommon/common.jsp" %>
+<%@include file="/WEB-INF/views/admincommon/common.jsp" %>
 
 </body>
 

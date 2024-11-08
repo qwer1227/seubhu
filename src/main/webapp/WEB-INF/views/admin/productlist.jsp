@@ -29,7 +29,7 @@
 <div id="wrapper">
 
   <!-- Sidebar -->
-  <%@include file="/WEB-INF/admincommon/sidebar.jsp" %>
+  <%@include file="/WEB-INF/views/admincommon/sidebar.jsp" %>
   <!-- End of Sidebar -->
 
   <!-- Content Wrapper -->
@@ -39,7 +39,7 @@
     <div id="content">
 
       <!-- Topbar -->
-      <%@include file="/WEB-INF/admincommon/topbar.jsp" %>
+      <%@include file="/WEB-INF/views/admincommon/topbar.jsp" %>
       <!-- End of Topbar -->
 
       <!-- Begin Page Content -->
@@ -82,7 +82,7 @@
         </form>
         <!-- 5-10-20개씩 보기 최신순 이름순 끝 -->
         <!-- Search -->
-        <%@include file="/WEB-INF/admincommon/searchbar.jsp" %>
+        <%@include file="/WEB-INF/views/admincommon/searchbar.jsp" %>
       </div>
       <!-- 회원 리스트 -->
       <div class="row mb-3">
@@ -120,10 +120,10 @@
   </div>
 </div>
 <!-- Footer -->
-<%@include file="/WEB-INF/admincommon/footer.jsp" %>
+<%@include file="/WEB-INF/views/admincommon/footer.jsp" %>
 <!-- End of Footer -->
 
-<%@include file="/WEB-INF/admincommon/common.jsp" %>
+<%@include file="/WEB-INF/views/admincommon/common.jsp" %>
 
 </body>
 

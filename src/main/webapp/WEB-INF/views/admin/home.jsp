@@ -33,7 +33,7 @@
 <!-- Page Wrapper -->
 <div id="wrapper">
 
-    <%@include file="/WEB-INF/admincommon/sidebar.jsp" %>
+    <%@include file="/WEB-INF/views/admincommon/sidebar.jsp" %>
     <!-- End of Sidebar -->
 
     <!-- Content Wrapper -->
@@ -43,7 +43,7 @@
         <div id="content">
 
             <!-- Topbar -->
-            <%@include file="/WEB-INF/admincommon/topbar.jsp" %>
+            <%@include file="/WEB-INF/views/admincommon/topbar.jsp" %>
             <!-- End of Topbar -->
 
             <!-- Begin Page Content -->
@@ -202,10 +202,10 @@
 <!-- End of Main Content -->
 
 <!-- Footer -->
-<%@include file="/WEB-INF/admincommon/footer.jsp" %>
+<%@include file="/WEB-INF/views/admincommon/footer.jsp" %>
 <!-- End of Footer -->
 
-<%@include file="/WEB-INF/admincommon/common.jsp" %>
+<%@include file="/WEB-INF/views/admincommon/common.jsp" %>
 </body>
 
 </html>

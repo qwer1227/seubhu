@@ -29,7 +29,7 @@
 <div id="wrapper">
 
   <!-- Sidebar -->
-  <%@include file="/WEB-INF/admincommon/sidebar.jsp" %>
+  <%@include file="/WEB-INF/views/admincommon/sidebar.jsp" %>
   <!-- End of Sidebar -->
 
   <!-- Content Wrapper -->
@@ -39,7 +39,7 @@
     <div id="content">
 
       <!-- Topbar -->
-      <%@include file="/WEB-INF/admincommon/topbar.jsp" %>
+      <%@include file="/WEB-INF/views/admincommon/topbar.jsp" %>
       <!-- End of Topbar -->
 
       <!-- Begin Page Content -->
@@ -80,7 +80,7 @@
           </div>
         </form>
         <!-- Search -->
-        <%@include file="/WEB-INF/admincommon/searchbar.jsp" %>
+        <%@include file="/WEB-INF/views/admincommon/searchbar.jsp" %>
         <div class="container-xxl text-center" id="wrap">
           <div class="row row-cols-1 row-cols-md-3 g-4 mt-5 mb-5">
             <div class="col mb-4">
@@ -147,10 +147,10 @@
   </div>
 </div>
 <!-- Footer -->
-<%@include file="/WEB-INF/admincommon/footer.jsp" %>
+<%@include file="/WEB-INF/views/admincommon/footer.jsp" %>
 <!-- End of Footer -->
 
-<%@include file="/WEB-INF/admincommon/common.jsp" %>
+<%@include file="/WEB-INF/views/admincommon/common.jsp" %>
 
 </body>
 
