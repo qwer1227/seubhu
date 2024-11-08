@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="store.seub2hu2.lesson.mapper.LessonMapper">
+
+    <!--
+        // 전체 레슨 조회하기
+        public List<Lesson> getAllLessons();
+
+        // 레슨 번호로 조회
+        public Lesson getLessonByNo(@Param("no") int no);
+
+        // 레슨 추가
+        public void insertLesson(Lesson lesson);
+
+        // 레슨 삭제
+        public void deleteLessonByNo(Lesson lesson);
+
+        // 레슨 수정
+        public void updateLessonByNo(Lesson lesson);
+    -->
+
+    <select id="getAllLessons" resultType="store.seub2hu2.lesson.vo.Lesson">
+        select
+            LESSON_NO               as 'no'
+            , USER_NO               as "user.no"
+            , LESSON_TITLE          as title
+            , LESSON_PRICE          as price
+            , LESSON_STATUS         as status
+            , LESSON_CREATED_DATE   as createdDate
+            , LESSON_THUMBNAIL      as thumbnail
+            , LESSON_PLAN           as plan
+            , LESSON_START_DATE     as start
+            , LESSON_END_DATE       as 'end'
+        from
+            LESSONS
+        WHERE
+            LESSON_START_DATE between DATE_FORMAT(#{param.start}, '%Y-%m-%d') and DATE_FORMAT(#{param.end}, '%Y-%m-%d')
+            or
+            LESSON_END_DATE between DATE_FORMAT(#{param.start}, '%Y-%m-%d') and DATE_FORMAT(#{param.end}, '%Y-%m-%d')
+    </select>
+
+    <select id="getLessonByNo" resultType="store.seub2hu2.lesson.vo.Lesson">
+        select
+            USER_NO as "user.no"
+            , LESSON_TITLE        as title
+            , LESSON_PRICE        as price
+            , lesson_status       as status
+            , lesson_created_date as createdDate
+            , lesson_thumbnail    as thumbnail
+            , lesson_plan         as plan
+        from
+            LESSONS
+    </select>
+
+    <insert id="insertLesson">
+        insert into LESSONS
+        ( user_no
+        , lesson_title
+        , lesson_price
+        , lesson_thumbnail
+        , lesson_plan)
+        values ( #{lesson.user.no}
+               , #{lesson.title}
+               , #{lesson.price}
+               , #{lesson.thumbnail}
+               , #{lesson.plan})
+    </insert>
+</mapper>
