@@ -1,4 +1,4 @@
-package store.seub2hu2.community.board;
+package store.seub2hu2.community.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
