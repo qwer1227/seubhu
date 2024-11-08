@@ -27,13 +27,15 @@
             <div class="col">
                 <div class="card h-100">
                     <a class="text-decoration-none" href="detail">
-                        <img src="image1.PNG" class="card-img-top" alt="...">
+                        <img src="https://ecimg.cafe24img.com/pg90b05313110010/brooksrunning/web/product/big/20240102/6531af333e9506981bed79075102fe43.png" class="card-img-top" alt="...">
                     </a>
                     <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <a class="text-decoration-none" href="detail">
-                            <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                        </a>
+                        <h5 class="card-title">남성 글리세린 21 블랙 (MEDIUM)</h5>
+                        <div class="text-decoration-none" href="detail">
+                            <p>BEST 상품</p>
+                            <span>1개 색상</span>
+                            <p class="card-text">199,000 원</p>
+                        </div>
                     </div>
                     <div class="card-footer bg-transparent border-primary" >판매중</div>
                 </div>
@@ -41,13 +43,15 @@
             <div class="col">
                 <div class="card h-100">
                     <a class="text-decoration-none" href="detail">
-                        <img src="image1.PNG" class="card-img-top" alt="...">
+                        <img src="https://ecimg.cafe24img.com/pg90b05313110010/brooksrunning/web/product/big/20240102/6531af333e9506981bed79075102fe43.png" class="card-img-top" alt="...">
                     </a>
                     <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <a class="text-decoration-none" href="detail">
-                            <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                        </a>
+                        <h5 class="card-title">남성 글리세린 21 블랙 (MEDIUM)</h5>
+                        <div class="text-decoration-none" href="detail">
+                            <p>BEST 상품</p>
+                            <span>1개 색상</span>
+                            <p class="card-text">199,000 원</p>
+                        </div>
                     </div>
                     <div class="card-footer bg-transparent border-primary" >판매중</div>
                 </div>
@@ -55,13 +59,15 @@
             <div class="col">
                 <div class="card h-100">
                     <a class="text-decoration-none" href="detail">
-                        <img src="image1.PNG" class="card-img-top" alt="...">
+                        <img src="https://ecimg.cafe24img.com/pg90b05313110010/brooksrunning/web/product/big/20240102/6531af333e9506981bed79075102fe43.png" class="card-img-top" alt="...">
                     </a>
                     <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <a class="text-decoration-none" href="detail">
-                            <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                        </a>
+                        <h5 class="card-title">남성 글리세린 21 블랙 (MEDIUM)</h5>
+                        <div class="text-decoration-none" href="detail">
+                            <p>BEST 상품</p>
+                            <span>1개 색상</span>
+                            <p class="card-text">199,000 원</p>
+                        </div>
                     </div>
                     <div class="card-footer bg-transparent border-primary" >판매중</div>
                 </div>
@@ -69,19 +75,20 @@
             <div class="col">
                 <div class="card h-100">
                     <a class="text-decoration-none" href="detail">
-                        <img src="image1.PNG" class="card-img-top" alt="...">
+                        <img src="https://ecimg.cafe24img.com/pg90b05313110010/brooksrunning/web/product/big/20240102/6531af333e9506981bed79075102fe43.png" class="card-img-top" alt="...">
                     </a>
                     <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <a class="text-decoration-none" href="detail">
-                            <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                        </a>
+                        <h5 class="card-title">남성 글리세린 21 블랙 (MEDIUM)</h5>
+                        <div class="text-decoration-none" href="detail">
+                            <p>BEST 상품</p>
+                            <span>1개 색상</span>
+                            <p class="card-text">199,000 원</p>
+                        </div>
                     </div>
                     <div class="card-footer bg-transparent border-primary" >판매중</div>
                 </div>
             </div>
         </div>
-    </div>
 
 <%@include file="/WEB-INF/common/footer.jsp" %>
 </body>
