@@ -13,7 +13,7 @@ import store.seub2hu2.user.service.UserService;
 
 import jakarta.validation.Valid;
 
-@Controller
+@Controller("/home")
 public class HomeController {
 
     @Autowired
