@@ -1,4 +1,4 @@
-package store.seub2hu2.community;
+package store.seub2hu2.community.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 

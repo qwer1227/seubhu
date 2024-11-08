@@ -1,6 +1,11 @@
 package store.seub2hu2.admin.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import store.seub2hu2.user.vo.User;
+
+import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface AdminMapper {
@@ -12,7 +17,8 @@ public interface AdminMapper {
     /*
      * 회원
      */
-
+    int getTotalRows(@Param("condition") Map<String, Object> condition);
+    List<User> getUsers(@Param("condition") Map<String, Object> condition);
     /*
      * 상품
      */

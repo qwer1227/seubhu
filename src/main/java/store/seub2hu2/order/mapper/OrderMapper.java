@@ -1,4 +1,4 @@
-package store.seub2hu2.order;
+package store.seub2hu2.order.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 

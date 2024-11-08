@@ -1,4 +1,4 @@
-package store.seub2hu2.product;
+package store.seub2hu2.product.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 

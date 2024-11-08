@@ -1,28 +1,51 @@
 package store.seub2hu2.admin.service;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.seub2hu2.admin.mapper.AdminMapper;
-import store.seub2hu2.community.CommunityMapper;
-import store.seub2hu2.lesson.LessonMapper;
-import store.seub2hu2.order.OrderMapper;
-import store.seub2hu2.product.ProductMapper;
+import store.seub2hu2.user.vo.User;
+import store.seub2hu2.util.ListDto;
+import store.seub2hu2.util.Pagination;
+
+import java.util.List;
+import java.util.Map;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
 public class AdminService {
 
-    private final AdminMapper adminMapper;
+//    private final AdminMapper adminMapper;
+//
+//    private final LessonMapper lessonMapper;
+//
+//    private final CommunityMapper communityMapper;
+//
+//    private final CommunityMapper courseMapper;
+//
+//    private final OrderMapper orderMapper;
+//
+//    private final ProductMapper productMapper;
+//
+    @Autowired
+    private AdminMapper adminMapper;
 
-    private final LessonMapper lessonMapper;
+        public ListDto<User> getAllUsers(Map<String, Object> condition) {
 
-    private final CommunityMapper communityMapper;
+            int totalRows = adminMapper.getTotalRows(condition);
 
-    private final CommunityMapper courseMapper;
+            int page = (Integer) condition.get("page");
+            int rows = (Integer) condition.get("rows");
+            Pagination pagination = new Pagination(page, totalRows, rows);
 
-    private final OrderMapper orderMapper;
+            int begin = pagination.getBegin();
+            int end = pagination.getEnd();
+            condition.put("begin", begin);
+            condition.put("end", end);
 
-    private final ProductMapper productMapper;
+            List<User> users = adminMapper.getUsers(condition);
+
+            ListDto<User> dto = new ListDto<>(users, pagination);
+            return dto;
+        }
 }

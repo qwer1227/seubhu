@@ -1,12 +1,28 @@
 package store.seub2hu2.admin.controller;
 
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import store.seub2hu2.admin.service.AdminService;
+import store.seub2hu2.user.vo.User;
+import store.seub2hu2.util.ListDto;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/admin")
+@RequiredArgsConstructor
+@Slf4j
 public class AdminController {
+
+    private final AdminService adminService;
 
     @GetMapping("/home")
     public String home() {
@@ -17,25 +33,47 @@ public class AdminController {
     @GetMapping("/course")
     public String course() {
 
-        return "admin/course";
+        return "admin/courselist";
     }
 
     @GetMapping("/user")
-    public String user() {
+    public String user(
+            @RequestParam(name = "page", required = false, defaultValue = "1") int page,
+            @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
+            @RequestParam(name = "opt", required = false) String opt,
+            @RequestParam(name = "keyword", required = false) String keyword,
+            Model model) {
 
-        return "admin/user";
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("page", page);
+        condition.put("rows", rows);
+        if (StringUtils.hasText(keyword)) {
+            condition.put("opt", opt);
+            condition.put("keyword", keyword);
+
+        }
+
+        // 검색조건을 전달해서 게시글 목록 조회
+        ListDto<User> dto = adminService.getAllUsers(condition);
+        System.out.println(dto);
+        // List<Board>를 "users"로 모델에 저장
+        model.addAttribute("users", dto.getData());
+        // Pagination을 "paging"로 모델에 저장
+        model.addAttribute("paging", dto.getPaging());
+
+        return "admin/userlist";
     }
 
     @GetMapping("/product")
     public String product() {
 
-        return "admin/product";
+        return "admin/productlist";
     }
 
     @GetMapping("/stock")
     public String stock() {
 
-        return "admin/stock";
+        return "admin/stocklist";
     }
 
     @GetMapping("/community")
