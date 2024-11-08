@@ -8,7 +8,7 @@
 <body>
 <%@include file="/WEB-INF/common/nav.jsp" %>
 <div class="container-xxl text-center" id="wrap">
-  
+
   <h2> 나중에..^^...... </h2>
 
 </div>
