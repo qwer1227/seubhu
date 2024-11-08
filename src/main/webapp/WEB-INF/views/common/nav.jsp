@@ -34,7 +34,7 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="#">상품</a>
+                <a class="nav-link" href="product/list">상품</a>
                 <div class="divider" style="border-left: 1px solid #0e0d0d; margin: 0 7px;"></div>
                 <a class="nav-link" href="#">코스</a>
                 <div class="divider" style="border-left: 1px solid #0e0d0d; margin: 0 7px;"></div>
