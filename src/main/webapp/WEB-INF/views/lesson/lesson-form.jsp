@@ -3,21 +3,20 @@
 <!doctype html>
 <html lang="ko">
 <head>
-    <%@include file="/WEB-INF/common/common.jsp" %>
+    <%@include file="/WEB-INF/common/common.jsp"%>
 </head>
 <body>
-<%@include file="/WEB-INF/common/nav.jsp" %>
+<%@include file="/WEB-INF/common/nav.jsp"%>
 <div class="container-xxl bg-light" id="wrap">
     <div class="row text-center p-3 ">
         <h2>게시글 작성</h2>
     </div>
-    <form action="/lesson/add" method="post">
     <div class="row p-3">
         <div class="col-1">
             글제목
         </div>
         <div class="col">
-            <input type="text" class="form-control" name="title" >
+            <input type="text" class="form-control">
         </div>
     </div>
     <div class="row p-3">
@@ -26,9 +25,14 @@
         </div>
         <div class="col">
             <select>
-                <option>자세</option>
-                <option>호흡</option>
+                <option>레슨</option>
                 <option>운동</option>
+                <option>코스</option>
+            </select>
+            <select>
+                <option>레슨</option>
+                <option>운동</option>
+                <option>코스</option>
             </select>
         </div>
     </div>
@@ -37,7 +41,7 @@
             게시글
         </div>
         <div class="col">
-            <textarea class="form-control" rows="20" name="content"></textarea>
+            <textarea class="form-control" rows="20"></textarea>
         </div>
     </div>
     <div class="row p-3 ">
@@ -54,7 +58,6 @@
             <button type="submit" class="btn btn-primary m-1">등록</button>
         </div>
     </div>
-    </form>
 </div>
 <%@include file="/WEB-INF/common/footer.jsp" %>
 </body>
