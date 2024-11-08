@@ -7,8 +7,12 @@
 </head>
 <body>
 <%@include file="/WEB-INF/common/nav.jsp" %>
+<div class="container-xxl text-center" id="wrap">
+  
+  <h2> 나중에..^^...... </h2>
 
-  <h1>event detail_test</h1>
+</div>
+
 
 <%@include file="/WEB-INF/common/footer.jsp" %>
 </body>

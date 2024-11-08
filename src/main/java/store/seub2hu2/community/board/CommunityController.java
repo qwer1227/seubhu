@@ -1,26 +1,30 @@
-package store.seub2hu2.community.controller;
+package store.seub2hu2.community.board;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/community/marathon")
-public class MarathonController {
+@RequestMapping("/community")
+public class CommunityController {
 
     @GetMapping("/main")
     public String Community() {
-        return "community/marathon/main";
+        return "community/main";
     }
 
     @GetMapping("/form")
     public String list() {
-        return "community/marathon/form";
+        return "community/form";
     }
 
     @GetMapping("/detail")
     public String detail() {
-        return "community/marathon/detail";
+        return "community/detail";
     }
 
+    @GetMapping("/write")
+    public String write() {
+        return "community/write";
+    }
 }
