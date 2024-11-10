@@ -1,9 +1,11 @@
 package store.seub2hu2.admin.service;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.seub2hu2.admin.mapper.AdminMapper;
+import store.seub2hu2.user.mapper.UserMapper;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.ListDto;
 import store.seub2hu2.util.Pagination;
@@ -30,7 +32,10 @@ public class AdminService {
     @Autowired
     private AdminMapper adminMapper;
 
-        public ListDto<User> getAllUsers(Map<String, Object> condition) {
+    @Autowired
+    private UserMapper userMapper;
+
+    public ListDto<User> getAllUsers(Map<String, Object> condition) {
 
             int totalRows = adminMapper.getTotalRows(condition);
 
@@ -43,9 +48,15 @@ public class AdminService {
             condition.put("begin", begin);
             condition.put("end", end);
 
+
             List<User> users = adminMapper.getUsers(condition);
 
             ListDto<User> dto = new ListDto<>(users, pagination);
             return dto;
         }
+
+    public User getUser(@Param("no") int no) {
+
+            return adminMapper.getUserByNo(no);
+    }
 }
