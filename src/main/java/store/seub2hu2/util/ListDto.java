@@ -2,15 +2,14 @@ package store.seub2hu2.util;
 
 import java.util.List;
 
+import lombok.ToString;
 
-
-import store.seub2hu2.util.Pagination;
 
 public class ListDto<T> {
     // 목록화면에 표시되는 데이터다.
     List<T> data;
     // 목록화면에 표시되는 페이징처리 정보다.
-    store.seub2hu2.util.Pagination paging;
+    Pagination paging;
 
     public ListDto(List<T> data, Pagination paging) {
         this.data = data;

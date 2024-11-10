@@ -1,4 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@include file="/WEB-INF/views/common/tags.jsp" %>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -24,7 +26,9 @@
 </head>
 
 <body id="page-top">
-
+<header>
+    <c:set var="menu" value="users" />
+</header>
 <!-- Page Wrapper -->
 <div id="wrapper">
 
@@ -49,50 +53,40 @@
                     <h1 class="h3 mb-0 text-gray-800">회원</h1>
                 </div>
                 <!-- 5-10-20개씩 보기 최신순 이름순 -->
-                <form id="form-search" method="get" action="userlist">
+                <form id="form-search" method="get" action="/admin/user">
                     <input type="hidden" name="page" />
                     <div class="row g-3 d-flex">
-                        <div class="col-2 mb-4">
+                        <div class="col-2 mb-4 pt-2">
                             <select class="form-control" name="rows" onchange="changeRows()">
-                                <option value="5">5개씩 보기</option>
-                                <option value="10">10개씩 보기</option>
-                                <option value="20">20개씩 보기</option>
+                                <option value="5" ${param.rows eq 5 ? "selected" : ""}>5개씩 보기</option>
+                                <option value="10" ${empty param.rows or param.rows eq 10 ? "selected" : ""}>10개씩 보기</option>
+                                <option value="20" ${param.rows eq 20 ? "selected" : ""}>20개씩 보기</option>
                             </select>
                         </div>
-                        <div class="col-4 mb-4 pt-2">
-                            <div class="form-check form-check-inline">
-                                <div class="mr-2">
-                                    <input class="form-check-input"
-                                           type="radio"/>
-                                    <label class="form-check-label">이메일로</label>
-                                </div>
-                                <div class="mr-2">
-                                    <input class="form-check-input"
-                                           type="radio"/>
-                                    <label class="form-check-label">아이디로</label>
-                                </div>
-                                <div class="mr-2">
-                                    <input class="form-check-input"
-                                           type="radio"/>
-                                    <label class="form-check-label">이름으로</label>
-                                </div>
-                            </div>
+                        <div class="col-2 mb-4 pt-2">
+                            <select class="form-control" name="opt">
+                                <option value="id" ${param.opt eq 'id' ? 'selected' : ''}>아이디</option>
+                                <option value="name" ${param.opt eq 'name' ? 'selected' : ''}>이름</option>
+                                <option value="email" ${param.opt eq 'email' ? 'selected' : ''}>이메일</option>
+                            </select>
                         </div>
-
+                        <div class="col-4 pt-2" >
+                            <!-- Search -->
+                            <%@include file="/WEB-INF/views/admincommon/searchbar.jsp" %>
+                        </div>
                     </div>
                 </form>
                 <!-- 5-10-20개씩 보기 최신순 이름순 끝 -->
-                <!-- Search -->
-                <%@include file="/WEB-INF/views/admincommon/searchbar.jsp" %>
             </div>
             <!-- 회원 리스트 -->
             <div class="row mb-3">
                 <div class="col">
-                    <div class="border-bottom p-4 bg-light">
+                    <div class="border-bottom pt-4 pr-4 pl-4 bg-light">
                         <table class="table">
                             <colgroup>
                                 <col width="10%">
-                                <col width="15%">
+                                <col width="10%">
+                                <col width="10%">
                                 <col width="10%">
                                 <col width="*%">
                                 <col width="15%">
@@ -102,46 +96,81 @@
                                     <th>회원번호</th>
                                     <th>이름</th>
                                     <th>아이디</th>
+                                    <th>닉네임</th>
                                     <th>이메일</th>
                                     <th>보기</th>
                                     <th>수정</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>10</td>
-                                    <td>홍길동</td>
-                                    <td>hong</td>
-                                    <td>hong@gmail.com</td>
-                                    <td>
-                                        <button class="btn btn-outline btn-success btn-sm "
-                                                onclick="previewUser()">미리보기</button>
-                                    </td>
-                                    <td>
-                                        <button class="btn btn-outline btn-danger btn-sm "
-                                                href="">수정</button>
-                                    </td>
-                                </tr>
+                                <c:forEach var="u" items="${users }">
+                                    <tr>
+                                        <td>${u.no}</td>
+                                        <td>${u.username}</td>
+                                        <td>${u.id}</td>
+                                        <td>${u.nickname}</td>
+                                        <td>${u.email}</td>
+                                        <td>
+                                            <button class="btn btn-outline btn-success btn-sm "
+                                                    onclick="previewUser(${u.no})">미리보기</button>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-outline btn-danger btn-sm "
+                                                    href="">수정</button>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
+            <!-- 페이징처리 -->
+        <c:if test="${not empty users}">
+            <div class="row mb-3">
+				<div class="col-12">
+					<nav>
+						<ul class="pagination justify-content-center">
+						    <li class="page-item ${paging.first ? 'disabled' : '' }">
+						    	<a class="page-link"
+						    		onclick="changePage(${paging.prevPage}, event)"
+						    		href="user?page=${paging.prevPage}">이전</a>
+						    </li>
+						<c:forEach var="num" begin="${paging.beginPage }" end="${paging.endPage }">
+						    <li class="page-item ${paging.page eq num ? 'active' : '' }">
+						    	<a class="page-link"
+						    		onclick="changePage(${num }, event)"
+						    		href="user?page=${num }">${num }</a>
+						    </li>
+						</c:forEach>
+						    <li class="page-item ${paging.last ? 'disabled' : '' }">
+						    	<a class="page-link"
+						    		onclick="changePage(${paging.nextPage}, event)"
+						    		href="user?page=${paging.nextPage}">다음</a>
+						    </li>
+					  	</ul>
+					</nav>
+				</div>
+			</div>
+        </c:if>
+    <!-- 페이징처리 끝 -->
             <!-- end Page Content -->
         </div>
     </div>
 </div>
 
     <!-- 모달 창 -->
-    <div class="modal fade" id="modal-preview-user" tabindex="-1" aria-labelledby="modal-preview-user" aria-hidden="true">
+    <div class="modal fade" id="modal-preview-user" tabindex="-1" aria-labelledby="modal-title-preview-user" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="modal-preview-user">회원정보 미리보기</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h1 class="modal-title fs-5" id="modal-title-preview-user">회원정보 미리보기</h1>
+                    <button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close">
+
+                    </button>
                 </div>
                 <div class="modal-body">
-                    <table>
+                    <table class="table">
                         <colgroup>
                             <col width="15%">
                             <col width="35%">
@@ -150,21 +179,21 @@
                         </colgroup>
                         <tr>
                             <th>번호</th>
-                            <td>1</td>
+                            <td><span id="u-no"></span></td>
                             <th>이름</th>
-                            <td>홍길동</td>
+                            <td><span id="u-username"></span></td>
                         </tr>
                         <tr>
                             <th>아이디</th>
-                            <td>hong</td>
+                            <td><span id="u-id"></span></td>
                             <th>닉네임</th>
-                            <td>홍홍홍</td>
+                            <td><span id="u-nickname"></span></td>
                         </tr>
                         <tr>
                             <th>이메일</th>
-                            <td>hong@gmail.com</td>
+                            <td><span id="u-email"></span></td>
                             <th>전화번호</th>
-                            <td>010-1111-1111</td>
+                            <td><span id="u-tel"></span></td>
                         </tr>
                     </table>
                 </div>
@@ -175,42 +204,9 @@
 
         </div>
 
+
     </div>
-
     <!-- 모달 창 끝 -->
-
-
-    <!-- 페이징처리 -->
-        <c:if test="${not empty users}">
-            <div class="row mb-3">
-				<div class="col-12">
-					<nav>
-						<ul class="pagination justify-content-center">
-						    <li class="page-item ${paging.first ? 'disabled' : '' }">
-						    	<a class="page-link"
-						    		onclick="changePage(${paging.prevPage}, event)"
-						    		href="userlist?page=${paging.prevPage}">이전</a>
-						    </li>
-						<c:forEach var="num" begin="${paging.beginPage }" end="${paging.endPage }">
-						    <li class="page-item ${paging.page eq num ? 'active' : '' }">
-						    	<a class="page-link"
-						    		onclick="changePage(${num }, event)"
-						    		href="userlist?page=${num }">${num }</a>
-						    </li>
-						</c:forEach>
-						    <li class="page-item ${paging.last ? 'disabled' : '' }">
-						    	<a class="page-link"
-						    		onclick="changePage(${paging.nextPage}, event)"
-						    		href="userlist?page=${paging.nextPage}">다음</a>
-						    </li>
-					  	</ul>
-					</nav>
-				</div>
-			</div>
-        </c:if>
-    <!-- 페이징처리 끝 -->
-
-
 
     <!-- Footer -->
     <%@include file="/WEB-INF/views/admincommon/footer.jsp" %>
@@ -219,11 +215,21 @@
     <%@include file="/WEB-INF/views/admincommon/common.jsp" %>
 
 <script type="text/javascript">
-    const myModal = new bootstrap.Modal("#modal-preview-user");
+    const form =document.querySelector("#form-search");
+    const pageInput = document.querySelector("input[name=page]");
+    const myModal = new bootstrap.Modal('#modal-preview-user');
 
      async function previewUser(userNo) {
-         let response = await fetch("admin/userlist/preview?no=" + userNo);
+         let response = await fetch("/admin/user/preview?no=" + userNo);
          let data = await response.json();
+
+         document.getElementById("u-no").textContent = data.no;
+         document.getElementById("u-username").textContent = data.username;
+         document.getElementById("u-id").textContent = data.id;
+         document.getElementById("u-nickname").textContent = data.nickname;
+         document.getElementById("u-email").textContent = data.email;
+         document.getElementById("u-tel").textContent = data.tel;
+
 
          myModal.show();
      }
@@ -251,6 +257,7 @@
 
         form.submit();
     }
+
 </script>
 
 </body>

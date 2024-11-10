@@ -3,25 +3,30 @@
 <mapper namespace="store.seub2hu2.lesson.mapper.LessonMapper">
 
     <!--
-        // 전체 레슨 조회하기
-        public List<Lesson> getAllLessons();
+// 전체 레슨 조회하기
+    public List<Lesson> getAllLessons(@Param("param") Map<String, Object> param);
 
-        // 레슨 번호로 조회
-        public Lesson getLessonByNo(@Param("no") int no);
+    // 레슨 번호로 조회
+    public Lesson getLessonByNo(@Param("no") int no);
 
-        // 레슨 추가
-        public void insertLesson(Lesson lesson);
+    // 회원 번호로 회원이 예약한 레슨 조회
+    public List<Lesson> getLessonsByUserNo (@Param("userNo") int userNo);
 
-        // 레슨 삭제
-        public void deleteLessonByNo(Lesson lesson);
+    // 레슨 추가
+    public void insertLesson(@Param("lesson") Lesson lesson);
 
-        // 레슨 수정
-        public void updateLessonByNo(Lesson lesson);
+    // 레슨 삭제
+    public void deleteLessonByNo(@Param("lesson") Lesson lesson);
+
+    // 레슨 수정
+    public void updateLessonByNo(@Param("lesson") Lesson lesson);
+
     -->
 
+    <!-- 모든 레슨 번호 조회하기-->
     <select id="getAllLessons" resultType="store.seub2hu2.lesson.vo.Lesson">
         select
-            LESSON_NO               as 'no'
+            LESSON_NO               as lessonNo
             , USER_NO               as "user.no"
             , LESSON_TITLE          as title
             , LESSON_PRICE          as price
@@ -39,30 +44,66 @@
             LESSON_END_DATE between DATE_FORMAT(#{param.start}, '%Y-%m-%d') and DATE_FORMAT(#{param.end}, '%Y-%m-%d')
     </select>
 
+
+    <!-- 레슨 번호로 레슨 조회하기-->
+    <!-- 레슨에서 조회되는 user.no는 강사 번호-->
     <select id="getLessonByNo" resultType="store.seub2hu2.lesson.vo.Lesson">
         select
-            USER_NO as "user.no"
-            , LESSON_TITLE        as title
-            , LESSON_PRICE        as price
-            , lesson_status       as status
-            , lesson_created_date as createdDate
-            , lesson_thumbnail    as thumbnail
-            , lesson_plan         as plan
+            L.USER_NO as    'lecturer.no'
+            , L.LESSON_TITLE        as title
+            , L.LESSON_PRICE        as price
+            , L.lesson_status       as status
+            , L.lesson_created_date as createdDate
+            , L.PARTICIPANT         as participant
+            , L.lesson_thumbnail    as thumbnail
+            , L.lesson_plan         as plan
+            , U.USER_NAME           as 'lesson.lecturer.username'
         from
-            LESSONS
+            LESSONS L, USERS U
+        where
+            LESSON_NO = #{no}
+            AND
+            L.USER_NO = U.USER_NO
     </select>
 
+    <select id="getLessonsByUserNo" resultType="store.seub2hu2.lesson.vo.LessonReservation">
+        select
+            R.LESSON_RESERVATIONS_NO    as "no"
+             , R.USER_NO as "user.no"
+             , R.LESSON_RESERVATIONS_CREATED_DATE as reservationCreatedDate
+             , R.LESSON_RESERVATIONS_UPDATED_DATE as reservationUpdatedDate
+             , L.LESSON_TITLE        as "lesson.title"
+             , L.LESSON_PRICE        as "lesson.price"
+             , L.USER_NO             as "user.no"
+             , L.lesson_status       as "lesson.status"
+             , L.lesson_created_date as "lesson.createdDate"
+             , U.USER_NAME           as "lesson.lecturer.username"
+        from
+            LESSON_RESERVATIONS R, LESSONS L, USERS U
+        where
+            R.USER_NO = #{userNo}
+            AND
+            R.LESSON_NO = L.LESSON_NO
+            AND
+            L.USER_NO = U.USER_NO
+    </select>
+
+    <!-- 레슨 추가하기 -->
     <insert id="insertLesson">
         insert into LESSONS
         ( user_no
         , lesson_title
         , lesson_price
         , lesson_thumbnail
-        , lesson_plan)
-        values ( #{lesson.user.no}
+        , lesson_plan
+        , lesson_start_date
+        , lesson_end_date)
+        values ( #{lesson.lecturer.no}
                , #{lesson.title}
                , #{lesson.price}
                , #{lesson.thumbnail}
-               , #{lesson.plan})
+               , #{lesson.plan}
+               , #{lesson.startDate}
+               , #{lesson.endDate})
     </insert>
 </mapper>

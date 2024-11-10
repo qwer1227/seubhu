@@ -15,7 +15,7 @@
         </div>
     </div>
     <div class="row mb-3 d-flex justify-content-center">
-        <h1 class="text-center mb-5 bg-black text-white">개인 자세교정 4회과정</h1>
+        <h1 class="text-center mb-5 bg-black text-white">${lesson.title}</h1>
         <div class="col-4 border ">
             <h1>이미지</h1>
         </div>
@@ -25,10 +25,10 @@
                     <td class="badge bg-info">신규</td>
                 </tr>
                 <tr class="m-3">
-                    <td>개인 자세교정 4회과정 | am 09시</td>
+                    <td>${lesson.title}</td>
                 </tr>
                 <tr>
-                    <td>강사 명 :홍길동</td>
+                    <td>강사 명 : ${lesson.lecturer.username}</td>
                 </tr>
                 <tr>
                     <td>장소 :중앙HTA</td>
@@ -43,16 +43,16 @@
                     <td colspan="2">클래스 시간 :09:00</td>
                 </tr>
                 <tr>
-                    <td colspan="2">신청인원 :0/1</td>
+                    <td colspan="2">신청인원 :${lesson.participant}/5</td>
                 </tr>
             </table>
         </div>
     </div>
     <div class="row text-white text-start mb-3">
         <div class="col-2"></div>
-        <div class="col-4 bg-black">개인 자세교정 4회과정 | am 09시</div>
+        <div class="col-4 bg-black">${lesson.title}</div>
         <div class="col-1 bg-black">결제 금액</div>
-        <div class="col-1 bg-black">50, 000원</div>
+        <div class="col-1 bg-black">${lesson.price}</div>
         <div class="col-2 bg-black"></div>
         <div class="col-2"></div>
     </div>

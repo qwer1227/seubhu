@@ -25,14 +25,9 @@
         </div>
         <div class="col">
             <select>
-                <option>레슨</option>
+                <option>호흡</option>
+                <option>자세</option>
                 <option>운동</option>
-                <option>코스</option>
-            </select>
-            <select>
-                <option>레슨</option>
-                <option>운동</option>
-                <option>코스</option>
             </select>
         </div>
     </div>
