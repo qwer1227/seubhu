@@ -1,12 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@include file="/WEB-INF/common/tags.jsp" %>
+<%@include file="/WEB-INF/views/common/tags.jsp" %>
 <!doctype html>
 <html lang="ko">
 <head>
-    <%@include file="/WEB-INF/common/common.jsp" %>
+    <%@include file="/WEB-INF/views/common/common.jsp" %>
 </head>
 <body>
-<%@include file="/WEB-INF/common/nav.jsp" %>
+<%@include file="/WEB-INF/views/common/nav.jsp" %>
 <main>
     <!-- 메인 이미지 캐러셀 -->
     <div id="carouselExample" class="carousel slide">

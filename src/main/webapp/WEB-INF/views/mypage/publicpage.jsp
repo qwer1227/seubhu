@@ -1,10 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ include file="/WEB-INF/common/tags.jsp" %>
+<%@ include file="/WEB-INF/views/common/tags.jsp" %>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <!doctype html>
 <html lang="ko">
 <head>
-    <%@ include file="/WEB-INF/common/common.jsp" %>
+    <%@ include file="/WEB-INF/views/common/common.jsp" %>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <style>
         .profile-header {

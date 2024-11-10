@@ -1,9 +1,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@include file="/WEB-INF/common/tags.jsp" %>
+<%@include file="/WEB-INF/views/common/tags.jsp" %>
 <!doctype html>
 <html lang="ko">
 <head>
-  <%@include file="/WEB-INF/common/common.jsp" %>
+  <%@include file="/WEB-INF/views/common/common.jsp" %>
 </head>
 <style>
     #marathon-table th {
@@ -14,7 +14,7 @@
     }
 </style>
 <body>
-<%@include file="/WEB-INF/common/nav.jsp" %>
+<%@include file="/WEB-INF/views/common/nav.jsp" %>
 <div class="container-xxl text-center" id="wrap">
   
   <h2> 마라톤 정보 상세페이지 </h2>
@@ -70,6 +70,6 @@
     <a type="button" href="main" class="btn btn-secondary">목록</a>
   </div>
 </div>
-<%@include file="/WEB-INF/common/footer.jsp" %>
+<%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
 </html>

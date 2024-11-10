@@ -3,14 +3,14 @@
 <!doctype html>
 <html lang="ko">
 <head>
-    <%@ include file="/WEB-INF/common/common.jsp" %>
+    <%@ include file="/WEB-INF/views/common/common.jsp" %>
     <title>회원 가입 폼</title>
 </head>
 <body>
 <!-- 헤더부 -->
 <header>
     <c:set var="menu" value="home"/>
-    <%@ include file="/WEB-INF/common/nav.jsp" %>
+    <%@ include file="/WEB-INF/views/common/nav.jsp" %>
 </header>
 
 <!-- 메인 컨텐츠부 -->

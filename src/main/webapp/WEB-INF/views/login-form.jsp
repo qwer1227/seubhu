@@ -1,16 +1,16 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@include file="/WEB-INF/common/tags.jsp" %>
+<%@include file="/WEB-INF/views/common/tags.jsp" %>
 <!doctype html>
 <html lang="ko">
 <head>
-    <%@include file="/WEB-INF/common/common.jsp" %>
+    <%@include file="/WEB-INF/views/common/common.jsp" %>
     <title>로그인 폼</title>
 </head>
 <body>
 <!-- 헤더부 -->
 <header>
     <c:set var="menu" value="home"/>
-    <%@include file="/WEB-INF/common/nav.jsp" %>
+    <%@include file="/WEB-INF/views/common/nav.jsp" %>
 </header>
 
 <!-- 메인 컨텐츠부 -->
