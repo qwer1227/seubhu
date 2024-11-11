@@ -41,7 +41,6 @@ public class AdminController {
     public User preview(int no) {
         User user = adminService.getUser(no);
 
-        System.out.println(user);
         return user;
     }
 
@@ -60,7 +59,6 @@ public class AdminController {
         if (StringUtils.hasText(value)) {
             condition.put("opt", opt);
             condition.put("value", value);
-
         }
 
         // 검색조건을 전달해서 게시글 목록 조회
@@ -69,7 +67,6 @@ public class AdminController {
         model.addAttribute("users", dto.getData());
         // Pagination을 "paging"로 모델에 저장
         model.addAttribute("paging", dto.getPaging());
-        System.out.println(dto);
 
         return "admin/userlist";
     }
