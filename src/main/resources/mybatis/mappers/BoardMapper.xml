@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="store/seub2hu2/community/mapper/BoardMapper">
+
+    <!-- void insertBoard(@Param("board") Board board); -->
+    <insert id="insertBoard">
+        insert into board_no
+            (
+             board_cat_no
+            , user_no
+            , board_title
+            , board_content
+            <if test="board.isUpfile != null">
+            , is_upfile
+            </if>
+            <if test="board.hashtag != null">
+                , is_hashtag
+            </if>
+            )
+        values
+            (
+             #{board.cat.no}
+            , #{board.user.no}
+            , #{board.title}
+            , #{board.content, jdbcType=VARCHAR}
+            <if test="board.isUpfile != null">
+                , 'Y'
+            </if>
+            <if test="board.hashtag != null">
+                , 'Y'
+            </if>
+            )
+    </insert>
+
+    <!-- List<Board> getAllBoards(@Param("board") Board board); -->
+</mapper>
