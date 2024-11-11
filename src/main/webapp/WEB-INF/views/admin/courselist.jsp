@@ -24,8 +24,7 @@
   <link href="${pageContext.request.contextPath}/resources/css/sb-admin-2.min.css" rel="stylesheet">
     <style>
         .card img {
-            width: 100%;
-            height: 200px; /* 모든 이미지가 같은 높이가 되도록 설정 */
+            height: 250px; /* 모든 이미지가 같은 높이가 되도록 설정 */
         }
     </style>
 </head>

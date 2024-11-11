@@ -118,8 +118,10 @@
                                                     onclick="previewUser(${u.no})">미리보기</button>
                                         </td>
                                         <td>
-                                            <button class="btn btn-outline btn-danger btn-sm "
-                                                    href="">수정</button>
+                                            <a href="user-form?user-no=${u.no}">
+                                                <button class="btn btn-outline btn-danger btn-sm "
+                                                        >수정</button>
+                                            </a>
                                         </td>
                                     </tr>
                                 </c:forEach>
@@ -221,6 +223,11 @@
     const form =document.querySelector("#form-search");
     const pageInput = document.querySelector("input[name=page]");
     const myModal = new bootstrap.Modal('#modal-preview-user');
+
+    async function userForm(userNo) {
+        let response = await fetch("/admin/user/form?no=" + userNo);
+        let data = await response.json();
+    }
 
      async function previewUser(userNo) {
          let response = await fetch("/admin/user/preview?no=" + userNo);

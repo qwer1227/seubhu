@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import store.seub2hu2.admin.mapper.AdminMapper;
 import store.seub2hu2.course.mapper.CourseMapper;
 import store.seub2hu2.course.vo.Course;
+import store.seub2hu2.product.vo.Product;
 import store.seub2hu2.user.mapper.UserMapper;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.ListDto;
@@ -83,4 +84,8 @@ public class AdminService {
 
             return adminMapper.getUserByNo(no);
     }
+
+/*    public ListDto<Product> getAllProduct(Map<String, Object> condition) {
+
+    }*/
 }
