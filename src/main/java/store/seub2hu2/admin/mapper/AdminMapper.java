@@ -2,6 +2,7 @@ package store.seub2hu2.admin.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.user.vo.User;
 import java.util.List;
 import java.util.Map;
@@ -9,9 +10,6 @@ import java.util.Map;
 @Mapper
 public interface AdminMapper {
 
-    /*
-    * 코스
-    */
 
     /*
      * 회원

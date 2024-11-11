@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.seub2hu2.admin.mapper.AdminMapper;
+import store.seub2hu2.course.mapper.CourseMapper;
+import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.user.mapper.UserMapper;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.ListDto;
@@ -23,7 +25,7 @@ public class AdminService {
 //
 //    private final CommunityMapper communityMapper;
 //
-//    private final CommunityMapper courseMapper;
+//    private final CourseMapper courseMapper;
 //
 //    private final OrderMapper orderMapper;
 //
@@ -31,6 +33,28 @@ public class AdminService {
 //
     @Autowired
     private AdminMapper adminMapper;
+
+    @Autowired
+    private CourseMapper courseMapper;
+
+    public ListDto<Course> getAllCourse(Map<String, Object> condition) {
+
+        int totalRows = courseMapper.getTotalRows(condition);
+
+        int page = (Integer) condition.get("page");
+        int rows = (Integer) condition.get("rows");
+        Pagination pagination = new Pagination(page, totalRows, rows);
+        int begin = pagination.getBegin();
+        int end = pagination.getEnd();
+        condition.put("begin", begin);
+        condition.put("end", end);
+
+
+        List<Course> courses = courseMapper.getCourses(condition);
+
+        ListDto<Course> dto = new ListDto<>(courses, pagination);
+        return dto;
+    }
 
     @Autowired
     private UserMapper userMapper;

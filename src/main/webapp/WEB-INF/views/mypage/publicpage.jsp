@@ -43,7 +43,7 @@
     </style>
 </head>
 <body>
-<%@ include file="/WEB-INF/common/nav.jsp" %>
+<%@ include file="/WEB-INF/views/common/nav.jsp" %>
 
 <div class="container-xxl text-center" id="wrap">
 
@@ -161,7 +161,7 @@
     </div>
 
 
-<%@ include file="/WEB-INF/common/footer.jsp" %>
+<%@ include file="/WEB-INF/views/common/footer.jsp" %>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 

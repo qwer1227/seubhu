@@ -2,6 +2,7 @@ package store.seub2hu2.admin.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.xmlbeans.impl.xb.xsdschema.ListDocument;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import store.seub2hu2.admin.service.AdminService;
+import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.ListDto;
 
@@ -31,7 +33,17 @@ public class AdminController {
     }
 
     @GetMapping("/course")
-    public String course() {
+    public String course(
+        @RequestParam(name = "page", required = false, defaultValue = "1") int page,
+        @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
+                Model model) {
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("page", page);
+        condition.put("rows", rows);
+
+        ListDto<Course> dto = adminService.getAllCourse(condition);
+        model.addAttribute("courses", dto.getData());
+        model.addAttribute("paging", dto.getPaging());
 
         return "admin/courselist";
     }
@@ -41,7 +53,6 @@ public class AdminController {
     public User preview(int no) {
         User user = adminService.getUser(no);
 
-        System.out.println(user);
         return user;
     }
 
@@ -60,7 +71,6 @@ public class AdminController {
         if (StringUtils.hasText(value)) {
             condition.put("opt", opt);
             condition.put("value", value);
-
         }
 
         // 검색조건을 전달해서 게시글 목록 조회
@@ -69,7 +79,6 @@ public class AdminController {
         model.addAttribute("users", dto.getData());
         // Pagination을 "paging"로 모델에 저장
         model.addAttribute("paging", dto.getPaging());
-        System.out.println(dto);
 
         return "admin/userlist";
     }

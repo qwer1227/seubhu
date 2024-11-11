@@ -57,14 +57,14 @@
             <where>
                 <if test="condition.opt != null">
                     <choose>
-                        <when test="condition.opt == 'id'">
-                             user_id like CONCAT('%#{condition.value}%')
-                        </when>
                         <when test="condition.opt == 'name'">
-                            user_name like CONCAT('%#{condition.value}%')
+                             user_name like CONCAT('%',#{condition.value},'%')
+                        </when>
+                        <when test="condition.opt == 'id'">
+                             user_id like CONCAT('%',#{condition.value},'%')
                         </when>
                         <when test="condition.opt == 'email'">
-                             user_email like CONCAT('%#{condition.value}%')
+                             user_email like CONCAT('%',#{condition.value},'%')
                         </when>
                     </choose>
                 </if>

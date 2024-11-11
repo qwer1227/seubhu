@@ -15,7 +15,7 @@ public class MyPageController {
     @Autowired
     PostService postService;
 
-    @GetMapping("/public")
+    @GetMapping("")
     public String myPageList() {
 
         return "mypage/publicpage";

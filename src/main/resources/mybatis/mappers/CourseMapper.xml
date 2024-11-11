@@ -1,5 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="CourseMapper.xml">
+<mapper namespace="store.seub2hu2.course.mapper.CourseMapper">
 
+    <!--
+        List<Course> getCourses(@Param("condition") Map<String, Object> condition);
+    -->
+    <select id="getCourses" resultType="store.seub2hu2.course.vo.Course">
+        select
+            *
+        from
+            (
+            select
+                row_number() over (order by course_no desc) rn
+                , course_no               as no
+                , course_name           as name
+                , course_time           as time
+                , course_distance       as distance
+                , course_level          as level
+                , course_like_cnt       as likeCnt
+                , challenge_cnt         as challengeCnt
+                , success_cnt           as successCnt
+                , course_filename       as filename
+                , region_no             as "region.no"
+            from
+                COURSES
+            ) as subquery
+        where
+            rn between #{condition.begin} and #{condition.end}
+    </select>
+
+    <!--
+        int getTotalRows(@Param("condition") Map<String, Object> condition);
+    -->
+    <select id="getTotalRows" resultType="int">
+        SELECT
+            count(*) cnt
+        FROM
+            COURSES
+    </select>
 </mapper>
