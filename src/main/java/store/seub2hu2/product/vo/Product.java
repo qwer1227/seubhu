@@ -17,6 +17,5 @@ public class Product {
     private int stock;
     private boolean isNew;
     private String status;
-    private String thumbImg;
     private Category category;
 }
