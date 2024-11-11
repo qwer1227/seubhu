@@ -21,7 +21,7 @@
   <h2> 커뮤니티 글 작성 </h2>
   
   <div class="row p-3 m-3">
-    <form action="register" method="post">
+    <form:form id="form-register" action="register" method="post" enctype="multipart/form-data">
       <table id="community-table" style="width: 98%">
         <colgroup>
           <col width="10%">
@@ -30,74 +30,78 @@
           <col width="35%">
         </colgroup>
         <tbody>
-        <tr>
-          <th>카테고리</th>
+        <tr class="form-group">
+          <th>
+            <label class="form-label" for="category">카테고리</label>
+          </th>
           <td style="text-align: start">
-            <select>
+            <select id="category" name="category" class="form-control">
               <option hidden="hidden">게시판을 선택해주세요.</option>
-              <option value="100">일반</option>
-              <option value="110">자랑</option>
-              <option value="120">질문</option>
-              <option value="130">훈련일지</option>
+              <option value="110">일반</option>
+              <option value="120">자랑</option>
+              <option value="130">질문</option>
+              <option value="140">훈련일지</option>
             </select>
           </td>
-          <th>임시저장시간</th>
-          <td>${board.createdDate}</td>
         </tr>
-        <tr>
+        <tr class="form-group">
           <th>
-            <label>글제목</label>
+            <label class="form-label" for="title">글제목</label>
           </th>
           <td colspan="3">
-            <input type="text" style="width: 100%" id="title" name="title">
+            <input type="text" class="form-control" style="width: 100%" id="title" name="title"
+                   placeholder="제목을 입력해주세요.">
           </td>
         </tr>
-        <tr>
+        <tr class="form-group">
           <th>
-            <label>글내용</label>
+            <label class="form-label" for="content">글내용</label>
           </th>
           <td colspan="3">
-            <textarea style="width: 100%" rows="10" name="content">d</textarea>
+            <textarea style="width: 100%" class="form-control" rows="10" id="content" name="content"
+                      placeholder="내용을 입력해주세요."></textarea>
             <!-- <%@include file="write.jsp" %> -->
           </td>
         </tr>
-        <tr>
-          <th>첨부파일</th>
+        <tr class="form-group">
+          <th>
+            <label class="form-label">첨부파일</label>
+          </th>
           <td colspan="3">
             <input type="file" class="form-control" name="upfile"/>
           </td>
         </tr>
         </tbody>
       </table>
-    </form>
-  </div>
-  
-  <div class="row">
-    <div class="col d-flex justify-content-between">
-      <div class="col d-flex" style="text-align: start">
-        <button type="button" class="btn btn-secondary m-1" onclick="abort()">취소</button>
+      <div class="row">
+        <div class="col d-flex justify-content-between">
+          <div class="col d-flex" style="text-align: start">
+            <button type="button" class="btn btn-secondary m-1" onclick="abort()">취소</button>
+          </div>
+          <div class="col d-flex justify-content-end">
+            <button type="button" class="btn btn-outline-primary m-1" onclick="keepContent()">보관</button>
+            <button type="submit" class="btn btn-primary m-1">등록</button>
+          </div>
+        </div>
       </div>
-      <div class="col d-flex justify-content-end">
-        <button type="button" class="btn btn-outline-primary m-1" onclick="keepContent()">보관</button>
-        <button type="submit" class="btn btn-primary m-1" onclick="submitContents()">등록</button>
-      </div>
-    </div>
+    </form:form>
   </div>
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script type="text/javascript">
-  function abort(){
-      alert("작성중이던 글을 임시보관하시겠습니까?")
-    location.href = "main";
-  }
-  
-  function keepContent(){
-  
-  }
-  
-  function submitContent(){
-  
-  }
+    function abort() {
+        alert("작성중이던 글을 임시보관하시겠습니까?");
+
+        location.href = "main";
+    }
+
+    function keepContent() {
+        location.href = 'main';
+    }
+
+    function submitContent() {
+        location.href = "detail";
+    }
 </script>
 </body>
 </html>

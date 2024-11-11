@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
+import store.seub2hu2.community.vo.BoardCategory;
 import store.seub2hu2.community.vo.Hashtag;
 
 import java.util.Map;
@@ -12,8 +13,9 @@ import java.util.Map;
 @Getter
 @Setter
 public class BoardForm {
+    private BoardCategory category;
     private String title;
     private String content;
-    private MultipartFile upfile;
-    private Map<String, Object> hashtag;
+    private MultipartFile filename;
+//    private Map<String, Object> hashtag;
 }

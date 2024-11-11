@@ -1,5 +1,6 @@
 package store.seub2hu2.community.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +20,9 @@ public class Board {
     private String title;
     private String content;
     private String filename;
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date createdDate;
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date updatedDate;
     private int cnt;
     private Scrap scrap;

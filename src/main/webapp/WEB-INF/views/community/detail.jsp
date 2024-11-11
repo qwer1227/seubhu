@@ -14,20 +14,23 @@
   <div>
     <div class="col d-flex justify-content-left">
       <div>
-        <a href="" style="text-decoration-line: none">유머</a>
+        <a href="" style="text-decoration-line: none">카테고리명</a>
       </div>
     </div>
     <div class="title h4 d-flex justify-content-between align-items-center">
       <div>
-        게시글 제목
+        ${board.title}
       </div>
       <div class="ml-auto">
-        2024-11-11
+        <c:if test="${empty board.updatedDate}">
+          ${board.createdDate}
+        </c:if>
+        ${board.updatedDate}
       </div>
     </div>
     <div class="meta d-flex justify-content-between mb-3">
-      <span>작성자 이름</span>
-      <span><i class="bi bi-eye"></i> 100  <i class="bi bi-hand-thumbs-up"></i> 10  <i
+      <span>${board.user.name}</span>
+      <span><i class="bi bi-eye"></i> ${board.cnt}  <i class="bi bi-hand-thumbs-up"></i> ${board.like}  <i
           class="bi bi-chat-square-text"></i> 5</span>
     </div>
     

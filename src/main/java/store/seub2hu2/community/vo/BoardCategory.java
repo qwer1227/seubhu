@@ -1,10 +1,30 @@
 package store.seub2hu2.community.vo;
 
-public class BoardCategory {
+import lombok.Getter;
 
-    public static final String NOMAL = "일반";
-    public static final String PRIDE = "자랑";
-    public static final String QUESTION = "질문";
-    public static final String TRAINING_LOG = "훈련일지";
+@Getter
+public enum BoardCategory {
+
+    NOMAL("일반", 100)
+    , PRIDE("자랑", 110)
+    , QUESTION("질문", 120)
+    , TRAINING_LOG("훈련일지", 130);
+
+    private String status;
+    private int catNo;
+
+    private BoardCategory(String name, int catNo) {
+        this.status = name;
+        this.catNo = catNo;
+    }
+
+//    public static BoardCategory fromString(String value){
+//        for (BoardCategory category : values()) {
+//            if (category.name().equalsIgnoreCase(value)) {
+//                return category;
+//            }
+//        }
+//        throw new IllegalArgumentException("Unknown enum value: " + value);
+//    }
 }
 

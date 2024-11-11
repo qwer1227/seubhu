@@ -83,13 +83,13 @@
         <col width="5%">
         <col width="10%">
         <col width="*%">
-        <col width="10%">
+        <col width="15%">
         <col width="10%">
         <col width="10%">
         <col width="10%">
       </colgroup>
       <thead class="text-start">
-      <tr>
+      <tr style="text-align: center">
         <th>번호</th>
         <th>분류</th>
         <th>제목</th>
@@ -100,19 +100,29 @@
       </tr>
       </thead>
       <tbody class="text-start">
-      <tr>
-        <td>1</td>
-        <td>자유게시판</td>
-        <td id="content-title">
-          <a href="detail" style="text-decoration-line: none; color: black">재밌는이야기</a>
-        </td>
-        <td>고길동</td>
-        <td>2345</td>
-        <td>5</td>
-        <td>2024-10-27</td>
-      </tr>
+      <c:choose>
+        <c:when test="${empty boards}">
+          <tr>
+            <td colspan="7" style="text-align: center">등록된 게시글이 없습니다.</td>
+          </tr>
+        </c:when>
+        <c:otherwise>
+          <c:forEach var="board" items="${boards}">
+            <tr style="text-align: center">
+              <td>${board.no}</td>
+              <td>${board.cat.name()}</td>
+              <td id="content-title" style="text-align: start">
+                <a href="detail?no=${board.no}" style="text-decoration-line: none; color: black">${board.title}</a>
+              </td>
+              <td>${board.user.id}</td>
+              <td>${board.like}</td>
+              <td>${board.cnt}</td>
+              <td><fmt:formatDate value="${board.createdDate}" pattern="yyyy-MM-dd"/></td>
+            </tr>
+          </c:forEach>
+        </c:otherwise>
+      </c:choose>
       </tbody>
-    
     </table>
   </div>
   <div class="row p-3 d-flex justify-content-left">
@@ -121,7 +131,7 @@
         <option value="title"> 게시글 제목</option>
         <option value="content"> 게시글 내용</option>
         <option value="writer"> 작성자</option>
-        <option value="hashtag"> 해시태그</option>
+<%--        <option value="hashtag"> 해시태그</option>--%>
       </select>
     </div>
     

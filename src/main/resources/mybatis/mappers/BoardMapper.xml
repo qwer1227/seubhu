@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="store/seub2hu2/community/mapper/BoardMapper">
+<mapper namespace="store.seub2hu2.community.mapper.BoardMapper">
 
     <!-- void insertBoard(@Param("board") Board board); -->
     <insert id="insertBoard">
-        insert into board_no
+        insert into BOARDS
             (
              board_cat_no
             , user_no
             , board_title
             , board_content
-            <if test="board.isUpfile != null">
-            , is_upfile
+            <if test="board.filename != null">
+            , file_name
             </if>
             <if test="board.hashtag != null">
                 , is_hashtag
@@ -23,7 +23,7 @@
             , #{board.user.no}
             , #{board.title}
             , #{board.content, jdbcType=VARCHAR}
-            <if test="board.isUpfile != null">
+            <if test="board.filename != null">
                 , 'Y'
             </if>
             <if test="board.hashtag != null">
@@ -33,4 +33,57 @@
     </insert>
 
     <!-- List<Board> getAllBoards(@Param("board") Board board); -->
+    <select id="getAllBoards" resultType="store.seub2hu2.community.vo.Board">
+        select
+            b.board_no                 as no
+            , c.board_cat_name         as "boardCategory.name"
+            , b.board_title            as title
+            , b.board_cnt              as cnt
+            , b.board_like             as `like`
+            , b.board_created_date     as createdDate
+            , u.user_id                as "user.id"
+        from BOARDS b join BOARDS_CATEGORIES c
+            on b.board_cat_no = c.board_cat_no
+                join USERS u
+            on b.user_no = u.user_no
+        where b.is_deleted = 'N'
+    </select>
+
+    <!-- int getTotalRows(@Param("condition") Map<String, Object> condition); -->
+    <select id="getTotalRows" resultType="int">
+        select count(*) cnt
+        from BOARDS
+        where is_deleted = 'N'
+    </select>
+
+    <!-- void getBoardByNo(@Param("board") Board board, @Param("no") int no); -->
+    <select id="getBoardByNo" resultType="store.seub2hu2.community.vo.Board">
+        select
+            b.board_no
+            , c.board_cat_name
+            , u.user_name
+            , b.board_title
+            , b.board_content
+            , b.file_name
+            , b.board_created_date
+            , b.board_updated_date
+            , b.board_cnt
+            , b.scrap_cnt
+            , b.board_like
+            , b.is_deleted
+            , b.is_keep
+            , b.is_report
+            , b.is_hashtag
+        from
+            BOARDS b join USERS u
+                on b.user_no = u.user_no
+            join BOARDS_CATEGORIES c
+                on b.board_cat_no = c.board_cat_no
+            join BOARDS_REPLIES r
+                on b.board_no = r.board_no
+        where
+            b.is_deleted = 'N'
+            and r.is_deleted = 'N'
+            and b.board_no = #{board.no}
+    </select>
 </mapper>
