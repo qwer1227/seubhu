@@ -53,7 +53,7 @@ public class ProductController {
         // 관련 데이터와 페이징 데이터를 담는다.
         ListDto<ProdListDto> dto = productService.getProducts(condition);
         model.addAttribute("products", dto.getData());
-        System.out.println("dto.getData()" + dto.getData());
+
         model.addAttribute("paging", dto.getPagination());
 
 

@@ -36,8 +36,8 @@
                 <div class="row g-3">
                     <div class="col-2">
                         <select class="form-control" name="rows" onchange="changeRows()">
-                            <option value="5" ${param.rows eq 5 ? "selected" : ""}>5개씩 보기</option>
-                            <option value="10" ${empty param.rows or param.rows eq 10 ? "selected" : ""}>10개씩 보기</option>
+                            <option value="5" ${empty param.rows or param.rows eq 5 ? "selected" : ""}>5개씩 보기</option>
+                            <option value="10" ${param.rows eq 10 ? "selected" : ""}>10개씩 보기</option>
                             <option value="20" ${param.rows eq 20 ? "selected" : ""}>20개씩 보기</option>
                         </select>
                     </div>
@@ -116,12 +116,12 @@
 					<nav>
 						<ul class="pagination justify-content-center">
 						    <li class="page-item ${paging.first ? 'disabled' : ''}">
-						    	<a class="page-link
-						    	onclick="changePage(${paging.prevPage}, event)
+						    	<a class="page-link"
+						    	onclick="changePage(${paging.prevPage}, event)"
 						    	href="list?page=${paging.prevPage}">이전</a>
 						    </li>
                             <c:forEach var="num" begin="${paging.beginPage}" end="${paging.endPage}">
-							    <li class="page-item" ${paging.page eq num ? 'active' : ''}>
+							    <li class="page-item ${paging.page eq num ? 'active' : ''}">
 							    	<a class="page-link"
 							    	onclick="changePage(${num}, event)"
 							    	href="list?page=${num}">${num}</a>
@@ -138,7 +138,7 @@
             </div>
 
     <script type="text/javascript">
-
+        const form = document.querySelector("#form-search")
         const pageInput = document.querySelector("input[name=page]");
 
         // 페이지 번호 링크를 클릭했을 때 변화
@@ -147,7 +147,7 @@
             // 페이지 번호 링크를 클릭했다면 해당 페이징 요청
             pageInput.value = page;
 
-            form.submit;
+            form.submit();
         }
 
         // 정렬방식이 변결될 때

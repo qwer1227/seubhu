@@ -38,6 +38,7 @@
         <result property="name" column="PROD_NAME"/>
         <result property="price" column="PROD_PRICE"/>
         <result property="status" column="PROD_STATUS"/>
+        <result property="createdAt" column="PROD_CREATED_AT" />
         <association property="category" javaType="store.seub2hu2.product.vo.Category">
             <id property="no" column="CAT_NO"/>
             <result property="name" column="CAT_NAME"/>
@@ -54,7 +55,7 @@
         SELECT
         <choose>
             <when test="condition.sort == 'date'">
-                row_number() over (order by P.PROD_NO desc) as rn
+                row_number() over (order by P.PROD_CREATED_AT desc) as rn
             </when>
             <when test="condition.sort == 'name'">
                 row_number() over (order by P.PROD_NAME asc) as rn
@@ -67,6 +68,7 @@
             P.PROD_NAME,
             P.PROD_PRICE,
             P.PROD_STATUS,
+            P.PROD_CREATED_AT,
             PC.CAT_NAME,
             PI.IMG_URL
         FROM PRODUCTS P
@@ -76,7 +78,7 @@
         <if test="condition != null">
             <choose>
                 <when test="condition.opt == 'name'">
-                    and P.PROD_NAME like '%' || #{condition.value} || '%'
+                    and P.PROD_NAME like concat ('%', #{condition.value}, '%')
                 </when>
                 <when test="condition.opt == 'minPrice'">
                     and P.PROD_PRICE >= #{condition.value}

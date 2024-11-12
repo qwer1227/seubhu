@@ -30,14 +30,12 @@ public class ProductService {
 
         // 검색 조건에 맞는 전체 데이터 갯수를 조회한다.
         int totalRows = productMapper.getTotalRows(condition);
-        System.out.println("totalRows: " + totalRows);
 
         // 현재 페이지
         int page = (Integer) condition.get("page");
-        System.out.println("페이지" + page);
         // 데이터 개수
         int rows = (Integer) condition.get("rows");
-        System.out.println("로우스" + rows);
+
         // Pagination 객체를 생성한다.
         Pagination pagination = new Pagination(page, totalRows , rows);
 
@@ -49,12 +47,10 @@ public class ProductService {
         // map 객체에 저장한다.
         condition.put("begin", begin);
         condition.put("end", end);
-        System.out.println(begin +" "+ end);
         List<ProdListDto> products = productMapper.getProducts(condition);
 
         ListDto<ProdListDto> dto = new ListDto<>(products, pagination);
 
-        log.info("dto" + dto.toString());
         return dto;
     }
 }

@@ -7,6 +7,7 @@ import lombok.ToString;
 import store.seub2hu2.product.vo.Category;
 import store.seub2hu2.product.vo.Image;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +21,7 @@ public class ProdListDto {
     private String name;
     private int price;
     private String status;
+    private Date createdAt;
     private Category category;
     private List<Image> images;
 }
