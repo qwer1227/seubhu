@@ -2,6 +2,30 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="store.seub2hu2.product.mapper.ProductMapper">
 
+    <!--
+    int getTotalRows(@Param("condition") Map<String, Object> condition);
+    -->
+    <select id="getTotalRows" resultType="int">
+        select
+        count(*) as cnt
+        from
+        PRODUCTS
+        <where>
+            <if test="condition != null">
+                <if test="condition.opt == 'name'">
+                    PROD_NAME like '%' || #{condition.value} || '%'
+                </if>
+                <if test="condition.opt == 'minPrice'">
+                    PROD_PRICE >= #{condition.value}
+                </if>
+                <if test="condition.opt == 'maxPrice'">
+                    PROD_PRICE &lt;= #{condition.value}
+                </if>
+            </if>
+        </where>
+    </select>
+
+
     <select id="getProductByCatNo" resultType="store.seub2hu2.product.vo.Product">
 
     </select>
@@ -9,33 +33,60 @@
     <!--
         List<Product> getProducts();
     -->
-    <resultMap id="productWithImgMap" type="store.seub2hu2.product.dto.ProdListDto" >
+    <resultMap id="productWithImgMap" type="store.seub2hu2.product.dto.ProdListDto">
         <id property="no" column="PROD_NO"/>
         <result property="name" column="PROD_NAME"/>
         <result property="price" column="PROD_PRICE"/>
-        <result property="status" column="PROD_STATUS" />
+        <result property="status" column="PROD_STATUS"/>
         <association property="category" javaType="store.seub2hu2.product.vo.Category">
             <id property="no" column="CAT_NO"/>
-            <result property="name" column="CAT_NAME" />
+            <result property="name" column="CAT_NAME"/>
             <result property="topNo" column="CAT_TOP_NO"/>
         </association>
         <collection property="images" ofType="store.seub2hu2.product.vo.Image">
-            <id property="no" column="IMG_NO" />
-            <result property="url" column="IMG_URL" />
+            <id property="no" column="IMG_NO"/>
+            <result property="url" column="IMG_URL"/>
         </collection>
     </resultMap>
     <select id="getProducts" resultMap="productWithImgMap">
-        SELECT P.PROD_NO,
+        SELECT *
+        FROM (
+        SELECT
+        <choose>
+            <when test="condition.sort == 'date'">
+                row_number() over (order by P.PROD_NO desc) as rn
+            </when>
+            <when test="condition.sort == 'name'">
+                row_number() over (order by P.PROD_NAME asc) as rn
+            </when>
+            <when test="condition.sort == 'price'">
+                row_number() over (order by P.PROD_PRICE asc) as rn
+            </when>
+        </choose>
+            ,P.PROD_NO,
             P.PROD_NAME,
             P.PROD_PRICE,
             P.PROD_STATUS,
             PC.CAT_NAME,
             PI.IMG_URL
         FROM PRODUCTS P
-            JOIN PROD_CATEGORIES PC ON P.CAT_NO = PC.CAT_NO
-            JOIN PROD_IMGS PI ON P.PROD_NO = PI.PROD_NO
-        WHERE PI.IMG_THUM = 'Y';
+        JOIN PROD_CATEGORIES PC ON P.CAT_NO = PC.CAT_NO
+        JOIN PROD_IMGS PI ON P.PROD_NO = PI.PROD_NO
+        WHERE PI.IMG_THUM = 'Y'
+        <if test="condition != null">
+            <choose>
+                <when test="condition.opt == 'name'">
+                    and P.PROD_NAME like '%' || #{condition.value} || '%'
+                </when>
+                <when test="condition.opt == 'minPrice'">
+                    and P.PROD_PRICE >= #{condition.value}
+                </when>
+                <when test="condition.opt == 'maxPrice'">
+                    and P.PROD_PRICE &lt;= #{condition.value}
+                </when>
+            </choose>
+        </if>
+        ) AS subquery
+        WHERE rn BETWEEN #{condition.begin} AND #{condition.end}
     </select>
-
-
 </mapper>
