@@ -2,88 +2,111 @@
 <!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="store.seub2hu2.community.mapper.BoardMapper">
 
-    <!-- void insertBoard(@Param("board") Board board); -->
-    <insert id="insertBoard">
-        insert into BOARDS
-            (
-             board_cat_no
-            , user_no
-            , board_title
-            , board_content
-            <if test="board.filename != null">
-            , file_name
-            </if>
-            <if test="board.hashtag != null">
-                , is_hashtag
-            </if>
-            )
-        values
-            (
-             #{board.cat.no}
-            , #{board.user.no}
-            , #{board.title}
-            , #{board.content, jdbcType=VARCHAR}
-            <if test="board.filename != null">
-                , 'Y'
-            </if>
-            <if test="board.hashtag != null">
-                , 'Y'
-            </if>
-            )
-    </insert>
+  <!-- void insertBoard(@Param("board") Board board); -->
+  <insert id="insertBoard">
+    insert into BOARDS
+    (
+      board_cat_name
+      , user_nickname
+      , board_title
+      , board_content
+    <!--            <if test="board.filename != null">-->
+    <!--                , file_name-->
+    <!--            </if>-->
+    <!--            <if test="board.hashtag != null">-->
+    <!--                , is_hashtag-->
+    <!--            </if>-->
+    )
+    values
+    (
+      #{board.catName}
+    <!--             , #{board.user.nickname}-->
+      , '김정정'
+      , #{board.title}
+      , #{board.content, jdbcType=VARCHAR}
+    <!--            <if test="board.filename != null">-->
+    <!--                , 'Y'-->
+    <!--            </if>-->
+    <!--            <if test="board.hashtag != null">-->
+    <!--                , 'Y'-->
+    <!--            </if>-->
+    )
+  </insert>
 
-    <!-- List<Board> getAllBoards(@Param("board") Board board); -->
-    <select id="getAllBoards" resultType="store.seub2hu2.community.vo.Board">
-        select
-            b.board_no                 as no
-            , c.board_cat_name         as "boardCategory.name"
-            , b.board_title            as title
-            , b.board_cnt              as cnt
-            , b.board_like             as `like`
-            , b.board_created_date     as createdDate
-            , u.user_id                as "user.id"
-        from BOARDS b join BOARDS_CATEGORIES c
-            on b.board_cat_no = c.board_cat_no
-                join USERS u
-            on b.user_no = u.user_no
-        where b.is_deleted = 'N'
-    </select>
+  <!-- List<Board> getBoards(@Param("condition") Map<String, Object> condition); -->
+  <select id="getBoards" resultType="store.seub2hu2.community.vo.Board">
+    select *
+    from (
+      select
+        row_number() over(order by b.board_no desc) rn
+        , b.board_no as no
+        , b.board_cat_name as catName
+        , b.board_title as title
+        , b.board_cnt as cnt
+        , b.board_like as `like`
+        , b.is_deleted
+        , b.board_created_date as createdDate
+        , u.user_nickname as `user.nickname`
+      from
+        BOARDS b join USERS u
+            on b.user_nickname = u.user_nickname
+      where b.is_deleted = 'N'
+      ) board
+    where rn between #{condition.begin} and #{condition.end}
+        <include refid="boardsFilterCondition"/>
+  </select>
 
-    <!-- int getTotalRows(@Param("condition") Map<String, Object> condition); -->
-    <select id="getTotalRows" resultType="int">
-        select count(*) cnt
-        from BOARDS
-        where is_deleted = 'N'
-    </select>
+  <!-- int getTotalRows(@Param("condition") Map<String, Object> condition); -->
+  <select id="getTotalRows" resultType="int">
+    select count(*)
+    from BOARDS
+    where is_deleted = 'N'
+        <include refid="boardsFilterCondition"/>
+  </select>
 
-    <!-- void getBoardByNo(@Param("board") Board board, @Param("no") int no); -->
-    <select id="getBoardByNo" resultType="store.seub2hu2.community.vo.Board">
-        select
-            b.board_no
-            , c.board_cat_name
-            , u.user_name
-            , b.board_title
-            , b.board_content
-            , b.file_name
-            , b.board_created_date
-            , b.board_updated_date
-            , b.board_cnt
-            , b.scrap_cnt
-            , b.board_like
-            , b.is_deleted
-            , b.is_keep
-            , b.is_report
-            , b.is_hashtag
-        from
-            BOARDS b join USERS u
-                on b.user_no = u.user_no
-            join BOARDS_CATEGORIES c
-                on b.board_cat_no = c.board_cat_no
-            join BOARDS_REPLIES r
-                on b.board_no = r.board_no
-        where
-            b.is_deleted = 'N'
-            and r.is_deleted = 'N'
-            and b.board_no = #{board.no}
-    </select>
+  <!-- Board getBoardByNo(@Param("no") int no); -->
+  <select id="getBoardByNo" resultType="store.seub2hu2.community.vo.Board" parameterType="int">
+    select b.board_no as no
+            , c.board_cat_name          as catName
+            , u.user_nickname           as "user.nickname"
+            , b.board_title             as title
+            , b.board_content           as content
+            , b.file_name               as filename
+            , b.board_created_date      as createdDate
+            , b.board_updated_date      as updatedDate
+            , b.board_cnt               as viewCnt
+            , b.scrap_cnt               as scrap
+            , b.board_like              as `like`
+            , b.is_deleted              as isDeleted
+            , b.is_keep                 as isKeep
+            , b.is_report               as isReport
+            , b.is_hashtag              as hashtag
+    from
+      BOARDS b join USERS u
+    on b.user_nickname = u.user_nickname
+      join BOARDS_CATEGORIES c
+      on b.board_cat_name = c.board_cat_name
+    where
+      b.is_deleted = 'N'
+      and b.board_no = ${no}
+  </select>
+
+  <!-- 게시글 검색시 자주 사용되는 SQL 구문 -->
+  <sql id="boardsFilterCondition">
+    <if test="condition.opt != null">
+      <choose>
+        <when test="condition.opt == 'title'">
+          and b.board_title like '%' || #{condition.keyword} || '%'
+        </when>
+        <when test="condition.opt == 'content'">
+          and b.board_content like '%' || #{condition.keyword} || '%'
+        </when>
+        <when test="condition.opt == 'writer'">
+          and b.user_no in (select user_no
+                            from BOARDS
+                            where user_nickname = #{condition.keyword})
+        </when>
+      </choose>
+    </if>
+  </sql>
 </mapper>

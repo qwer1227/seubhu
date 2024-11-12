@@ -2,7 +2,6 @@ package store.seub2hu2.community.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import store.seub2hu2.community.dto.BoardForm;
 import store.seub2hu2.community.vo.Board;
 
 import java.util.List;
@@ -12,7 +11,7 @@ import java.util.Map;
 public interface BoardMapper {
 
     void insertBoard(@Param("board") Board board);
-    List<Board> getAllBoards(@Param("condition") Map<String, Object> condition);
+    List<Board> getBoards(@Param("condition") Map<String, Object> condition);
     int getTotalRows(@Param("condition") Map<String, Object> condition);
     Board getBoardByNo(@Param("no") int no);
 }

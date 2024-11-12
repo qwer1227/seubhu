@@ -13,7 +13,8 @@ import java.util.Map;
 @Getter
 @Setter
 public class BoardForm {
-    private BoardCategory category;
+    private String catName;
+    private int no;
     private String title;
     private String content;
     private MultipartFile filename;

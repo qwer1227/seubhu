@@ -1,10 +1,7 @@
 package store.seub2hu2.community.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import store.seub2hu2.user.vo.User;
 
 import java.util.Date;
@@ -15,7 +12,8 @@ import java.util.Date;
 @Setter
 public class Board {
     private int no;
-    private BoardCategory cat;
+    private String catName;
+    private BoardCategory category;
     private User user;
     private String title;
     private String content;
@@ -24,7 +22,7 @@ public class Board {
     private Date createdDate;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date updatedDate;
-    private int cnt;
+    private int viewCnt;
     private Scrap scrap;
     private int like;
     private String isDeleted;

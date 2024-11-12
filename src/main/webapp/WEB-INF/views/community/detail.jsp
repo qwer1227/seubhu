@@ -14,7 +14,7 @@
   <div>
     <div class="col d-flex justify-content-left">
       <div>
-        <a href="" style="text-decoration-line: none">카테고리명</a>
+        <a href="" style="text-decoration-line: none">${board.catName}</a>
       </div>
     </div>
     <div class="title h4 d-flex justify-content-between align-items-center">
@@ -22,20 +22,20 @@
         ${board.title}
       </div>
       <div class="ml-auto">
-        <c:if test="${empty board.updatedDate}">
-          ${board.createdDate}
-        </c:if>
-        ${board.updatedDate}
+<%--        <c:if test="${empty board.updatedDate}">--%>
+<%--          ${board.createdDate}--%>
+<%--        </c:if>--%>
+<%--        ${board.updatedDate}--%>
       </div>
     </div>
     <div class="meta d-flex justify-content-between mb-3">
-      <span>${board.user.name}</span>
-      <span><i class="bi bi-eye"></i> ${board.cnt}  <i class="bi bi-hand-thumbs-up"></i> ${board.like}  <i
+      <span>${board.user.nickname}</span>
+      <span><i class="bi bi-eye"></i> ${board.viewCnt}  <i class="bi bi-hand-thumbs-up"></i> ${board.like}  <i
           class="bi bi-chat-square-text"></i> 5</span>
     </div>
     
-    <div class="content mb-4">
-      <p>여기에 본문 내용이 들어갑니다. 본문은 여러 줄로 작성할 수 있으며, 원하는 만큼 길게 작성할 수 있습니다.</p>
+    <div class="content mb-4" style="text-align: start">
+      <p>${board.content}</p>
     </div>
     
     <div class="actions d-flex justify-content-between mb-4">

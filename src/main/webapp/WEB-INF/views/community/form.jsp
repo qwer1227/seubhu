@@ -35,12 +35,12 @@
             <label class="form-label" for="category">카테고리</label>
           </th>
           <td style="text-align: start">
-            <select id="category" name="category" class="form-control">
+            <select id="category" name="catName" class="form-control">
               <option hidden="hidden">게시판을 선택해주세요.</option>
-              <option value="110">일반</option>
-              <option value="120">자랑</option>
-              <option value="130">질문</option>
-              <option value="140">훈련일지</option>
+              <option value="일반게시판">일반</option>
+              <option value="자랑게시판">자랑</option>
+              <option value="질문게시판">질문</option>
+              <option value="훈련일지">훈련일지</option>
             </select>
           </td>
         </tr>
@@ -80,7 +80,7 @@
           </div>
           <div class="col d-flex justify-content-end">
             <button type="button" class="btn btn-outline-primary m-1" onclick="keepContent()">보관</button>
-            <button type="submit" class="btn btn-primary m-1">등록</button>
+            <button type="submit" class="btn btn-primary m-1" onclick="submitContent()">등록</button>
           </div>
         </div>
       </div>
@@ -97,10 +97,6 @@
 
     function keepContent() {
         location.href = 'main';
-    }
-
-    function submitContent() {
-        location.href = "detail";
     }
 </script>
 </body>

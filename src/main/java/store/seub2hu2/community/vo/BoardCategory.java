@@ -17,14 +17,5 @@ public enum BoardCategory {
         this.status = name;
         this.catNo = catNo;
     }
-
-//    public static BoardCategory fromString(String value){
-//        for (BoardCategory category : values()) {
-//            if (category.name().equalsIgnoreCase(value)) {
-//                return category;
-//            }
-//        }
-//        throw new IllegalArgumentException("Unknown enum value: " + value);
-//    }
 }
 
