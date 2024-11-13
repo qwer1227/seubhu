@@ -6,12 +6,12 @@ public class ListDto<T> {
     // 목록 화면에 표시할 데이터
     List<T> data;
     // 목록 화면에 표시되는 페이징 처리 정보
-    Pagination pagination;
+    Pagination paging;
 
     // 생성자 메소드로 데이터 저장
     public ListDto(List<T> data, Pagination pagination) {
         this.data = data;
-        this.pagination = pagination;
+        this.paging = pagination;
     }
 
     // getter 메소드로 데이터 꺼내기
@@ -19,7 +19,7 @@ public class ListDto<T> {
         return data;
     }
 
-    public Pagination getPagination() {
-        return pagination;
+    public Pagination getPaging() {
+        return paging;
     }
 }
