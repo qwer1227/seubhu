@@ -34,6 +34,7 @@ public class CourseController {
         if (StringUtils.hasText(keyword)) {
             condition.put("keyword", keyword);
         }
+
         System.out.println("페이지:" + condition.get("page"));
         System.out.println("거리:" + condition.get("distance"));
         System.out.println("난이도:" + condition.get("level"));
@@ -50,4 +51,15 @@ public class CourseController {
         return "course/list";
     }
 
+    @GetMapping("/detail")
+    public String detail(int no, Model model) {
+        // 1. 코스의 상세 정보를 가져온다.
+        Course course = courseService.getCourseDetail(no);
+
+        // 2. Model 객체에 코스의 상세 정보를 저장한다.
+        model.addAttribute("course", course);
+
+        // 3. 뷰이름을 반환한다.
+        return "course/detail";
+    }
 }

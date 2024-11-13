@@ -36,4 +36,14 @@ public class CourseService {
         ListDto<Course> dto = new ListDto<>(courses, pagination);
         return dto;
     }
+
+    public Course getCourseDetail(int no) {
+        // 1. 코스 번호로 코스의 상세 정보를 가져온다.
+        Course course = courseMapper.getCourseByNo(no);
+
+        // 2. 없는 코스 번호로 코스 상세 페이지 접속 시, 예외를 던진다.
+
+        // 3. 코스의 상세 정보를 반환한다.
+        return course;
+    }
 }
