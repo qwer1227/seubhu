@@ -1,9 +1,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@include file="/WEB-INF/common/tags.jsp" %>
+<%@include file="/WEB-INF/views/common/tags.jsp" %>
 <!doctype html>
 <html lang="ko">
 <head>
-  <%@include file="/WEB-INF/common/common.jsp" %>
+  <%@include file="/WEB-INF/views/common/common.jsp" %>
 </head>
 <style>
     .category-nav a {
@@ -23,7 +23,7 @@
     }
 </style>
 <body>
-<%@include file="/WEB-INF/common/nav.jsp" %>
+<%@include file="/WEB-INF/views/common/nav.jsp" %>
 <div class="container-xxl text-center" id="wrap">
   
   <h2> 이벤트 정보 </h2>
@@ -61,6 +61,6 @@
       <a href="form" type="button" class="btn btn-primary">글쓰기</a>
     </div>
   </div>
-  <%@include file="/WEB-INF/common/footer.jsp" %>
+  <%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
 </html>

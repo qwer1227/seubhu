@@ -6,10 +6,10 @@
   <%@include file="/WEB-INF/views/common/common.jsp" %>
 </head>
 <style>
-  #content-title:hover{
-      text-decoration: black underline;
-      font-weight: bold;
-  }
+    #content-title:hover {
+        text-decoration: underline;
+        font-weight: bold;
+    }
 </style>
 <body>
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
@@ -26,27 +26,7 @@
         <tbody>
         <tr>
           <td>
-            <a href="" style="text-decoration-line: none; color: black; font-weight: bold">공지사항1</a>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <a href="" style="text-decoration-line: none; color: black; font-weight: bold">공지사항2</a>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <a href="" style="text-decoration-line: none; color: black; font-weight: bold">공지사항3</a>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <a href="" style="text-decoration-line: none; color: black; font-weight: bold">공지사항4</a>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <a href="" style="text-decoration-line: none; color: black; font-weight: bold">공지사항5</a>
+            <a href="" style="text-decoration-line: none; color: black; font-weight: bold">공지사항 => 5개만 보여줄 예정</a>
           </td>
         </tr>
         </tbody>
@@ -58,98 +38,215 @@
     </div>
   </div>
   
+  <!-- 카테고리 종류에 따른 게시글 목록 반환 기능 -->
   <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
-    <div class="col " >
-      <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="#">전체</a>
+    <div class="col ">
+      <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
+         href="main">전체</a>
     </div>
-    <div class="col " >
-      <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="#">일반</a>
+    <div class="col">
+      <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
+         href="main?category=일반게시판">일반</a>
     </div>
-    <div class="col " >
-      <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="#">자랑</a>
+    <div class="col ">
+      <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
+         href="#">자랑</a>
     </div>
-    <div class="col " >
-      <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="#">질문</a>
+    <div class="col ">
+      <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
+         href="#">질문</a>
     </div>
-    <div class="col " >
-      <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="#">훈련일지</a>
+    <div class="col ">
+      <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
+         href="#">훈련일지</a>
     </div>
   </div>
-  
-  
+
+  <!-- 게시글 정렬 기능 -->
+  <form class="row p-3" id="sorting" method="get" action="main">
+    <input type="hidden" name="page" value="${param.page != null ? param.page : 1}">
+    <div class="col d-flex justify-content-end">
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="sort" value="date" onchange="changeSort()"
+               ${empty param.sort or param.sort eq 'date' ? 'checked' : ''}>
+        <label class="form-check-label">최신순</label>
+      </div>
+      <div class="form-check-inline">
+        <input class="form-check-input" type="radio" name="sort" value="like" onchange="changeSort()"
+               ${param.sort eq 'like' ? 'checked' : ''}>
+        <label class="form-check-label">추천순</label>
+      </div>
+      <div class="form-check-inline">
+        <input class="form-check-input" type="radio" name="sort" value="viewCnt" onchange="changeSort()"
+               ${param.sort eq 'viewCnt' ? 'checked' : ''}>
+        <label class="form-check-label">조회순</label>
+      </div>
+      <div>
+        <select class="form-control-sm" name="rows" onchange="changeRows()">
+          <option value="10" ${param.rows eq 10 ? 'selected' : ''}>10개씩 보기</option>
+          <option value="20" ${param.rows eq 20 ? 'selected' : ''}>20개씩 보기</option>
+          <option value="30" ${param.rows eq 30 ? 'selected' : ''}>30개씩 보기</option>
+        </select>
+      </div>
+    </div>
+  </form>
+
+  <!--  게시글 목록 -->
   <div class="row p-3">
     <table class="table">
       <colgroup>
         <col width="5%">
         <col width="10%">
         <col width="*%">
-        <col width="10%">
+        <col width="15%">
         <col width="10%">
         <col width="10%">
         <col width="10%">
       </colgroup>
       <thead class="text-start">
-      <tr>
-        <th>번호</th>
-        <th>분류</th>
-        <th>제목</th>
-        <th>작성자</th>
-        <th>추천</th>
-        <th>조회</th>
-        <th>날짜</th>
-      </tr>
+        <tr style="text-align: center">
+          <th>번호</th>
+          <th>분류</th>
+          <th>제목</th>
+          <th>작성자</th>
+          <th>추천</th>
+          <th>조회</th>
+          <th>날짜</th>
+        </tr>
       </thead>
       <tbody class="text-start">
-      <tr>
-        <td>1</td>
-        <td>자유게시판</td>
-        <td id="content-title">
-          <a href="detail" style="text-decoration-line: none; color: black">재밌는이야기</a>
-        </td>
-        <td>고길동</td>
-        <td>2345</td>
-        <td>5</td>
-        <td>2024-10-27</td>
-      </tr>
+        <c:choose>
+          <c:when test="${empty boards}">
+            <tr>
+              <td colspan="7" style="text-align: center">등록된 게시글이 없습니다.</td>
+            </tr>
+          </c:when>
+          <c:otherwise>
+            <c:forEach var="board" items="${boards}">
+              <tr style="text-align: center">
+                <td>${board.no}</td>
+                <td>${board.catName}</td>
+                <td id="content-title" style="text-align: start">
+                  <a href="detail?no=${board.no}" style="text-decoration-line: none; color: black">${board.title}</a>
+                </td>
+                <td>${board.user.nickname}</td>
+                <td>${board.like}</td>
+                <td>${board.viewCnt}</td>
+                <td><fmt:formatDate value="${board.createdDate}" pattern="yyyy-MM-dd"/></td>
+              </tr>
+            </c:forEach>
+          </c:otherwise>
+        </c:choose>
       </tbody>
-    
     </table>
   </div>
-  <div class="row p-3 d-flex justify-content-left">
-    <div class="col-2">
-      <select class="form-control" name="opt">
-        <option value="title"> 게시글 제목</option>
-        <option value="content"> 게시글 내용</option>
-        <option value="writer"> 작성자</option>
-        <option value="hashtag"> 해시태그</option>
-      </select>
+
+  <!-- 검색 및 글쓰기 기능 -->
+  <form id="form-search" method="get" action="main">
+    <input type="hidden" name="page" value="${param.page != null ? param.page : 1}">
+    <div class="row p-3 d-flex justify-content-left">
+      <div class="col-2">
+        <select class="form-control" name="opt">
+          <option value="title" ${param.opt eq 'title' ? 'selected' : ''}> 게시글 제목</option>
+          <option value="content" ${param.opt eq 'content' ? 'selected' : ''}> 게시글 내용</option>
+          <option value="writer" ${param.opt eq 'writer' ? 'selected' : ''}> 작성자</option>
+          <%--        <option value="hashtag"> 해시태그</option>--%>
+        </select>
+      </div>
+
+      <div class="col-2">
+        <input type="text" class="form-control" name="keyword">
+      </div>
+      <div class="col-1">
+        <button class="btn btn-outline-primary" onclick="searchKeyword()">검색</button>
+      </div>
+      <div class="col d-flex justify-content-center">
+
+      </div>
+      <div class="col d-flex justify-content-end">
+        <a href="form" type="button" class="btn btn-primary">글쓰기</a>
+      </div>
     </div>
-    
-    <div class="col-2">
-      <input type="text" class="form-control" name="value" value="">
-    </div>
-    <div class="col-1">
-      <button class="btn btn-outline-primary">검색</button>
-    </div>
-    <div class="col d-flex justify-content-center">
-    
-    </div>
-    <div class="col d-flex justify-content-end">
-      <a href="form" type="button" class="btn btn-primary">글쓰기</a>
-    </div>
-  </div>
+  </form>
+
+  <!-- 페이징처리 -->
   <div>
-    <a href=""><<</a>
-    <a href="">1</a>
-    |
-    <a href="">2</a>
-    |
-    <a href="">3</a>
-    <a href="">>></a>
+    <ul class="pagination justify-content-center">
+      <li class="page-item ${paging.first ? 'disabled' : '' }">
+        <a class="page-link"
+           onclick="changePage(${paging.prevPage}, event)"
+           href="javascript:void(0)"><<</a>
+      </li>
+
+      <c:forEach var="num" begin="${paging.beginPage }" end="${paging.endPage }">
+        <li class="page-item ${paging.page eq num ? 'active' : '' }">
+          <a class="page-link"
+             onclick="changePage(${num }, event)"
+             href="javascript:void(0)">${num }</a>
+        </li>
+      </c:forEach>
+
+      <li class="page-item ${paging.last ? 'disabled' : '' }">
+        <a class="page-link"
+           onclick="changePage(${paging.nextPage}, event)"
+           href="javascript:void(0)">>></a>
+      </li>
+    </ul>
   </div>
 </div>
-
-
-<%@include file="/WEB-INF/common/footer.jsp" %>
+<%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
+<script type="text/javascript">
+    // 페이지 번호 링크를 클릭했을 때 변화
+    function changePage(page, event) {
+        // 기본 동작을 막음
+        event.preventDefault();
+        // 페이지 번호 링크를 클릭했다면 해당 페이징 요청
+        let form = document.querySelector("#form-search");
+        // 페이지 번호 input 요소 선택
+        let pageInput = form.querySelector("input[name=page]");
+        // 페이지 번호를 원하는 값으로 설정
+        pageInput.value = page;
+        // 폼 제출
+        form.submit();
+    }
+
+    // 검색어를 입력하고 검색버튼을 클릭 했을 때
+    function searchValue() {
+        let pageInput = form.querySelector("input[name=page]");
+        pageInput.value = 1;
+        form.submit();
+    }
+
+    // 정렬방식이 변경될 때
+    function changeSort() {
+        let form = document.querySelector("#sorting");
+        let sortInput = document.querySelector("input[name=sort]");
+        let pageInput = form.querySelector("input[name=page]");
+        sortInput.value = 1;
+        form.submit();
+    }
+
+    // 한 화면에 표기할 행의 갯수가 변경될 때
+    function changeRows() {
+        // 페이지 갯수를 클릭했다면 해당 페이징 요청
+        let form = document.querySelector("#sorting");
+        // 페이지 번호 input 요소 선택
+        let rowsInput = document.querySelector("input[name=rows]");
+        // 새로 요청하는 페이지는 1로 초기화
+        let pageInput = form.querySelector("input[name=page]");
+        pageInput.value = 1;
+        // 폼 제출
+        form.submit();
+    }
+
+    // 카테고리를 선택했을 때
+    function changeCategory(){
+        let form = document.querySelector("#category");
+        let catInput = document.querySelector("button[name=catName]");
+        let pageInput = form.querySelector("input[name=page]");
+        pageInput.value = 1;
+        form.submit();
+    }
+</script>
 </html>

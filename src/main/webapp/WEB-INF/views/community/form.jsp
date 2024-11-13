@@ -21,7 +21,8 @@
   <h2> 커뮤니티 글 작성 </h2>
   
   <div class="row p-3 m-3">
-    <form action="" method="post">
+    <!-- db에 해당 board.no가 있으면 update(), 없으면 register() 실행 -->
+    <form:form id="form-register" action="${board.no != null ? 'update' : 'register'}" method="post" enctype="multipart/form-data">
       <table id="community-table" style="width: 98%">
         <colgroup>
           <col width="10%">
@@ -30,53 +31,85 @@
           <col width="35%">
         </colgroup>
         <tbody>
-        <tr>
-          <th>카테고리</th>
+        <tr class="form-group">
+          <th>
+            <label class="form-label" for="category">카테고리</label>
+          </th>
           <td style="text-align: start">
-            <select>
+            <select id="category" name="catName" class="form-control">
               <option hidden="hidden">게시판을 선택해주세요.</option>
-              <option>일반</option>
-              <option>자랑</option>
-              <option>질문</option>
-              <option>훈련일지</option>
+              <option value="일반게시판" ${board.catName eq '일반게시판' ? 'selected' : ''}>일반</option>
+              <option value="자랑게시판" ${board.catName eq '자랑게시판' ? 'selected' : ''}>자랑</option>
+              <option value="질문게시판" ${board.catName eq '훈련게시판' ? 'selected' : ''}>질문</option>
+              <option value="훈련일지" ${board.catName eq '훈련일지' ? 'selected' : ''}>훈련일지</option>
             </select>
           </td>
-          <th>임시저장시간</th>
-          <td>2024년 11월 07일 오후 2시 46분</td>
         </tr>
-        <tr>
-          <th>글제목</th>
-          <td colspan="3"><input type="text" value="" style="width: 100%"></td>
-        </tr>
-        <tr>
-          <th>글내용</th>
+        <tr class="form-group">
+          <th>
+            <label class="form-label" for="title">글제목</label>
+          </th>
           <td colspan="3">
-            <%@include file="write.jsp" %>
+            <input type="text" class="form-control" style="width: 100%" id="title" name="title"
+                   placeholder="제목을 입력해주세요." value="">
+                   ${board != null ? boardForm.title : ''}
           </td>
         </tr>
-        <tr>
-          <th>첨부파일</th>
+        <tr class="form-group">
+          <th>
+            <label class="form-label" for="content">글내용</label>
+          </th>
+          <td colspan="3">
+            <textarea style="width: 100%" class="form-control" rows="10" id="content" name="content"
+                      placeholder="내용을 입력해주세요."></textarea>
+                      ${board != null ? board.content : ''}
+            <!-- <%@include file="write.jsp" %> -->
+          </td>
+        </tr>
+        <tr class="form-group">
+          <th>
+            <label class="form-label">첨부파일</label>
+          </th>
           <td colspan="3">
             <input type="file" class="form-control" name="upfile"/>
           </td>
         </tr>
         </tbody>
       </table>
-    </form>
-  </div>
-  
-  <div class="row">
-    <div class="col d-flex justify-content-between">
-      <div class="col d-flex" style="text-align: start">
-        <button type="button" class="btn btn-secondary m-1">취소</button>
+      <div class="row">
+        <div class="col d-flex justify-content-between">
+          <div class="col d-flex" style="text-align: start">
+            <button type="button" class="btn btn-secondary m-1" onclick="abort()">취소</button>
+          </div>
+          <div class="col d-flex justify-content-end">
+            <button type="button" class="btn btn-outline-primary m-1" onclick="keepContent()"
+              ${board.no != null ? 'disabled' : ''}>
+              보관
+            </button>
+            <button type="submit" class="btn btn-primary m-1" onclick="submitContent()">
+              ${board.no != null ? '수정' : '등록'}
+            </button>
+          </div>
+        </div>
       </div>
-      <div class="col d-flex justify-content-end">
-        <button type="button" class="btn btn-outline-primary m-1">보관</button>
-        <button type="submit" class="btn btn-primary m-1">등록</button>
-      </div>
-    </div>
+    </form:form>
   </div>
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
+<script type="text/javascript">
+    function abort() {
+        alert("작성중이던 글을 임시보관하시겠습니까?");
+
+        location.href = "main";
+    }
+
+    function keepContent() {
+        location.href = 'main';
+    }
+
+    function submitContent(){
+
+    }
+</script>
 </body>
 </html>

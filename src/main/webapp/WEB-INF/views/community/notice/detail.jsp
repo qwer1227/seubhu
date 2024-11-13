@@ -6,7 +6,7 @@
   <%@include file="/WEB-INF/common/common.jsp" %>
 </head>
 <body>
-<%@include file="/WEB-INF/common/nav.jsp" %>
+<%@include file="/WEB-INF/views/common/nav.jsp" %>
 <div class="container-xxl text-center" id="wrap">
   
   <h2> 공지사항 글 상세 </h2>

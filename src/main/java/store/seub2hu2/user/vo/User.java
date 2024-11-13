@@ -11,7 +11,6 @@ import java.util.Date;
 @Getter
 @Setter
 @ToString
-@Alias("User")  // MyBatis에서 사용할 alias 이름
 public class User {
 
     private int no;             // 유저 고유 ID
