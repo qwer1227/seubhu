@@ -116,7 +116,7 @@
     </div>
 </div>
 
-<%@include file="/WEB-INF/common/footer.jsp" %>
+<%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script type="text/javascript">
     // 페이지 번호를 클릭했을 때
     function changePage(page, event) {

@@ -61,7 +61,7 @@
          href="#">훈련일지</a>
     </div>
   </div>
-  
+
   <!-- 게시글 정렬 기능 -->
   <form class="row p-3" id="sorting" method="get" action="main">
     <input type="hidden" name="page" value="${param.page != null ? param.page : 1}">
@@ -90,7 +90,7 @@
       </div>
     </div>
   </form>
-  
+
   <!--  게시글 목록 -->
   <div class="row p-3">
     <table class="table">
@@ -140,7 +140,7 @@
       </tbody>
     </table>
   </div>
-  
+
   <!-- 검색 및 글쓰기 기능 -->
   <form id="form-search" method="get" action="main">
     <input type="hidden" name="page" value="${param.page != null ? param.page : 1}">
@@ -153,7 +153,7 @@
           <%--        <option value="hashtag"> 해시태그</option>--%>
         </select>
       </div>
-      
+
       <div class="col-2">
         <input type="text" class="form-control" name="keyword">
       </div>
@@ -161,14 +161,14 @@
         <button class="btn btn-outline-primary" onclick="searchKeyword()">검색</button>
       </div>
       <div class="col d-flex justify-content-center">
-      
+
       </div>
       <div class="col d-flex justify-content-end">
         <a href="form" type="button" class="btn btn-primary">글쓰기</a>
       </div>
     </div>
   </form>
-  
+
   <!-- 페이징처리 -->
   <div>
     <ul class="pagination justify-content-center">
@@ -177,7 +177,7 @@
            onclick="changePage(${paging.prevPage}, event)"
            href="javascript:void(0)"><<</a>
       </li>
-      
+
       <c:forEach var="num" begin="${paging.beginPage }" end="${paging.endPage }">
         <li class="page-item ${paging.page eq num ? 'active' : '' }">
           <a class="page-link"
@@ -185,7 +185,7 @@
              href="javascript:void(0)">${num }</a>
         </li>
       </c:forEach>
-      
+
       <li class="page-item ${paging.last ? 'disabled' : '' }">
         <a class="page-link"
            onclick="changePage(${paging.nextPage}, event)"
@@ -239,7 +239,7 @@
         // 폼 제출
         form.submit();
     }
-    
+
     // 카테고리를 선택했을 때
     function changeCategory(){
         let form = document.querySelector("#category");
