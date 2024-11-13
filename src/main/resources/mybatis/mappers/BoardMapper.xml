@@ -6,10 +6,10 @@
   <insert id="insertBoard">
     insert into BOARDS
     (
-      board_cat_name
-      , user_nickname
-      , board_title
-      , board_content
+    board_cat_name
+    , user_nickname
+    , board_title
+    , board_content
     <!--            <if test="board.filename != null">-->
     <!--                , file_name-->
     <!--            </if>-->
@@ -19,11 +19,11 @@
     )
     values
     (
-      #{board.catName}
+    #{board.catName}
     <!--             , #{board.user.nickname}-->
-      , '김정정'
-      , #{board.title}
-      , #{board.content, jdbcType=VARCHAR}
+    , '김정정'
+    , #{board.title}
+    , #{board.content, jdbcType=VARCHAR}
     <!--            <if test="board.filename != null">-->
     <!--                , 'Y'-->
     <!--            </if>-->
@@ -37,23 +37,25 @@
   <select id="getBoards" resultType="store.seub2hu2.community.vo.Board">
     select *
     from (
-      select
-        row_number() over(order by b.board_no desc) rn
-        , b.board_no as no
-        , b.board_cat_name as catName
-        , b.board_title as title
-        , b.board_cnt as cnt
-        , b.board_like as `like`
-        , b.is_deleted
-        , b.board_created_date as createdDate
-        , u.user_nickname as `user.nickname`
-      from
-        BOARDS b join USERS u
-            on b.user_nickname = u.user_nickname
-      where b.is_deleted = 'N'
-      ) board
+          select
+            row_number() over(order by b.board_no desc) rn
+            , b.board_no as no
+            , b.board_cat_name as catName
+            , b.board_title as title
+            , b.board_content as content
+            , b.board_cnt as viewCnt
+            , b.board_like as `like`
+            , b.is_deleted as isDeleted
+            , b.board_created_date as createdDate
+            , u.user_nickname as `user.nickname`
+          from
+            BOARDS b join USERS u
+                on b.user_nickname = u.user_nickname
+          where b.is_deleted = 'N'
+        ) as board
     where rn between #{condition.begin} and #{condition.end}
-        <include refid="boardsFilterCondition"/>
+    <include refid="boardsFilterCondition1"/>
+    <include refid="boardsFilterCondition2"/>
   </select>
 
   <!-- int getTotalRows(@Param("condition") Map<String, Object> condition); -->
@@ -61,7 +63,6 @@
     select count(*)
     from BOARDS
     where is_deleted = 'N'
-        <include refid="boardsFilterCondition"/>
   </select>
 
   <!-- Board getBoardByNo(@Param("no") int no); -->
@@ -91,20 +92,35 @@
       and b.board_no = ${no}
   </select>
 
-  <!-- 게시글 검색시 자주 사용되는 SQL 구문 -->
-  <sql id="boardsFilterCondition">
+  <!-- 게시글 검색시 옵션 선택에 따른 SQL 구문 -->
+  <sql id="boardsFilterCondition1">
     <if test="condition.opt != null">
       <choose>
         <when test="condition.opt == 'title'">
-          and b.board_title like '%' || #{condition.keyword} || '%'
+          and board.title like concat ('%', #{condition.keyword}, '%')
         </when>
         <when test="condition.opt == 'content'">
-          and b.board_content like '%' || #{condition.keyword} || '%'
+          and board.content like concat('%', #{condition.keyword}, '%')
         </when>
         <when test="condition.opt == 'writer'">
-          and b.user_no in (select user_no
-                            from BOARDS
-                            where user_nickname = #{condition.keyword})
+          and board.`user.nickname` like concat('%', #{condition.keyword}, '%')
+        </when>
+      </choose>
+    </if>
+  </sql>
+
+  <!-- 게시글 정렬시 옵션 선택에 따른 SQL 구문 -->
+  <sql id="boardsFilterCondition2">
+    <if test="condition.sort != null">
+      <choose>
+        <when test="condition.sort == 'date'">
+          order by board.createdDate desc
+        </when>
+        <when test="condition.sort == 'like'">
+          order by board.`like` desc
+        </when>
+        <when test="condition.sort == 'viewCnt'">
+          order by board.viewCnt desc
         </when>
       </choose>
     </if>

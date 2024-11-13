@@ -40,9 +40,17 @@
     
     <div class="actions d-flex justify-content-between mb-4">
       <div>
-        <button class="btn btn-warning">수정</button>
-        <button class="btn btn-danger">삭제</button>
-        <button class="btn btn-danger">신고</button>
+      <c:if test="${empty LOGIN_USER ? '' : 'disabled'}">
+        <c:choose>
+          <c:when test="${LOGINED_USER eq board.user.no ? '' : 'disabled'}">
+            <button class="btn btn-warning">수정</button>
+            <button class="btn btn-danger">삭제</button>
+          </c:when>
+          <c:otherwise>
+            <button class="btn btn-danger">신고</button>
+          </c:otherwise>
+        </c:choose>
+      </c:if>
       </div>
       <div>
         <button class="btn btn-outline-dark">
@@ -53,17 +61,26 @@
       </div>
     </div>
     
+
     <div class="comment-form mb-4">
       <h5 style="text-align: start">댓글 작성</h5>
       <div class="row">
         <div class="form-group col-11">
-          <textarea class="form-control" rows="3" placeholder="댓글을 작성하세요."></textarea>
-        </div>
-        <div class="col">
-          <button class="btn btn-success">등록</button>
+        <c:choose>
+          <c:when test="${empty LOGIN_USER}">
+            <input class="form-control" disabled rows="3" placeholder="로그인 후 댓글 작성이 가능합니다." />
+          </c:when>
+          <c:otherwise>
+            <textarea class="form-control" rows="3" placeholder="댓글을 작성하세요."></textarea>
+            <div class="col">
+              <button class="btn btn-success">등록</button>
+            </div>
+          </c:otherwise>
+        </c:choose>
         </div>
       </div>
     </div>
+
     
     <!-- 댓글 목록 / style은 구현할때 삭제 예정 -->
     <div class="row comments rounded" style="background-color: #c9e0f0">

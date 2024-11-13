@@ -30,18 +30,20 @@ public class BoardController {
     @GetMapping("/main")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page
             , @RequestParam(name = "rows", required = false, defaultValue = "10") int rows
+            , @RequestParam(name = "sort", required = false, defaultValue = "date") String sort
             , @RequestParam(name = "opt", required = false) String opt
-            , @RequestParam(name = "value", required = false) String value
+            , @RequestParam(name = "keyword", required = false) String keyword
             , Model model) {
 
 
         Map<String, Object> condition = new HashMap<>();
         condition.put("page", page);
         condition.put("rows", rows);
+        condition.put("sort", sort);
 
-        if (StringUtils.hasText(value)){
+        if (StringUtils.hasText(keyword)){
             condition.put("opt", opt);
-            condition.put("value", value);
+            condition.put("keyword", keyword);
         }
 
         ListDto<Board> dto = boardService.getBoards(condition);

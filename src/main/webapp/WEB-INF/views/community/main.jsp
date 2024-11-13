@@ -61,6 +61,34 @@
     </div>
   </div>
   
+  <form class="row p-3" id="sorting" method="get" action="main">
+    <input type="hidden" name="page" value="${param.page != null ? param.page : 1}">
+    <div class="col d-flex justify-content-end">
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="sort" value="date" onchange="changeSort()"
+               ${empty param.sort or param.sort eq 'date' ? 'checked' : ''}>
+        <label class="form-check-label">최신순</label>
+      </div>
+      <div class="form-check-inline">
+        <input class="form-check-input" type="radio" name="sort" value="like" onchange="changeSort()"
+               ${param.sort eq 'like' ? 'checked' : ''}>
+        <label class="form-check-label">추천순</label>
+      </div>
+      <div class="form-check-inline">
+        <input class="form-check-input" type="radio" name="sort" value="viewCnt" onchange="changeSort()"
+               ${param.sort eq 'viewCnt' ? 'checked' : ''}>
+        <label class="form-check-label">조회순</label>
+      </div>
+      <div>
+        <select class="form-control-sm" name="rows" onchange="changeRows()">
+          <option value="10" ${param.rows eq 10 ? 'selected' : ''}>10개씩 보기</option>
+          <option value="20" ${param.rows eq 20 ? 'selected' : ''}>20개씩 보기</option>
+          <option value="30" ${param.rows eq 30 ? 'selected' : ''}>30개씩 보기</option>
+        </select>
+      </div>
+    </div>
+  </form>
+  
   <!--  게시글 목록 -->
   <div class="row p-3">
     <table class="table">
@@ -125,7 +153,7 @@
       </div>
       
       <div class="col-2">
-        <input type="text" class="form-control" name="value" value="">
+        <input type="text" class="form-control" name="keyword">
       </div>
       <div class="col-1">
         <button class="btn btn-outline-primary" onclick="searchKeyword()">검색</button>
@@ -167,36 +195,46 @@
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
 <script type="text/javascript">
-    const pageInput = document.querySelector("input[name=page]");
-
     // 페이지 번호 링크를 클릭했을 때 변화
     function changePage(page, event) {
+        // 기본 동작을 막음
         event.preventDefault();
         // 페이지 번호 링크를 클릭했다면 해당 페이징 요청
         let form = document.querySelector("#form-search");
-        let input = document.querySelector("input[name=page]");
-
-        input.value = page;
-
-        form.submit();
-    }
-
-    // 정렬방식이 변경될 때
-    function changeSort() {
-        pageInput.value = 1;
+        // 페이지 번호 input 요소 선택
+        let pageInput = form.querySelector("input[name=page]");
+        // 페이지 번호를 원하는 값으로 설정
+        pageInput.value = page;
+        // 폼 제출
         form.submit();
     }
 
     // 검색어를 입력하고 검색버튼을 클릭 했을 때
     function searchValue() {
+        let pageInput = form.querySelector("input[name=page]");
         pageInput.value = 1;
         form.submit();
+    }
 
+    // 정렬방식이 변경될 때
+    function changeSort() {
+        let form = document.querySelector("#sorting");
+        let sortInput = document.querySelector("input[name=sort]");
+        let pageInput = form.querySelector("input[name=page]");
+        sortInput.value = 1;
+        form.submit();
     }
 
     // 한 화면에 표기할 행의 갯수가 변경될 때
     function changeRows() {
+        // 페이지 갯수를 클릭했다면 해당 페이징 요청
+        let form = document.querySelector("#sorting");
+        // 페이지 번호 input 요소 선택
+        let rowsInput = document.querySelector("input[name=rows]");
+        // 새로 요청하는 페이지는 1로 초기화
+        let pageInput = form.querySelector("input[name=page]");
         pageInput.value = 1;
+        // 폼 제출
         form.submit();
     }
 </script>
