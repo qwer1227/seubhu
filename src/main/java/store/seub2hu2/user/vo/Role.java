@@ -16,6 +16,7 @@ import lombok.ToString;
 @Alias("Role")
 public class Role {
 
+	private int roleNo;
 	private String name;
 	private String description;
 }
