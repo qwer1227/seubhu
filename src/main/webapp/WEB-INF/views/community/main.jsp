@@ -38,14 +38,15 @@
     </div>
   </div>
   
+  <!-- 카테고리 종류에 따른 게시글 목록 반환 기능 -->
   <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
     <div class="col ">
       <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
-         href="#">전체</a>
+         href="main">전체</a>
     </div>
-    <div class="col ">
+    <div class="col">
       <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
-         href="#">일반</a>
+         href="main?category=일반게시판">일반</a>
     </div>
     <div class="col ">
       <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
@@ -61,6 +62,7 @@
     </div>
   </div>
   
+  <!-- 게시글 정렬 기능 -->
   <form class="row p-3" id="sorting" method="get" action="main">
     <input type="hidden" name="page" value="${param.page != null ? param.page : 1}">
     <div class="col d-flex justify-content-end">
@@ -235,6 +237,15 @@
         let pageInput = form.querySelector("input[name=page]");
         pageInput.value = 1;
         // 폼 제출
+        form.submit();
+    }
+    
+    // 카테고리를 선택했을 때
+    function changeCategory(){
+        let form = document.querySelector("#category");
+        let catInput = document.querySelector("button[name=catName]");
+        let pageInput = form.querySelector("input[name=page]");
+        pageInput.value = 1;
         form.submit();
     }
 </script>

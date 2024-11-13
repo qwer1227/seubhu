@@ -56,4 +56,12 @@ public class BoardService {
 
         return board;
     }
+
+    public void updateBoard(BoardForm boardForm){
+        boardMapper.updateBoard(boardForm);
+    }
+
+    public Board getBoardByNo(int boardNo) {
+        return boardMapper.getBoardByNo(boardNo);
+    }
 }

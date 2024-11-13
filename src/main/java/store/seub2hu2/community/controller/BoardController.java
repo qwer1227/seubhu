@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import store.seub2hu2.community.dto.BoardForm;
 import store.seub2hu2.community.service.BoardService;
 import store.seub2hu2.community.vo.Board;
+import store.seub2hu2.community.vo.BoardCategory;
 import store.seub2hu2.util.ListDto;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,6 +35,7 @@ public class BoardController {
             , @RequestParam(name = "sort", required = false, defaultValue = "date") String sort
             , @RequestParam(name = "opt", required = false) String opt
             , @RequestParam(name = "keyword", required = false) String keyword
+            , @RequestParam(name = "category", required = false) String category
             , Model model) {
 
 
@@ -40,6 +43,12 @@ public class BoardController {
         condition.put("page", page);
         condition.put("rows", rows);
         condition.put("sort", sort);
+
+//        // 카테고리 필터링 처리
+//        if (StringUtils.hasText(keyword)) {
+//            BoardCategory boardCategory = BoardCategory.valueOf(keyword);
+//            condition.put("category", boardCategory.name());
+//        }
 
         if (StringUtils.hasText(keyword)){
             condition.put("opt", opt);
@@ -50,12 +59,19 @@ public class BoardController {
 
         model.addAttribute("boards", dto.getData());
         model.addAttribute("paging", dto.getPaging());
+//        model.addAttribute("categories", BoardCategory.getCategoryNames());
 
         return "community/main";
     }
 
     @GetMapping("/form")
-    public String form() {
+    public String form(@RequestParam(name="boardNo", required = false) Integer boardNo, Model model) {
+        Board board = new Board();
+        // boardNo가 있으면, 해당하는 게시글번호의 board 반환
+        if (boardNo != null) {
+            board = boardService.getBoardByNo(boardNo);
+        }
+        model.addAttribute("board", board);
         return "community/form";
     }
 
@@ -100,5 +116,26 @@ public class BoardController {
         boardService.addNewBoard(board);
         return "redirect:main";
 //        return "redirect:detail?no=" + board.getNo();
+    }
+
+    @GetMapping("/modify")
+    public String update(BoardForm boardForm) {
+        Board board = new Board();
+        board.setCatName(boardForm.getCatName());
+        board.setTitle(boardForm.getTitle());
+        board.setContent(boardForm.getContent());
+        board.setUpdatedDate(new Date());
+
+        boardService.updateBoard(boardForm);
+        return "redirect:detail?no=" + boardForm.getNo();
+    }
+
+    @GetMapping("/delete")
+    public String delete(BoardForm boardForm) {
+        Board board = new Board();
+        board.setIsDeleted(boardForm.getIsDeleted());
+
+        boardService.updateBoard(boardForm);
+        return "/community/main";
     }
 }

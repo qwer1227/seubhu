@@ -2,6 +2,10 @@ package store.seub2hu2.community.vo;
 
 import lombok.Getter;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Getter
 public enum BoardCategory {
 
@@ -17,5 +21,12 @@ public enum BoardCategory {
         this.status = name;
         this.catNo = catNo;
     }
+
+//    // 모든 카테고리 이름을 반환하는 메소드
+//    public static List<String> getCategoryNames(){
+//        return Arrays.stream(BoardCategory.values())
+//                .map(BoardCategory::getStatus)
+//                .collect(Collectors.toUnmodifiableList());
+//    }
 }
 

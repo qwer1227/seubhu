@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import store.seub2hu2.community.vo.BoardCategory;
 import store.seub2hu2.community.vo.Hashtag;
 
+import java.util.Date;
 import java.util.Map;
 
 @NoArgsConstructor
@@ -18,5 +19,8 @@ public class BoardForm {
     private String title;
     private String content;
     private MultipartFile filename;
+    private Date createdDate;
+    private Date updatedDate;
+    private String isDeleted;
 //    private Map<String, Object> hashtag;
 }

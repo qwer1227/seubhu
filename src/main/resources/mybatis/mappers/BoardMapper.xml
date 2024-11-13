@@ -56,6 +56,7 @@
     where rn between #{condition.begin} and #{condition.end}
     <include refid="boardsFilterCondition1"/>
     <include refid="boardsFilterCondition2"/>
+<!--    <include refid="boardsFilterCondition3"/>-->
   </select>
 
   <!-- int getTotalRows(@Param("condition") Map<String, Object> condition); -->
@@ -92,6 +93,23 @@
       and b.board_no = ${no}
   </select>
 
+  <!-- void updateBoard(@Param("board") Board board); -->
+  <update id="updateBoard" parameterType="store.seub2hu2.community.vo.Board">
+    update
+      BOARDS
+    set
+      board_cat_name = #{board.catName}
+      , board_title = #{board.title}
+      , board_content = #{board.content}
+      , BOARD_UPDATED_DATE = sysdate()
+      , is_deleted = #{board.isDeleted}
+    where board_no = #{board.no}
+  </update>
+
+  <!-- void insertReply(@Param("reply") Board board); -->
+
+  <!-- List<Reply> getRepliesByBoardNo(@Param("boardNo") int boardNo); -->
+
   <!-- 게시글 검색시 옵션 선택에 따른 SQL 구문 -->
   <sql id="boardsFilterCondition1">
     <if test="condition.opt != null">
@@ -125,4 +143,24 @@
       </choose>
     </if>
   </sql>
+
+<!--  &lt;!&ndash; 카테고리 선택에 따른 SQL 구문 &ndash;&gt;-->
+<!--  <sql id="boardsFilterCondition3">-->
+<!--    <if test="condition.category != null">-->
+<!--      <choose>-->
+<!--        <when test="condition.catetory == '일반게시판'">-->
+<!--          and board.catName = '일반게시판'-->
+<!--        </when>-->
+<!--        <when test="condition.category == '자랑게시판'">-->
+<!--          and board.catName = '자랑게시판'-->
+<!--        </when>-->
+<!--        <when test="condition.category == '질문게시판'">-->
+<!--          and board.catName = '질문게시판'-->
+<!--        </when>-->
+<!--        <when test="condition.category == '훈련일지'">-->
+<!--          and board.catName = '훈련일지'-->
+<!--        </when>-->
+<!--      </choose>-->
+<!--    </if>-->
+<!--  </sql>-->
 </mapper>

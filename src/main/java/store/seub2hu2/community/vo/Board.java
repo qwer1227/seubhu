@@ -18,9 +18,7 @@ public class Board {
     private String title;
     private String content;
     private String filename;
-    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date createdDate;
-    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date updatedDate;
     private int viewCnt;
     private Scrap scrap;
@@ -29,6 +27,7 @@ public class Board {
     private String isKeep;
     private String insReport;
     private Hashtag hashtag;
+    private Reply reply;
 
     public String getOriginalFileName() {
         if(filename == null){
