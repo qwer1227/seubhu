@@ -1,10 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@include file="/WEB-INF/common/tags.jsp" %>
+<%@include file="/WEB-INF/views/common/tags.jsp" %>
 <script type="text/javascript" src="../resources/static/smartEditor/js/HuskyEZCreator.js" charset="utf-8"></script>
 <!doctype html>
 <html lang="ko">
 <head>
-  <%@include file="/WEB-INF/common/common.jsp" %>
+  <%@include file="/WEB-INF/views/common/common.jsp" %>
 </head>
 <style>
     #notice-table th {
@@ -15,7 +15,7 @@
     }
 </style>
 <body>
-<%@include file="/WEB-INF/common/nav.jsp" %>
+<%@include file="/WEB-INF/views/common/nav.jsp" %>
 <div class="container-xxl text-center" id="wrap">
   
   <h2>공지사항 글 작성</h2>
@@ -79,6 +79,6 @@
   </div>
 
 </div>
-<%@include file="/WEB-INF/common/footer.jsp" %>
+<%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
 </html>

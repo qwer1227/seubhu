@@ -17,7 +17,7 @@ import java.util.Map;
 @Transactional
 public class AdminService {
 
-//    private final AdminMapper adminMapper;
+    //    private final AdminMapper adminMapper;
 //
 //    private final LessonMapper lessonMapper;
 //
@@ -37,26 +37,25 @@ public class AdminService {
 
     public ListDto<User> getAllUsers(Map<String, Object> condition) {
 
-            int totalRows = adminMapper.getTotalRows(condition);
+        int totalRows = adminMapper.getTotalRows(condition);
 
-            int page = (Integer) condition.get("page");
-            int rows = (Integer) condition.get("rows");
-            Pagination pagination = new Pagination(page, totalRows, rows);
+        int page = (Integer) condition.get("page");
+        int rows = (Integer) condition.get("rows");
+        Pagination pagination = new Pagination(page, totalRows, rows);
 
-            int begin = pagination.getBegin();
-            int end = pagination.getEnd();
-            condition.put("begin", begin);
-            condition.put("end", end);
+        int begin = pagination.getBegin();
+        int end = pagination.getEnd();
+        condition.put("begin", begin);
+        condition.put("end", end);
 
+        List<User> users = adminMapper.getUsers(condition);
 
-            List<User> users = adminMapper.getUsers(condition);
-
-            ListDto<User> dto = new ListDto<>(users, pagination);
-            return dto;
-        }
+        ListDto<User> dto = new ListDto<>(users, pagination);
+        return dto;
+    }
 
     public User getUser(@Param("no") int no) {
 
-            return adminMapper.getUserByNo(no);
+        return adminMapper.getUserByNo(no);
     }
 }
