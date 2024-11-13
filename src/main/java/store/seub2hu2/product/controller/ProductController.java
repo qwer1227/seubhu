@@ -65,7 +65,7 @@ public class ProductController {
         ListDto<ProdListDto> dto = productService.getProducts(condition);
         model.addAttribute("products", dto.getData());
         model.addAttribute("topNo", topNo);
-        model.addAttribute("paging", dto.getPagination());
+        model.addAttribute("paging", dto.getPaging());
 
 
         return "product/list";
