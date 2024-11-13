@@ -9,6 +9,8 @@ import store.seub2hu2.mypage.dto.PostInsertForm;
 import store.seub2hu2.mypage.service.PostService;
 import store.seub2hu2.mypage.vo.Post;
 
+import java.util.Base64;
+
 @Controller
 @RequestMapping("/mypage")
 public class MyPageController {
@@ -31,7 +33,11 @@ public class MyPageController {
     }
 
     @GetMapping("/test")
-    public String test(){
+    public String test(Model model){
+        Post post = postService.getPostDetail(1);
+
+        System.out.println(post);
+        model.addAttribute("Post",post);
 
         return "mypage/test";
     }

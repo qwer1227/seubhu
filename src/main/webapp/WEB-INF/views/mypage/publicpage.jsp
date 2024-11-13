@@ -136,7 +136,6 @@
                     <!-- Left section: Image -->
                     <div class="col-6">
                         <img src="data:image/png;base64,${post.thumbnail}" class="card-img-top" alt="Feed Image">
-
                     </div>
 
                     <!-- Right section: User information, content, and comments -->
@@ -191,7 +190,8 @@
                     $("#detailPostContent").text(response.postContent);
                     $("#detailCreatedDate").text(response.postCreatedDate);
                     $("#detailPostWriter").text(response.user.username);
-                    $("#boardNo").attr('src', response.thumbnail);
+                    $('.card-img-top').attr('src', 'data:image/png;base64,' + response.thumbnail);
+
                     // 모달을 표시
                     $("#feedModal").show();
                 },
