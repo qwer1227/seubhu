@@ -23,7 +23,7 @@
     }
 </style>
 <body>
-<%@include file="/WEB-INF/common/nav.jsp" %>
+<%@include file="/WEB-INF/views/common/nav.jsp" %>
 <div class="container-xxl text-center" id="wrap">
   
   <h2> 습습후후 러닝 크루 </h2>

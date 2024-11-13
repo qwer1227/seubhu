@@ -70,7 +70,7 @@
 
 <!-- 푸터부 -->
 <footer>
-    <%@include file="/WEB-INF/common/footer.jsp" %>
+    <%@include file="/WEB-INF/views/common/footer.jsp" %>
 </footer>
 
 <script type="text/javascript">

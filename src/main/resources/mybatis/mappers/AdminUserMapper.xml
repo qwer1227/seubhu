@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="store.seub2hu2.admin.mapper.AdminMapper">
+
+    <!--
+        User getUserByNo(@Param("no") int no);
+    -->
+    <select id="getUserByNo" resultType="store.seub2hu2.user.vo.User">
+        select
+            user_no               as no
+            , user_id               as id
+            , user_name             as username
+            , password
+            , user_nickname         as nickname
+            , user_tel              as tel
+            , user_email            as email
+            , user_created_date     as createdDate
+            , user_type             as type
+            , provider              as provider
+        from
+            USERS
+        where
+            user_no = #{no}
+    </select>
+
+    <!--
+        int getTotalRows(@Param("condition") Map<String, Object> condition);
+    -->
+    <select id="getTotalRows" resultType="int">
+        SELECT
+            count(*) cnt
+        FROM
+            USERS
+    </select>
+    <!--
+        List<User> getUsers(@Param("condition")Map<String, Object> condition);
+    -->
+    <select id="getUsers" resultType="store.seub2hu2.user.vo.User">
+        select
+        *
+        from (
+        select
+        user_no               as no
+        , user_id               as id
+        , user_name             as username
+        , password
+        , user_nickname         as nickname
+        , user_tel              as tel
+        , user_email            as email
+        , user_created_date     as createdDate
+        , user_type             as type
+        , provider              as provider
+        , ROW_NUMBER() OVER (ORDER BY user_no desc) as rn
+        from
+        USERS
+        <where>
+            <if test="condition.opt != null">
+                <choose>
+                    <when test="condition.opt == 'name'">
+                        user_name like CONCAT('%',#{condition.value},'%')
+                    </when>
+                    <when test="condition.opt == 'id'">
+                        user_id like CONCAT('%',#{condition.value},'%')
+                    </when>
+                    <when test="condition.opt == 'email'">
+                        user_email like CONCAT('%',#{condition.value},'%')
+                    </when>
+                </choose>
+            </if>
+        </where>
+        ) as subquery
+        where
+        rn between #{condition.begin} and #{condition.end}
+    </select>
+</mapper>

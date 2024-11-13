@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ include file="/WEB-INF/common/tags.jsp" %>
+<%@ include file="/WEB-INF/views/common/tags.jsp" %>
 <!doctype html>
 <html lang="ko">
 <head>
@@ -109,7 +109,7 @@
 
 <!-- 푸터부 -->
 <footer>
-    <%@ include file="/WEB-INF/common/footer.jsp" %>
+    <%@ include file="/WEB-INF/views/common/footer.jsp" %>
 </footer>
 
 <script type="text/javascript">

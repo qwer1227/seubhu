@@ -10,7 +10,7 @@
 <title>샘플 애플리케이션</title>
 </head>
 <body>
-<%@include file="/WEB-INF/views/common/tags.jsp" %>
+<%@ include file="/WEB-INF/views/common/nav.jsp" %>
 <div class="container mt-3">
 	<div class="row">
 		<div class="col-2">
