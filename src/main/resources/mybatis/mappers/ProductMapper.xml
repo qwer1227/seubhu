@@ -5,25 +5,33 @@
     <!--
     int getTotalRows(@Param("condition") Map<String, Object> condition);
     -->
+
     <select id="getTotalRows" resultType="int">
         select
         count(*) as cnt
         from
-        PRODUCTS
+        PRODUCTS P
+        <if test="condition.topNo != null and condition.topNo != ''">
+            JOIN PROD_CATEGORIES PC ON P.CAT_NO = PC.CAT_NO
+        </if>
         <where>
             <if test="condition != null">
                 <if test="condition.opt == 'name'">
-                    PROD_NAME like '%' || #{condition.value} || '%'
+                    and P.PROD_NAME like '%' || #{condition.value} || '%'
                 </if>
                 <if test="condition.opt == 'minPrice'">
-                    PROD_PRICE >= #{condition.value}
+                    and P.PROD_PRICE >= #{condition.value}
                 </if>
                 <if test="condition.opt == 'maxPrice'">
-                    PROD_PRICE &lt;= #{condition.value}
+                    and P.PROD_PRICE &lt;= #{condition.value}
                 </if>
+            </if>
+            <if test="condition.topNo != null and condition.topNo != ''">
+                and PC.TOP_CAT_NO IN (#{condition.topNo}, 30)
             </if>
         </where>
     </select>
+
 
 
     <select id="getProductByCatNo" resultType="store.seub2hu2.product.vo.Product">
@@ -42,7 +50,7 @@
         <association property="category" javaType="store.seub2hu2.product.vo.Category">
             <id property="no" column="CAT_NO"/>
             <result property="name" column="CAT_NAME"/>
-            <result property="topNo" column="CAT_TOP_NO"/>
+            <result property="topNo" column="TOP_CAT_NO"/>
         </association>
         <collection property="images" ofType="store.seub2hu2.product.vo.Image">
             <id property="no" column="IMG_NO"/>
@@ -70,6 +78,7 @@
             P.PROD_STATUS,
             P.PROD_CREATED_AT,
             PC.CAT_NAME,
+            PC.TOP_CAT_NO,
             PI.IMG_URL
         FROM PRODUCTS P
         JOIN PROD_CATEGORIES PC ON P.CAT_NO = PC.CAT_NO
@@ -87,6 +96,9 @@
                     and P.PROD_PRICE &lt;= #{condition.value}
                 </when>
             </choose>
+        </if>
+        <if test="condition.topNo != null and condition.topNo != ''">
+            and PC.TOP_CAT_NO IN (#{condition.topNo}, 30)
         </if>
         ) AS subquery
         WHERE rn BETWEEN #{condition.begin} AND #{condition.end}

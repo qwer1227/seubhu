@@ -20,19 +20,20 @@
     </div>
         <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
             <div class="col " >
-                <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="#" >러닝화</a>
+                <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="catNo=11" >러닝화</a>
             </div>
             <div class="col " >
-                <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="#">러닝복</a>
+                <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="catNo=22">러닝복</a>
             </div>
             <div class="col " >
-                <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="#">러닝용품</a>
+                <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="topNo=30">러닝용품</a>
             </div>
         </div>
     <div class="row mt-3">
         <div class="col-12">
             <form id="form-search" method="get" action="list">
                 <input type="hidden" name="page" />
+                <input type="hidden" name="topNo" value="${topNo}">
                 <div class="row g-3">
                     <div class="col-2">
                         <select class="form-control" name="rows" onchange="changeRows()">
@@ -127,10 +128,10 @@
 							    	href="list?page=${num}">${num}</a>
 							    </li>
                             </c:forEach>
-						    <li class="page-item" ${paging.last ? 'disabled' : ''} >
+						    <li class="page-item ${paging.last ? 'disabled' : ''}"  >
 						    	<a class="page-link"
 						    	onclick="changePage(${paging.nextPage}, event)"
-						    	href="" ${paging.last ? 'disabled' : ''}>다음</a>
+						    	href="list?page=${paging.nextPage}" >다음</a>
 						    </li>
 					  	</ul>
 					</nav>

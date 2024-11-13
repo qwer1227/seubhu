@@ -14,7 +14,6 @@ import store.seub2hu2.util.ListDto;
 
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -30,21 +29,33 @@ public class ProductController {
     public String home() {
         return "home";
     }
-    
-    //  상품 전체 페이지 이동
+
+
+    //  상품 전체 페이지 이동: 동적쿼리
     @GetMapping("/list")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
                        @RequestParam(name = "rows", required = false, defaultValue = "5") int rows,
                        @RequestParam(name = "sort", required = false, defaultValue = "date") String sort,
+                       @RequestParam(name = "topNo", required = false) int topNo,
                        @RequestParam(name = "opt", required = false) String opt,
                        @RequestParam(name = "value", required = false) String value,
                        Model model) {
+
+
+        if(topNo == 10) {
+            topNo = 10;
+        } else if(topNo == 20) {
+            topNo = 20;
+        } else if(topNo == 30) {
+            topNo = 30;
+        }
 
         // 조건들을 맵에 담기.
         Map<String, Object> condition = new HashMap<>();
         condition.put("page", page);
         condition.put("rows", rows);
         condition.put("sort", sort);
+        condition.put("topNo", topNo);
         if(StringUtils.hasText(value)) {
             condition.put("opt", opt);
             condition.put("value", value);
@@ -53,7 +64,7 @@ public class ProductController {
         // 관련 데이터와 페이징 데이터를 담는다.
         ListDto<ProdListDto> dto = productService.getProducts(condition);
         model.addAttribute("products", dto.getData());
-
+        model.addAttribute("topNo", topNo);
         model.addAttribute("paging", dto.getPagination());
 
 
