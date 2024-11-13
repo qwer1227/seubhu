@@ -48,10 +48,37 @@
       <div class="container-fluid">
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-          <h1 class="h3 mb-0 text-gray-800">공지사항</h1>
+          <h1 class="h3 mb-0 text-gray-800">유저 등록</h1>
         </div>
-        <!-- Search -->
-        <%@include file="/WEB-INF/views/admincommon/searchbar.jsp" %>
+        <div class="row mb-3">
+          <div class="col-4">
+            <div class="col mb-3">
+              <label class="form-label">이름</label>
+              <input type="text" class="form-control" name="name" />
+            </div>
+            <div class="col mb-3">
+              <label class="form-label">아이디</label>
+              <input type="text" class="form-control" name="id" />
+            </div>
+            <div class="col mb-3">
+              <label class="form-label">이메일</label>
+              <input type="text" class="form-control" id="user-email" name="email" />
+            </div>
+            <div class="col mb-3 text-end">
+              <button type="submit" class="btn btn-primary">등록</button>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="col mb-3">
+              <label class="form-label">닉네임</label>
+              <input type="text" class="form-control" name="nickname" />
+            </div>
+            <div class="col mb-3">
+              <label class="form-label">비밀번호</label>
+              <input type="text" class="form-control" name="pwd" />
+            </div>
+          </div>
+        </div>
       </div>
       <!-- end Page Content -->
     </div>
@@ -66,4 +93,6 @@
 </body>
 
 </html>
+
+
 
