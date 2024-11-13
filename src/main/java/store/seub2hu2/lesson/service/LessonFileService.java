@@ -19,7 +19,7 @@ import java.util.Map;
 @Slf4j
 public class LessonFileService {
 
-    @Value("${file.upload-dir}")
+    @Value("${file.upload-lesson-dir}")
     private String saveDirectory;
 
     private final LessonMapper lessonMapper;
