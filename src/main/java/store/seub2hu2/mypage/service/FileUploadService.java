@@ -20,7 +20,7 @@ public class FileUploadService {
     @Autowired
     private PostMapper postMapper;
 
-    public String saveFile(List<MultipartFile> files, int postNo) {
+    public String saveFile(List<MultipartFile> files, int postNo) throws IOException {
         List<Map<String, Object>> images = new ArrayList<>();
         String thumbnailFilename = null;  // 썸네일 파일명
 
@@ -51,11 +51,7 @@ public class FileUploadService {
             String filename = System.currentTimeMillis() + "_" + UUID.randomUUID().toString() + fileExtension;
 
             // 파일 저장
-            try {
-                FileUtils.saveMultipartFile(file, uploadDir, filename);
-            } catch (IOException e) {
-                throw new RuntimeException("파일 저장 중 오류가 발생했습니다.", e);
-            }
+            FileUtils.saveMultipartFile(file, uploadDir, filename);
 
             String fileUrl = "/upload/" + filename;
 
