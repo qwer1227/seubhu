@@ -40,7 +40,7 @@
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">코스</h6>
                 <a class="collapse-item" href="course">코스 전체</a>
-                <a class="collapse-item" href="course">코스 등록하기</a>
+                <a class="collapse-item" href="course-register-form">코스 등록하기</a>
             </div>
         </div>
     </li>

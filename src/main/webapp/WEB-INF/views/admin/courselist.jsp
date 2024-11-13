@@ -92,24 +92,26 @@
           </div>
         </form>
         <div class="container-xxl text-center" id="wrap">
-          <div class="row row-cols-1 row-cols-md-3 g-4 mt-4 mb-5">
-            <c:forEach var="c" items="${courses}">
-            <div class="col mb-4">
-              <div class="card h-100">
-                <a class="text-decoration-none" href="detail.html">
-                  <img src="${pageContext.request.contextPath}/resources/img/${c.filename}" class="card-img-top" alt="...">
-                </a>
-                <div class="card-body">
-                  <h5 class="card-title">${c.time}분 거리</h5>
-                  <a class="text-decoration-none" href="detail.html">
-                    <p class="card-text">${c.name}</p>
-                  </a>
+          <div class="row row-cols-1 row-cols-md-3 g-4 mt-5 mb-5">
+        <c:forEach var="course" items="${courses }">
+            <div class="col mb-3">
+                <div class="card h-100">
+                    <a class="text-decoration-none" href="detail?no=${course.no }">
+                        <img src="/resources/images/course/${course.filename }" class="card-img-top" alt="...">
+                    </a>
+                    <div class="card-body">
+                        <h5 class="card-title">${course.name }</h5>
+                        <a class="text-decoration-none" href="detail?no=${course.no }">
+                            <p class="card-text">${course.region.si } ${course.region.gu } ${course.region.dong }</p>
+                        </a>
+                    </div>
+                    <div class="card-footer bg-transparent border-primary" >
+                        <span>난이도 : ${course.level }단계</span><span> / 거리 : ${course.distance }KM</span>
+                    </div>
                 </div>
-                <div class="card-footer bg-transparent border-primary" >${c.distance}km</div>
-              </div>
             </div>
-            </c:forEach>
-          </div>
+        </c:forEach>
+    </div>
         </div>
       </div>
       <!-- 페이징처리 -->

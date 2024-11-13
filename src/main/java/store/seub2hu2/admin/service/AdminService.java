@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import store.seub2hu2.admin.mapper.AdminMapper;
 import store.seub2hu2.course.mapper.CourseMapper;
 import store.seub2hu2.course.vo.Course;
+import store.seub2hu2.course.vo.Region;
 import store.seub2hu2.product.vo.Product;
 import store.seub2hu2.user.mapper.UserMapper;
 import store.seub2hu2.user.vo.User;
@@ -20,8 +21,6 @@ import java.util.Map;
 @Transactional
 public class AdminService {
 
-//    private final AdminMapper adminMapper;
-//
 //    private final LessonMapper lessonMapper;
 //
 //    private final CommunityMapper communityMapper;
@@ -37,6 +36,13 @@ public class AdminService {
 
     @Autowired
     private CourseMapper courseMapper;
+
+    public void addNewCourse (Course course) {
+        adminMapper.insertCourse(course);
+    }
+    public void addNewRegion (Region region) {
+        adminMapper.insertRegion(region);
+    }
 
     public ListDto<Course> getAllCourse(Map<String, Object> condition) {
 
