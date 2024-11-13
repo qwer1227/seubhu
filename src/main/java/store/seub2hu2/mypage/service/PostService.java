@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import store.seub2hu2.mypage.mapper.PostMapper;
 import store.seub2hu2.mypage.vo.Post;
 
+
 @Service
 public class PostService {
 
@@ -13,11 +14,12 @@ public class PostService {
 
     public Post getPostDetail(int postNo){
         Post post = postMapper.getPostByNo(postNo);
-        if(post == null){
-
-        }
 
         return post;
+    }
+
+    public void insertPost(Post post){
+        postMapper.insertPost(post);
     }
 
 }
