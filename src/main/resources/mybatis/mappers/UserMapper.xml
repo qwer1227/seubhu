@@ -26,6 +26,7 @@
             user_password as USER_PASSWORD,
             user_email as USER_EMAIL,
             user_nickname as USER_NICKNAME,
+            user_tel as USER_TEL,
             user_type as USER_TYPE,
             user_provider as USER_PROVIDER,
             user_created_date as USER_CREATED_DATE,
@@ -41,13 +42,13 @@
     <select id="getRolesByUserNo" resultType="store.seub2hu2.user.vo.Role">
         select
             role_name as name,
-            role_description as description
+            role_desc as description
         from
-            spring_roles
+            role
         where
             role_name in (
                 select role_name
-                from spring_user_roles
+                from user_granted_roles
                 where user_no = #{no}
             )
     </select>
