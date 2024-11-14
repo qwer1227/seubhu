@@ -4,6 +4,20 @@
 <mapper namespace="store.seub2hu2.admin.mapper.AdminMapper">
 
     <!--
+        코스 등록폼에 들어갈 코스 시 / 구 / 동 조회
+        List<Region> getRegions(@Param("condition") Map<String, Object> condition);
+    -->
+    <select id="getRegions">
+        select
+            region_no
+            , region_si
+            , region_gu
+            , region_dong
+        from
+            COURSE_REGION
+    </select>
+
+    <!--
         코스등록
         void insertCourse(@Param("course") Course course);
         + 지역등록
@@ -19,7 +33,6 @@
         <if test="course.filename != null">
         , course_filename
         </if>
-        , region_no
         )
         values
         (
@@ -30,11 +43,10 @@
         <if test="course.filename != null">
         , #{course.filename}
         </if>
-        , #{course.region.no}
         )
     </insert>
 
-    <insert id="insertRegion">
+    <insert id="insertRegion" parameterType="store.seub2hu2.course.vo.Region">
         insert into COURSE_REGION
         (
         region_si
@@ -44,8 +56,8 @@
         values
         (
          #{region.si}
-         #{region.gu}
-         #{region.dong}
+         , #{region.gu}
+         , #{region.dong}
         )
     </insert>
     <!--

@@ -18,6 +18,7 @@ import store.seub2hu2.util.FileUtils;
 import store.seub2hu2.util.ListDto;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -42,7 +43,6 @@ public class AdminController {
 
     @GetMapping("/course-register-form")
     public String courseRegisterForm() {
-
         return "admin/course-register-form";
     }
 
@@ -52,6 +52,7 @@ public class AdminController {
         Course course = new Course();
         course.setName(form.getName());
         course.setTime(form.getTime());
+        course.setLevel(form.getLevel());
         Double distance = form.getDistance();
         if (distance == null) {
             distance = 0.0; // 기본값 설정 (필요에 따라 변경)
@@ -65,8 +66,8 @@ public class AdminController {
         region.setGu(form.getRegion().getGu());
         region.setDong(form.getRegion().getDong());
 
-
-        /*course.setRegion(region);*/
+        System.out.println("course: " + course);
+        System.out.println("region: " + region);
 
         MultipartFile multipartFile = form.getImage();
         if (!multipartFile.isEmpty()) {
@@ -77,17 +78,15 @@ public class AdminController {
             FileUtils.saveMultipartFile(multipartFile, saveDirectory, filename);
 
             course.setFilename(filename);
-            System.out.println();
         }
         if(multipartFile.isEmpty()){
-            return "redirect:admin/course-register-form";
+            return "redirect:/admin/course-register-form";
         }
         adminService.addNewRegion(region);
 
-
         adminService.addNewCourse(course);
 
-        return "redirect:admin/course-register-form";
+        return "redirect:/admin/courselist";
     }
 
     /*코스 목록*/
@@ -105,11 +104,6 @@ public class AdminController {
         if (StringUtils.hasText(keyword)) {
             condition.put("keyword", keyword);
         }
-        System.out.println("페이지:" + condition.get("page"));
-        System.out.println("거리:" + condition.get("distance"));
-        System.out.println("난이도:" + condition.get("level"));
-        System.out.println("검색어:" + condition.get("keyword"));
-
         // 2. 검색에 해당하는 코스 목록을 가져온다.
         ListDto<Course> dto = courseService.getAllCourses(condition);
 
