@@ -71,10 +71,10 @@
         <a href="https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=c6212e324efa9f98ed4eae72535d96ec&redirect_uri=http://localhost:80/auth/kakao/callback" class="btn btn-social btn-kakao">
             <img src="/resources/img/login_kakaotalk_wide.jpg" alt="카카오 로그인 아이콘">
         </a>
-        <a href="/auth/naver" class="btn btn-social btn-naver">
+        <a href="https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=kNZVK0mh3eMsIM8BsYrl&state=test&redirect_uri=http://localhost:80/auth/naver/callback" class="btn btn-social btn-naver">
             <img src="/resources/img/login_naver_wide.png" alt="네이버 로그인 아이콘">
         </a>
-        <a href="/auth/apple" class="btn btn-social btn-apple">
+        <a href="https://accounts.google.com/o/oauth2/v2/auth?client_id=80851257702-0csbqcd37spa4qc1rqn735n44pt3s2f1.apps.googleusercontent.com&redirect_uri=http://localhost:80/auth/google/callback&response_type=code&scope=email profile" class="btn btn-social btn-apple">
             <img src="/resources/img/login_apple_wide.jpg" alt="Apple 로그인 아이콘">
         </a>
 

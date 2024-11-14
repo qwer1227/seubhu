@@ -14,6 +14,6 @@ import lombok.Setter;
 @Alias("UserRole")
 public class UserRole {
 
-	private User userNo;
-	private Role roleNo;
-}
+		private int userNo;
+		private String roleName;
+	}
