@@ -8,7 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 import store.seub2hu2.community.dto.BoardForm;
 import store.seub2hu2.community.exception.CommunityException;
 import store.seub2hu2.community.mapper.BoardMapper;
+import store.seub2hu2.community.mapper.ReplyMapper;
 import store.seub2hu2.community.vo.Board;
+import store.seub2hu2.community.vo.Reply;
 import store.seub2hu2.util.ListDto;
 import store.seub2hu2.util.Pagination;
 
@@ -22,6 +24,9 @@ public class BoardService {
 
     @Autowired
     private BoardMapper boardMapper;
+
+    @Autowired
+    private ReplyMapper replyMapper;
 
     public void addNewBoard(Board board){
         boardMapper.insertBoard(board);
@@ -43,13 +48,13 @@ public class BoardService {
         // 조회범위에 맞는 데이터 조회하기
         List<Board> boards = boardMapper.getBoards(condition);
         ListDto<Board> dto = new ListDto<>(boards, pagination);
-
         return dto;
     }
 
     public Board getBoardDetail(int boardNo){
-        Board board = boardMapper.getBoardByNo(boardNo);
+        Board board = boardMapper.getBoardDetailByNo(boardNo);
 
+        System.out.println("board = " + board);
         if(board == null){
             throw new CommunityException("존재하지 않는 게시글입니다.");
         }
@@ -57,11 +62,15 @@ public class BoardService {
         return board;
     }
 
+    public List<Reply> getReplies(int boardNo){
+        return replyMapper.getRepliesByBoardNo(boardNo);
+    }
+
     public void updateBoard(BoardForm boardForm){
         boardMapper.updateBoard(boardForm);
     }
 
     public Board getBoardByNo(int boardNo) {
-        return boardMapper.getBoardByNo(boardNo);
+        return boardMapper.getBoardDetailByNo(boardNo);
     }
 }

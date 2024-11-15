@@ -5,6 +5,7 @@ import lombok.*;
 import store.seub2hu2.user.vo.User;
 
 import java.util.Date;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,13 +22,13 @@ public class Board {
     private Date createdDate;
     private Date updatedDate;
     private int viewCnt;
-    private Scrap scrap;
+//    private Scrap scrap; // 구현할때 타입 변경
     private int like;
     private String isDeleted;
     private String isKeep;
     private String insReport;
-    private Hashtag hashtag;
-    private Reply reply;
+//    private Hashtag hashtag;
+    private List<Reply> reply;
 
     public String getOriginalFileName() {
         if(filename == null){

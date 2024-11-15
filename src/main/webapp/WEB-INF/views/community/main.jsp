@@ -38,34 +38,35 @@
     </div>
   </div>
   
-  <!-- 카테고리 종류에 따른 게시글 목록 반환 기능 -->
-  <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
-    <div class="col ">
-      <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
-         href="main">전체</a>
-    </div>
-    <div class="col">
-      <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
-         href="main?category=일반게시판">일반</a>
-    </div>
-    <div class="col ">
-      <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
-         href="#">자랑</a>
-    </div>
-    <div class="col ">
-      <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
-         href="#">질문</a>
-    </div>
-    <div class="col ">
-      <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
-         href="#">훈련일지</a>
-    </div>
-  </div>
-
-  <!-- 게시글 정렬 기능 -->
-  <form class="row p-3" id="sorting" method="get" action="main">
+  <!-- 카테고리 종류에 따른 게시글 목록 반환 기능 & 게시글 정렬 기능 -->
+  <form:form id="sorting" method="get" action="main">
     <input type="hidden" name="page" value="${param.page != null ? param.page : 1}">
-    <div class="col d-flex justify-content-end">
+    <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
+      <div class="col">
+        <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
+           href="main">전체</a>
+      </div>
+      <div class="col">
+        <button class="nav-link p-3 border-start border-primary border-4 bg-light" style="width:100%; border-color: #0064FF;"
+          name="category" value="일반게시판" onchange="changeCategory()">
+          일반
+        </button>
+      </div>
+      <div class="col ">
+        <button class="nav-link p-3 border-start border-primary border-4 bg-light" style="width:100%;border-color: #0064FF;"
+          name="category" value="자랑게시판" onchange="changeCategory()">자랑</button>
+      </div>
+      <div class="col ">
+        <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
+           href="#">질문</a>
+      </div>
+      <div class="col ">
+        <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
+           href="#">훈련일지</a>
+      </div>
+    </div>
+
+    <div class="col p-3 d-flex justify-content-end">
       <div class="form-check form-check-inline">
         <input class="form-check-input" type="radio" name="sort" value="date" onchange="changeSort()"
                ${empty param.sort or param.sort eq 'date' ? 'checked' : ''}>
@@ -89,7 +90,7 @@
         </select>
       </div>
     </div>
-  </form>
+  </form:form>
 
   <!--  게시글 목록 -->
   <div class="row p-3">
@@ -242,10 +243,11 @@
 
     // 카테고리를 선택했을 때
     function changeCategory(){
-        let form = document.querySelector("#category");
-        let catInput = document.querySelector("button[name=catName]");
-        let pageInput = form.querySelector("input[name=page]");
-        pageInput.value = 1;
+        let form = document.querySelector("#sorting");
+        let catInput = document.querySelector("button[name=category]");
+        // 선택된 카테고리로 값 설정 및 페이지 초기화
+        catInput.value = category;
+        // 폼제출
         form.submit();
     }
 </script>

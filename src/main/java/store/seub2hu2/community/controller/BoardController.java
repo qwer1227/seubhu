@@ -13,10 +13,12 @@ import store.seub2hu2.community.dto.BoardForm;
 import store.seub2hu2.community.service.BoardService;
 import store.seub2hu2.community.vo.Board;
 import store.seub2hu2.community.vo.BoardCategory;
+import store.seub2hu2.community.vo.Reply;
 import store.seub2hu2.util.ListDto;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller("communityController")
@@ -43,12 +45,17 @@ public class BoardController {
         condition.put("page", page);
         condition.put("rows", rows);
         condition.put("sort", sort);
+        System.out.println("category: " + category);
 
-//        // 카테고리 필터링 처리
-//        if (StringUtils.hasText(keyword)) {
-//            BoardCategory boardCategory = BoardCategory.valueOf(keyword);
-//            condition.put("category", boardCategory.name());
-//        }
+        // 카테고리 필터링 처리
+        if (StringUtils.hasText(category)) {
+            try {
+                condition.put("category", category);
+                System.out.println("category ==== " + category);
+            } catch (IllegalArgumentException e) {
+                return "redirect:/community/main";
+            }
+        }
 
         if (StringUtils.hasText(keyword)){
             condition.put("opt", opt);
@@ -59,7 +66,6 @@ public class BoardController {
 
         model.addAttribute("boards", dto.getData());
         model.addAttribute("paging", dto.getPaging());
-//        model.addAttribute("categories", BoardCategory.getCategoryNames());
 
         return "community/main";
     }
@@ -76,11 +82,9 @@ public class BoardController {
     }
 
     @GetMapping("/detail")
-    public String detail(int no, Model model) {
-
+    public String detail(@RequestParam(name = "no") int no, Model model) {
         Board board = boardService.getBoardDetail(no);
         model.addAttribute("board", board);
-
         return "community/detail";
     }
 

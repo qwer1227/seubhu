@@ -47,7 +47,7 @@
             , b.board_like as `like`
             , b.is_deleted as isDeleted
             , b.board_created_date as createdDate
-            , u.user_nickname as `user.nickname`
+            , u.user_nickname as "user.nickname"
           from
             BOARDS b join USERS u
                 on b.user_nickname = u.user_nickname
@@ -56,7 +56,7 @@
     where rn between #{condition.begin} and #{condition.end}
     <include refid="boardsFilterCondition1"/>
     <include refid="boardsFilterCondition2"/>
-<!--    <include refid="boardsFilterCondition3"/>-->
+
   </select>
 
   <!-- int getTotalRows(@Param("condition") Map<String, Object> condition); -->
@@ -66,10 +66,10 @@
     where is_deleted = 'N'
   </select>
 
-  <!-- Board getBoardByNo(@Param("no") int no); -->
-  <select id="getBoardByNo" resultType="store.seub2hu2.community.vo.Board" parameterType="int">
-    select b.board_no as no
-            , c.board_cat_name          as catName
+  <!-- Board getBoardDetailByNo(@Param("no") int no); -->
+  <select id="getBoardDetailByNo" resultType="store.seub2hu2.community.vo.Board" parameterType="int">
+    select b.board_no                   as no
+            , b.board_cat_name          as catName
             , u.user_nickname           as "user.nickname"
             , b.board_title             as title
             , b.board_content           as content
@@ -86,8 +86,6 @@
     from
       BOARDS b join USERS u
     on b.user_nickname = u.user_nickname
-      join BOARDS_CATEGORIES c
-      on b.board_cat_name = c.board_cat_name
     where
       b.is_deleted = 'N'
       and b.board_no = ${no}
@@ -129,27 +127,54 @@
 
   <!-- 게시글 정렬시 옵션 선택에 따른 SQL 구문 -->
   <sql id="boardsFilterCondition2">
-    <if test="condition.sort != null">
-      <choose>
-        <when test="condition.sort == 'date'">
-          order by board.createdDate desc
-        </when>
-        <when test="condition.sort == 'like'">
-          order by board.`like` desc
-        </when>
-        <when test="condition.sort == 'viewCnt'">
-          order by board.viewCnt desc
-        </when>
-      </choose>
-    </if>
-  </sql>
-
-<!--  &lt;!&ndash; 카테고리 선택에 따른 SQL 구문 &ndash;&gt;-->
-<!--  <sql id="boardsFilterCondition3">-->
+    <choose>
+      <when test="condition.sort != null">
+        <choose>
+          <when test="condition.sort == 'date'">
+            order by board.createdDate desc
+          </when>
+          <when test="condition.sort == 'like'">
+            order by board.`like` desc
+          </when>
+          <when test="condition.sort == 'viewCnt'">
+            order by board.viewCnt desc
+          </when>
+        </choose>
+      </when>
+    <otherwise>
+        <choose>
+          <when test="condition.category == '일반게시판'">
+            and board.catName = '일반게시판'
+          </when>
+          <when test="condition.category == '자랑게시판'">
+            and board.catName = '자랑게시판'
+          </when>
+          <when test="condition.category == '질문게시판'">
+            and board.catName = '질문게시판'
+          </when>
+          <when test="condition.category == '훈련일지'">
+            and board.catName = '훈련일지'
+          </when>
+        </choose>
+    </otherwise>
+    </choose>
+<!--    <if test="condition.sort != null">-->
+<!--      <choose>-->
+<!--        <when test="condition.sort == 'date'">-->
+<!--          order by board.createdDate desc-->
+<!--        </when>-->
+<!--        <when test="condition.sort == 'like'">-->
+<!--          order by board.`like` desc-->
+<!--        </when>-->
+<!--        <when test="condition.sort == 'viewCnt'">-->
+<!--          order by board.viewCnt desc-->
+<!--        </when>-->
+<!--      </choose>-->
+<!--    </if>-->
 <!--    <if test="condition.category != null">-->
 <!--      <choose>-->
 <!--        <when test="condition.catetory == '일반게시판'">-->
-<!--          and board.catName = '일반게시판'-->
+<!--          and b.board_cat_name = '일반게시판'-->
 <!--        </when>-->
 <!--        <when test="condition.category == '자랑게시판'">-->
 <!--          and board.catName = '자랑게시판'-->
@@ -162,5 +187,5 @@
 <!--        </when>-->
 <!--      </choose>-->
 <!--    </if>-->
-<!--  </sql>-->
+  </sql>
 </mapper>

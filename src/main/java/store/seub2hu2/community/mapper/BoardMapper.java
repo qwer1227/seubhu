@@ -15,6 +15,7 @@ public interface BoardMapper {
     void insertBoard(@Param("board") Board board);
     List<Board> getBoards(@Param("condition") Map<String, Object> condition);
     int getTotalRows(@Param("condition") Map<String, Object> condition);
-    Board getBoardByNo(@Param("no") int no);
+    Board getBoardDetailByNo(@Param("no") int no);
+    List<Reply> getRepliesByBoardNo(@Param("no") int no);
     void updateBoard(@Param("boardForm") BoardForm boardForm); // 게시글 수정 및 삭제
 }
