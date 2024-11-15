@@ -5,6 +5,34 @@
 <head>
   <%@include file="/WEB-INF/views/common/common.jsp" %>
 </head>
+<style>
+  /* 툴팁 스타일 (처음에는 숨겨져 있음) */
+  #hover-box {
+    display: none; /* 기본적으로 툴팁 숨김 */
+    position: absolute;
+    top: 100%; /* 버튼 바로 아래에 위치 */
+    right: 0%;
+    transform: translateX(-50%); /* 툴팁을 버튼의 중앙에 맞춤 */
+    background-color: rgba(0, 0, 0, 0.7); /* 배경 색상 */
+    color: white; /* 글씨 색상 */
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    white-space: nowrap; /* 내용이 길어도 줄바꿈 하지 않음 */
+    z-index: 10; /* 툴팁을 다른 요소 위에 표시 */
+  }
+  
+  /* 버튼에 마우스를 올렸을 때 툴팁 표시 */
+  .btn-outline-primary:hover + #hover-box {
+    display: block;
+  }
+  
+  /* 툴팁이 나타날 때 다른 콘텐츠가 영향을 받지 않도록 */
+  #fileDown:hover {
+    z-index: 20; /* 버튼과 툴팁 위로 다른 요소들이 오지 않도록 설정 */
+    position: relative; /* 툴팁을 버튼을 기준으로 설정 */
+  }
+</style>
 <body>
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
 <div class="container-xxl text-center" id="wrap">
@@ -38,6 +66,11 @@
         <i class="bi bi-hand-thumbs-up"></i> ${board.like}
         <i class="bi bi-chat-square-text"></i> 5
       </span>
+    </div>
+    
+    <div class="content mb-4" id="fileDown" style="text-align: end">
+      <a href="filedown?no=${board.no}" class="btn btn-outline-primary btn-sm">첨부파일 다운로드</a>
+      <span id="hover-box">${board.title} 수정 예정</span>
     </div>
     
     <div class="content mb-4" style="text-align: start">

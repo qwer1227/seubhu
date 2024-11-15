@@ -8,7 +8,7 @@ import store.seub2hu2.community.vo.Reply;
 import java.util.List;
 
 @Mapper
-public class ReplyMapper {
+public interface ReplyMapper {
 
 //    void insertReply(@Param("reply") Board board);
 //    List<Reply> getRepliesByBoardNo(@Param("boardNo") int boardNo);

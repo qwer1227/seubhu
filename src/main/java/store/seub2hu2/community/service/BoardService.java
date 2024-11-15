@@ -5,10 +5,14 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import store.seub2hu2.community.dto.AddBoardFileForm;
 import store.seub2hu2.community.dto.BoardForm;
 import store.seub2hu2.community.exception.CommunityException;
 import store.seub2hu2.community.mapper.BoardMapper;
+import store.seub2hu2.community.mapper.BoardUploadMapper;
 import store.seub2hu2.community.vo.Board;
+import store.seub2hu2.community.vo.UploadFile;
 import store.seub2hu2.util.ListDto;
 import store.seub2hu2.util.Pagination;
 
@@ -23,8 +27,26 @@ public class BoardService {
     @Autowired
     private BoardMapper boardMapper;
 
+    @Autowired
+    private BoardUploadMapper boardUploadMapper;
+
     public void addNewBoard(Board board){
         boardMapper.insertBoard(board);
+    }
+
+    public void addBoardFile(AddBoardFileForm form){
+        String fileName = form.getFileName();
+        MultipartFile upfile = form.getUpfile();
+
+        if(!upfile.isEmpty()){
+            String originalFilename = upfile.getOriginalFilename();
+
+            UploadFile uploadFile = new UploadFile();
+            uploadFile.setOriginalName(originalFilename);
+            uploadFile.setSaveName(fileName);
+
+            boardUploadMapper.insertBoardFile(uploadFile);
+        }
     }
 
     public ListDto<Board> getBoards(Map<String,Object> condition){

@@ -9,10 +9,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import store.seub2hu2.community.dto.AddBoardFileForm;
 import store.seub2hu2.community.dto.BoardForm;
 import store.seub2hu2.community.service.BoardService;
 import store.seub2hu2.community.vo.Board;
 import store.seub2hu2.community.vo.BoardCategory;
+import store.seub2hu2.util.FileUtils;
 import store.seub2hu2.util.ListDto;
 
 import java.util.Date;
@@ -23,7 +26,7 @@ import java.util.Map;
 @RequestMapping("/community")
 public class BoardController {
 
-    @Value("")
+    @Value("${upload.directory.community}")
     private String saveDirectory;
 
     @Autowired
@@ -44,11 +47,10 @@ public class BoardController {
         condition.put("rows", rows);
         condition.put("sort", sort);
 
-//        // 카테고리 필터링 처리
-//        if (StringUtils.hasText(keyword)) {
-//            BoardCategory boardCategory = BoardCategory.valueOf(keyword);
-//            condition.put("category", boardCategory.name());
-//        }
+        // 카테고리 필터링 처리
+        if (StringUtils.hasText(category)) {
+            condition.put("category", category);
+        }
 
         if (StringUtils.hasText(keyword)){
             condition.put("opt", opt);
@@ -59,7 +61,6 @@ public class BoardController {
 
         model.addAttribute("boards", dto.getData());
         model.addAttribute("paging", dto.getPaging());
-//        model.addAttribute("categories", BoardCategory.getCategoryNames());
 
         return "community/main";
     }
@@ -92,7 +93,8 @@ public class BoardController {
 
     @PostMapping("/register")
 //    @PreAuthorize("isAuthenticated()")
-    public String register(BoardForm boardForm){
+    public String register(BoardForm boardForm
+        ,@RequestParam(value = "upfile", required = false)AddBoardFileForm addBoardFileForm){
 //                          , @AuthenticationPrincipal LoginUser loginUser) {
         // Board 객체를 생성하여 사용자가 입력한 제목과 내용을 저장한다.
         Board board = new Board();
@@ -104,15 +106,16 @@ public class BoardController {
 //        User user = User.builder().no(loginUser.getNo()).build();
 //        board.setUser(user);
 
-//        MultipartFile multipartFile = boardForm.getFilename();
-//
-//        if(!multipartFile.isEmpty()) {
-//            String originalFilename = multipartFile.getOriginalFilename();
-//            String filename = System.currentTimeMillis() + originalFilename;
-//            FileUtils.saveMultipartFile(multipartFile, saveDirectory, filename);
-//            board.setFilename(filename);
-//        }
+        if (addBoardFileForm != null){
+            MultipartFile multipartFile = boardForm.getFilename();
 
+            if(!multipartFile.isEmpty()) {
+                String originalFilename = multipartFile.getOriginalFilename();
+                String filename = System.currentTimeMillis() + originalFilename;
+                FileUtils.saveMultipartFile(multipartFile, saveDirectory, filename);
+                board.setFilename(filename);
+            }
+        }
         boardService.addNewBoard(board);
         return "redirect:main";
 //        return "redirect:detail?no=" + board.getNo();

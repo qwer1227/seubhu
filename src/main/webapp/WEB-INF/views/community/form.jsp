@@ -22,7 +22,7 @@
   
   <div class="row p-3 m-3">
     <!-- db에 해당 board.no가 있으면 update(), 없으면 register() 실행 -->
-    <form:form id="form-register" action="${board.no != null ? 'update' : 'register'}" method="post" enctype="multipart/form-data">
+    <form:form id="form-register" action="register" method="post" enctype="multipart/form-data">
       <table id="community-table" style="width: 98%">
         <colgroup>
           <col width="10%">

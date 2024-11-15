@@ -38,34 +38,36 @@
     </div>
   </div>
   
-  <!-- 카테고리 종류에 따른 게시글 목록 반환 기능 -->
-  <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
-    <div class="col ">
-      <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
-         href="main">전체</a>
-    </div>
-    <div class="col">
-      <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
-         href="main?category=일반게시판">일반</a>
-    </div>
-    <div class="col ">
-      <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
-         href="#">자랑</a>
-    </div>
-    <div class="col ">
-      <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
-         href="#">질문</a>
-    </div>
-    <div class="col ">
-      <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
-         href="#">훈련일지</a>
-    </div>
-  </div>
   
   <!-- 게시글 정렬 기능 -->
-  <form class="row p-3" id="sorting" method="get" action="main">
+  <form class="row" id="sorting" method="get" action="main">
+    <input type="hidden" name="category" id="categoryInput">
+    <!-- 카테고리 종류에 따른 게시글 목록 반환 기능 -->
+    <div class="p-3 row row-cols-2 row-cols-lg-5 g-2 g-lg-3" id="category">
+      <div class="col">
+        <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
+           href="main">전체</a>
+      </div>
+      <div class="col">
+        <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
+           href="javascript:void(0)" onclick="changeCategory('일반게시판')">일반</a>
+      </div>
+      <div class="col ">
+        <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
+           href="javascript:void(0)" onclick="changeCategory('자랑게시판')">자랑</a>
+      </div>
+      <div class="col ">
+        <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
+           href="javascript:void(0)" onclick="changeCategory('질문게시판')">질문</a>
+      </div>
+      <div class="col ">
+        <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
+           href="javascript:void(0)" onclick="changeCategory('훈련일지')">훈련일지</a>
+      </div>
+    </div>
+
     <input type="hidden" name="page" value="${param.page != null ? param.page : 1}">
-    <div class="col d-flex justify-content-end">
+    <div class="p-1 col d-flex justify-content-end">
       <div class="form-check form-check-inline">
         <input class="form-check-input" type="radio" name="sort" value="date" onchange="changeSort()"
                ${empty param.sort or param.sort eq 'date' ? 'checked' : ''}>
@@ -83,7 +85,8 @@
       </div>
       <div>
         <select class="form-control-sm" name="rows" onchange="changeRows()">
-          <option value="10" ${param.rows eq 10 ? 'selected' : ''}>10개씩 보기</option>
+          <option value="5" ${param.rows eq 5 ? 'selected' : ''}>5개씩 보기</option>
+          <option value="10" ${empty param.rows or param.rows eq 10 ? 'selected' : ''}>10개씩 보기</option>
           <option value="20" ${param.rows eq 20 ? 'selected' : ''}>20개씩 보기</option>
           <option value="30" ${param.rows eq 30 ? 'selected' : ''}>30개씩 보기</option>
         </select>
@@ -222,7 +225,6 @@
     function changeSort() {
         let form = document.querySelector("#sorting");
         let sortInput = document.querySelector("input[name=sort]");
-        let pageInput = form.querySelector("input[name=page]");
         sortInput.value = 1;
         form.submit();
     }
@@ -241,11 +243,10 @@
     }
     
     // 카테고리를 선택했을 때
-    function changeCategory(){
-        let form = document.querySelector("#category");
-        let catInput = document.querySelector("button[name=catName]");
-        let pageInput = form.querySelector("input[name=page]");
-        pageInput.value = 1;
+    function changeCategory(category){
+        let form = document.querySelector("#sorting");
+        let catInput = document.querySelector("#categoryInput");
+        catInput.value = category;
         form.submit();
     }
 </script>

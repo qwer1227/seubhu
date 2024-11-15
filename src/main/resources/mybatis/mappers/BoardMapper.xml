@@ -10,9 +10,9 @@
     , user_nickname
     , board_title
     , board_content
-    <!--            <if test="board.filename != null">-->
-    <!--                , file_name-->
-    <!--            </if>-->
+    <if test="board.filename != null">
+        , file_name
+    </if>
     <!--            <if test="board.hashtag != null">-->
     <!--                , is_hashtag-->
     <!--            </if>-->
@@ -24,9 +24,9 @@
     , '김정정'
     , #{board.title}
     , #{board.content, jdbcType=VARCHAR}
-    <!--            <if test="board.filename != null">-->
-    <!--                , 'Y'-->
-    <!--            </if>-->
+    <if test="board.filename != null">
+        , #{board.filename}
+    </if>
     <!--            <if test="board.hashtag != null">-->
     <!--                , 'Y'-->
     <!--            </if>-->
@@ -38,7 +38,7 @@
     select *
     from (
           select
-            row_number() over(order by b.board_no desc) rn
+            <include refid="boardsFilterCondition2"/>
             , b.board_no as no
             , b.board_cat_name as catName
             , b.board_title as title
@@ -54,15 +54,15 @@
           where b.is_deleted = 'N'
         ) as board
     where rn between #{condition.begin} and #{condition.end}
-    <include refid="boardsFilterCondition1"/>
-    <include refid="boardsFilterCondition2"/>
-<!--    <include refid="boardsFilterCondition3"/>-->
+      <include refid="boardsFilterCondition1"/>
+      <include refid="boardsFilterCondition3"/>
+    order by rn
   </select>
 
   <!-- int getTotalRows(@Param("condition") Map<String, Object> condition); -->
   <select id="getTotalRows" resultType="int">
     select count(*)
-    from BOARDS
+    from BOARDS board
     where is_deleted = 'N'
   </select>
 
@@ -86,7 +86,7 @@
     from
       BOARDS b join USERS u
     on b.user_nickname = u.user_nickname
-      join BOARDS_CATEGORIES c
+      join BOARD_CATEGORIES c
       on b.board_cat_name = c.board_cat_name
     where
       b.is_deleted = 'N'
@@ -127,40 +127,44 @@
     </if>
   </sql>
 
-  <!-- 게시글 정렬시 옵션 선택에 따른 SQL 구문 -->
+  <!-- 게시글 옵션 선택에 따른 SQL 구문 -->
   <sql id="boardsFilterCondition2">
+    <!-- 정렬 기준 선택에 따른 SQL 구문 -->
     <if test="condition.sort != null">
       <choose>
         <when test="condition.sort == 'date'">
-          order by board.createdDate desc
+          row_number() over(order by b.board_created_date desc) rn
         </when>
         <when test="condition.sort == 'like'">
-          order by board.`like` desc
+          row_number() over(order by b.board_like desc) rn
         </when>
         <when test="condition.sort == 'viewCnt'">
-          order by board.viewCnt desc
+          row_number() over(order by b.board_cnt desc) rn
         </when>
+        <otherwise>
+          row_number() over(order by b.board_no desc) rn
+        </otherwise>
       </choose>
     </if>
   </sql>
 
-<!--  &lt;!&ndash; 카테고리 선택에 따른 SQL 구문 &ndash;&gt;-->
-<!--  <sql id="boardsFilterCondition3">-->
-<!--    <if test="condition.category != null">-->
-<!--      <choose>-->
-<!--        <when test="condition.catetory == '일반게시판'">-->
-<!--          and board.catName = '일반게시판'-->
-<!--        </when>-->
-<!--        <when test="condition.category == '자랑게시판'">-->
-<!--          and board.catName = '자랑게시판'-->
-<!--        </when>-->
-<!--        <when test="condition.category == '질문게시판'">-->
-<!--          and board.catName = '질문게시판'-->
-<!--        </when>-->
-<!--        <when test="condition.category == '훈련일지'">-->
-<!--          and board.catName = '훈련일지'-->
-<!--        </when>-->
-<!--      </choose>-->
-<!--    </if>-->
-<!--  </sql>-->
+    <!-- 카테고리 선택에 따른 SQL 구문 -->
+  <sql id="boardsFilterCondition3">
+    <if test="condition.category != null">
+      <choose>
+        <when test="condition.category == '일반게시판'">
+          and board.catName = '일반게시판'
+        </when>
+        <when test="condition.category == '자랑게시판'">
+          and board.catName = '자랑게시판'
+        </when>
+        <when test="condition.category == '질문게시판'">
+          and board.catName = '질문게시판'
+        </when>
+        <when test="condition.category == '훈련일지'">
+          and board.catName = '훈련일지'
+        </when>
+      </choose>
+    </if>
+  </sql>
 </mapper>
