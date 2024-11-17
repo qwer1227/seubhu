@@ -70,7 +70,7 @@
     
     <div class="content mb-4" id="fileDown" style="text-align: end">
       <a href="filedown?no=${board.no}" class="btn btn-outline-primary btn-sm">첨부파일 다운로드</a>
-      <span id="hover-box">${board.title} 수정 예정</span>
+      <span id="hover-box">${board.originalFileName} 수정 예정</span>
     </div>
     
     <div class="content mb-4" style="text-align: start">

@@ -2,6 +2,10 @@ package store.seub2hu2.community.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -10,14 +14,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 import store.seub2hu2.community.dto.AddBoardFileForm;
 import store.seub2hu2.community.dto.BoardForm;
+import store.seub2hu2.community.exception.CommunityException;
 import store.seub2hu2.community.service.BoardService;
+import store.seub2hu2.community.view.FileDownloadView;
 import store.seub2hu2.community.vo.Board;
-import store.seub2hu2.community.vo.BoardCategory;
 import store.seub2hu2.util.FileUtils;
 import store.seub2hu2.util.ListDto;
 
+import java.io.File;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +39,9 @@ public class BoardController {
 
     @Autowired
     public BoardService boardService;
+
+    @Autowired
+    public FileDownloadView fileDownloadView;
 
     @GetMapping("/main")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page
@@ -77,7 +88,10 @@ public class BoardController {
     }
 
     @GetMapping("/detail")
-    public String detail(int no, Model model) {
+    public String detail(@RequestParam("no") Integer no, Model model) {
+        if (no == null) {
+            throw new CommunityException("유효하지 않는 게시글 번호입니다.");
+        }
 
         Board board = boardService.getBoardDetail(no);
         model.addAttribute("board", board);
@@ -140,5 +154,35 @@ public class BoardController {
 
         boardService.updateBoard(boardForm);
         return "/community/main";
+    }
+
+    @GetMapping("/filedown")
+    public ModelAndView download(int boardNo) {
+        Board board = boardService.getBoardDetail(boardNo);
+
+        ModelAndView mav = new ModelAndView();
+
+        mav.setView(fileDownloadView);
+        mav.addObject("directory", saveDirectory);
+        mav.addObject("filename", board.getFilename());
+        mav.addObject("originalFilename", board.getOriginalFileName());
+
+        return mav;
+    }
+
+    @GetMapping("download")
+    public ResponseEntity<Resource> downloadFile(int boardNo) throws Exception{
+        Board board = boardService.getBoardDetail(boardNo);
+
+        String fileName = board.getFilename();
+        String originalFileName = board.getOriginalFileName();
+        originalFileName = URLEncoder.encode(originalFileName, "UTF-8");
+
+        File file = new File(new File(saveDirectory), fileName);
+        FileSystemResource resource = new FileSystemResource(file);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + originalFileName)
+                .body(resource);
     }
 }

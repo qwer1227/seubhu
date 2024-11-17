@@ -40,7 +40,7 @@
   
   
   <!-- 게시글 정렬 기능 -->
-  <form class="row" id="sorting" method="get" action="main">
+  <form id="form-search" method="get" action="main">
     <input type="hidden" name="category" id="categoryInput">
     <!-- 카테고리 종류에 따른 게시글 목록 반환 기능 -->
     <div class="p-3 row row-cols-2 row-cols-lg-5 g-2 g-lg-3" id="category">
@@ -92,7 +92,6 @@
         </select>
       </div>
     </div>
-  </form>
   
   <!--  게시글 목록 -->
   <div class="row p-3">
@@ -145,7 +144,7 @@
   </div>
   
   <!-- 검색 및 글쓰기 기능 -->
-  <form id="form-search" method="get" action="main">
+
     <input type="hidden" name="page" value="${param.page != null ? param.page : 1}">
     <div class="row p-3 d-flex justify-content-left">
       <div class="col-2">
@@ -170,7 +169,6 @@
         <a href="form" type="button" class="btn btn-primary">글쓰기</a>
       </div>
     </div>
-  </form>
   
   <!-- 페이징처리 -->
   <div>
@@ -196,6 +194,7 @@
       </li>
     </ul>
   </div>
+  </form>
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
@@ -223,7 +222,7 @@
 
     // 정렬방식이 변경될 때
     function changeSort() {
-        let form = document.querySelector("#sorting");
+        let form = document.querySelector("#form-search");
         let sortInput = document.querySelector("input[name=sort]");
         sortInput.value = 1;
         form.submit();
@@ -232,7 +231,7 @@
     // 한 화면에 표기할 행의 갯수가 변경될 때
     function changeRows() {
         // 페이지 갯수를 클릭했다면 해당 페이징 요청
-        let form = document.querySelector("#sorting");
+        let form = document.querySelector("#form-search");
         // 페이지 번호 input 요소 선택
         let rowsInput = document.querySelector("input[name=rows]");
         // 새로 요청하는 페이지는 1로 초기화
@@ -244,7 +243,7 @@
     
     // 카테고리를 선택했을 때
     function changeCategory(category){
-        let form = document.querySelector("#sorting");
+        let form = document.querySelector("#form-search");
         let catInput = document.querySelector("#categoryInput");
         catInput.value = category;
         form.submit();
