@@ -29,44 +29,29 @@
     </div>
 
     <%-- 검색 기능 --%>
-    <%-- 요청 파라미터(검색 정보) : page, distance, level, si, gu, keyword --%>
+    <%-- 요청 파라미터(검색 정보) : page, distance, level, keyword --%>
     <div class="row row-cols-1 row-cols-md-1 g-4 mt-3 mb-3">
         <div class="col">
             <form id="form-search" method="get" action="list">
                 <input type="hidden" name="page" />
                 <div class="row g-3 d-flex justify-content-center">
-                    <div class="col-4">
-                        거리
+                    <div class="col-5">
+                        <label for="customRange2" class="form-label">거리</label>
+                        <input type="range" class="form-range" min="0" max="10" id="customRange2" name="distance"
+                               value="${param.distance }">
                     </div>
                     <div class="col-1">
                         난이도
                         <select class="form-select" name="level">
-                            <option value="1" ${param.opt eq '1' ? 'selected' : '' }> 1단계</option>
-                            <option value="2" ${param.opt eq '2' ? 'selected' : '' }> 2단계</option>
-                            <option value="3" ${param.opt eq '3' ? 'selected' : '' }> 3단계</option>
-                            <option value="4" ${param.opt eq '4' ? 'selected' : '' }> 4단계</option>
-                            <option value="5" ${param.opt eq '5' ? 'selected' : '' }> 5단계</option>
-                        </select>
-                    </div>
-                    <div class="col-1">
-                        시
-                        <select class="form-select col" name="si">
-                            <option value="1" ${param.opt eq '1' ? 'selected' : '' }> 서울시</option>
-                            <option value="2" ${param.opt eq '2' ? 'selected' : '' }> 경기도</option>
-                        </select>
-                    </div>
-                    <div class="col-2">
-                        구
-                        <select class="form-select col" name="gu">
-                            <option value="1" ${param.opt eq '1' ? 'selected' : '' }> 성동구</option>
-                            <option value="2" ${param.opt eq '2' ? 'selected' : '' }> 동대문구</option>
-                            <option value="2" ${param.opt eq '2' ? 'selected' : '' }> 은평구</option>
+                            <c:forEach var="num" begin="1" end="5">
+                                <option value="${num }" ${param.level eq num ? "selected" : ""}> ${num }단계</option>
+                            </c:forEach>
                         </select>
                     </div>
                     <div class="col-3">
-                        검색어<input type="text" class="form-control" name="keyword" value="${param.keyword }">
+                        지역 검색<input type="text" class="form-control" name="keyword" value="${param.keyword }">
                     </div>
-                    <div class="col-1">
+                    <div class="col-1 pt-4">
                         <button type="button" class="btn btn-outline-primary" onclick="searchKeyword()">검색 버튼</button>
                     </div>
                 </div>
@@ -76,20 +61,24 @@
 
     <%-- 코스 목록 --%>
     <div class="row row-cols-1 row-cols-md-3 g-4 mt-5 mb-5">
-        <div class="col">
-            <div class="card h-100">
-                <a class="text-decoration-none" href="detail.html">
-                    <img src="image1.PNG" class="card-img-top" alt="...">
-                </a>
-                <div class="card-body">
-                    <h5 class="card-title">코스1</h5>
-                    <a class="text-decoration-none" href="detail.html">
-                        <p class="card-text">코스 사진</p>
+        <c:forEach var="course" items="${courses }">
+            <div class="col">
+                <div class="card h-100">
+                    <a class="text-decoration-none" href="detail?no=${course.no }">
+                        <img src="/resources/images/course/${course.filename }" class="card-img-top" alt="...">
                     </a>
+                    <div class="card-body">
+                        <h5 class="card-title">${course.name }</h5>
+                        <a class="text-decoration-none" href="detail?no=${course.no }">
+                            <p class="card-text">${course.region.si } ${course.region.gu } ${course.region.dong }</p>
+                        </a>
+                    </div>
+                    <div class="card-footer bg-transparent border-primary" >
+                        <span>난이도 : ${course.level }단계</span><span> / 거리 : ${course.distance }KM</span>
+                    </div>
                 </div>
-                <div class="card-footer bg-transparent border-primary" >지역 / 거리 / 난이도 / 등록버튼</div>
             </div>
-        </div>
+        </c:forEach>
     </div>
 </div>
 
@@ -98,44 +87,48 @@
     <div class="col-12">
         <nav>
             <ul class="pagination justify-content-center">
-                <li class="page-item ${paging.first ? 'disabled' : '' }">
-                    <a class="page-link" onclick="changePage(${paging.prevPage }, event)" href="list?page=${paging.prevPage }">이전</a>
+                <li class="page-item ${pagination.first ? 'disabled' : '' }">
+                    <a class="page-link"
+                       onclick="changePage(${pagination.prevPage}, event)"
+                       href="list?page=${pagination.prevPage}">이전</a>
                 </li>
 
-                <c:forEach var="num" begin="${paging.beginPage }" end="${paging.endPage }">
-                    <li class="page-item ${paging.page eq num ? 'active' : '' }">
-                        <a class="page-link" onclick="changePage(${num }, event)" href="list?page=${num }">${num }</a>
+                <c:forEach var="num" begin="${pagination.beginPage }" end="${pagination.endPage }">
+                    <li class="page-item ${pagination.page eq num ? 'active' : '' }">
+                        <a class="page-link"
+                           onclick="changePage(${num }, event)"
+                           href="list?page=${num }">${num }</a>
                     </li>
                 </c:forEach>
 
-                <li class="page-item ${paging.last ? 'disabled' : '' }">
-                    <a class="page-link" onclick="changePage(${paging.nextPage }, event)" href="list?page=${paging.nextPage }">다음</a>
+                <li class="page-item ${pagination.last ? 'disabled' : '' }">
+                    <a class="page-link"
+                       onclick="changePage(${pagination.nextPage}, event)"
+                       href="list?page=${pagination.nextPage}">다음</a>
                 </li>
             </ul>
         </nav>
     </div>
 </div>
 
-<%@include file="/WEB-INF/common/footer.jsp" %>
+
+<%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script type="text/javascript">
-    // 페이지 번호를 클릭했을 때
+    let form = document.querySelector("#form-search"); // form 태그를 가져온다. (name = page, distance, level, keyword)
+    let pageInput = document.querySelector("input[name=page]"); // form 태그의 일부 태그를 가져온다. (name = page)
+
+    // 페이지 번호를 클릭했을 때, 요청 파라미터 정보를 제출한다.
     function changePage(page, event) {
-        event.preventDefault(); // 클릭해서 링크를 이동하면 안 되기 때문에, 사전에 링크 이동 방지
+        event.preventDefault();
 
-        let form = document.querySelector("#form-search");
-        let input = document.querySelector("input[name=page]");
-
-        input.value = 1; // page의 값으로 1을 저장한 후,
-        form.submit(); // <form id="form-search" ...> 태그의 name(page, opt, keyword)을 서버에 요청 파라미터 정보로 제출한다.
+        pageInput.value = page;
+        form.submit();
     }
 
-    // 검색 버튼을 클릭했을 때
+    // 검색 버튼을 클릭했을 때, 요청 파라미터 정보를 제출한다.
     function searchKeyword() {
-        let form = document.querySelector("#form-search");
-        let input = document.querySelector("input[name=page]");
-
-        input.value = 1; // page의 값으로 1을 저장한 후,
-        form.submit(); // <form id="form-search" ...> 태그의 name(page, opt, keyword)을 서버에 요청 파라미터 정보로 제출한다.
+        pageInput.value = 1;
+        form.submit();
     }
 </script>
 </body>

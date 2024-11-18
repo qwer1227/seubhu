@@ -34,7 +34,17 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="product/list">상품</a>
+                <div class="dropdown">
+                    <a class="btn dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                        상품
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <li><a class="dropdown-item" href="/product/list?topNo=10">남성</a></li>
+                        <li><a class="dropdown-item" href="/product/list?topNo=20">여성</a></li>
+                        <li><a class="dropdown-item" href="/product/list?topNo=30">러닝용품</a></li>
+                    </ul>
+                </div>
+
                 <div class="divider" style="border-left: 1px solid #0e0d0d; margin: 0 7px;"></div>
                 <a class="nav-link" href="#">코스</a>
                 <div class="divider" style="border-left: 1px solid #0e0d0d; margin: 0 7px;"></div>
@@ -42,7 +52,7 @@
                 <div class="divider" style="border-left: 1px solid #0e0d0d; margin: 0 7px;"></div>
                 <a class="nav-link " href="#">커뮤</a>
                 <div class="divider" style="border-left: 1px solid #0e0d0d; margin: 0 7px;"></div>
-                <a class="nav-link " href="#">로그인</a>
+                <a class="nav-link " href="user/login">로그인</a>
                 <div style="padding: 0 20px;"></div>
             </div>
         </div>

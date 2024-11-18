@@ -1,57 +1,73 @@
 package store.seub2hu2.user.service;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import store.seub2hu2.user.dto.LoginResponse;
+import store.seub2hu2.user.dto.SocialLoginRequest;
+import store.seub2hu2.user.dto.UserJoinForm;
+import store.seub2hu2.user.exception.AlreadyUsedEmailException;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.user.mapper.UserMapper;
-import store.seub2hu2.user.dto.UserRegisterForm;
-import store.seub2hu2.user.dto.UserUpdateRequest;
+import store.seub2hu2.user.vo.UserRole;
 
 @Service
 public class UserService {
 
-    private final UserMapper userMapper;
 
     @Autowired
-    public UserService(UserMapper userMapper) {
-        this.userMapper = userMapper;
+    private UserMapper userMapper;
+
+    /**
+     * 이메일을 전달받아서 존재여부를 체크하는 서비스다
+     *
+     * @param email 이메일
+     * @return 이메일이 존재하면 true를반환한다.
+     */
+    public boolean isExistEmail(String email) {
+
+        User user = userMapper.getUserByEmail(email);
+        return user != null;
     }
 
-    @Transactional
-    public void updateUserInfo(String userId, UserUpdateRequest request) {
-        User user = userMapper.findById(userId);
-        if (user == null) {
-            throw new RuntimeException("사용자를 찾을 수 없습니다.");
+    /**
+     * 신규 사용자 정보를 전달받아서 회원가입 시키는 서비스다.
+     *
+     * @param form
+     */
+    public void insertUser(UserJoinForm form) {
+        // 이메일 중복 체크
+        User savedUser = userMapper.getUserByEmail(form.getEmail());
+        if (savedUser != null) {
+            throw new AlreadyUsedEmailException(form.getEmail());
         }
 
-        // 요청 받은 값으로 사용자 정보 업데이트
-        user.setUsername(request.getUsername());
-        user.setEmail(request.getEmail());
-        // user.setAddress(request.getAddress());
+        User user = new User();
+        BeanUtils.copyProperties(form, user);
+        // 비밀번호를 암호화한다.
+        //String encodedPassword = passwordEncoder.encode(user.getPassword());
+        //user.setPassword(encodedPassword);
+        // 회원정보를 테이블에 저장시킨다.
+        userMapper.insertUser(user);
 
-        // 사용자 정보 업데이트 (MyBatis 매퍼를 이용한 SQL 실행)
-        userMapper.updateUserInfo(userId, request.getUsername(), request.getEmail(), request.getAddress());
+        addUserRole(user.getNo(), "ROLE_USER");
     }
 
-    // 회원가입 처리
-    public void save(User user) {
-        // 이메일 중복 체크 및 기타 유효성 검사 로직 추가 가능
-        if (userMapper.existsByEmail(user.getEmail())) {
-            throw new IllegalArgumentException("사용중인 이메일입니다.");
-        }
-        userMapper.insertUser(user); // 실제 데이터베이스에 저장
+    /**
+     * 사용자번호, 권한이름을 전달받아서 권한을 추가하는 서비스다.
+     *
+     * @param userNo   사용자번호
+     * @param roleName 권한이름
+     */
+    public void addUserRole(int userNo, String roleName) {
+        UserRole userRole = new UserRole(userNo, roleName);
+        userMapper.insertUserRole(userRole);
+
     }
 
-    public void addNewUser(UserRegisterForm form) {
+    public LoginResponse doSocialLogin(SocialLoginRequest request) {
+        return null;
 
     }
-
-    //public boolean checkEmailExists(String email) {
-    //     return userMapper.checkEmailExists(email);
-    // }
-
-    //public boolean checkNicknameExists(String nickname) {
-    //    return userMapper.checkNicknameExists(nickname);
-    //}
 }

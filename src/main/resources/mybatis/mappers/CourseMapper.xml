@@ -1,5 +1,84 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="CourseMapper.xml">
+<mapper namespace="store.seub2hu2.course.mapper.CourseMapper">
+    <!--
+        int getTotalRows(@Param("condition") Map<String, Object> condition);
+    -->
+    <select id="getTotalRows" resultType="int">
+        select count(*)
+        from COURSES c, COURSE_REGION r
+        where c.region_no = r.region_no
+        <include refid="CoursesFilterCondition" />
+    </select>
 
+    <!--
+        List<Course> getCourses(@Param("condition") Map<String, Object> condition);
+    -->
+    <select id="getCourses" resultType="store.seub2hu2.course.vo.Course">
+        select *
+        from (
+              select row_number() over (order by c.course_no) rn
+                    , c.course_no as no
+                    , c.course_name as name
+                    , c.course_distance as distance
+                    , c.course_level as level
+                    , c.course_filename as filename
+                    , r.region_no as "region.no"
+                    , r.region_si as "region.si"
+                    , r.region_gu as "region.gu"
+                    , r.region_dong as "region.dong"
+              from COURSES c, COURSE_REGION r
+              where c.region_no = r.region_no
+              <include refid="CoursesFilterCondition" />
+             ) cr
+        where rn between #{condition.begin} and #{condition.end}
+    </select>
+
+    <sql id="CoursesFilterCondition">
+        <if test="condition.distance != null">
+            and c.course_distance <![CDATA[<=]]> #{condition.distance}
+        </if>
+        <if test="condition.level != null">
+            and c.course_level = #{condition.level}
+        </if>
+        <if test="condition.keyword != null">
+            and r.region_gu like concat('%', #{condition.keyword}, '%')
+        </if>
+    </sql>
+
+    <!--
+        Course getCourseByNo(@Param("no") int no);
+    -->
+    <resultMap id="CourseResultMap" type="store.seub2hu2.course.vo.Course">
+        <id property="no" column="course_no"/>
+        <result property="name" column="course_name"/>
+        <result property="time" column="course_time"/>
+        <result property="distance" column="course_distance"/>
+        <result property="level" column="course_level"/>
+        <result property="likeCnt" column="course_like_cnt"/>
+        <result property="filename" column="course_filename"/>
+        <association property="region" javaType="store.seub2hu2.course.vo.Region">
+            <id property="no" column="region_no"/>
+            <result property="si" column="region_si"/>
+            <result property="gu" column="region_gu"/>
+            <result property="dong" column="region_dong"/>
+        </association>
+    </resultMap>
+
+    <select id="getCourseByNo" resultMap="CourseResultMap">
+        select c.course_no
+              , c.course_name
+              , c.course_time
+              , c.course_distance
+              , c.course_level
+              , c.course_like_cnt
+              , c.course_filename
+              , r.region_no
+              , r.region_si
+              , r.region_gu
+              , r.region_dong
+        from COURSES c, COURSE_REGION r
+        where c.region_no = r.region_no
+        and c.course_no = #{no}
+    </select>
 </mapper>

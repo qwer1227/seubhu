@@ -21,13 +21,19 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 @Controller
+@RequestMapping("/lesson/pay")
 public class WidgetController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @GetMapping("/checkout")
     public String checkout() {
-        return "lesson/checkout";
+        return "lesson/pay/checkout";
+    }
+
+    @GetMapping("/toss")
+    public String toss() {
+        return "lesson/pay/toss";
     }
 
     @RequestMapping(value = "/confirm")

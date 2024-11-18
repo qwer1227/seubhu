@@ -100,9 +100,9 @@
     function keepContent() {
         location.href = 'main';
     }
-    
+
     function submitContent(){
-    
+
     }
 </script>
 </body>

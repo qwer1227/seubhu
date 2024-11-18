@@ -73,8 +73,8 @@
             await widgets.requestPayment({
                 orderId: "yscLEJlVQIO65K9jFYZLx",
                 orderName: "토스 티셔츠 외 2건",
-                successUrl: window.location.origin + "/WEB-INF/views/lesson/success.jsp",
-                failUrl: window.location.origin + "/WEB-INF/views/lesson/fail.jsp",
+                successUrl: window.location.origin + "/lesson/pay/success.jsp",
+                failUrl: window.location.origin + "/WEB-INF/views/lesson/pay/fail.jsp",
                 customerEmail: "customer123@gmail.com",
                 customerName: "김토스",
                 customerMobilePhone: "01012341234",
