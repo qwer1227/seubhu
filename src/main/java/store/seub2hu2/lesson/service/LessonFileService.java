@@ -29,25 +29,20 @@ public class LessonFileService {
     public void saveLessonImages(Integer lessonNo, MultipartFile thumbnail, MultipartFile mainImage)  {
         System.out.println("saveLessonImages lessonNo: " + lessonNo);
 
-        try {
-            if (thumbnail != null && !thumbnail.isEmpty()) {
-                String thumbnailFileName = FileUtils.saveMultipartFile(thumbnail, saveDirectory);
-                LessonFile thumbnailFile = new LessonFile(
-                        lessonNo, thumbnailFileName, "THUMBNAIL", saveDirectory
-                );
-                lessonFileMapper.insertLessonFile(thumbnailFile);
-            }
+        if (thumbnail != null && !thumbnail.isEmpty()) {
+            String thumbnailFileName = FileUtils.saveMultipartFile(thumbnail, saveDirectory);
+            LessonFile thumbnailFile = new LessonFile(
+                    lessonNo, thumbnailFileName, "THUMBNAIL", saveDirectory
+            );
+            lessonFileMapper.insertLessonFile(thumbnailFile);
+        }
 
-            if (mainImage != null && !mainImage.isEmpty()) {
-                String mainImageFileName = FileUtils.saveMultipartFile(mainImage, saveDirectory);
-                LessonFile mainImageFile = new LessonFile(
-                        lessonNo, mainImageFileName, "MAIN_IMAGE", saveDirectory
-                );
-                lessonFileMapper.insertLessonFile(mainImageFile);
-            }
-        } catch (IOException e) {
-            log.info("파일 저장 에러 발생 = {}", e.getMessage());
-            throw new RuntimeException(e.getMessage());
+        if (mainImage != null && !mainImage.isEmpty()) {
+            String mainImageFileName = FileUtils.saveMultipartFile(mainImage, saveDirectory);
+            LessonFile mainImageFile = new LessonFile(
+                    lessonNo, mainImageFileName, "MAIN_IMAGE", saveDirectory
+            );
+            lessonFileMapper.insertLessonFile(mainImageFile);
         }
 
 
