@@ -11,5 +11,7 @@ import java.util.List;
 public interface ReplyMapper {
 
     void insertReply(@Param("reply") Reply reply);
+    void insertComment(@Param("reply") Reply reply);
     List<Reply> getRepliesByBoardNo(@Param("boardNo") int boardNo);
+    void deleteReplyByNo(@Param("replyNo") int replyNo);
 }

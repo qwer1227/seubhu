@@ -18,23 +18,37 @@
       )
   </insert>
 
-  <!-- List<Reply> getRepliesByBoardNo(@Param("boardNo") int boardNo); -->
-  <select id="getRepliesByBoardNo" parameterType="int" resultType="store.seub2hu2.community.vo.Reply">
+  <!-- void insertComment(@Param("reply") Reply reply); -->
+  <insert id="insertComment">
+
+  </insert>
+
+  <!-- List<Reply> getRepliesByBoardNo(@Param("no") int no); -->
+  <select id="getRepliesByBoardNo" resultType="store.seub2hu2.community.vo.Reply" parameterType="int">
     select
-        br.reply_no
-        , b.board_no
-        , br.reply_content
-        , br.reply_created_date
-        , u.user_nickname
-        , br.is_report
-        , br.board_reply_like
-        , br.is_deleted
-    from
-      BOARD_REPLIES br join BOARDS b
-            on br.board_no = b.board_no
-        join USERS u
-            on br.user_no = u.user_no
-    where b.board_no = #{reply.board.no}
+      b.board_no                 as "board.no"
+      , u.user_no                as "user.no"
+      , u.user_nickname          as "user_nickname"
+      , br.reply_no              as no
+      , br.prev_reply_no         as prevNo
+      , br.reply_content         as content
+      , br.reply_created_date    as createdDate
+      , br.reply_updated_date    as updatedDate
+      , br.is_report             as isReport
+      , br.board_reply_like      as replyLike
+      , br.is_deleted            as isDeleted
+    from BOARDS b join BOARDS_REPLIES br
+         on b.board_no = br.board_no
+      join USERS u
+         on br.user_no = u.user_no
+    where b.board_no = #{no}
+    order by br.reply_created_date asc
   </select>
 
+  <!-- void deleteReplyByNo(@Param("replyNo") int replyNo); -->
+  <update id="deleteReplyByNo" parameterType="int">
+    update BOARDS_REPLIES
+    set is_deleted = 'Y'
+    where reply_no = #{replyNo}
+  </update>
 </mapper>

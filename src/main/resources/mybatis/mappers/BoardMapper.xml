@@ -111,10 +111,10 @@
     </if>
   </select>
 
-  <!-- Board getBoardByNo(@Param("no") int no); -->
-  <select id="getBoardByNo" resultType="store.seub2hu2.community.vo.Board" parameterType="int">
-    select b.board_no as no
-            , c.board_cat_name          as catName
+  <!-- Board getBoardDetailByNo(@Param("no") int no); -->
+  <select id="getBoardDetailByNo" resultType="store.seub2hu2.community.vo.Board" parameterType="int">
+    select b.board_no                   as no
+            , b.board_cat_name          as catName
             , u.user_nickname           as "user.nickname"
             , b.board_title             as title
             , b.file_name               as "uploadFile.saveName"
@@ -157,6 +157,5 @@
   <!-- void insertReply(@Param("reply") Board board); -->
 
   <!-- List<Reply> getRepliesByBoardNo(@Param("boardNo") int boardNo); -->
-
 
 </mapper>

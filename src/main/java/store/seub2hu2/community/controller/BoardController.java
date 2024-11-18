@@ -132,6 +132,7 @@ public class BoardController {
         }
         boardService.addNewBoard(board);
         return "redirect:main";
+//        return "redirect:detail?no=" + board.getNo();
     }
 
     @GetMapping("/modify")
@@ -149,7 +150,6 @@ public class BoardController {
         boardService.updateBoard(form);
         return "redirect:detail?no=" + form.getNo();
     }
-
 
     @GetMapping("/delete")
     public String delete(int boardNo) {
