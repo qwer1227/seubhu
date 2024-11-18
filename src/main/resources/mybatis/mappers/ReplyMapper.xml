@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="store.seub2hu2.community.mapper.ReplyMapper">
+
+  <!-- void insertReply(@Param("reply") Reply reply); -->
+  <insert id="insertReply">
+    insert into BOARD_REPLIES
+      (
+        board_no
+      , reply_content
+      , user_no
+      )
+    values
+      (
+        #{boardNo}
+      , #{reply}
+      , #{user.no}
+      )
+  </insert>
+
+  <!-- List<Reply> getRepliesByBoardNo(@Param("boardNo") int boardNo); -->
+  <select id="getRepliesByBoardNo" parameterType="int" resultType="store.seub2hu2.community.vo.Reply">
+    select
+        br.reply_no
+        , b.board_no
+        , br.reply_content
+        , br.reply_created_date
+        , u.user_nickname
+        , br.is_report
+        , br.board_reply_like
+        , br.is_deleted
+    from
+      BOARD_REPLIES br join BOARDS b
+            on br.board_no = b.board_no
+        join USERS u
+            on br.user_no = u.user_no
+    where b.board_no = #{reply.board.no}
+  </select>
+
+</mapper>

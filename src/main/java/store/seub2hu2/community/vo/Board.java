@@ -13,11 +13,10 @@ import java.util.Date;
 public class Board {
     private int no;
     private String catName;
-    private BoardCategory category;
     private User user;
     private String title;
     private String content;
-    private String filename;
+    private UploadFile uploadFile;
     private Date createdDate;
     private Date updatedDate;
     private int viewCnt;
@@ -30,9 +29,9 @@ public class Board {
     private Reply reply;
 
     public String getOriginalFileName() {
-        if(filename == null){
+        if(uploadFile.getOriginalName() == null){
             return null;
         }
-        return filename.substring(13);
+        return uploadFile.getSaveName().substring(13);
     }
 }

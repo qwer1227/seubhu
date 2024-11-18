@@ -15,12 +15,9 @@ import java.util.Map;
 @Setter
 public class BoardForm {
     private String catName;
-    private int no;
     private String title;
     private String content;
-    private MultipartFile filename;
-    private Date createdDate;
-    private Date updatedDate;
-    private String isDeleted;
+    private MultipartFile upfile;
+
 //    private Map<String, Object> hashtag;
 }

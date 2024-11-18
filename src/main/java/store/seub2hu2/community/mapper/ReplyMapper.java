@@ -10,6 +10,6 @@ import java.util.List;
 @Mapper
 public interface ReplyMapper {
 
-//    void insertReply(@Param("reply") Board board);
-//    List<Reply> getRepliesByBoardNo(@Param("boardNo") int boardNo);
+    void insertReply(@Param("reply") Reply reply);
+    List<Reply> getRepliesByBoardNo(@Param("boardNo") int boardNo);
 }

@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
-import store.seub2hu2.community.dto.AddBoardFileForm;
 import store.seub2hu2.community.dto.BoardForm;
-import store.seub2hu2.community.exception.CommunityException;
+import store.seub2hu2.community.dto.ModifyBoardForm;
 import store.seub2hu2.community.service.BoardService;
 import store.seub2hu2.community.view.FileDownloadView;
 import store.seub2hu2.community.vo.Board;
+import store.seub2hu2.community.vo.UploadFile;
 import store.seub2hu2.util.FileUtils;
 import store.seub2hu2.util.ListDto;
 
@@ -39,6 +39,9 @@ public class BoardController {
 
     @Autowired
     public BoardService boardService;
+
+    //@Autowired
+    //public ReplyService replyService;
 
     @Autowired
     public FileDownloadView fileDownloadView;
@@ -89,82 +92,84 @@ public class BoardController {
 
     @GetMapping("/detail")
     public String detail(@RequestParam("no") Integer no, Model model) {
-        if (no == null) {
-            throw new CommunityException("유효하지 않는 게시글 번호입니다.");
-        }
-
         Board board = boardService.getBoardDetail(no);
         model.addAttribute("board", board);
 
         return "community/detail";
     }
 
-    // 나중에 구현 완료되면 지울 코드
-    @GetMapping("/write")
-    public String write() {
-        return "community/write";
+    @GetMapping("/register")
+    public String form() {
+        return "community/form";
     }
 
     @PostMapping("/register")
 //    @PreAuthorize("isAuthenticated()")
-    public String register(BoardForm boardForm
-        ,@RequestParam(value = "upfile", required = false)AddBoardFileForm addBoardFileForm){
+    public String register(BoardForm boardForm){
 //                          , @AuthenticationPrincipal LoginUser loginUser) {
         // Board 객체를 생성하여 사용자가 입력한 제목과 내용을 저장한다.
         Board board = new Board();
         board.setCatName(boardForm.getCatName());
-        board.setNo(boardForm.getNo());
         board.setTitle(boardForm.getTitle());
         board.setContent(boardForm.getContent());
 
 //        User user = User.builder().no(loginUser.getNo()).build();
 //        board.setUser(user);
 
-        if (addBoardFileForm != null){
-            MultipartFile multipartFile = boardForm.getFilename();
+        if (boardForm.getUpfile() != null){
+            MultipartFile multipartFile = boardForm.getUpfile();
 
             if(!multipartFile.isEmpty()) {
                 String originalFilename = multipartFile.getOriginalFilename();
                 String filename = System.currentTimeMillis() + originalFilename;
                 FileUtils.saveMultipartFile(multipartFile, saveDirectory, filename);
-                board.setFilename(filename);
+
+                UploadFile uploadFile = new UploadFile();
+                uploadFile.setOriginalName(originalFilename);
+                uploadFile.setSaveName(filename);
+                board.setUploadFile(uploadFile);
             }
         }
         boardService.addNewBoard(board);
         return "redirect:main";
-//        return "redirect:detail?no=" + board.getNo();
     }
 
     @GetMapping("/modify")
-    public String update(BoardForm boardForm) {
-        Board board = new Board();
-        board.setCatName(boardForm.getCatName());
-        board.setTitle(boardForm.getTitle());
-        board.setContent(boardForm.getContent());
-        board.setUpdatedDate(new Date());
+    public String modifyForm(@RequestParam("no") Integer boardNo, Model model) {
+        Board board = boardService.getBoardDetail(boardNo);
+        model.addAttribute("board", board);
 
-        boardService.updateBoard(boardForm);
-        return "redirect:detail?no=" + boardForm.getNo();
+        return "community/modify";
     }
 
-    @GetMapping("/delete")
-    public String delete(BoardForm boardForm) {
-        Board board = new Board();
-        board.setIsDeleted(boardForm.getIsDeleted());
 
-        boardService.updateBoard(boardForm);
+    @PostMapping("/modify")
+    public String update(ModifyBoardForm form
+        ,@RequestParam(name = "upfile", required = false) MultipartFile multipartFile) {
+        boardService.updateBoard(form);
+        return "redirect:detail?no=" + form.getNo();
+    }
+
+
+    @GetMapping("/delete")
+    public String delete(int boardNo) {
+        ModifyBoardForm form = new ModifyBoardForm();
+        form.setNo(boardNo);
+        boardService.deleteBoard(boardNo);
         return "/community/main";
     }
 
+
+    // 요청 URL : comm/filedown?no=xxx
     @GetMapping("/filedown")
-    public ModelAndView download(int boardNo) {
+    public ModelAndView download(@RequestParam("no") int boardNo) {
         Board board = boardService.getBoardDetail(boardNo);
 
         ModelAndView mav = new ModelAndView();
 
         mav.setView(fileDownloadView);
         mav.addObject("directory", saveDirectory);
-        mav.addObject("filename", board.getFilename());
+        mav.addObject("filename", board.getUploadFile().getSaveName());
         mav.addObject("originalFilename", board.getOriginalFileName());
 
         return mav;
@@ -174,7 +179,7 @@ public class BoardController {
     public ResponseEntity<Resource> downloadFile(int boardNo) throws Exception{
         Board board = boardService.getBoardDetail(boardNo);
 
-        String fileName = board.getFilename();
+        String fileName = board.getUploadFile().getSaveName();
         String originalFileName = board.getOriginalFileName();
         originalFileName = URLEncoder.encode(originalFileName, "UTF-8");
 
@@ -185,4 +190,11 @@ public class BoardController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + originalFileName)
                 .body(resource);
     }
+
+//    @PostMapping("addReply")
+//    public Reply addNewReply(ReplyForm form) {
+//        Reply reply = replyService.addNewReply(form);
+//
+//        return reply;
+//    }
 }

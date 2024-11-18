@@ -41,32 +41,32 @@
   
   <!-- 게시글 정렬 기능 -->
   <form id="form-search" method="get" action="main">
-    <input type="hidden" name="category" id="categoryInput">
+    <input type="hidden" name="page" value="${param.page != null ? param.page : 1}">
+    <input type="hidden" name="category" id="categoryInput" value="${param.category }">
     <!-- 카테고리 종류에 따른 게시글 목록 반환 기능 -->
     <div class="p-3 row row-cols-2 row-cols-lg-5 g-2 g-lg-3" id="category">
       <div class="col">
         <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
-           href="main">전체</a>
+        href="main">전체</a>
       </div>
       <div class="col">
         <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
-           href="javascript:void(0)" onclick="changeCategory('일반게시판')">일반</a>
+        href="javascript:void(0)" onclick="changeCategory('일반게시판')">일반</a>
       </div>
       <div class="col ">
         <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
-           href="javascript:void(0)" onclick="changeCategory('자랑게시판')">자랑</a>
+        href="javascript:void(0)" onclick="changeCategory('자랑게시판')">자랑</a>
       </div>
       <div class="col ">
         <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
-           href="javascript:void(0)" onclick="changeCategory('질문게시판')">질문</a>
+        href="javascript:void(0)" onclick="changeCategory('질문게시판')">질문</a>
       </div>
       <div class="col ">
         <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
-           href="javascript:void(0)" onclick="changeCategory('훈련일지')">훈련일지</a>
+        href="javascript:void(0)" onclick="changeCategory('훈련일지')">훈련일지</a>
       </div>
     </div>
 
-    <input type="hidden" name="page" value="${param.page != null ? param.page : 1}">
     <div class="p-1 col d-flex justify-content-end">
       <div class="form-check form-check-inline">
         <input class="form-check-input" type="radio" name="sort" value="date" onchange="changeSort()"
@@ -144,8 +144,6 @@
   </div>
   
   <!-- 검색 및 글쓰기 기능 -->
-
-    <input type="hidden" name="page" value="${param.page != null ? param.page : 1}">
     <div class="row p-3 d-flex justify-content-left">
       <div class="col-2">
         <select class="form-control" name="opt">
@@ -157,7 +155,7 @@
       </div>
       
       <div class="col-2">
-        <input type="text" class="form-control" name="keyword">
+        <input type="text" class="form-control" name="keyword" value="${param.keyword }">
       </div>
       <div class="col-1">
         <button class="btn btn-outline-primary" onclick="searchKeyword()">검색</button>
@@ -245,7 +243,11 @@
     function changeCategory(category){
         let form = document.querySelector("#form-search");
         let catInput = document.querySelector("#categoryInput");
+        let pageInput = document.querySelector("input[name=page]");
+        
         catInput.value = category;
+        pageInput.value = 1;
+        
         form.submit();
     }
 </script>

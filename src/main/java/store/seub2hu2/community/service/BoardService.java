@@ -1,21 +1,22 @@
 package store.seub2hu2.community.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import store.seub2hu2.community.dto.AddBoardFileForm;
-import store.seub2hu2.community.dto.BoardForm;
+import store.seub2hu2.community.dto.ModifyBoardForm;
 import store.seub2hu2.community.exception.CommunityException;
 import store.seub2hu2.community.mapper.BoardMapper;
 import store.seub2hu2.community.mapper.BoardUploadMapper;
 import store.seub2hu2.community.vo.Board;
 import store.seub2hu2.community.vo.UploadFile;
+import store.seub2hu2.util.FileUtils;
 import store.seub2hu2.util.ListDto;
 import store.seub2hu2.util.Pagination;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -30,28 +31,16 @@ public class BoardService {
     @Autowired
     private BoardUploadMapper boardUploadMapper;
 
+    @Value("${upload.directory.community}")
+    private String saveDirectory;
+
     public void addNewBoard(Board board){
         boardMapper.insertBoard(board);
     }
 
-    public void addBoardFile(AddBoardFileForm form){
-        String fileName = form.getFileName();
-        MultipartFile upfile = form.getUpfile();
-
-        if(!upfile.isEmpty()){
-            String originalFilename = upfile.getOriginalFilename();
-
-            UploadFile uploadFile = new UploadFile();
-            uploadFile.setOriginalName(originalFilename);
-            uploadFile.setSaveName(fileName);
-
-            boardUploadMapper.insertBoardFile(uploadFile);
-        }
-    }
-
     public ListDto<Board> getBoards(Map<String,Object> condition){
         // 검색 조건에 맞는 데이터 전체 갯수 조회
-        int totalRows = boardMapper.getTotalRows(condition);
+        int totalRows = boardMapper.getTotalRowsForBoard(condition);
 
         // pagination 객체 생성
         int page = (Integer)condition.get("page");
@@ -71,16 +60,47 @@ public class BoardService {
 
     public Board getBoardDetail(int boardNo){
         Board board = boardMapper.getBoardByNo(boardNo);
-
         if(board == null){
             throw new CommunityException("존재하지 않는 게시글입니다.");
         }
+        board.setViewCnt(board.getViewCnt() + 1);
+        boardMapper.updateBoard(board);
 
         return board;
     }
 
-    public void updateBoard(BoardForm boardForm){
-        boardMapper.updateBoard(boardForm);
+    public void updateBoard(ModifyBoardForm form){
+        Board savedBoard = boardMapper.getBoardByNo(form.getNo());
+        savedBoard.setTitle(form.getTitle());
+        savedBoard.setContent(form.getContent());
+        savedBoard.setCatName(form.getCatName());
+        savedBoard.setNo(form.getNo());
+        savedBoard.setIsDeleted("N");
+        savedBoard.setUpdatedDate(new Date());
+
+        MultipartFile multipartFile = form.getUpfile();
+
+        if(!multipartFile.isEmpty()) {
+            String originalFilename = multipartFile.getOriginalFilename();
+            String filename = System.currentTimeMillis() + originalFilename;
+            FileUtils.saveMultipartFile(multipartFile, saveDirectory, filename);
+
+            UploadFile uploadFile = new UploadFile();
+            uploadFile.setOriginalName(originalFilename);
+            uploadFile.setSaveName(filename);
+            savedBoard.setUploadFile(uploadFile);
+        } else {
+            savedBoard.setUploadFile(null);
+        }
+
+        boardMapper.updateBoard(savedBoard);
+    }
+
+    public void deleteBoard(int boardNo){
+        Board savedBoard = boardMapper.getBoardByNo(boardNo);
+        savedBoard.setIsDeleted("Y");
+
+        boardMapper.updateBoard(savedBoard);
     }
 
     public Board getBoardByNo(int boardNo) {

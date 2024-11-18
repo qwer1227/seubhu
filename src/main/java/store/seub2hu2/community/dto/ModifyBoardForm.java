@@ -8,7 +8,10 @@ import org.springframework.web.multipart.MultipartFile;
 @Getter
 @Setter
 @ToString
-public class AddBoardFileForm {
-    private String fileName;
+public class ModifyBoardForm {
+    private String catName;
+    private int no;
+    private String title;
+    private String content;
     private MultipartFile upfile;
 }
