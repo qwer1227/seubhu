@@ -39,17 +39,17 @@
     </select>
 
     <!--
-        ProdListDto getProducts();
+        List<ProdListDto> getProducts();
     -->
     <select id="getProducts" resultType="store.seub2hu2.product.dto.ProdListDto">
         SELECT
-            P.PROD_NO,
-            P.PROD_NAME,
-            P.PROD_PRICE,
-            P.PROD_STATUS,
-            P.PROD_CREATED_AT,
-            P.PROD_IMG_THUM,
-            PC.CAT_NAME
+            P.PROD_NO AS NO,
+            P.PROD_NAME AS NAME ,
+            P.PROD_PRICE AS PRICE,
+            P.PROD_STATUS AS STATUS,
+            P.PROD_CREATED_AT AS CREATEDAT,
+            P.PROD_IMG_THUM AS IMGTHUM,
+            PC.CAT_NAME AS "CAT_NAME"
         FROM PRODUCTS P
         JOIN PROD_CATEGORIES PC ON P.CAT_NO = PC.CAT_NO
     </select>

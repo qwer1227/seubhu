@@ -91,7 +91,7 @@
                 <div class="col">
                     <div class="card h-100">
                         <a class="text-decoration-none" href="detail">
-                            <img src="" class="card-img-top" alt="...">
+                            <img src="${prod.imgThum}" class="card-img-top" alt="...">
                         </a>
                         <div class="card-body">
                             <h5 class="card-title">${prod.name}</h5>

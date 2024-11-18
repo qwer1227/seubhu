@@ -23,6 +23,7 @@ public class ProductService {
     public List<ProdListDto> getProducts() {
 
         List<ProdListDto> products = productMapper.getProducts();
+        System.out.println(products.toString());
 
         return products;
     }

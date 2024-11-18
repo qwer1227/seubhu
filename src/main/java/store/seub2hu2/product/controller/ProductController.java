@@ -39,6 +39,7 @@ public class ProductController {
 
         List<ProdListDto> products = productService.getProducts();
         model.addAttribute("products", products);
+        System.out.println(products.toString());
         return "product/list";
     }
 
