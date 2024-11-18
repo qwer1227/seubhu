@@ -15,7 +15,7 @@ public interface ProductMapper {
     int getTotalRows(@Param("condition")Map<String, Object> condition);
 
     // 상품 전체 목록 조회하기
-    List<ProdListDto> getProducts(@Param("condition") Map<String, Object> condition);
+    ProdListDto getProducts();
 
     // 카테고리별 상품 목록 조회하기
     List<Product> getProductByCatNo(int catNo);

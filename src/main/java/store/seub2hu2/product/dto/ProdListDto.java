@@ -22,6 +22,7 @@ public class ProdListDto {
     private int price;
     private String status;
     private Date createdAt;
+    private String imgThum;
     private Category category;
-    private List<Image> images;
+
 }

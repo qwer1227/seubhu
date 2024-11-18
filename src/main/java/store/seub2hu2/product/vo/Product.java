@@ -21,5 +21,6 @@ public class Product {
     private String status;
     private Date createdAt;
     private Date updatedAt;
+    private String imgThum;
     private Category category;
 }
