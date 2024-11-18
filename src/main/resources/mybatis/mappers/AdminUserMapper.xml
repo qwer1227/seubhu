@@ -3,6 +3,95 @@
 
 <mapper namespace="store.seub2hu2.admin.mapper.AdminMapper">
 
+
+    <!--
+
+        List<Region> getRegions(@Param("region") Region region);
+    -->
+    <select id="getRegions" resultType="store.seub2hu2.course.vo.Region">
+        select
+            REGION_NO       as no
+            , REGION_SI     as si
+            , REGION_GU     as gu
+            , REGION_DONG   as dong
+        from
+            COURSE_REGION
+        where
+            REGION_NO = (SELECT MAX(REGION_NO) FROM COURSE_REGION);
+    </select>
+
+    <!--
+        코스등록
+        void insertCourse(@Param("course") Course course);
+        + 지역등록
+        void insertRegion(@Param("region")Region region);
+    -->
+    <insert id="insertCourse">
+        insert into COURSES
+        (
+         course_name
+        , course_time
+        , course_distance
+        , course_level
+        <if test="course.filename != null">
+        , course_filename
+        </if>
+        , region_no
+        )
+        values
+        (
+        #{course.name}
+        , #{course.time}
+        , #{course.distance}
+        , #{course.level}
+        <if test="course.filename != null">
+            , #{course.filename}
+        </if>
+        , #{course.region.no}
+        )
+    </insert>
+
+    <!--
+        void checkRegion(@Param("region")Region region);
+    -->
+    <select id="checkRegion" resultType="store.seub2hu2.course.vo.Region">
+        select
+            R.region_no as no
+            , R.region_si as si
+            , R.region_gu as gu
+            , R.region_dong as dong
+        from
+            COURSES C, COURSE_REGION R
+        where
+            C.REGION_NO = R.REGION_NO
+          and
+            R.REGION_SI = #{region.si}
+          and
+            R.REGION_GU = #{region.gu}
+          and
+            R.REGION_DONG = #{region.dong}
+    </select>
+
+    <insert id="insertRegion" parameterType="store.seub2hu2.course.vo.Region">
+        insert into COURSE_REGION
+        (
+        region_si
+        , region_gu
+        , region_dong
+        )
+        values
+        (
+         #{region.si}
+         , #{region.gu}
+         , #{region.dong}
+        )
+        <selectKey resultType="Long" keyProperty="no" keyColumn="region_no" order="AFTER">
+            select last_insert_id()
+        </selectKey>
+    </insert>
+
+
+
     <!--
         User getUserByNo(@Param("no") int no);
     -->
@@ -27,50 +116,50 @@
     <!--
         int getTotalRows(@Param("condition") Map<String, Object> condition);
     -->
-    <select id="getTotalRows" resultType="int">
-        SELECT
-            count(*) cnt
-        FROM
-            USERS
-    </select>
+        <select id="getTotalRows" resultType="int">
+            SELECT
+                count(*) cnt
+            FROM
+                USERS
+        </select>
     <!--
         List<User> getUsers(@Param("condition")Map<String, Object> condition);
     -->
     <select id="getUsers" resultType="store.seub2hu2.user.vo.User">
         select
-        *
+            *
         from (
-        select
-        user_no               as no
-        , user_id               as id
-        , user_name             as username
-        , password
-        , user_nickname         as nickname
-        , user_tel              as tel
-        , user_email            as email
-        , user_created_date     as createdDate
-        , user_type             as type
-        , provider              as provider
-        , ROW_NUMBER() OVER (ORDER BY user_no desc) as rn
-        from
-        USERS
-        <where>
-            <if test="condition.opt != null">
-                <choose>
-                    <when test="condition.opt == 'name'">
-                        user_name like CONCAT('%',#{condition.value},'%')
-                    </when>
-                    <when test="condition.opt == 'id'">
-                        user_id like CONCAT('%',#{condition.value},'%')
-                    </when>
-                    <when test="condition.opt == 'email'">
-                        user_email like CONCAT('%',#{condition.value},'%')
-                    </when>
-                </choose>
-            </if>
-        </where>
-        ) as subquery
+            select
+             user_no               as no
+            , user_id               as id
+            , user_name             as username
+            , password
+            , user_nickname         as nickname
+            , user_tel              as tel
+            , user_email            as email
+            , user_created_date     as createdDate
+            , user_type             as type
+            , provider              as provider
+            , ROW_NUMBER() OVER (ORDER BY user_no desc) as rn
+            from
+                USERS
+            <where>
+                <if test="condition.opt != null">
+                    <choose>
+                        <when test="condition.opt == 'name'">
+                             user_name like CONCAT('%',#{condition.value},'%')
+                        </when>
+                        <when test="condition.opt == 'id'">
+                             user_id like CONCAT('%',#{condition.value},'%')
+                        </when>
+                        <when test="condition.opt == 'email'">
+                             user_email like CONCAT('%',#{condition.value},'%')
+                        </when>
+                    </choose>
+                </if>
+            </where>
+            ) as subquery
         where
-        rn between #{condition.begin} and #{condition.end}
+            rn between #{condition.begin} and #{condition.end}
     </select>
 </mapper>

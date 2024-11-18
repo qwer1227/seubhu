@@ -22,4 +22,12 @@ public class Course {
     private int successCnt; // 성공 횟수
     private String filename; // 파일명
     private Region region; // 지역 번호
+
+    public String getOriginalFilename() {
+        if(filename == null) {
+            return null;
+        }
+        return filename.substring(13);
+
+    }
 }
