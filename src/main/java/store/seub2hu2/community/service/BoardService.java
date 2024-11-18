@@ -59,7 +59,7 @@ public class BoardService {
     }
 
     public Board getBoardDetail(int boardNo){
-        Board board = boardMapper.getBoardByNo(boardNo);
+        Board board = boardMapper.getBoardDetailByNo(boardNo);
         if(board == null){
             throw new CommunityException("존재하지 않는 게시글입니다.");
         }
@@ -70,7 +70,7 @@ public class BoardService {
     }
 
     public void updateBoard(ModifyBoardForm form){
-        Board savedBoard = boardMapper.getBoardByNo(form.getNo());
+        Board savedBoard = boardMapper.getBoardDetailByNo(form.getNo());
         savedBoard.setTitle(form.getTitle());
         savedBoard.setContent(form.getContent());
         savedBoard.setCatName(form.getCatName());
@@ -97,13 +97,13 @@ public class BoardService {
     }
 
     public void deleteBoard(int boardNo){
-        Board savedBoard = boardMapper.getBoardByNo(boardNo);
+        Board savedBoard = boardMapper.getBoardDetailByNo(boardNo);
         savedBoard.setIsDeleted("Y");
 
         boardMapper.updateBoard(savedBoard);
     }
 
     public Board getBoardByNo(int boardNo) {
-        return boardMapper.getBoardByNo(boardNo);
+        return boardMapper.getBoardDetailByNo(boardNo);
     }
 }

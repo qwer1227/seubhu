@@ -12,7 +12,7 @@ import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.Map;
 
-@Component
+@Component("communityFileDownloadView")
 public class FileDownloadView implements View {
 
     @Override
