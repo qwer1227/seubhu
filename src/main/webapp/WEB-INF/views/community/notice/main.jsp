@@ -39,16 +39,12 @@
         <col width="*%">
         <col width="10%">
         <col width="10%">
-        <col width="10%">
-        <col width="10%">
       </colgroup>
       <thead class="text-start">
       <tr>
         <th>번호</th>
         <th>분류</th>
         <th>제목</th>
-        <th>작성자</th>
-        <th>추천</th>
         <th>조회</th>
         <th>날짜</th>
       </tr>
@@ -60,8 +56,6 @@
         <td id="content-title">
           <a href="detail" style="text-decoration-line: none; color: black">재밌는이야기</a>
         </td>
-        <td>고길동</td>
-        <td>2345</td>
         <td>5</td>
         <td>2024-10-27</td>
       </tr>
