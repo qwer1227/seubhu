@@ -26,6 +26,10 @@ public interface AdminMapper {
 
     void insertRegion(@Param("region")Region region);
 
+    Region getRegions(@Param("region")Region region);
+
+    Region checkRegion(@Param("region")Region region);
+
     /*
      * 상품
      */

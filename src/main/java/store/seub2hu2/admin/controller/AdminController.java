@@ -28,8 +28,7 @@ import java.util.Map;
 @Slf4j
 public class AdminController {
 
-    @Value("${project.upload.path}")
-    private String saveDirectory;
+
 
     private final CourseService courseService;
 
@@ -49,44 +48,10 @@ public class AdminController {
     @PostMapping("/course-register-form")
     public String courseRegisterForm(CourseRegisterForm form) {
 
-        Course course = new Course();
-        course.setName(form.getName());
-        course.setTime(form.getTime());
-        course.setLevel(form.getLevel());
-        Double distance = form.getDistance();
-        if (distance == null) {
-            distance = 0.0; // 기본값 설정 (필요에 따라 변경)
-        }
-        course.setDistance(distance);
 
+        adminService.checkNewRegion(form);
 
-        Region region = new Region();
-
-        region.setSi(form.getRegion().getSi());
-        region.setGu(form.getRegion().getGu());
-        region.setDong(form.getRegion().getDong());
-
-        System.out.println("course: " + course);
-        System.out.println("region: " + region);
-
-        MultipartFile multipartFile = form.getImage();
-        if (!multipartFile.isEmpty()) {
-
-            String originalFilename = multipartFile.getOriginalFilename();
-            String filename= System.currentTimeMillis() + originalFilename;
-
-            FileUtils.saveMultipartFile(multipartFile, saveDirectory, filename);
-
-            course.setFilename(filename);
-        }
-        if(multipartFile.isEmpty()){
-            return "redirect:/admin/course-register-form";
-        }
-        adminService.addNewRegion(region);
-
-        adminService.addNewCourse(course);
-
-        return "redirect:/admin/courselist";
+        return "redirect:/admin/course";
     }
 
     /*코스 목록*/
@@ -122,17 +87,6 @@ public class AdminController {
         return user;
     }
 
-    @GetMapping("/user-form")
-    public String userForm() {
-
-        return "admin/user-form";
-    }
-
-    @GetMapping("/user-register-form")
-    public String userRegisterForm() {
-
-        return "admin/user-register-form";
-    }
 
     @GetMapping("/user")
     public String user(

@@ -14,7 +14,9 @@ public class CourseRegisterForm {
     private String Name;
     private int time;
     private Double distance;
-    private Region region = new Region();
     private int level;
     private MultipartFile image;
+    private String si;
+    private String gu;
+    private String dong;
 }

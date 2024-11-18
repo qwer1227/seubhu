@@ -56,7 +56,6 @@
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">회원</h6>
                 <a class="collapse-item" href="user">회원 전체</a>
-                <a class="collapse-item" href="user-register-form">회원 등록하기</a>
             </div>
         </div>
     </li>

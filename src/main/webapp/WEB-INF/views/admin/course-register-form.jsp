@@ -74,14 +74,14 @@
                 </div>
                   <div class="col-4">
                   <label class="form-label">시</label>
-                      <select class="form-control mb-3" name="region.si" >
+                      <select class="form-control mb-3" name="si" >
                           <option value="서울시" selected>서울시</option>
                           <option value="경기도">경기도</option>
                       </select>
                   </div>
                 <div class="col-4">
                   <label class="form-label">구</label>
-                  <select class="form-control mb-3" name="region.gu" >
+                  <select class="form-control mb-3" name="gu" >
                     <option value="강남구" selected>강남구</option>
                     <option value="강동구">강동구</option>
                     <option value="강북구">강북구</option>
@@ -111,7 +111,7 @@
                 </div>
                 <div class="col-4">
                   <label class="form-label">동</label>
-                  <input type="text" class="form-control" name="region.dong">
+                  <input type="text" class="form-control" name="dong">
                 </div>
                 <div class="col-4 mt-4" >
                   <div class="row">

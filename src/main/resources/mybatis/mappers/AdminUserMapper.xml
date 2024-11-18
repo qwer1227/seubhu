@@ -3,18 +3,21 @@
 
 <mapper namespace="store.seub2hu2.admin.mapper.AdminMapper">
 
+
     <!--
-        코스 등록폼에 들어갈 코스 시 / 구 / 동 조회
-        List<Region> getRegions(@Param("condition") Map<String, Object> condition);
+
+        List<Region> getRegions(@Param("region") Region region);
     -->
-    <select id="getRegions">
+    <select id="getRegions" resultType="store.seub2hu2.course.vo.Region">
         select
-            region_no
-            , region_si
-            , region_gu
-            , region_dong
+            REGION_NO       as no
+            , REGION_SI     as si
+            , REGION_GU     as gu
+            , REGION_DONG   as dong
         from
             COURSE_REGION
+        where
+            REGION_NO = (SELECT MAX(REGION_NO) FROM COURSE_REGION);
     </select>
 
     <!--
@@ -33,6 +36,7 @@
         <if test="course.filename != null">
         , course_filename
         </if>
+        , region_no
         )
         values
         (
@@ -41,10 +45,32 @@
         , #{course.distance}
         , #{course.level}
         <if test="course.filename != null">
-        , #{course.filename}
+            , #{course.filename}
         </if>
+        , #{course.region.no}
         )
     </insert>
+
+    <!--
+        void checkRegion(@Param("region")Region region);
+    -->
+    <select id="checkRegion" resultType="store.seub2hu2.course.vo.Region">
+        select
+            R.region_no as no
+            , R.region_si as si
+            , R.region_gu as gu
+            , R.region_dong as dong
+        from
+            COURSES C, COURSE_REGION R
+        where
+            C.REGION_NO = R.REGION_NO
+          and
+            R.REGION_SI = #{region.si}
+          and
+            R.REGION_GU = #{region.gu}
+          and
+            R.REGION_DONG = #{region.dong}
+    </select>
 
     <insert id="insertRegion" parameterType="store.seub2hu2.course.vo.Region">
         insert into COURSE_REGION
@@ -59,7 +85,13 @@
          , #{region.gu}
          , #{region.dong}
         )
+        <selectKey resultType="Long" keyProperty="no" keyColumn="region_no" order="AFTER">
+            select last_insert_id()
+        </selectKey>
     </insert>
+
+
+
     <!--
         User getUserByNo(@Param("no") int no);
     -->
