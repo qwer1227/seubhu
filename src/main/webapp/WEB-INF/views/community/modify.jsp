@@ -71,7 +71,7 @@
             <label class="form-label">첨부파일</label>
           </th>
           <td colspan="3">
-            <input type="file" class="form-control" name="filename"
+            <input type="file" class="form-control" name="upfile"
                    value="${board.uploadFile.originalName ? board.uploadFile.originalName : ""}"/>
           </td>
         </tr>

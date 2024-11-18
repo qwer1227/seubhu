@@ -204,7 +204,7 @@
         }
     }
     function deleteBoard(boardNo) {
-        let result = confirm("해당 댓글을 삭제하시겠습니까?");
+        let result = confirm("해당 게시글을 삭제하시겠습니까?");
         if (result){
             window.location.href = "delete?no=" + boardNo;
         }

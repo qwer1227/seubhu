@@ -11,7 +11,7 @@
     , board_title
     , board_content
     <if test="board.uploadFile != null">
-        , file_name
+      , file_name
     </if>
     <!--            <if test="board.hashtag != null">-->
     <!--                , is_hashtag-->
@@ -25,7 +25,7 @@
     , #{board.title}
     , #{board.content, jdbcType=VARCHAR}
     <if test="board.uploadFile != null">
-        , #{board.uploadFile.saveName}
+      , #{board.uploadFile.saveName}
     </if>
     <!--            <if test="board.hashtag != null">-->
     <!--                , 'Y'-->

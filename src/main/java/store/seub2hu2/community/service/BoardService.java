@@ -28,9 +28,6 @@ public class BoardService {
     @Autowired
     private BoardMapper boardMapper;
 
-    @Autowired
-    private BoardUploadMapper boardUploadMapper;
-
     @Value("${upload.directory.community}")
     private String saveDirectory;
 
@@ -80,7 +77,7 @@ public class BoardService {
 
         MultipartFile multipartFile = form.getUpfile();
 
-        if(!multipartFile.isEmpty()) {
+        if (multipartFile != null || !multipartFile.isEmpty()) {
             String originalFilename = multipartFile.getOriginalFilename();
             String filename = System.currentTimeMillis() + originalFilename;
             FileUtils.saveMultipartFile(multipartFile, saveDirectory, filename);

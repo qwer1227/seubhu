@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
-import store.seub2hu2.community.dto.BoardForm;
+import store.seub2hu2.community.dto.RegisterBoardForm;
 import store.seub2hu2.community.dto.ModifyBoardForm;
 import store.seub2hu2.community.service.BoardService;
 import store.seub2hu2.community.view.FileDownloadView;
@@ -26,7 +26,6 @@ import store.seub2hu2.util.ListDto;
 
 import java.io.File;
 import java.net.URLEncoder;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -105,7 +104,7 @@ public class BoardController {
 
     @PostMapping("/register")
 //    @PreAuthorize("isAuthenticated()")
-    public String register(BoardForm boardForm){
+    public String register(RegisterBoardForm boardForm){
 //                          , @AuthenticationPrincipal LoginUser loginUser) {
         // Board 객체를 생성하여 사용자가 입력한 제목과 내용을 저장한다.
         Board board = new Board();
@@ -143,22 +142,19 @@ public class BoardController {
         return "community/modify";
     }
 
-
     @PostMapping("/modify")
-    public String update(ModifyBoardForm form
-        ,@RequestParam(name = "upfile", required = false) MultipartFile multipartFile) {
+    public String update(ModifyBoardForm form) {
         boardService.updateBoard(form);
         return "redirect:detail?no=" + form.getNo();
     }
 
     @GetMapping("/delete")
-    public String delete(int boardNo) {
+    public String delete(@RequestParam("no") int boardNo) {
         ModifyBoardForm form = new ModifyBoardForm();
         form.setNo(boardNo);
         boardService.deleteBoard(boardNo);
-        return "/community/main";
+        return "redirect:main";
     }
-
 
     // 요청 URL : comm/filedown?no=xxx
     @GetMapping("/filedown")
