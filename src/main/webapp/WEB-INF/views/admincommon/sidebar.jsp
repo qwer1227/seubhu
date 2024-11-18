@@ -41,6 +41,7 @@
                 <h6 class="collapse-header">코스</h6>
                 <a class="collapse-item" href="course">코스 전체</a>
                 <a class="collapse-item" href="course-register-form">코스 등록하기</a>
+                <a class="collapse-item" href="course">코스 수정하기</a>
             </div>
         </div>
     </li>
@@ -56,6 +57,7 @@
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">회원</h6>
                 <a class="collapse-item" href="user">회원 전체</a>
+                <a class="collapse-item" href="blacklist">블랙리스트</a>
             </div>
         </div>
     </li>
@@ -97,14 +99,14 @@
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSix"
            aria-expanded="true" aria-controls="collapseSix">
             <i class="fas fa-fw fa-cog"></i>
-            <span>커뮤니티</span>
+            <span>레슨관리</span>
         </a>
         <div id="collapseSix" class="collapse" aria-labelledby="headingSix" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">커뮤니티</h6>
-                <a class="collapse-item" href="community">공지사항</a>
-                <a class="collapse-item" href="community">이벤트</a>
-                <a class="collapse-item" href="community">신고글 보기</a>
+                <h6 class="collapse-header">레슨</h6>
+                <a class="collapse-item" href="lesson">레슨 전체</a>
+                <a class="collapse-item" href="lesson">레슨 등록하기</a>
+                <a class="collapse-item" href="lesson">레슨 수정하기</a>
             </div>
         </div>
     </li>

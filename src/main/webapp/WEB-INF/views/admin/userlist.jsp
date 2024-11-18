@@ -87,12 +87,13 @@
                     <div class="border-bottom pt-4 pr-4 pl-4 bg-light">
                         <table class="table">
                             <colgroup>
-                                <col width="10%">
+                                <col width="7%">
                                 <col width="10%">
                                 <col width="13%">
                                 <col width="10%">
-                                <col width="*%">
-                                <col width="15%">
+                                <col width="20%">
+                                <col width="10%">
+                                <col width="10%">
                             </colgroup>
                             <thead>
                                 <tr>
@@ -102,7 +103,7 @@
                                     <th>닉네임</th>
                                     <th>이메일</th>
                                     <th>보기</th>
-                                    <th>수정</th>
+                                    <th>블랙현황</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -118,9 +119,9 @@
                                                     onclick="previewUser(${u.no})">미리보기</button>
                                         </td>
                                         <td>
-                                            <a href="user-form?user-no=${u.no}">
+                                            <a href="userblack?user_no=${u.no}">
                                                 <button class="btn btn-outline btn-danger btn-sm "
-                                                        >수정</button>
+                                                        >블랙</button>
                                             </a>
                                         </td>
                                     </tr>

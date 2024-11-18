@@ -40,6 +40,11 @@ public class AdminController {
         return "admin/home";
     }
 
+    @GetMapping("/lesson")
+    public String lesson() {
+        return "admin/lessonlist";
+    }
+
     @GetMapping("/course-register-form")
     public String courseRegisterForm() {
         return "admin/course-register-form";
@@ -87,6 +92,10 @@ public class AdminController {
         return user;
     }
 
+    @GetMapping("/blacklist")
+    public String blacklist() {
+        return "admin/blacklist";
+    }
 
     @GetMapping("/user")
     public String user(
