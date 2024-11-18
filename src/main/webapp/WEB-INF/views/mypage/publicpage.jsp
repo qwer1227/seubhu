@@ -81,20 +81,28 @@
     </div>
 
     <!-- Feed -->
-    <div class="container mt-4">
-        <div class="row row-cols-1 row-cols-md-3 g-4">
-            <!-- Feed Card Example (Repeat this for each feed) -->
+<div class="container mt-4">
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        <!-- Feed Card (반복문을 사용하여 각 게시글을 표시) -->
+        <c:forEach var="post" items="${posts}">
             <div class="col">
-                <div class="card feed" data-post-id="1" data-bs-toggle="modal" data-bs-target="#feedModal">
-                    <img src="data:image/png;base64,${post.thumbnail}" class="card-img-dtop" alt="Feed Image">
+                <div class="card feed" data-post-id="${post.no}" data-bs-toggle="modal" data-bs-target="#feedModal">
+                    <!-- 썸네일 이미지 -->
+                    <img src="${post.thumbnail}" class="card-img-top" alt="Feed Image">
                     <div class="card-body">
-                        <p class="card-text">테스트</p>
+                        <!-- 게시글 내용 (content) -->
+                        <p class="card-text">${post.postContent}</p>
+                        <!-- 게시글 작성자 -->
+                        <p class="text-muted">작성자: ${post.user.username}</p>
+                        <!-- 게시글 작성일 -->
+                        <p class="text-muted">${post.postCreatedDate}</p>
                     </div>
                 </div>
             </div>
-            <!-- More Cards can go here... -->
-        </div>
+        </c:forEach>
     </div>
+</div>
+
 
     <!-- 새 글 작성 모달 -->
     <div class="modal fade" id="newPostModal" tabindex="-1" aria-labelledby="newPostModalLabel" aria-hidden="true">
@@ -111,9 +119,9 @@
                         <label for="fileInput">이미지 파일:</label>
                         <input type="file" id="fileInput" name="files" accept="image/*" multiple required>
                         <div id="imagePreviewContainer" class="image-preview-container"></div> <!-- 이미지 미리보기 공간 -->
-                        <input type="hidden" id="postNoInput" name="postNo" value="123"> <!-- 임의의 POST_NO 값 -->
+                        <input type="hidden" id="postNoInput" name="postNo" value=""> <!-- 임의의 POST_NO 값 -->
+                        <input type="hidden" id="thumbnailIndex" name="thumbnailIndex" value="">
                         <input type="hidden" id="thumbnailImage" name="thumbnailImage" value=""> <!-- 썸네일 이미지 -->
-                        <button type="button" onclick="uploadImage()">업로드</button>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -124,42 +132,43 @@
         </div>
     </div>
 
-    <!-- Modal for Feed Detail -->
-    <div class="modal fade" id="feedModal" tabindex="-1" aria-labelledby="feedModalLabel" aria-hidden="true" data-post-id="${post.no}">
+    <!-- Feed Modal -->
+    <div class="modal fade" id="feedModal" tabindex="-1" aria-labelledby="feedModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="feedModalLabel">테스트</h5>
+                    <h5 class="modal-title" id="feedModalLabel">게시글 상세</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body d-flex">
-                    <!-- Left section: Image -->
-                    <div class="col-6">
-                        <img src="data:image/png;base64,${post.thumbnail}" class="card-img-top" alt="Feed Image">
+                    <!-- Left section: Image carousel -->
+                    <div id="carouselExample" class="carousel slide">
+                        <div class="carousel-inner">
+                            <!-- Carousel items will be dynamically added here -->
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
                     </div>
 
-                    <!-- Right section: User information, content, and comments -->
+                    <!-- Right section: User info, content, comments -->
                     <div class="col-6 ps-3">
-                        <!-- User info and content -->
                         <div>
-                            <div class="col d-flex justify-content-start align-items-start">
-                                <h5 class="m-0" ID="detailPostWriter">${post.user.username}</h5>
-                            </div>
+                            <h5 id="detailPostWriter">작성자</h5>
                             <hr>
-                            <p class="mt-3" id="detailPostContent">${post.postContent}</p>
-                            <p class="text-muted" id="detailCreatedDate">${post.postCreatedDate}</p>
-                            <div>
-                                <button class="btn btn-outline-primary">좋아요</button>
-                            </div>
+                            <p id="detailPostContent">내용</p>
+                            <p id="detailCreatedDate">작성일</p>
+                            <button class="btn btn-outline-primary">좋아요</button>
                         </div>
-
-                        <hr>
-
                         <!-- Comment input -->
                         <div class="mt-3">
                             <p><strong>친구1:</strong> 멋진 사진이네요!</p>
                             <p><strong>친구2:</strong> 저도 가보고 싶어요!</p>
-                            <!-- Additional comments can go here -->
                         </div>
 
                         <!-- Comments section -->
@@ -167,146 +176,134 @@
 
                         <div class="mt-3">
                             <input type="text" class="form-control" placeholder="댓글을 입력하세요...">
-                            <button class="btn btn-primary mt-2">댓글 등록</button>
+                            <button class="btn btn-primary mt-2">댓글</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <%@ include file="/WEB-INF/views/common/footer.jsp" %>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script>
-        // 게시글 클릭 시 AJAX로 데이터 가져오기
-        $('.feed').on('click', function() {
-            var postId = $(this).data("post-id");
-            $.ajax({
-                url: "/mypage/detail/" + postId,
-                method: "GET",
-                success: function(response) {
-                    // 서버에서 받은 게시글 정보를 모달에 표시
-                    $("#detailPostContent").text(response.postContent);
-                    $("#detailCreatedDate").text(response.postCreatedDate);
-                    $("#detailPostWriter").text(response.user.username);
-                    $('.card-img-top').attr('src', 'data:image/png;base64,' + response.thumbnail);
 
-                    // 모달을 표시
-                    $("#feedModal").show();
-                },
-                error: function() {
-                    alert("게시글 정보를 가져오는데 실패했습니다");
+<script>
+    // 게시글 클릭 시 AJAX로 데이터 가져오기
+    $('.feed').on('click', function() {
+        var postId = $(this).data("post-id");  // 클릭한 게시글의 ID 가져오기
+        $.ajax({
+            url: "/mypage/detail/" + postId,  // 서버로 AJAX 요청
+            method: "GET",
+            success: function(response) {
+                // 서버에서 받은 게시글 정보로 모달 내용 채우기
+                $("#detailPostContent").text(response.postContent);
+                $("#detailCreatedDate").text(response.postCreatedDate);
+                $("#detailPostWriter").text(response.user.username);
+
+                // 이미지 슬라이드 구성
+                var carouselContainer = $('#feedModal .carousel-inner');
+                carouselContainer.empty();  // 기존 이미지를 초기화
+
+                // 이미지를 carousel에 추가
+                if (response.images && response.images.length > 0) {
+                    response.images.forEach(function(image, index) {
+                        var activeClass = (index === 0) ? 'active' : '';  // 첫 번째 이미지를 active로 설정
+                        var imgElement = $('<div>', {
+                            class: 'carousel-item ' + activeClass
+                        }).append(
+                            $('<img>', {
+                                src: image.imageUrl,  // 이미지 URL
+                                class: 'd-block w-100',
+                                alt: 'Post Image ' + (index + 1)
+                            })
+                        );
+                        carouselContainer.append(imgElement);  // carousel-inner에 추가
+                    });
+                } else {
+                    carouselContainer.append('<p>이미지가 없습니다.</p>');  // 이미지가 없을 경우
                 }
-            });
-        });
 
-        // 이미지 미리보기 기능 및 썸네일 설정
-        $('#fileInput').on('change', function(event) {
-            const files = event.target.files;
-            const previewContainer = $('#imagePreviewContainer');
-            previewContainer.empty();  // 미리보기 영역 초기화
-
-            if (files.length <= 5) {
-                for (const file of files) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const img = $('<img>');
-                        img.attr('src', e.target.result);
-
-                        // base64 데이터를 기반으로 파일명 생성 (기존의 currentMillis를 대체)
-                        const base64Data = e.target.result;
-                        const newFileName = base64Data.split(',')[0].replace('data:image/', '').replace(';base64', '');  // base64 데이터에서 확장자 포함한 파일명 생성
-
-                        // Base64 데이터와 새 파일명을 함께 처리
-                        const slicedBase64Data = sliceBase64(base64Data);
-
-                        img.on('click', function() {
-                            $('#imagePreviewContainer img').removeClass('selected');  // 다른 이미지 선택 해제
-                            img.addClass('selected');  // 클릭한 이미지를 선택 상태로 변경
-                            $('#thumbnailImage').val(slicedBase64Data);  // 선택된 이미지를 썸네일로 설정
-                            $('#thumbnailImage').data('file-name', newFileName);  // 새로운 파일명을 숨은 필드에 저장
-                        });
-
-                        previewContainer.append(img);
-                    };
-                    reader.readAsDataURL(file);
-                }
-            } else {
-                alert("최대 5개의 이미지만 업로드할 수 있습니다.");
+                // 모달을 표시
+                $("#feedModal").show();
+            },
+            error: function() {
+                alert("게시글 정보를 가져오는데 실패했습니다.");
             }
         });
-
-        // base64 문자열 슬라이싱 함수
-        function sliceBase64(base64Data) {
-            const prefix = base64Data.slice(0, 22);  // data:image/jpeg;base64, 부분
-            const slicedData = base64Data.slice(22);  // 실제 이미지 데이터 부분만 슬라이싱
-            return prefix + slicedData;  // 슬라이싱된 base64 문자열 반환
-        }
+    });
 
 
-        function insertPost(){
-            const formData = new FormData(document.getElementById('uploadForm'));
+    // 이미지 선택 시 미리보기 및 썸네일 설정
+    document.getElementById('fileInput').addEventListener('change', function (e) {
+        let files = e.target.files;
+        let previewContainer = document.getElementById('imagePreviewContainer');
+        previewContainer.innerHTML = ""; // 기존 미리보기 이미지 제거
 
-            $.ajax({
-                url: '/mypage/public/insert',  // 백엔드 업로드 엔드포인트
-                type: 'POST',
-                data: formData,
-                processData: false,       // 파일 전송 시 필수 설정
-                contentType: false,       // 파일 전송 시 필수 설정
-                success: function(response) {
-                    alert("업로드 성공: " + response);
-                    closeModal();
-                },
-                error: function(xhr, status, error) {
-                    alert("업로드 실패: " + xhr.responseText);
-                }
+        Array.from(files).forEach((file, index) => {
+            let reader = new FileReader();
+            reader.onload = function (event) {
+                let img = document.createElement('img');
+                img.src = event.target.result;
+                img.setAttribute('data-index', index); // 고유한 data-index 추가
+                img.onclick = function() {
+                    selectImageAsThumbnail(img);
+                };
+                previewContainer.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        });
+    });
+
+    function selectImageAsThumbnail(imageElement) {
+        // 선택된 이미지의 data-index 값 가져오기
+        let selectedIndex = imageElement.getAttribute('data-index');
+
+        // 모든 이미지에서 선택된 이미지를 찾고 스타일 적용
+        document.querySelectorAll('.image-preview-container img').forEach(img => {
+            img.classList.remove('selected'); // 모든 이미지에서 'selected' 클래스 제거
+        });
+
+        // 클릭된 이미지에 'selected' 클래스 추가
+        imageElement.classList.add('selected');
+
+        // 선택된 이미지의 src를 썸네일로 저장
+        document.getElementById('thumbnailImage').value = imageElement.src;
+    }
+
+    // 게시글 작성
+    function insertPost() {
+        let postContent = $('#postContent').val();
+        let thumbnailImage = $('#thumbnailImage').val();  // 썸네일 이미지
+        let thumbnailIndex = $('#thumbnailIndex').val(); // 선택된 썸네일의 index
+        let formData = new FormData();
+        formData.append('content', postContent);
+        formData.append('thumbnailImage', thumbnailImage);
+
+        // 이미지 파일 전송
+        let files = $('#fileInput')[0].files;
+        if (files.length > 0) {
+            Array.from(files).forEach(file => {
+                formData.append('files', file);
             });
         }
 
-        // 이미지 업로드 함수
-        function uploadImage() {
-            const form = document.getElementById('uploadForm');
-            const formData = new FormData(form);
-            const files = form.querySelector('#fileInput').files;
-
-            // 각 파일에 대해 base64 데이터와 파일 이름 설정
-            if (files.length > 0) {
-                for (let i = 0; i < files.length; i++) {
-                    const file = files[i];
-                    const reader = new FileReader();
-
-                    reader.onload = function(e) {
-                        // base64 데이터 가져오기
-                        const base64Data = e.target.result;
-                        const fileName = base64Data.split(',')[0].replace('data:image/', '').replace(';base64', ''); // 파일 이름 설정 (확장자 포함)
-
-                        // base64 데이터를 'fileNames[]' 필드로 추가
-                        formData.append('fileNames[]', fileName);  // 파일 이름을 별도의 필드로 추가
-                        formData.set('files', file, fileName);  // 파일의 이름을 base64 데이터로 설정
-                    };
-
-                    reader.readAsDataURL(file); // 파일을 base64로 읽어들임
-                }
+        $.ajax({
+            url: '/mypage/public/insert', // 게시글 생성 엔드포인트
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                alert("게시글이 성공적으로 작성되었습니다!");
+                location.reload();
+            },
+            error: function() {
+                alert("게시글 작성 실패.");
             }
+        });
+    }
 
-            // AJAX로 파일 데이터와 파일 이름 전송
-            $.ajax({
-                url: '/mypage/public/upload',  // 백엔드 업로드 엔드포인트
-                type: 'POST',
-                data: formData,
-                processData: false,       // 파일 전송 시 필수 설정
-                contentType: false,       // 파일 전송 시 필수 설정
-                success: function(response) {
-                    alert("업로드 성공: " + response);
-                    closeModal();
-                },
-                error: function(xhr, status, error) {
-                    alert("업로드 실패: " + xhr.responseText);
-                }
-            });
-        }
+</script>
 
-    </script>
 </body>
 </html>
