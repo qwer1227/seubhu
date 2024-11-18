@@ -19,7 +19,10 @@
     <link
             href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
             rel="stylesheet">
-
+    <!-- Bootstrap CSS 링크 예시 페이지네이션-->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <!-- 모달창 x표시(아이콘 같은) 보임 대신 select option 화살표 표시 안보이고 courselist radio버튼 문제 생김-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom styles for this template-->
     <link href="${pageContext.request.contextPath}/resources/css/sb-admin-2.min.css" rel="stylesheet">
 
@@ -86,7 +89,7 @@
                             <colgroup>
                                 <col width="10%">
                                 <col width="10%">
-                                <col width="10%">
+                                <col width="13%">
                                 <col width="10%">
                                 <col width="*%">
                                 <col width="15%">
@@ -115,8 +118,10 @@
                                                     onclick="previewUser(${u.no})">미리보기</button>
                                         </td>
                                         <td>
-                                            <button class="btn btn-outline btn-danger btn-sm "
-                                                    href="">수정</button>
+                                            <a href="user-form?user-no=${u.no}">
+                                                <button class="btn btn-outline btn-danger btn-sm "
+                                                        >수정</button>
+                                            </a>
                                         </td>
                                     </tr>
                                 </c:forEach>
@@ -219,6 +224,11 @@
     const pageInput = document.querySelector("input[name=page]");
     const myModal = new bootstrap.Modal('#modal-preview-user');
 
+    async function userForm(userNo) {
+        let response = await fetch("/admin/user/form?no=" + userNo);
+        let data = await response.json();
+    }
+
      async function previewUser(userNo) {
          let response = await fetch("/admin/user/preview?no=" + userNo);
          let data = await response.json();
@@ -233,10 +243,6 @@
 
          myModal.show();
      }
-    function changeSort() {
-        pageInput.value = 1;
-        form.submit();
-    }
 
     // 한 화면에 표시할 행의 갯수가 변경될 때
     function changeRows() {

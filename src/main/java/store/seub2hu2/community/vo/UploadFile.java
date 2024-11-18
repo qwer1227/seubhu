@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -14,6 +16,8 @@ public class UploadFile {
     private Board board;
     private String originalName;
     private String saveName;
-    private String path;
-    private String type;
+    private String savePath;
+    private String isDeleted;
+    private Date createdDate;
+    private Date updatedDate;
 }

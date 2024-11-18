@@ -24,6 +24,6 @@ public class Reply {
     private Date updatedDate;
     private User user;
     private String isReport;
-    private int like;
+    private int replyLike;
     private String isDeleted;
 }

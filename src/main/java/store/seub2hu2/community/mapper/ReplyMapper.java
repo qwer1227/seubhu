@@ -8,8 +8,10 @@ import store.seub2hu2.community.vo.Reply;
 import java.util.List;
 
 @Mapper
-public class ReplyMapper {
+public interface ReplyMapper {
 
-//    void insertReply(@Param("reply") Board board);
-//    List<Reply> getRepliesByBoardNo(@Param("boardNo") int boardNo);
+    void insertReply(@Param("reply") Reply reply);
+    void insertComment(@Param("reply") Reply reply);
+    List<Reply> getRepliesByBoardNo(@Param("boardNo") int boardNo);
+    void deleteReplyByNo(@Param("replyNo") int replyNo);
 }

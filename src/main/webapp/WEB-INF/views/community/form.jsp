@@ -21,8 +21,7 @@
   <h2> 커뮤니티 글 작성 </h2>
   
   <div class="row p-3 m-3">
-    <!-- db에 해당 board.no가 있으면 update(), 없으면 register() 실행 -->
-    <form:form id="form-register" action="${board.no != null ? 'update' : 'register'}" method="post" enctype="multipart/form-data">
+    <form:form id="form-register" action="register" method="post" enctype="multipart/form-data">
       <table id="community-table" style="width: 98%">
         <colgroup>
           <col width="10%">
@@ -82,13 +81,8 @@
             <button type="button" class="btn btn-secondary m-1" onclick="abort()">취소</button>
           </div>
           <div class="col d-flex justify-content-end">
-            <button type="button" class="btn btn-outline-primary m-1" onclick="keepContent()"
-              ${board.no != null ? 'disabled' : ''}>
-              보관
-            </button>
-            <button type="submit" class="btn btn-primary m-1" onclick="submitContent()">
-              ${board.no != null ? '수정' : '등록'}
-            </button>
+            <button type="button" class="btn btn-outline-primary m-1" onclick="keepContent()">보관</button>
+            <button type="submit" class="btn btn-primary m-1" onclick="submitContent()">등록</button>
           </div>
         </div>
       </div>

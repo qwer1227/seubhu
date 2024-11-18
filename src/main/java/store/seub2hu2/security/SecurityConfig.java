@@ -9,6 +9,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import store.seub2hu2.security.CustomAccessDeniedHandler;
+import store.seub2hu2.security.CustomAuthenticationEntryPoint;
 
 @Configuration
 @EnableWebSecurity
@@ -21,28 +23,30 @@ public class SecurityConfig {
     @Autowired
     private CustomAccessDeniedHandler customAccessDeniedHandler;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
+    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                // CSRF 비활성화 (JWT 토큰 사용 시 불필요)
                 .csrf(csrf -> csrf.disable())
-                // 요청별 접근 인가 설정
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll())
-
-                // JWT 인증 실패 및 접근 거부 처리
+                        .anyRequest().permitAll()) // 모든 요청 허용
+                .formLogin(formLogin -> formLogin
+                        .loginPage("/login")
+                        .usernameParameter("id")
+                        .passwordParameter("password")
+                        .loginProcessingUrl("/login")
+                        .defaultSuccessUrl("/main")
+                        .failureUrl("/login?error=fail"))
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/main")
+                        .invalidateHttpSession(true))
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint(customAuthenticationEntryPoint)
                         .accessDeniedHandler(customAccessDeniedHandler));
         return http.build();
-    }
-
-
-    // 비밀번호를 암호화하는 PasswordEncoder 빈 등록
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 }
 

@@ -1,6 +1,10 @@
 <%@ page pageEncoding="UTF-8"%>
+<head>
+  <script src="https://kit.fontawesome.com/dc49441f6a.js" crossorigin="anonymous"></script>
+</head>
 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-
+  <div><img id="weatherIcon" alt="현재 날씨 아이콘"></div>
+  <div id="area"></div>
   <!-- Sidebar Toggle (Topbar) -->
   <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
     <i class="fa fa-bars"></i>
@@ -67,3 +71,6 @@
   </ul>
 
 </nav>
+<script>
+  <%@include file="/WEB-INF/views/admincommon/weather.jsp" %>
+</script>

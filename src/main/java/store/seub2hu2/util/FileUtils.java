@@ -1,9 +1,10 @@
 package store.seub2hu2.util;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.File;
 import java.io.IOException;
+
+import org.springframework.web.multipart.MultipartFile;
+
 
 public class FileUtils {
 
@@ -15,7 +16,7 @@ public class FileUtils {
      */
     public static String saveMultipartFile(
             MultipartFile multipartFile,
-            String directory) throws IOException{
+            String directory) {
         String filename = multipartFile.getOriginalFilename();
         saveMultipartFile(multipartFile, directory, filename);
 
@@ -23,20 +24,20 @@ public class FileUtils {
     }
 
     /**
-     * 첨부파일, 디렉토리 경로, 저장할 파일명을 전달받아서 파일에 저장한다.
-     * @param multipartFile   첨부파일
-     * @param directory   디렉토리
-     * @param filename   파일명
+     * 첨부파일, 디렉토리 경로, 저장할 파일명을 전달받아서 파일을 저장한다.
+     * @param multipartFile 첨부파일
+     * @param directory 디렉토리
+     * @param filename 파일명
      */
     public static void saveMultipartFile(
             MultipartFile multipartFile,
             String directory,
-            String filename) throws IOException{
+            String filename) {
         try {
             File dest = new File(new File(directory), filename);
             multipartFile.transferTo(dest);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            throw new RuntimeException("첨부파일 저장에 실패하였습니다.");
         }
     }
 }
