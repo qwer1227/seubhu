@@ -15,6 +15,7 @@ import store.seub2hu2.util.ListDto;
 
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -36,7 +37,7 @@ public class ProductController {
     @GetMapping("/list")
     public String list(Model model) {
 
-        ProdListDto products = productService.getProducts();
+        List<ProdListDto> products = productService.getProducts();
         model.addAttribute("products", products);
         return "product/list";
     }

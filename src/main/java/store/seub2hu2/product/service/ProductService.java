@@ -20,9 +20,9 @@ public class ProductService {
     @Autowired
     ProductMapper productMapper;
 
-    public ProdListDto getProducts() {
+    public List<ProdListDto> getProducts() {
 
-        ProdListDto products = productMapper.getProducts();
+        List<ProdListDto> products = productMapper.getProducts();
 
         return products;
     }
