@@ -43,21 +43,21 @@
             <!-- 아이디 -->
             <div class="form-group mb-3">
                 <div class="input-group has-validation">
-                    <form:input type="text" class="form-control" placeholder="아이디*" path="username" required="required"
-                                id="user-username" onblur="checkUsername()"/>
-                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="checkUsername()">중복확인
+                    <form:input type="text" class="form-control" placeholder="아이디*" path="id" required="required"
+                                id="user-id" onblur="checkid()"/>
+                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="checkid()">중복확인
                     </button>
                     <div class="invalid-feedback">아이디는 영문 소문자와 숫자만 사용할 수 있으며 4~16자로 입력해 주세요.</div>
                     <div class="valid-feedback">사용 가능한 아이디입니다!</div>
                 </div>
-                <form:errors path="username" cssClass="text-danger fst-italic"/>
+                <form:errors path="id" cssClass="text-danger fst-italic"/>
             </div>
 
             <!-- 비밀번호 -->
             <div class="form-group mb-3">
                 <form:password class="form-control" placeholder="비밀번호*" path="password" required="required"
                                id="user-password" onblur="checkPassword()"/>
-                <div class="invalid-feedback">비밀번호는 10~16자로 영문, 숫자, 특수문자 중 2가지 이상을 포함해 주세요.</div>
+                <div class="invalid-feedback">비밀번호는 6글자 이상이어야 합니다.</div>
                 <div class="valid-feedback">비밀번호가 유효합니다.</div>
                 <form:errors path="password" cssClass="text-danger fst-italic"/>
             </div>
@@ -123,7 +123,7 @@
 <!-- 이메일 -->
 <div class="form-group mb-3">
     <div class="input-group has-validation">
-        <form:input type="text" class="form-control" id="user-email" placeholder="이메일(example@domain.com)*" path="email"
+        <form:input type="text" class="form-control" id="user-email" placeholder="이메일(example@domain.com)*" path="email" onblur="checkEmail()"
                     required="required" />
         <button onclick="checkEmail()" type="button" class="btn btn-outline-primary btn-sm">중복확인</button>
         <div class="invalid-feedback">이메일 형식이 올바르지 않거나 이미 사용 중입니다.</div>
@@ -166,168 +166,157 @@
 </footer>
 
 <script type="text/javascript">
-    // 상태 플래그
-    let isUsernameChecked = false;
-    let isUsernameAvailable = false;
-    let isPasswordValid = false;
-    let isPasswordConfirmed = false;
-    let isEmailChecked = false;
-    let isEmailPassed = false;
-    let isNicknameChecked = false;
-    let isNicknameAvailable = false;
+        // 상태 플래그
+        let isidChecked = false;
+        let isidAvailable = false;
+        let isPasswordValid = false;
+        let isPasswordConfirmed = false;
+        let isEmailChecked = false;
+        let isEmailPassed = false;
+        let isNicknameChecked = false;
+        let isNicknameAvailable = false;
 
-
-    // 아이디 유효성 검사
-    function checkUsername() {
-        let usernameInput = document.querySelector("#user-username");
-        let username = usernameInput.value;
+        // 아이디 유효성 검사
+        function checkid() {
+        let idInput = document.querySelector("#user-id");
+        let id = idInput.value;
 
         // 아이디 유효성 검사: 공백, 특수문자, 길이 체크
-        if (/\s/.test(username) || /[^a-z0-9]/.test(username) || username.length < 4 || username.length > 16) {
-            usernameInput.classList.add("is-invalid");
-            usernameInput.classList.remove("is-valid");
-            isUsernameAvailable = false;
-            isUsernameChecked = false;
-            return;
-        }
+        if (/\s/.test(id) || /[^a-z0-9]/.test(id) || id.length < 4 || id.length > 16) {
+        idInput.classList.add("is-invalid");
+        idInput.classList.remove("is-valid");
+        return;
+    }
 
         // 아이디 중복 검사 (서버와 통신)
-        fetch(`/ajax/check-username?username=${username}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.exists) {
-                    alert("이미 사용 중인 아이디입니다.");
-                    isUsernameAvailable = false;
-                } else {
-                    alert("사용 가능한 아이디입니다.");
-                    isUsernameAvailable = true;
-                }
-
-                // 유효한 아이디일 경우 스타일 적용
-                usernameInput.classList.add(isUsernameAvailable ? "is-valid" : "is-invalid");
-                usernameInput.classList.remove(isUsernameAvailable ? "is-invalid" : "is-valid");
-                isUsernameChecked = true;
-            });
+        fetch(`/ajax/check-id?id=${id}`)
+        .then(response => response.json())
+        .then(data => {
+        if (data.exists) {
+        idInput.classList.add("is-invalid");
+        idInput.classList.remove("is-valid");
+        idInput.nextElementSibling.textContent = "이미 사용 중인 아이디입니다.";
+        isidAvailable = false;
+    } else {
+        idInput.classList.add("is-valid");
+        idInput.classList.remove("is-invalid");
+        isidAvailable = true;
+    }
+        isidChecked = true;
+    });
     }
 
-    // 비밀번호 유효성 검사
-    function checkPassword() {
-        let password = document.querySelector("#user-password").value;
+        // 비밀번호 유효성 검사
+        function checkPassword() {
+        let passwordInput = document.querySelector("#user-password");
+        let password = passwordInput.value;
 
-        // 비밀번호 길이 체크
-        if (password.length < 10 || password.length > 16) {
-            alert("비밀번호는 10~16자로 입력해 주세요.");
-            isPasswordValid = false;
-            return;
-        }
-
-        // 비밀번호 조합 체크 (영문, 숫자, 특수문자 중 2가지 이상)
-        if (!/(?=.*[a-zA-Z])(?=.*[0-9])|(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9])|(?=.*[0-9])(?=.*[^a-zA-Z0-9])/.test(password)) {
-            alert("비밀번호는 영문/특수문자/숫자 중 2가지 이상으로 조합해 주세요.");
-            isPasswordValid = false;
-            return;
-        }
-
+        // 비밀번호 길이와 조합 체크
+        if (
+        password.length < 10 ||
+        password.length > 16 ||
+        !/(?=.*[a-zA-Z])(?=.*[0-9])|(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9])|(?=.*[0-9])(?=.*[^a-zA-Z0-9])/.test(password)
+        ) {
+        passwordInput.classList.add("is-invalid");
+        passwordInput.classList.remove("is-valid");
+        passwordInput.nextElementSibling.textContent = "비밀번호는 10~16자로 영문/숫자/특수문자 중 2가지 이상으로 조합해 주세요.";
+        isPasswordValid = false;
+    } else {
+        passwordInput.classList.add("is-valid");
+        passwordInput.classList.remove("is-invalid");
         isPasswordValid = true;
     }
-
-    // 비밀번호 확인 유효성 검사
-    function checkPasswordConfirm() {
-        let password = document.querySelector("#user-password").value;
-        let passwordConfirm = document.querySelector("#password-confirm").value;
-
-        if (password !== passwordConfirm) {
-            alert("비밀번호가 일치하지 않습니다.");
-            isPasswordConfirmed = false;
-        } else {
-            isPasswordConfirmed = true;
-        }
     }
 
-    // 이메일 유효성 검사 함수
-    function isValidEmail(email) {
+        // 비밀번호 확인 유효성 검사
+        function checkPasswordConfirm() {
+        let password = document.querySelector("#user-password").value;
+        let passwordConfirmInput = document.querySelector("#password-confirm");
+        let passwordConfirm = passwordConfirmInput.value;
+
+        if (password !== passwordConfirm) {
+        passwordConfirmInput.classList.add("is-invalid");
+        passwordConfirmInput.classList.remove("is-valid");
+        passwordConfirmInput.nextElementSibling.textContent = "비밀번호가 일치하지 않습니다.";
+        isPasswordConfirmed = false;
+    } else {
+        passwordConfirmInput.classList.add("is-valid");
+        passwordConfirmInput.classList.remove("is-invalid");
+        passwordConfirmInput.nextElementSibling.textContent = "비밀번호가 일치합니다!";
+        isPasswordConfirmed = true;
+    }
+    }
+
+        // 이메일 유효성 검사
+        function isValidEmail(email) {
         const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         return emailPattern.test(email);
     }
 
-    // 이메일 중복 체크 함수
-    async function checkEmail() {
-        const emailInput = document.querySelector("#user-email");
-        const email = emailInput.value;
+        function checkEmail() {
+        let emailInput = document.querySelector("#user-email");
+        let email = emailInput.value;
 
         // 이메일 형식 검사
         if (!isValidEmail(email)) {
-            alert("이메일 형식이 올바르지 않습니다.");
-            emailInput.classList.add("is-invalid");
-            emailInput.classList.remove("is-valid");
-            return;
-        }
-        // 이메일 형식이 올바를 경우
-        emailInput.classList.remove("is-invalid");
-
-        // 이메일 중복 체크 API 호출
-        const response = await fetch(`/ajax/check-email?email=${email}`);
-        if (response.ok) {
-            const result = await response.json();
-
-            if (result.data === 'none') {
-                alert("사용 가능한 이메일입니다.");
-                emailInput.classList.add("is-valid");
-                emailInput.classList.remove("is-invalid");
-                isEmailPassed = true;
-            } else {
-                alert("이미 사용중인 이메일입니다.");
-                emailInput.classList.add("is-invalid");
-                emailInput.classList.remove("is-valid");
-                isEmailPassed = false;
-            }
-        }
+        emailInput.classList.add("is-invalid");
+        emailInput.classList.remove("is-valid");
+        return;
     }
 
+        // 이메일 중복 체크
+        fetch(`/ajax/check-email?email=${email}`)
+        .then(response => response.json())
+        .then(data => {
+        if (data.exists) {
+        emailInput.classList.add("is-invalid");
+        emailInput.classList.remove("is-valid");
+        emailInput.nextElementSibling.textContent = "이미 사용 중인 이메일입니다.";
+        isEmailPassed = false;
+    } else {
+        emailInput.classList.add("is-valid");
+        emailInput.classList.remove("is-invalid");
+        isEmailPassed = true;
+    }
+        isEmailChecked = true;
+    });
+    }
 
+        // 닉네임 유효성 검사
+        function checkNickname() {
+        let nicknameInput = document.querySelector("#user-nickname");
+        let nickname = nicknameInput.value;
 
-    // 닉네임 유효성 검사 및 중복 체크
-    function checkNickname() {
-        let nickname = document.querySelector("#user-nickname").value;
+        if (!nickname) {
+        nicknameInput.classList.add("is-invalid");
+        nicknameInput.classList.remove("is-valid");
+        isNicknameAvailable = false;
+        return;
+    }
 
-        // 닉네임이 빈 문자열일 경우
-        if (nickname === "") {
-            document.querySelector("#nickname-error").textContent = "닉네임을 입력해주세요.";
-            document.querySelector("#user-nickname").classList.add("is-invalid");
-            document.querySelector("#user-nickname").classList.remove("is-valid");
-            isNicknameAvailable = false;
-            return;
-        } else {
-            // 닉네임이 공백이 아니면 is-invalid 클래스 제거
-            document.querySelector("#user-nickname").textContent = "";
-            document.querySelector("#user-nickname").classList.remove("is-invalid");
-        }
-
-        // 닉네임 중복 체크 API 호출
+        // 닉네임 중복 체크
         fetch(`/ajax/check-nickname?nickname=${nickname}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.exists) {
-                    document.querySelector("#nickname-error").textContent = "이미 사용 중인 닉네임입니다.";
-                    document.querySelector("#user-nickname").classList.add("is-invalid");
-                    document.querySelector("#user-nickname").classList.remove("is-valid");
-                    isNicknameAvailable = false;
-                } else {
-                    document.querySelector("#user-nickname").textContent = "";
-                    document.querySelector("#user-nickname").classList.add("is-valid");
-                    document.querySelector("#user-nickname").classList.remove("is-invalid");
-                    isNicknameAvailable = true;
-                }
-
-                isNicknameChecked = true;
-            });
+        .then(response => response.json())
+        .then(data => {
+        if (data.exists) {
+        nicknameInput.classList.add("is-invalid");
+        nicknameInput.classList.remove("is-valid");
+        nicknameInput.nextElementSibling.textContent = "이미 사용 중인 닉네임입니다.";
+        isNicknameAvailable = false;
+    } else {
+        nicknameInput.classList.add("is-valid");
+        nicknameInput.classList.remove("is-invalid");
+        isNicknameAvailable = true;
+    }
+        isNicknameChecked = true;
+    });
     }
 
 
     // 폼 제출 시 유효성 검사
     async function formSubmit() {
         // 모든 유효성 검사 호출
-        checkUsername();
+        checkid();
         checkPassword();
         checkPasswordConfirm();
         checkEmail();

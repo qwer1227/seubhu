@@ -15,22 +15,20 @@ import lombok.ToString;
 @ToString
 public class UserJoinForm {
 
+    @NotBlank(message = "아이디는 필수입력값입니다.")
+    private String id;
+
+    @NotBlank(message = "비밀번호는 필수입력값입니다.")
+    private String password;
+
+    @NotBlank(message = "비밀번호확인은 필수입력값입니다.")
+    private String passwordConfirm;
+
     @NotBlank(message = "이메일은 필수입력값입니다.")
     @Email(message = "유효한 이메일 형식이 아닙니다.")
     private String email;
 
-    @NotBlank(message = "비밀번호는 필수입력값입니다.")
-    @Size(min = 6, message = "비밀번호는 6글자 이상이어야 합니다.")
-    private String password;
-
-    @NotBlank(message = "비밀번호확인는 필수입력값입니다.")
-    @Size(min = 6, message = "비밀번호는 6글자 이상이어야 합니다.")
-    private String passwordConfirm;
-
-    @NotBlank(message = "이름은 필수입력값입니다.")
-    private String username;
-
-    @Pattern(regexp = "^[가-힣]+$", message = "닉네임은 한글 한글자 이상이어야 합니다.")
+    @Pattern(regexp = "^[가-힣a-z0-9]{2,}$", message = "닉네임은 한글, 영소문자, 숫자 조합으로 2글자 이상이어야 합니다.")
     private String nickname;
 
     @Pattern(regexp = "^\\d{2,3}-\\d{3,4}-\\d{4}$", message = "유효한 전화번호 형식이 아닙니다.")
