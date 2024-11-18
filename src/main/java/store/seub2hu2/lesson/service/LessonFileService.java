@@ -10,6 +10,7 @@ import store.seub2hu2.lesson.mapper.LessonMapper;
 import store.seub2hu2.lesson.vo.LessonFile;
 import store.seub2hu2.util.FileUtils;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,24 +26,31 @@ public class LessonFileService {
     private final LessonMapper lessonMapper;
     private final LessonFileMapper lessonFileMapper;
 
-    public void saveLessonImages(Integer lessonNo, MultipartFile thumbnail, MultipartFile mainImage) {
+    public void saveLessonImages(Integer lessonNo, MultipartFile thumbnail, MultipartFile mainImage)  {
         System.out.println("saveLessonImages lessonNo: " + lessonNo);
 
-        if (thumbnail != null && !thumbnail.isEmpty()) {
-            String thumbnailFileName = FileUtils.saveMultipartFile(thumbnail, saveDirectory);
-            LessonFile thumbnailFile = new LessonFile(
-                    lessonNo, thumbnailFileName, "THUMBNAIL", saveDirectory
-            );
-            lessonFileMapper.insertLessonFile(thumbnailFile);
+        try {
+            if (thumbnail != null && !thumbnail.isEmpty()) {
+                String thumbnailFileName = FileUtils.saveMultipartFile(thumbnail, saveDirectory);
+                LessonFile thumbnailFile = new LessonFile(
+                        lessonNo, thumbnailFileName, "THUMBNAIL", saveDirectory
+                );
+                lessonFileMapper.insertLessonFile(thumbnailFile);
+            }
+
+            if (mainImage != null && !mainImage.isEmpty()) {
+                String mainImageFileName = FileUtils.saveMultipartFile(mainImage, saveDirectory);
+                LessonFile mainImageFile = new LessonFile(
+                        lessonNo, mainImageFileName, "MAIN_IMAGE", saveDirectory
+                );
+                lessonFileMapper.insertLessonFile(mainImageFile);
+            }
+        } catch (IOException e) {
+            log.info("파일 저장 에러 발생 = {}", e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
 
-        if (mainImage != null && !mainImage.isEmpty()) {
-            String mainImageFileName = FileUtils.saveMultipartFile(mainImage, saveDirectory);
-            LessonFile mainImageFile = new LessonFile(
-                    lessonNo, mainImageFileName, "MAIN_IMAGE", saveDirectory
-            );
-            lessonFileMapper.insertLessonFile(mainImageFile);
-        }
+
     }
 
 //    public Map<String, LessonFile> findLessonImagesByLessonNo(Integer lessonNo) {

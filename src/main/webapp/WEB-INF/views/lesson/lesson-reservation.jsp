@@ -48,7 +48,7 @@
             </select>
             <select name="lessonStatus">
                 <option>모두</option>
-                <option>모집</option>
+                <option>예약</option>
                 <option>수료</option>
                 <option>취소</option>
             </select>
@@ -82,6 +82,7 @@
                 <col width="15%">
                 <col width="15%">
                 <col width="15%">
+                <col width="15%">
             </colgroup>
             <tr>
                 <th>번호</th>
@@ -89,14 +90,16 @@
                 <th>강사명</th>
                 <th>가격</th>
                 <th>상태</th>
+                <th>예약날짜</th>
             </tr>
             <c:forEach var="reservation" items="${lessons}" varStatus="loop">
                 <tr>
                     <td>${reservation.no}</td>
                     <td><a href="/lesson/detail?lessonNo=${reservation.lesson.lessonNo}" style="text-decoration:none">${reservation.lesson.title}</a></td>
                     <td>${reservation.lesson.lecturer.username}</td>
-                    <td>${reservation.lesson.price}</td>
+                    <td><fmt:formatNumber value="${reservation.lesson.price}" pattern="#,###" /></td>
                     <td>${reservation.lesson.status}</td>
+                    <td><fmt:formatDate value="${reservation.reservationCreatedDate}" pattern="yyyy-MM-dd" /></td>
                 </tr>
             </c:forEach>
         </table>

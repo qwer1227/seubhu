@@ -2,10 +2,9 @@ package store.seub2hu2.lesson.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.security.core.parameters.P;
 import store.seub2hu2.lesson.vo.Lesson;
 import store.seub2hu2.lesson.vo.LessonReservation;
-import store.seub2hu2.lesson.vo.ReservationSearchCondition;
+import store.seub2hu2.lesson.dto.ReservationSearchCondition;
 
 import java.util.List;
 import java.util.Map;
