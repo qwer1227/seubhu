@@ -5,9 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import store.seub2hu2.mypage.mapper.PostMapper;
-import store.seub2hu2.util.FileUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -20,58 +18,47 @@ public class FileUploadService {
     @Autowired
     private PostMapper postMapper;
 
-    public String saveFile(List<MultipartFile> files, int postNo) throws IOException {
+    public Map<String, Object> saveFile(List<MultipartFile> files, int postNo, String thumb) {
         List<Map<String, Object>> images = new ArrayList<>();
-        String thumbnailFilename = null;  // 썸네일 파일명
+        String thumbnailBase64 = null;
 
-        // 파일 저장 디렉토리가 존재하지 않으면 생성
-        File dir = new File(uploadDir);
-        if (!dir.exists()) {
-            dir.mkdirs();  // 디렉토리 생성
+        // 썸네일 처리 (base64로 전달된 경우)
+        if (thumb != null && !thumb.isEmpty()) {
+            thumbnailBase64 = thumb;  // base64 문자열을 썸네일로 저장
         }
 
+        // 일반 이미지 파일을 base64로 변환하여 저장
         for (MultipartFile file : files) {
-            // 파일 확장자 추출
-            String originalFilename = file.getOriginalFilename();
-            String fileExtension = originalFilename != null ? originalFilename.substring(originalFilename.lastIndexOf(".")) : ".jpg"; // 확장자 기본값 설정
+            String base64Image = convertFileToBase64(file);  // 파일을 base64로 변환
 
-            // 파일 크기 검증 (예: 10MB 이하로 제한)
-            long maxSize = 10 * 1024 * 1024; // 10MB
-            if (file.getSize() > maxSize) {
-                throw new IllegalArgumentException("파일 크기가 너무 큽니다.");
-            }
-
-            // 파일 형식 검증 (예: 이미지 파일만 허용)
-            List<String> allowedExtensions = Arrays.asList(".jpg", ".jpeg", ".png", ".gif");
-            if (!allowedExtensions.contains(fileExtension)) {
-                throw new IllegalArgumentException("허용되지 않는 파일 형식입니다.");
-            }
-
-            // 현재 시간을 기준으로 파일명 생성 (중복 방지용 UUID 추가)
-            String filename = System.currentTimeMillis() + "_" + UUID.randomUUID().toString() + fileExtension;
-
-            // 파일 저장
-            FileUtils.saveMultipartFile(file, uploadDir, filename);
-
-            String fileUrl = "/upload/" + filename;
-
-            // 첫 번째 이미지를 썸네일로 설정 (예시로 첫 번째 파일을 썸네일로 설정)
-            if (thumbnailFilename == null) {
-                thumbnailFilename = filename;
-            }
-
-            // 각 파일 정보를 저장할 Map 객체 생성
+            // 이미지를 DB에 저장할 때 base64 문자열로 저장
             Map<String, Object> param = new HashMap<>();
-            param.put("imageUrl", fileUrl);
-            param.put("postNo", postNo);
+            param.put("imageUrl", base64Image);  // base64 이미지 저장
+            param.put("postNo", postNo);        // `postNo`를 이미지에 추가
             images.add(param);
         }
 
-        // MyBatis 매퍼를 사용해 DB에 데이터 삽입
+        // 이미지 정보 DB에 삽입
         postMapper.insertPostImages(images);
 
-        // 썸네일로 사용할 파일명을 반환
-        return thumbnailFilename;
+        // 반환할 응답 정보 준비
+        Map<String, Object> response = new HashMap<>();
+        response.put("thumbnailBase64", thumbnailBase64);  // 썸네일 base64 반환
+        return response;
     }
-}
 
+    // 파일을 base64로 변환하는 메소드 (MIME 타입 포함)
+    private String convertFileToBase64(MultipartFile file) {
+        try {
+            // 파일의 MIME 타입을 추출
+            String mimeType = file.getContentType();  // 예: image/png, image/jpeg 등
+            byte[] fileBytes = file.getBytes();
+
+            // "data:image/png;base64," 형태로 변환하여 반환
+            return "data:" + mimeType + ";base64," + Base64.getEncoder().encodeToString(fileBytes);
+        } catch (IOException e) {
+            throw new RuntimeException("파일을 base64로 변환하는 중 오류가 발생했습니다.", e);
+        }
+    }
+
+}

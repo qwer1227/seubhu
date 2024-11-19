@@ -27,7 +27,7 @@ public class MyPageController {
 
     @GetMapping("/public/detail")
     public String detail(int no, Model model) {
-        Post post = postService.getPostDetail(89);
+        Post post = postService.getPostDetail(102);
         System.out.println(post.getImages());
         model.addAttribute(post);
 
