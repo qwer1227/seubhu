@@ -33,7 +33,6 @@ public class Lesson {
     private Date endDate;
 
 
-
     public String getOriginalFilename() {
         if (filename == null) {
             return null;

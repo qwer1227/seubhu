@@ -4,6 +4,8 @@
 <html lang="ko">
 <head>
     <%@include file="/WEB-INF/views/common/common.jsp" %>
+    <script src="https://js.tosspayments.com/v2/standard"></script>
+    <script src="https://cdn.portone.io/v2/browser-sdk.js"></script>
     <style>
         body {
             background: #fafafa;
@@ -68,7 +70,8 @@
     <div class="row text-end mb-3">
         <div class="col-2"></div>
         <div class="col border-bottom border-dark border-2 pb-3">
-            <button class="btn btn-primary" id="pay">수강신청</button>
+            <a href="/payments/checkout" class="btn btn-danger">수강신청</a>
+            <button class="btn btn-primary" id="pay" onclick="requestPay()">수강신청</button>
         </div>
         <div class="col-2"></div>
     </div>
@@ -104,6 +107,21 @@
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script>
+
+    // function requestPay() {
+    //     PortOne.requestPayment({
+    //         storeId: "store-217dbe0f-fbb7-4d16-bfff-f4a47ce92b0f",
+    //         paymentId: "testm3o7667l",
+    //         orderName: "짜장면 1개",
+    //         totalAmount: 30000,
+    //         currency: "KRW",
+    //         channelKey: "channel-key-ccf24b7f-9a39-41a2-940e-c394c6a8dee0",
+    //         productType: "REAL",
+    //         payMethod: "CARD",
+    //         card: {},
+    //     });
+    // }
+
     document.getElementById("pay").addEventListener("click", function () {
         const popupWidth = 600;
         const popupHeight = 800;

@@ -26,18 +26,23 @@
     <!-- 모든 레슨 번호 조회하기-->
     <!-- start 레슨 시작 시간, end 레슨 종료 시간-->
     <select id="getAllLessons" resultType="store.seub2hu2.lesson.vo.Lesson">
-        select LESSON_NO           as lessonNo
-             , USER_NO             as "user.no"
-             , LESSON_TITLE        as title
-             , LESSON_PRICE        as price
-             , LESSON_STATUS       as status
-             , LESSON_CREATED_DATE as createdDate
-             , LESSON_PLAN         as plan
-             , LESSON_START_DATE   as start
-             , LESSON_END_DATE as 'end'
-        from LESSONS
-        WHERE LESSON_START_DATE between DATE_FORMAT(#{param.start}, '%Y-%m-%d') and DATE_FORMAT(#{param.end}, '%Y-%m-%d')
-           or LESSON_END_DATE between DATE_FORMAT(#{param.start}, '%Y-%m-%d') and DATE_FORMAT(#{param.end}, '%Y-%m-%d')
+        SELECT
+        LESSON_NO AS lessonNo,
+        USER_NO AS "user.no",
+        LESSON_TITLE AS title,
+        LESSON_PRICE AS price,
+        LESSON_STATUS AS status,
+        LESSON_CREATED_DATE AS createdDate,
+        LESSON_PLAN AS plan,
+        LESSON_START_DATE AS start,
+        LESSON_END_DATE AS `end`,
+        LESSON_CATEGORY AS category
+        FROM LESSONS
+        WHERE (LESSON_START_DATE between DATE_FORMAT(#{param.start}, '%Y-%m-%d') and DATE_FORMAT(#{param.end}, '%Y-%m-%d')
+        or LESSON_END_DATE between DATE_FORMAT(#{param.start}, '%Y-%m-%d') and DATE_FORMAT(#{param.end}, '%Y-%m-%d'))
+        <if test="course != null and course != '전체'">
+            AND LESSON_CATEGORY = #{course}
+        </if>
     </select>
 
 
