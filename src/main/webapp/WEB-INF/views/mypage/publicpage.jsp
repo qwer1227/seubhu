@@ -93,7 +93,7 @@
                         <!-- 게시글 내용 (content) -->
                         <p class="card-text">${post.postContent}</p>
                         <!-- 게시글 작성자 -->
-                        <p class="text-muted">작성자: ${post.user.username}</p>
+                        <p class="text-muted">작성자: ${post.user.name}</p>
                         <!-- 게시글 작성일 -->
                         <p class="text-muted">${post.postCreatedDate}</p>
                     </div>
@@ -213,7 +213,7 @@
                 // 서버에서 받은 게시글 정보로 모달 내용 채우기
                 $("#detailPostContent").text(response.postContent);
                 $("#detailCreatedDate").text(response.postCreatedDate);
-                $("#detailPostWriter").text(response.user.username);
+                $("#detailPostWriter").text(response.user.name);
 
                 // 이미지 슬라이드 구성
 

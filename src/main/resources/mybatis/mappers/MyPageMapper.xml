@@ -54,38 +54,38 @@
     <!-- 게시글 목록을 사용자 번호로 조회 -->
     <select id="getPostsByNo" parameterType="int" resultMap="PostResultMap">
         SELECT
-            p.post_no,
-            p.thumbnail_image,
-            p.post_context,
-            p.post_deleted,
-            p.created_date,
-            u.user_no, <!-- 사용자 정보 -->
-            u.user_name,
-            i.image_no,
-            i.image_url
+        p.post_no,
+        p.thumbnail_image,
+        p.post_context,
+        p.post_deleted,
+        p.created_date,
+        u.user_no, <!-- 사용자 정보 -->
+        u.user_name,
+        i.image_no,
+        i.image_url
         FROM
-            POSTS p,
-            USERS u,
-            POST_IMAGES i
+        POSTS p,
+        USERS u,
+        POST_IMAGES i
         WHERE
-            p.user_no = u.user_no
+        p.user_no = u.user_no
         and
-            p.post_no = i.post_no
+        p.post_no = i.post_no
         and
-            p.user_no = 1
+        p.user_no = 1
         and
-            p.post_deleted = 'N'
+        p.post_deleted = 'N'
         ORDER BY
-            p.created_date DESC
+        p.created_date DESC
     </select>
 
     <!-- void insertPost(@Param("post") Post post); -->
 
     <insert id="insertPost" useGeneratedKeys="true" keyProperty="no">
-    insert into POSTS
-        (THUMBNAIL_IMAGE, POST_CONTEXT, CREATED_DATE, USER_NO)
-    VALUES
-        (#{post.thumbnail, jdbcType=BLOB}, #{post.postContent}, NOW(), 1)
+        insert into POSTS
+            (THUMBNAIL_IMAGE, POST_CONTEXT, CREATED_DATE, USER_NO)
+        VALUES
+            (#{post.thumbnail, jdbcType=BLOB}, #{post.postContent}, NOW(), 1)
     </insert>
 
     <!-- void insertPostImage(Map<String, Object> param); -->

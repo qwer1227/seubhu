@@ -53,7 +53,5 @@ public class FeedRestController {
             return ResponseEntity.status(500).body(Map.of("message", "포스트 생성 실패: " + e.getMessage()));
         }
     }
-
 }
-
 
