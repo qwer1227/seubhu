@@ -31,7 +31,10 @@ public class SecurityConfig {
                 .securityMatcher("/api/**")  // REST API에만 적용
                 .csrf(csrf -> csrf.disable()) // CSRF 비활성화
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().authenticated()) // 모든 API 요청은 인증 필요
+                        .requestMatchers("/auth/**").permitAll() // /auth/** 경로 허용
+                        // static 이하 /js/**, /css/**, /image/** 경로는 인증 없이 접근 가능
+                        .requestMatchers("/js/**", "/css/**", "/image/**").permitAll()
+                        .anyRequest().permitAll()) // 모든 API 요청은 인증 필요
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)); // 세션 사용 안 함
  //               .addFilter(new JwtAuthenticationFilter()) // JWT 인증 필터 추가
@@ -48,10 +51,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // CSRF 활성화
                 // 접근 인가정책을 설정한다.
                 .authorizeHttpRequests(auth -> auth
-                        // /my** 요청은 USER, MANAGER, ADMIN 권한을 가지고 있을 때만 접근허용
-//                        .requestMatchers("/my/**").hasAnyRole("USER", "MANAGER", "ADMIN")
+                        // /mypage** 요청은 USER, MANAGER, ADMIN 권한을 가지고 있을 때만 접근허용
+                        .requestMatchers("/mypage/**").hasAnyRole("USER", "COACH", "ADMIN")
                         // /admin/** 요청은 ADMIN 권한을 가지고 있을때만 접근허용
-//                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         // 위에서 설정한 요청외의 모든 요청은 인증된 사용자만 접근허용
                         .anyRequest().permitAll())
                 // 폼 로그인 정책을 설정한다.

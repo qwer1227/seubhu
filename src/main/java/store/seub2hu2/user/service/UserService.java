@@ -31,7 +31,7 @@ public class UserService {
     public void insertUser(UserJoinForm form) {
         // 사용자 ID 중복 체크
 
-        User savedUser = userMapper.findUserById(form.getId());
+        User savedUser = userMapper.findById(form.getId());
         if (savedUser != null) {
             throw new AlreadyUsedIdException(form.getId());
         }
@@ -70,7 +70,6 @@ public class UserService {
         userMapper.insertUserRole(userRole);
     }
 
-
     /**
      * 소셜 로그인 처리 (현재는 구현되지 않음).
      *
@@ -81,4 +80,17 @@ public class UserService {
         // 소셜 로그인 처리 로직을 여기에 추가해야 합니다.
         return null;  // 임시로 null 반환
     }
-}
+
+    /**
+     * 임시 비밀번호 발급 처리
+     * */
+
+
+    public String findIdByEmail(String email) {
+                User user = userMapper.findIdByEmail(email);
+                if (user != null) {
+                    return user.getId(); // VO에서 ID만 반환
+                }
+                return null; // 조회된 결과가 없으면 null 반환
+            }
+        }
