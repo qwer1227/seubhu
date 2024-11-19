@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import store.seub2hu2.product.vo.Brand;
 import store.seub2hu2.product.vo.Category;
 import store.seub2hu2.product.vo.Image;
 
@@ -24,5 +25,6 @@ public class ProdListDto {
     private Date createdAt;
     private String imgThum;
     private Category category;
+    private Brand brand;
 
 }
