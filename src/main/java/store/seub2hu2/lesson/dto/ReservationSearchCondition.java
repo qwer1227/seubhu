@@ -1,8 +1,9 @@
-package store.seub2hu2.lesson.vo;
+package store.seub2hu2.lesson.dto;
 
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @NoArgsConstructor
@@ -18,7 +19,7 @@ public class ReservationSearchCondition {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date startDate;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date endDate;
+    private Date  endDate;
 
 
 }

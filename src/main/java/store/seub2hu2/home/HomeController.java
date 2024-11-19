@@ -1,6 +1,11 @@
 package store.seub2hu2.home;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -10,7 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import store.seub2hu2.user.dto.UserJoinForm;
-import store.seub2hu2.user.exception.AlreadyUsedEmailException;
+import store.seub2hu2.user.exception.AlreadyUsedIdException;
 import store.seub2hu2.user.service.UserService;
 import store.seub2hu2.user.vo.User;
 
@@ -54,18 +59,15 @@ public class HomeController {
         }
 
         try {
-            // 업무로직 메소드를 호출한다.
             userService.insertUser(form);
-
-        } catch (AlreadyUsedEmailException ex) {
-            // 이메일 중복으로 폼 입력값이 유효하지 않는 경우
+        } catch (AlreadyUsedIdException ex) {
             errors.rejectValue("email", null, "이미 사용중인 이메일입니다.");
             return "user/join-form";
-
         }
 
         return "redirect:/main";
     }
+
 
     // 로그인 폼 페이지
     @GetMapping("/login")
@@ -73,4 +75,12 @@ public class HomeController {
         return "user/login-form";
     }
 }
+
+// 로그아웃
+//@GetMapping("/logout")
+//public String logout() {
+    // Spring Security의 자동 로그아웃 처리
+//    return "redirect:/main"; // 로그아웃 후 메인 페이지로 리다이렉트
+//}
+
 

@@ -1,7 +1,5 @@
 package store.seub2hu2.security;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -11,28 +9,32 @@ import store.seub2hu2.user.mapper.UserMapper;
 import store.seub2hu2.user.vo.Role;
 import store.seub2hu2.user.vo.User;
 
+import java.util.List;
+
 @Service
-public class CustomUserDetailsService implements UserDetailsService{
+public class CustomUserDetailsService implements UserDetailsService {
+
+	private final UserMapper userMapper;
 
 	@Autowired
-	private UserMapper userMapper;
-	
-	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		// 이메일로 사용자 정보를 조회한다.
-		User user = userMapper.getUserByEmail(username);
-		// 조회된 사용자 정보가 없으면 UsernameNotFoundException예외를 발생시킨다.
-		if (user == null) {
-			throw new UsernameNotFoundException("["+username+"] 사용자가 없습니다.");
-		}
-		
-		//
-		List<Role> roles = userMapper.getRolesByUserNo(user.getNo());
-		
-		// UserDetails 구현객체를 생성해서 사용자정보(이메일, 비밀번호, 권한정보)를 담는다.
-		CustomUserDetails customUserDetails = new CustomUserDetails(user, roles);
-		
-		return customUserDetails;
+	public CustomUserDetailsService(UserMapper userMapper) {
+		this.userMapper = userMapper;
 	}
 
+	@Override
+	public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
+		// 1. 사용자 정보 조회
+		System.out.println("loadUserByUsername : " + id);
+		User user = userMapper.findUserById(id);
+		System.out.println("loadUserByUsername : " + user);
+		if (user == null) {
+			throw new UsernameNotFoundException("[" + id + "] 사용자가 없습니다.");
+		}
+
+		// 2. 역할(Role) 정보 조회
+		List<Role> roles = userMapper.getRolesByUserNo(user.getNo());
+
+		// 3. CustomUserDetails 생성 및 반환
+		return new CustomUserDetails(user, roles);
+	}
 }

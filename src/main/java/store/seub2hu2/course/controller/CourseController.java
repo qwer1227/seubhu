@@ -22,15 +22,19 @@ public class CourseController {
 
     @GetMapping("/list")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
-                       @RequestParam(name = "distance", required = false) Double distance,
+                       @RequestParam(name = "distance", required = false, defaultValue = "10") Double distance,
                        @RequestParam(name = "level", required = false) Integer level,
                        @RequestParam(name = "keyword", required = false) String keyword,
                        Model model){
         // 1. 요청 파라미터 정보를 Map 객체에 담는다.
         Map<String, Object> condition = new HashMap<>();
         condition.put("page", page);
-        condition.put("distance", distance);
-        condition.put("level", level);
+        if (distance != null) {
+            condition.put("distance", distance);
+        }
+        if (level != null) {
+            condition.put("level", level);
+        }
         if (StringUtils.hasText(keyword)) {
             condition.put("keyword", keyword);
         }
@@ -40,14 +44,15 @@ public class CourseController {
         System.out.println("난이도:" + condition.get("level"));
         System.out.println("검색어:" + condition.get("keyword"));
 
-        // 2. 검색에 해당하는 코스 목록을 가져온다.
+        // 3. 검색에 해당하는 코스 목록을 가져온다.
         ListDto<Course> dto = courseService.getAllCourses(condition);
 
-        // 3. Model 객체에 화면에 표시할 데이터를 저장해서 보낸다.
+        // 4. Model 객체에 화면에 표시할 데이터를 저장해서 보낸다.
         model.addAttribute("courses", dto.getData());
         model.addAttribute("pagination", dto.getPaging());
+        model.addAttribute("searchNo", condition.get("searchNo"));
 
-        // 4. 뷰 이름을 반환한다.
+        // 5. 뷰 이름을 반환한다.
         return "course/list";
     }
 

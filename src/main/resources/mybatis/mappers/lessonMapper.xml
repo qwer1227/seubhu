@@ -45,15 +45,15 @@
     <!-- 레슨 번호로 레슨 조회하기-->
     <!-- 레슨에서 조회되는 user.no는 강사 번호-->
     <select id="getLessonByNo" resultType="store.seub2hu2.lesson.vo.Lesson">
-        select L.USER_NO             as 'lecturer.no'
-             , L.LESSON_TITLE        as title
+        select L.USER_NO as 'lecturer.no'
+             , L.LESSON_TITLE as title
              , L.LESSON_PRICE        as price
              , L.lesson_status       as status
              , L.lesson_created_date as createdDate
              , L.PARTICIPANT         as participant
              , L.lesson_thumbnail    as thumbnail
              , L.lesson_plan         as plan
-             , U.USER_NAME           as 'lecturer.username'
+             , U.USER_NAME as 'lecturer.username'
         from LESSONS L
                  INNER JOIN USERS U
                             ON
@@ -117,7 +117,7 @@
         , L.LESSON_CATEGORY as "lesson.category"
         , L.USER_NO as "user.no"
         , L.lesson_status as "lesson.status"
-        , L.lesson_created_date as "lesson.createdDate"
+        , date_format(L.lesson_created_date, '%Y-%m-%d')
         , U.USER_NAME as "lesson.lecturer.username"
         from LESSON_RESERVATIONS R
         INNER JOIN LESSONS L
@@ -128,13 +128,13 @@
         L.USER_NO = U.USER_NO
         where R.USER_NO = #{userNo}
         <choose>
-            <when test="condition.searchCondition == '강사명'">
+            <when test="condition.searchCondition == '강사명' and condition.searchKeyword != null and condition.searchKeyword != ''">
                 AND U.USER_NAME LIKE CONCAT('%', #{condition.searchKeyword}, '%')
             </when>
-            <when test="condition.searchCondition == '레슨명'">
+            <when test="condition.searchCondition == '레슨명' and condition.searchKeyword != null and condition.searchKeyword != ''">
                 AND L.LESSON_TITLE LIKE CONCAT('%', #{condition.searchKeyword}, '%')
             </when>
-            <when test="condition.searchCondition == '과목'">
+            <when test="condition.searchCondition == '과목' and condition.searchKeyword != null and condition.searchKeyword != ''">
                 AND L.LESSON_CATEGORY LIKE CONCAT('%', #{condition.searchKeyword}, '%')
             </when>
         </choose>

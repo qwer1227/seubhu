@@ -57,87 +57,6 @@
 
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script>
-    // document.addEventListener('DOMContentLoaded', function () {
-    //     var calendarEl = document.getElementById('calendar');
-    //     new FullCalendar.Calendar(대상 DOM객체, {속성:속성값, 속성2:속성값2..})
-    //
-    //
-    //     var calendar = new FullCalendar.Calendar(calendarEl, {
-    //
-    //         headerToolbar: {
-    //             left: 'prev,next today',
-    //             center: 'title',
-    //             right: 'dayGridMonth'
-    //         },
-    //
-    //         buttonText: {
-    //             today: '현재날짜',
-    //             month: '월별',
-    //             week: '주',
-    //             day: '일',
-    //             list: '목록'
-    //         },
-    //         editable: true,
-    //         droppable: true, // this allows things to be dropped onto the calendar
-    //
-    //         // events: [
-    //         //     { // this object will be "parsed" into an Event Object
-    //         //         title: '자세교정 12/10', // a property!
-    //         //         display: 'block',
-    //         //         backgroundColor:'white',
-    //         //         textColor: 'black',
-    //         //         start: '2024-11-08', // a property!
-    //         //          // a property! ** see important note below about 'end' **
-    //         //         url:'lesson/detail'
-    //         //     }
-    //         // ],
-    //
-    //         events: function (info, successCallback, failureCallback, event) {
-    //
-    //             refreshEvents(info, successCallback);
-    //         },
-    //
-    //         eventClick: function () {
-    //             lessonDetail();
-    //         },
-    //
-    //     });
-    //
-    //     function lessonDetail(info) {
-    //         window.open('/lesson/detail');
-    //     }
-    //
-    //     // DB에서 목록 가져오기?
-    //     function refreshEvents(info, successCallback) {
-    //         let start = moment(info.start).format("YYYY-MM-DD");
-    //         let end = moment(info.end).format("YYYY-MM-DD");
-    //         let lessonNo = info.event.data.
-    //
-    //         let param = {
-    //             start: start,
-    //             end: end,
-    //             // lessonNo: 1
-    //         };
-    //
-    //
-    //
-    //         $.ajax({
-    //             type: 'get',
-    //             url: '/lesson/list',
-    //             extendedProps: {
-    //                 lessonNo: 1
-    //             }
-    //             data: param,
-    //             dataType: 'json'
-    //         } )
-    //             .done(function (eventObject) {
-    //                 successCallback(eventObject);
-    //             })
-    //     }
-    //
-    //     calendar.render();
-    //
-    // });
 
 
     document.addEventListener('DOMContentLoaded', function () {
@@ -181,7 +100,7 @@
         function lessonDetail(lessonNo) {
             if (lessonNo !== undefined && lessonNo !== null && lessonNo !== "") {  // Validate lessonNo
                 console.log("LessonNo:", lessonNo); // Log to ensure lessonNo is being passed as int
-                window.open(`/lesson/detail?lessonNo=`+lessonNo);
+                location.href =(`/lesson/detail?lessonNo=`+lessonNo);
             } else {
                 console.error("Invalid lessonNo");
             }

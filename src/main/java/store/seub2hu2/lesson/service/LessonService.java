@@ -5,18 +5,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
+import store.seub2hu2.lesson.dto.LessonRegisterForm;
+import store.seub2hu2.lesson.dto.ReservationSearchCondition;
 import store.seub2hu2.lesson.mapper.LessonFileMapper;
 import store.seub2hu2.lesson.mapper.LessonMapper;
 import store.seub2hu2.lesson.vo.*;
-import store.seub2hu2.util.FileUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -56,11 +51,11 @@ public class LessonService {
         Map<String, String> images = new HashMap<>();
         for (LessonFile file : lessonFiles) {
             if ("THUMBNAIL".equals(file.getFileType())) {
-                images.put("THUMBNAIL", file.getFilePath() + "/" + file.getFileName());
-                log.info("THUMBNAIL = {}", file.getFilePath() + "/" + file.getFileName());
+                images.put("THUMBNAIL", file.getFileName());
+                log.info("THUMBNAIL = {}", file.getFileName());
             } else if ("MAIN_IMAGE".equals(file.getFileType())) {
-                images.put("MAIN_IMAGE", file.getFilePath() + "/" + file.getFileName());
-                log.info("MAIN_IMAGE = {}", file.getFilePath() + "/" + file.getFileName());
+                images.put("MAIN_IMAGE",  file.getFileName());
+                log.info("MAIN_IMAGE = {}",  file.getFileName());
             }
         }
         return images;
