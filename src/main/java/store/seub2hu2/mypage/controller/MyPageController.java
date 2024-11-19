@@ -19,8 +19,8 @@ public class MyPageController {
     @GetMapping("")
     public String myPageList(Model model) {
         int userNo = 1;
-        List<Post> posts = postService.getPostsByNo(userNo);
-        model.addAttribute("posts",posts);
+//        List<Post> posts = postService.getPostsByNo(userNo);
+//        model.addAttribute("posts",posts);
 
         return "mypage/publicpage";
     }

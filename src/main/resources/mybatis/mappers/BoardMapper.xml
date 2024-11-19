@@ -21,16 +21,19 @@
     (
     #{board.catName}
     <!--             , #{board.user.nickname}-->
-    , '페이커'
+    , '이은은'
     , #{board.title}
     , #{board.content, jdbcType=VARCHAR}
     <if test="board.uploadFile != null">
-      , #{board.uploadFile.saveName}
+      , #{board.uploadFile.originalName}
     </if>
     <!--            <if test="board.hashtag != null">-->
     <!--                , 'Y'-->
     <!--            </if>-->
     )
+    <selectKey resultType="int" keyProperty="board.no" keyColumn="board_no" order="AFTER">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
   </insert>
 
   <!-- List<Board> getBoards(@Param("condition") Map<String, Object> condition); -->
@@ -60,7 +63,7 @@
             , b.board_content as content
             , b.board_cnt as viewCnt
             , b.board_like as `like`
-            , b.is_deleted as isDeleted
+            , b.is_deleted as deleted
             , b.board_created_date as createdDate
             , u.user_nickname as `user.nickname`
           from
@@ -112,22 +115,38 @@
   </select>
 
   <!-- Board getBoardDetailByNo(@Param("no") int no); -->
-  <select id="getBoardDetailByNo" resultType="store.seub2hu2.community.vo.Board" parameterType="int">
+  <update id="updateBoard" >
+    update
+    BOARDS
+    set
+    board_cat_name = #{board.catName}
+    , board_title = #{board.title}
+    , board_content = #{board.content}
+    , board_updated_date = sysdate()
+    , is_deleted = #{board.deleted}
+    <if test="board.uploadFile != null">
+      , file_name = #{board.uploadFile.originalName}
+    </if>
+    , board_cnt = #{board.viewCnt}
+    where board_no = #{board.no}
+  </update>
+
+  <!--  Board getBoardDetailByNo(@Param("no") int no); -->
+  <select id="getBoardDetailByNo" resultType="store.seub2hu2.community.vo.Board" >
     select b.board_no                   as no
             , b.board_cat_name          as catName
             , u.user_nickname           as "user.nickname"
             , b.board_title             as title
-            , b.file_name               as "uploadFile.saveName"
+            , b.file_name               as "uploadFile.originalName"
             , b.board_content           as content
-            , b.file_name               as filename
             , b.board_created_date      as createdDate
             , b.board_updated_date      as updatedDate
             , b.board_cnt               as viewCnt
             , b.scrap_cnt               as scrap
             , b.board_like              as `like`
-            , b.is_deleted              as isDeleted
-            , b.is_keep                 as isKeep
-            , b.is_report               as isReport
+            , b.is_deleted              as deleted
+            , b.is_keep                 as `keep`
+            , b.is_report               as report
             , b.is_hashtag              as hashtag
     from
       BOARDS b join USERS u
@@ -136,23 +155,8 @@
       on b.board_cat_name = c.board_cat_name
     where
       b.is_deleted = 'N'
-      and b.board_no = ${no}
+      and b.board_no = #{no}
   </select>
-
-  <!-- void updateBoard(@Param("board") Board board); -->
-  <update id="updateBoard" parameterType="store.seub2hu2.community.vo.Board">
-    update
-      BOARDS
-    set
-      board_cat_name = #{board.catName}
-      , board_title = #{board.title}
-      , board_content = #{board.content}
-      , board_updated_date = sysdate()
-      , is_deleted = #{board.isDeleted}
-      , file_name = #{board.uploadFile.originalName}
-      , board_cnt = #{board.viewCnt}
-    where board_no = #{board.no}
-  </update>
 
   <!-- void insertReply(@Param("reply") Board board); -->
 

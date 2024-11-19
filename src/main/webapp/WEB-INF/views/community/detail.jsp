@@ -67,7 +67,7 @@
       </span>
     </div>
     
-    <c:if test="${not empty board.uploadFile}">
+    <c:if test="${not empty board.uploadFile.originalName}">
       <div class="content mb-4" id="fileDown" style="text-align: end">
         <a href="filedown?no=${board.no}" class="btn btn-outline-primary btn-sm">첨부파일 다운로드</a>
         <span id="hover-box">${board.uploadFile.originalName}</span>
