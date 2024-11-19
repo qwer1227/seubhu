@@ -16,14 +16,14 @@ public class MyPageController {
     @Autowired
     PostService postService;
 
-    @GetMapping("")
+    /*@GetMapping("")
     public String myPageList(Model model) {
         int userNo = 1;
         List<Post> posts = postService.getPostsByNo(userNo);
         model.addAttribute("posts",posts);
 
         return "mypage/publicpage";
-    }
+    }*/
 
     @GetMapping("/public/detail")
     public String detail(int no, Model model) {

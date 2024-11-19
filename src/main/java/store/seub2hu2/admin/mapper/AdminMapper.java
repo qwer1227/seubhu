@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.course.vo.Region;
+import store.seub2hu2.lesson.vo.Lesson;
 import store.seub2hu2.user.vo.User;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,7 @@ public interface AdminMapper {
      */
 
     /*
-     * 커뮤니티
+     * 레슨
      */
+    List<Lesson> getAllLessons(@Param("condition") Map<String, Object> condition);
 }

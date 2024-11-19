@@ -16,6 +16,7 @@ import java.util.List;
 @Getter
 @Setter
 @Alias("Lesson")
+@ToString
 public class Lesson {
     private int lessonNo;
     private String title;
@@ -28,7 +29,8 @@ public class Lesson {
     private Date updatedDate;
     private User lecturer;
     private String filename;
-
+    private Date startDate;
+    private Date endDate;
 
 
     public String getOriginalFilename() {
