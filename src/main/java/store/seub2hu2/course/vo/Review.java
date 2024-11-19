@@ -2,8 +2,10 @@ package store.seub2hu2.course.vo;
 
 import lombok.*;
 import org.apache.ibatis.type.Alias;
+import store.seub2hu2.user.vo.User;
 
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -21,6 +23,7 @@ public class Review {
     private Date createdDate; // 작성날짜
     private Date updatedDate; // 수정날짜
     private String isDeleted; // 삭제여부
-//  private User user; // 회원번호
+    private User user; // 회원번호
     private Course course; // 코스번호
+    private List<ReviewImage> reviewImage; // 리뷰 첨부 파일
 }

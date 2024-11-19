@@ -58,18 +58,18 @@
     <div class="card mt-5" id="review">
         <div class="card-header">
             코스 리뷰
-            <div class="text-end"><button class="btn btn-primary" onclick="openCommentFormModal()">리뷰 작성</button></div>
+            <div class="text-end"><button class="btn btn-primary" onclick="openReviewFormModal()">리뷰 작성</button></div>
         </div>
         <div class="card-body">
             <div class="row mb-3">
-                <div class="col-12" id="box-comments"></div>
+                <div class="col-12" id="box-reviews"></div>
             </div>
         </div>
     </div>
 </div>
 
 <%-- 코스 리뷰 등록 Modal창 --%>
-<div class="modal fade" id="modal-comment-form" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modal-review-form" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -79,7 +79,7 @@
             <%-- 리뷰 내용을 입력하고 등록한다. --%>
             <%-- 요청 파라미터 정보 : courseNo, title, content, upfile --%>
             <div class="modal-body">
-                <form method="post" action="/addComment" enctype="multipart/form-data">
+                <form method="post" action="/addReview" enctype="multipart/form-data">
                     <input type="hidden" name="courseNo" value="${course.no }" />
                     <div class="form-group">
                         <label class="form-label">제목(반드시 입력)</label>
@@ -92,6 +92,7 @@
                     <div class="form-group">
                         <label class="form-label">코스 사진 업로드</label>
                         <input type="file" class="form-control" name="upfile" multiple="multiple"/>
+                        Ctrl를 누른 채로 사진 여러 개 클릭
                     </div>
                 </form>
             </div>
@@ -105,24 +106,39 @@
 
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script type="text/javascript">
-    const commentFormModal = new bootstrap.Modal('#modal-comment-form')
+    const reviewFormModal = new bootstrap.Modal('#modal-review-form')
 
     // 코스 리뷰 등록 Modal창을 연다.
-    function openCommentFormModal() {
-        commentFormModal.show();
+    function openReviewFormModal() {
+        reviewFormModal.show();
     }
 
     // 입력한 코스 리뷰 정보(코스번호, 제목, 내용, 첨부파일)를 컨트롤러에 제출한다.
-    function submitComment() {
-        let value1 = document.querySelector("input[name=courseNo]").value;
-        let value2 = document.querySelector("input[name=title]").value;
-        let value3 = document.querySelector("textarea[name=content]").value;
+    async function submitReview() {
+        // 1. 입력한 코스 리뷰 정보를 가져오고, formData 객체에 저장한다.
+        let courseNo = document.querySelector("input[name=courseNo]").value;
+        let title = document.querySelector("input[name=title]").value;
+        let content = document.querySelector("textarea[name=content]").value;
+        let inputFile = document.querySelector("input[name=upfile]");
+        let files = inputFile.files;
 
-        let data = {
-            courseNo: value1,
-            title: value2,
-            content: value3
+        let formData = new FormData();
+
+        formData.append("courseNo", courseNo);
+        formData.append("title", title);
+        formData.append("content", content);
+        for (let file of files) {
+            formData.append("upfile", file);
         }
+
+        // 2. formData(입력한 코스 리뷰 정보)를 서버에 보낸다.
+        let response = await fetch("/course/addReview", {
+            method: "POST",
+            body: formData
+        });
+
+        // 3. 요청 처리 성공 확인 후, 입력한 리뷰를 화면에 표시한다.
+
     }
 </script>
 </body>
