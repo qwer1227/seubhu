@@ -58,7 +58,7 @@
                     <label class="form-check-label" for="rememberMe">아이디 저장</label>
                 </div>
                 <div>
-                    <a href="/forgot-username" class="text-decoration-none">아이디 찾기</a> |
+                    <a href="/forgot-id" class="text-decoration-none">아이디 찾기</a> |
                     <a href="/forgot-password" class="text-decoration-none">비밀번호 재설정</a>
                 </div>
             </div>
@@ -80,7 +80,7 @@
 
         <!-- 회원가입 -->
         <div class="mt-4">
-            <a href="user/join-form" class="color-black text-decoration-none fw-bold">회원가입</a>
+            <a href="/join" class="color-black text-decoration-none fw-bold">회원가입</a>
         </div>
     </div>
 </main>
@@ -97,34 +97,30 @@
 
     if (rememberMe.checked) {
         // 아이디 저장
-        localStorage.setItem("savedUsername", username);
+        localStorage.setItem("savedId", id);
     } else {
         // 아이디 저장하지 않음
-        localStorage.removeItem("savedUsername");
+        localStorage.removeItem("savedId");
     }
 
 
     // 아이디 유효성 검사 함수 (간단한 예시)
-    function validateUsername() {
-        let username = document.querySelector("#username").value;
-        let domain = document.querySelector("#email-domain").value;
-        let fullUsername = username + "@" + domain;
+    function validateId() {
+        let id = document.querySelector("#id").value;
 
-        if (username === "" || domain === "") {
-            alert("아이디를 입력하고 도메인을 선택해주세요.");
+        if (id === "") {
+            alert("아이디를 입력해주세요.");
             return;
         }
-
         // 서버에서 아이디 중복 검사 또는 다른 검증 로직 추가 가능
-        console.log("검증된 아이디: " + fullUsername);
+        console.log("검증된 아이디: " + fullId);
     }
 
-    function rollbackUsernameCheck() {
-        let usernameField = document.querySelector("#username");
-        usernameField.value = ""; // 아이디 입력값 초기화
+    function rollbackIdCheck() {
+        let idField = document.querySelector("#id");
+        idField.value = ""; // 아이디 입력값 초기화
     }
 </script>
-
 
     </body>
 </html>
