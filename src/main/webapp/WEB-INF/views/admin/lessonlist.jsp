@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="/WEB-INF/views/common/tags.jsp" %>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 
 <head>
 
@@ -50,50 +50,27 @@
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
           <h1 class="h3 mb-0 text-gray-800">레슨</h1>
         </div>
-        <form id="form-search" method="get" action="/lesson">
-          <input type="hidden" name="" value="">
+        <form id="form-search" method="get" action="/admin/lesson">
+          <input type="hidden" name="page"/>
           <div class="row mb-3 d-flex">
-            <div class="col-2 mb-4 pt-2">
-              <select class="form-control" name="rows" onchange="changeRows()">
-                <option value="5" ${param.rows eq 5 ? "selected" : ""}>5개씩 보기</option>
-                <option value="10" ${empty param.rows or param.rows eq 10 ? "selected" : ""}>10개씩 보기</option>
-                <option value="20" ${param.rows eq 20 ? "selected" : ""}>20개씩 보기</option>
-              </select>
-            </div>
-            <div class="col-1 mb-4 pt-2">
-              <select class="form-control" name="lessonCategory">
-                <option>모두</option>
-                <option>호흡</option>
-                <option>자세</option>
-                <option>운동</option>
-              </select>
-            </div>
-            <div class="row col-5 mb-4 pt-2">
-                <div class="col">
-                </div>
-                <div class="col-1.7 mb-4 pt-2">
+            <div class="row col-3 mb-4 pt-2">
+                <div class="col mb-4 pt-2">
                   <span>날짜</span>
                 </div>
-                <div class="row col-10 mb-4 pt-1">
-                  <div class="col-4">
-                    <input type="date" name="startDate">
-                  </div>
-                  <div class="col-2 text-center">
-                    <p>-</p>
-                  </div>
-                  <div class="col-4">
-                    <input type="date" name="endDate">
+                <div class="row col-9 mb-4 pt-1">
+                  <div class="col">
+                    <input type="date" name="day" id="dateInput"/>
                   </div>
                 </div>
             </div>
-            <div class="col-1 mb-4 pt-2">
-              <select class="form-control" name="searchCondition">
-                <option>강사명</option>
-                <option>레슨명</option>
-                <option>과목</option>
+            <div class="col-2 mb-4 pt-2">
+              <select class="form-control" name="opt">
+                <option value="name">강사명</option>
+                <option value="lessonname">레슨명</option>
+                <option value="course">과목</option>
               </select>
             </div>
-            <div class="col-3 mb-4 pt-2">
+            <div class="col-4 mb-4 pt-2">
             <!-- Search -->
             <%@include file="/WEB-INF/views/admincommon/searchbar.jsp" %>
 
@@ -107,25 +84,44 @@
           <div class="border-bottom pt-4 pr-4 pl-4 bg-light">
             <table class="table">
               <colgroup>
-                <col width="15%">
-                <col width="*">
-                <col width="15%">
-                <col width="15%">
-                <col width="15%">
+                <col width="10%">
+                <col width="10%">
+                <col width="*%">
+                <col width="10%">
+                <col width="10%">
+                <col width="18%">
                 <col width="15%">
               </colgroup>
-              <tr>
-                <th>번호</th>
-                <th>레슨명</th>
-                <th>강사명</th>
-                <th>가격</th>
-                <th>상태</th>
-                <th>예약날짜</th>
-              </tr>
-              <tr>
-                <td>1</td>
-                <td></td>
-              </tr>
+              <thead>
+                <tr>
+                  <th>날짜</th>
+                  <th>시간</th>
+                  <th>레슨명</th>
+                  <th>강사명</th>
+                  <th>가격</th>
+                  <th>예약인원</th>
+                  <th>모집상태</th>
+                </tr>
+              </thead>
+              <tbody>
+                <c:forEach var="l" items="${lessons}">
+                  <tr>
+
+                    <td>
+                      <fmt:formatDate value="${l.startDate}" pattern="yyyy-MM-dd" timeZone="GMT"/>
+                    </td>
+                    <td><fmt:formatDate value="${l.startDate}" pattern="HH:mm:ss"  timeZone="GMT"/></td>
+                    <td>${l.title}</td>
+                    <td>${l.lecturer.name}</td>
+                    <td>${l.price}</td>
+                    <td>4/5
+                      <button class="btn btn-outline btn-success btn-sm "
+                              onclick="previewUser(${u.no})">회원보기</button>
+                    </td>
+                    <td>${l.status}</td>
+                  </tr>
+                </c:forEach>
+              </tbody>
             </table>
 
           </div>
@@ -143,6 +139,29 @@
 <!-- End of Footer -->
 
 <%@include file="/WEB-INF/views/admincommon/common.jsp" %>
+<script>
+  const form =document.querySelector("#form-search");
+  const pageInput = document.querySelector("input[name=page]");
+  const myModal = new bootstrap.Modal('#modal-preview-users');
+
+  // 검색어를 입력하고 검색버튼을 클릭했을 때
+  function searchValue() {
+    pageInput.value = 1;		// 정렬방식이 바뀌면
+    form.submit();
+  }
+
+  // 오늘 날짜를 얻기
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1
+  const dd = String(today.getDate()).padStart(2, '0');
+
+  // 'yyyy-mm-dd' 형식으로 변환
+  const formattedDate = `${yyyy}-${mm}-${dd}`;
+
+  // 기본값 설정
+  document.getElementById('dateInput').value = formattedDate;
+</script>
 
 </body>
 

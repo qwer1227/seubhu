@@ -65,7 +65,7 @@
             headerToolbar: {
                 left: 'prev,next,today',
                 center: 'title',
-                right: 'dayGridMonth'
+                right: 'dayGridMonth, timeGridWeek'
             },
             buttonText: {
                 today: '현재날짜',

@@ -11,7 +11,8 @@ import store.seub2hu2.admin.mapper.AdminMapper;
 import store.seub2hu2.course.mapper.CourseMapper;
 import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.course.vo.Region;
-import store.seub2hu2.product.vo.Product;
+import store.seub2hu2.lesson.mapper.LessonMapper;
+import store.seub2hu2.lesson.vo.Lesson;
 import store.seub2hu2.user.mapper.UserMapper;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.FileUtils;
@@ -27,7 +28,6 @@ public class AdminService {
 
     @Value("${project.upload.path}")
     private String saveDirectory;
-//    private final LessonMapper lessonMapper;
 //
 //    private final CommunityMapper communityMapper;
 //
@@ -38,10 +38,21 @@ public class AdminService {
 //    private final ProductMapper productMapper;
 //
     @Autowired
+    private LessonMapper lessonMapper;
+
+    @Autowired
     private AdminMapper adminMapper;
 
     @Autowired
     private CourseMapper courseMapper;
+
+    public List<Lesson> getLessons(Map<String, Object> condition) {
+
+        List<Lesson> lessons = adminMapper.getAllLessons(condition);
+
+        return lessons;
+
+    }
 
 
     public void checkNewRegion (CourseRegisterForm form) {
@@ -147,9 +158,12 @@ public class AdminService {
             condition.put("end", end);
 
 
+
             List<User> users = adminMapper.getUsers(condition);
 
+            System.out.println("users: " + users);
             ListDto<User> dto = new ListDto<>(users, pagination);
+
             return dto;
         }
 
