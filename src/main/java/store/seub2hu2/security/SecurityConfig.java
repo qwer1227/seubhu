@@ -52,9 +52,9 @@ public class SecurityConfig {
                 // 접근 인가정책을 설정한다.
                 .authorizeHttpRequests(auth -> auth
                         // /mypage** 요청은 USER, MANAGER, ADMIN 권한을 가지고 있을 때만 접근허용
-                        .requestMatchers("/mypage/**").hasAnyRole("USER", "COACH", "ADMIN")
+//                        .requestMatchers("/mypage/**").hasAnyRole("USER", "COACH", "ADMIN")
                         // /admin/** 요청은 ADMIN 권한을 가지고 있을때만 접근허용
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+//                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         // 위에서 설정한 요청외의 모든 요청은 인증된 사용자만 접근허용
                         .anyRequest().permitAll())
                 // 폼 로그인 정책을 설정한다.
