@@ -106,30 +106,8 @@ public class BoardController {
 //    @PreAuthorize("isAuthenticated()")
     public String register(RegisterBoardForm boardForm){
 //                          , @AuthenticationPrincipal LoginUser loginUser) {
-        // Board 객체를 생성하여 사용자가 입력한 제목과 내용을 저장한다.
-        Board board = new Board();
-        board.setCatName(boardForm.getCatName());
-        board.setTitle(boardForm.getTitle());
-        board.setContent(boardForm.getContent());
 
-//        User user = User.builder().no(loginUser.getNo()).build();
-//        board.setUser(user);
-
-        if (boardForm.getUpfile() != null){
-            MultipartFile multipartFile = boardForm.getUpfile();
-
-            if(!multipartFile.isEmpty()) {
-                String originalFilename = multipartFile.getOriginalFilename();
-                String filename = System.currentTimeMillis() + originalFilename;
-                FileUtils.saveMultipartFile(multipartFile, saveDirectory, filename);
-
-                UploadFile uploadFile = new UploadFile();
-                uploadFile.setOriginalName(originalFilename);
-                uploadFile.setSaveName(filename);
-                board.setUploadFile(uploadFile);
-            }
-        }
-        boardService.addNewBoard(board);
+        boardService.addNewBoard(boardForm);
         return "redirect:main";
 //        return "redirect:detail?no=" + board.getNo();
     }
@@ -155,6 +133,13 @@ public class BoardController {
         boardService.deleteBoard(boardNo);
         return "redirect:main";
     }
+
+//    @GetMapping("/deleteUploadFile")
+//    public String deleteUploadFile(@RequestParam("no") int boardNo) {
+//        boardService.deleteBoardFile(boardNo);
+//
+//        return "redirect:modify?no=" + boardNo;
+//    }
 
     // 요청 URL : comm/filedown?no=xxx
     @GetMapping("/filedown")

@@ -58,14 +58,22 @@ public class LessonController {
         }
     }
 
+
+    @GetMapping("/payment")
+    public String payment() {
+
+        return "lesson/payment";
+    }
+
     // 레슨 작성 폼
     @GetMapping("/form")
     public String form() {
-        return "lesson/lesson-register-form";
+        return "lesson/lesson-form";
     }
 
+    // 레슨 번호를 lessonFile 객체에 어떻게 전달?
     @PostMapping("/form")
-    public String registerForm(@ModelAttribute("form") LessonRegisterForm form, Model model) throws IOException {
+    public String form(@ModelAttribute("form") LessonRegisterForm form, Model model) throws IOException {
         // Lesson 객체 생성
         int lessonNo = lessonService.getMostLatelyLessonNo();
 
@@ -79,8 +87,8 @@ public class LessonController {
         lesson.setLecturer(user);
         lesson.setCategory(form.getCategory());
         lesson.setPlan(form.getPlan());
-        lesson.setStart(form.getStartDate());
-        lesson.setEnd(form.getEndDate());
+        lesson.setStart(form.getDate());
+        lesson.setEnd(form.getDate());
 
         // Get the uploaded file
         MultipartFile thumbnail = form.getThumbnail();
@@ -105,14 +113,11 @@ public class LessonController {
 
     @GetMapping("/list")
     @ResponseBody
-    public List<Lesson> lesson(@RequestParam("start") String start,
-                               @RequestParam("end") String end,
-                               @RequestParam(value = "course", required = false, defaultValue = "전체") String course) {
+    public List<Lesson> lesson(@RequestParam("start") String start, @RequestParam("end") String end) {
         Map<String, Object> param = new HashMap<>();
         param.put("start", start);
         param.put("end", end);
-        log.info("course = {}", course);
-        List<Lesson> lessons = lessonService.getAllLessons(param, course);
+        List<Lesson> lessons = lessonService.getAllLessons(param);
 
         return lessons;
     }
@@ -128,12 +133,5 @@ public class LessonController {
         List<LessonReservation> lessons = lessonService.searchLessonReservationList(condition, userNo);
         model.addAttribute("lessons", lessons);
         return "lesson/lesson-reservation";
-    }
-
-
-    // 결제용 임시 컨트롤러
-    @GetMapping("/payment")
-    public String pay() {
-        return "lesson/payment";
     }
 }
