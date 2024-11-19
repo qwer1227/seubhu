@@ -21,11 +21,11 @@ public class FeedRestController {
     @Autowired
     private PostService postService;
 
-    /*@PostMapping("/public/insert")
+    @PostMapping("/public/insert")
     public ResponseEntity<Map<String, Object>> insertPost(@RequestParam("content") String postContent,
                                                           @RequestParam("thumbnailImage") String thumb,
                                                           @RequestParam("files") List<MultipartFile> files) {
-     *//*   try {
+        try {
             // 1. 썸네일 이미지 처리
             //thumb = thumb.replaceFirst("data:image/[^;]+;base64,", "");
             //System.out.println("Before decoding: " + thumb);
@@ -54,7 +54,6 @@ public class FeedRestController {
         }
     }
 
-      */
 }
 
 
