@@ -16,7 +16,7 @@
         <!-- User 객체 매핑 -->
         <association property="user" javaType="store.seub2hu2.user.vo.User">
             <id property="no" column="USER_NO"/> <!-- 유저 번호 -->
-            <result property="username" column="USER_NAME"/> <!-- 유저 이름 -->
+            <result property="name" column="USER_NAME"/> <!-- 유저 이름 -->
         </association>
         <!-- PostImage 리스트 매핑 -->
         <collection property="images" ofType="store.seub2hu2.mypage.vo.PostImage">
