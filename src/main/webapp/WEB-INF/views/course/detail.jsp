@@ -58,7 +58,9 @@
     <div class="card mt-5" id="review">
         <div class="card-header">
             코스 리뷰
-            <div class="text-end"><button class="btn btn-primary" onclick="openReviewFormModal()">리뷰 작성</button></div>
+                <sec:authorize access="isAuthenticated()">
+                        <div class="text-end"><button class="btn btn-primary" onclick="openReviewFormModal()">리뷰 작성</button></div>
+                </sec:authorize>
         </div>
         <div class="card-body">
             <div class="row mb-3">
@@ -98,7 +100,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                <button type="submit" class="btn btn-primary" onclick="submitComment()">등록</button>
+                <button type="submit" class="btn btn-primary" onclick="submitReview()">등록</button>
             </div>
         </div>
     </div>
@@ -112,6 +114,13 @@
     function openReviewFormModal() {
         reviewFormModal.show();
     }
+
+    // 리뷰 목록이 화면에 표시된다.
+    // async function getReviews() {
+    //     document.querySelector("input[name=courseNo]").value;
+    //
+    //     let response = await fetch("/course/reviews");
+    // }
 
     // 입력한 코스 리뷰 정보(코스번호, 제목, 내용, 첨부파일)를 컨트롤러에 제출한다.
     async function submitReview() {
@@ -138,7 +147,36 @@
         });
 
         // 3. 요청 처리 성공 확인 후, 입력한 리뷰를 화면에 표시한다.
+        if (response.ok) {
+            let review = await response.json();
+            console.log('응답으로 받은 데이터', review); // 응답 데이터 확인 용도
+            appendReview(review);
+        }
+    }
 
+    // 입력한 리뷰를 화면에 표시한다.
+    function appendReview(review) {
+        let content = `
+	        <div class="card mb-3" id="review-\${review.no}">
+	            <div class="card-header">
+	                <span>\${review.title}</span>
+	                    <span class="float-end">
+	                    <small>\${review.user.name}</small>
+	                    <small>\${review.createdDate}</small>
+	                </span>
+	            </div>
+	            <div class="card-body">
+	                \${review.content}
+	            </div>
+	            <div class="card-footer text-end">
+	                <button class="btn btn-danger btn-sm"
+	                       onclick="removeReview(\${review.no})">삭제</button>
+	            </div>
+	        </div>
+	    `;
+
+        let box = document.querySelector("#box-reviews");
+        box.insertAdjacentHTML("beforeend", content)
     }
 </script>
 </body>
