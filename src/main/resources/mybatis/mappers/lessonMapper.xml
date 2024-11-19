@@ -55,7 +55,6 @@
              , L.lesson_status       as status
              , L.lesson_created_date as createdDate
              , L.PARTICIPANT         as participant
-             , L.lesson_thumbnail    as thumbnail
              , L.lesson_plan         as plan
              , U.USER_NAME as 'lecturer.username'
         from LESSONS L

@@ -28,7 +28,8 @@ public class Lesson {
     private Date updatedDate;
     private User lecturer;
     private String filename;
-
+    private Date startDate;
+    private Date endDate;
 
 
     public String getOriginalFilename() {

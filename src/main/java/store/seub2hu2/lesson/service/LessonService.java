@@ -1,10 +1,12 @@
 package store.seub2hu2.lesson.service;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 import store.seub2hu2.lesson.dto.LessonRegisterForm;
 import store.seub2hu2.lesson.dto.ReservationSearchCondition;
 import store.seub2hu2.lesson.mapper.LessonFileMapper;
@@ -62,7 +64,7 @@ public class LessonService {
     }
 
 
-    public void registerLesson(Lesson lesson, LessonRegisterForm form) {
+    public void registerLesson(Lesson lesson, @Validated LessonRegisterForm form) {
         // Convert LessonRegisterForm to Lesson
 
         lessonMapper.insertLesson(lesson); // Save lesson details and generate lessonNo
