@@ -13,7 +13,7 @@ import java.util.Map;
 public interface LessonMapper {
 
     // 전체 레슨 조회하기
-    public List<Lesson> getAllLessons(@Param("param") Map<String, Object> param);
+    public List<Lesson> getAllLessons(@Param("param") Map<String, Object> param, @Param("course") String course);
     // 레슨 번호로 조회
     public Lesson getLessonByNo(@Param("no") int no);
     // 회원 번호로 회원이 예약한 레슨 조회

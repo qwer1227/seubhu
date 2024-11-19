@@ -113,11 +113,14 @@ public class LessonController {
 
     @GetMapping("/list")
     @ResponseBody
-    public List<Lesson> lesson(@RequestParam("start") String start, @RequestParam("end") String end) {
+    public List<Lesson> lesson(@RequestParam("start") String start,
+                               @RequestParam("end") String end,
+                               @RequestParam(value = "course", required = false, defaultValue = "전체") String course) {
         Map<String, Object> param = new HashMap<>();
         param.put("start", start);
         param.put("end", end);
-        List<Lesson> lessons = lessonService.getAllLessons(param);
+        log.info("course = {}", course);
+        List<Lesson> lessons = lessonService.getAllLessons(param, course);
 
         return lessons;
     }
