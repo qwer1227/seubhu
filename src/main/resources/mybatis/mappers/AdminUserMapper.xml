@@ -99,7 +99,7 @@
         select
             user_no               as no
             , user_id               as id
-            , user_name             as username
+            , user_name             as name
             , password
             , user_nickname         as nickname
             , user_tel              as tel
@@ -132,7 +132,7 @@
             select
              user_no               as no
             , user_id               as id
-            , user_name             as username
+            , user_name             as name
             , password
             , user_nickname         as nickname
             , user_tel              as tel
