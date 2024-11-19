@@ -99,7 +99,7 @@
         select
             user_no               as no
             , user_id               as id
-            , user_name             as username
+            , user_name             as name
             , password
             , user_nickname         as nickname
             , user_tel              as tel
@@ -132,7 +132,7 @@
             select
              user_no               as no
             , user_id               as id
-            , user_name             as username
+            , user_name             as name
             , password
             , user_nickname         as nickname
             , user_tel              as tel
@@ -161,5 +161,47 @@
             ) as subquery
         where
             rn between #{condition.begin} and #{condition.end}
+    </select>
+
+    <!--
+        List<Lesson> getAllLessons(@Param("condition") Map<String, Object> condition);
+    -->
+
+    <select id="getAllLessons" resultType="store.seub2hu2.lesson.vo.Lesson">
+        select
+            *
+        from
+            (
+                select L.LESSON_NO           as lessonNo
+                     , U.USER_NAME           as "lecturer.name"
+                     , L.LESSON_TITLE        as title
+                     , L.LESSON_PRICE        as price
+                     , L.LESSON_STATUS       as status
+                     , L.LESSON_CREATED_DATE as createdDate
+                     , L.LESSON_PLAN         as plan
+                     , L.LESSON_START_DATE   as startDate
+                     , L.LESSON_END_DATE     as endDate
+                     , L.LESSON_CATEGORY     as category
+                from
+                    LESSONS L, USERS U
+                where
+                    L.user_no = U.user_no
+                    <if test="condition.opt != null">
+                        <choose>
+                            <when test="condition.opt == 'name'">
+                                and U.user_name like CONCAT('%',#{condition.value},'%')
+                            </when>
+                            <when test="condition.opt == 'lessonname'">
+                                and L.lesson_title like CONCAT('%',#{condition.value},'%')
+                            </when>
+                            <when test="condition.opt == 'course'">
+                                and L.lesson_category like CONCAT('%',#{condition.value},'%')
+                            </when>
+                        </choose>
+                    </if>
+                    <if test="condition.day != null">
+                        and DATE(L.lesson_start_date) =  #{condition.day}
+                    </if>
+            ) as subquery
     </select>
 </mapper>

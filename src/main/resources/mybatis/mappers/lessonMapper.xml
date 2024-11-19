@@ -32,7 +32,6 @@
              , LESSON_PRICE        as price
              , LESSON_STATUS       as status
              , LESSON_CREATED_DATE as createdDate
-             , LESSON_THUMBNAIL    as thumbnail
              , LESSON_PLAN         as plan
              , LESSON_START_DATE   as start
              , LESSON_END_DATE as 'end'
@@ -51,7 +50,6 @@
              , L.lesson_status       as status
              , L.lesson_created_date as createdDate
              , L.PARTICIPANT         as participant
-             , L.lesson_thumbnail    as thumbnail
              , L.lesson_plan         as plan
              , U.USER_NAME as 'lecturer.username'
         from LESSONS L
