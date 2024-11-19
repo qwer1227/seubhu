@@ -3,6 +3,13 @@
 <mapper namespace="store.seub2hu2.product.mapper.ProductMapper">
 
     <!--
+        void insertProduct(Product product);
+    -->
+    <insert id="insertProduct">
+
+    </insert>
+
+    <!--
     int getTotalRows(@Param("condition") Map<String, Object> condition);
     -->
 
@@ -86,5 +93,12 @@
             ) AS subquery
         WHERE
             RN BETWEEN #{condition.begin} AND #{condition.end}
+    </select>
+
+    <!--
+         ProdDetailDto getProductByNo(int no);
+    -->
+    <select id="getProductByNo" resultType="store.seub2hu2.product.dto.ProdDetailDto">
+
     </select>
 </mapper>

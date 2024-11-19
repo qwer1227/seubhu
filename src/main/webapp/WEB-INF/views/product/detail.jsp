@@ -11,7 +11,6 @@
 
     <h2>상품 상세 페이지</h2>
 
-
     <div class="container" style="margin-top: 100px;">
         <div class="row mb-3">
             <%--상품의 사진을 화면에 표시한다.--%>
@@ -75,18 +74,16 @@
                             <div class="card-header">
                                 <h4>상품 옵션 선택</h4>
                             </div>
+                            <div>색상</div>
                             <div class="card-body">
+                                <div class="mb-4">
+                                    <a href="detail"><img src="https://shop-phinf.pstatic.net/20221201_200/1669892701251cgqk2_JPEG/71028484951174905_616546595.jpg?type=m510" width="15%"></a>
+                                    <a href="detail"><img src="https://shop-phinf.pstatic.net/20221201_200/1669892701251cgqk2_JPEG/71028484951174905_616546595.jpg?type=m510" width="15%"></a>
+                                    <a href="detail"><img src="https://shop-phinf.pstatic.net/20221201_200/1669892701251cgqk2_JPEG/71028484951174905_616546595.jpg?type=m510" width="15%"></a>
+                                    <a href="detail"><img src="https://shop-phinf.pstatic.net/20221201_200/1669892701251cgqk2_JPEG/71028484951174905_616546595.jpg?type=m510" width="15%"></a>
+                                    <a href="detail"><img src="https://shop-phinf.pstatic.net/20221201_200/1669892701251cgqk2_JPEG/71028484951174905_616546595.jpg?type=m510" width="15%"></a>
+                                </div>
                                 <form method="post">
-                                    <div class="mb-4">
-                                        <label class="form-label">색상을 선택하세요</label>
-                                        <select class="form-select" name="color">
-                                            <option value="" disabled selected>색상을 선택하세요</option>
-                                            <option value="black">블랙</option>
-                                            <option value="white">화이트</option>
-                                            <option value="mango">망고</option>
-                                            <option value="bolt">볼트</option>
-                                        </select>
-                                    </div>
                                     <div class="mb-4">
                                         <div class="mb-4">
                                             <label class="form-label d-block">사이즈를 선택하세요:</label>
@@ -188,9 +185,67 @@
                 </div>
             </div>
         </div>
+        <!-- 리뷰 -->
+        <div class="row mb-3">
+			<div class="col">
+				<div class="border p-2 bg-secondary text-white fw-bold d-flex justify-content-between">
+					<span>리뷰 리스트</span>
+						<button class="btn btn-light btn-sm" id="btn-show-review-modal" onclick="openCommentFormModal()">리뷰쓰기</button>
+				</div>
+			</div>
+		</div>
+        <div class="row mb-3">
+            <div class="col">
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <div class="row mb-1">
+                            <div class="col-10"><span class="fw-bold">너무 좋아요</span></div>
+                            <div class="col-2 text-end"><small>2024-11-19-15:16:04</small></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-10">너무 좋은 제품이라 또 사고 싶습니다.</div>
+                            <div class="col-2 text-end"><a href="deleteReview?no=10&productNo=10" class="text-danger"><small><i class="fas fa-trash"></i></small></a></div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!-- 리뷰 쓰기 모달 창 -->
+        <div class="modal fade" id="form-review-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <form id="form-review" method="post" action="addReview">
+                    <input type="hidden" name="productNo" value="">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">새 리뷰쓰기</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="text-danger" id="form-alert">제목과 내용은 필수입력값입니다.</div>
+                            <div class="row mb-1 p-2">
+                                <input type="text" class="form-control" id="review-title" name="title" placeholder="제목을 입력하세요">
+                            </div>
+                            <div class="row mb-1 p-2">
+                                <textarea rows="5" class="form-control" id="review-content" name="content" placeholder="내용을 입력하세요"></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                            <button type="submit" class="btn btn-primary" id="btn-add-review">등록</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
+<script type="text/javascript">
+    const commentFormModal = new bootstrap.Modal('#form-review-modal');
 
+    function openCommentFormModal() {
+        commentFormModal.show();
+    }
+</script>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
 </html>
