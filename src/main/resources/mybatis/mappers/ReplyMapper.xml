@@ -2,38 +2,34 @@
 <!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="store.seub2hu2.community.mapper.ReplyMapper">
 
-  <!-- void insertReply(@Param("reply") Reply reply); -->
-  <insert id="insertReply">
-    insert into BOARD_REPLIES
-      (
-        board_no
-      , reply_content
-      , user_no
-      )
-    values
-      (
-        #{reply.boardNo}
-      , #{reply.content}
-      , #{reply.userNo}
-      )
-  </insert>
+  <update id="updateReply">
+        update BOARD_REPLIES
+        set
+            prev_reply_no = #{reply.prevNo}
+            , is_deleted = #{reply.deleted}
+        where
+            reply_no = #{reply.no}
+  </update>
 
-  <!-- void insertComment(@Param("reply") Reply reply); -->
-  <insert id="insertComment">
+  <!-- void insertReply(@Param("reply") Reply reply); -->
+  <insert id="insertReply" >
+
     insert into BOARD_REPLIES
     (
-      board_no
-    , prev_reply_no
+    board_no
     , reply_content
     , user_no
     )
     values
-      (
-        #{boardNo}
-      , #{prevReplyNo}
-      , #{reply}
-      , #{userNo}
-      )
+    (
+    #{reply.boardNo}
+    , #{reply.content}
+    , #{reply.user.no}
+    )
+
+    <selectKey resultType="int" keyProperty="reply.no" keyColumn="reply_no" order="AFTER">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
   </insert>
 
   <!-- List<Reply> getRepliesByBoardNo(@Param("no") int boardNo); -->
@@ -58,10 +54,33 @@
     order by br.prev_reply_no asc, br.reply_no asc
   </select>
 
-  <!-- void deleteReplyByNo(@Param("replyNo") int replyNo); -->
+  <!-- Reply getReplyByReplyNo(@Param("no") int replyNo); -->
+  <select id="getReplyByReplyNo" parameterType="int">
+    select
+        br.reply_no                 as no
+        , br.prev_reply_no          as prevNo
+        , b.board_no                as boardNo
+        , br.reply_content          as content
+        , br.reply_created_date     as createdDate
+        , br.reply_updated_date     as updatedDate
+        , u.user_no                 as "user.no"
+        , u.user_nickname           as "user.nickname"
+        , br.is_report              as report
+        , br.board_reply_like       as replyLike
+        , br.is_deleted             as deleted
+    from
+        BOARD_REPLIES br join BOARDS b
+            on br.board_no = b.board_no
+        join USERS u
+            on br.user_no = u.user_no
+    where
+        br.reply_no = #{reply.no}
+  </select>
+
+  <!-- void deleteReplyByNo(@Param("no") int replyNo); -->
   <update id="deleteReplyByNo" parameterType="int">
     update BOARDS_REPLIES
     set is_deleted = 'Y'
-    where reply_no = #{replyNo}
+    where reply_no = #{reply.no}
   </update>
 </mapper>

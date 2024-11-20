@@ -11,8 +11,10 @@ import java.util.Map;
 @Mapper
 public interface ReplyMapper {
 
+    void updateReply(@Param("reply") Reply reply);
     void insertReply(@Param("reply") Reply reply);
     void insertComment(@Param("reply") Reply reply);
     List<Reply> getRepliesByBoardNo(@Param("no") int boardNo);
-    void deleteReplyByNo(@Param("replyNo") int replyNo);
+    Reply getReplyByReplyNo(@Param("no") int replyNo);
+    void deleteReplyByNo(@Param("no") int replyNo);
 }
