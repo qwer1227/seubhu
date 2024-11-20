@@ -1,3 +1,4 @@
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="/WEB-INF/views/common/tags.jsp" %>
 <!doctype html>
@@ -58,9 +59,8 @@
     <div class="card mt-5" id="review">
         <div class="card-header">
             코스 리뷰
-                <sec:authorize access="isAuthenticated()">
-                        <div class="text-end"><button class="btn btn-primary" onclick="openReviewFormModal()">리뷰 작성</button></div>
-                </sec:authorize>
+<%--                <sec:authorize access="isAuthenticated()"> </sec:authorize>--%>
+                    <div class="text-end"><button class="btn btn-primary" onclick="openReviewFormModal()">리뷰 작성</button></div>
         </div>
         <div class="card-body">
             <div class="row mb-3">
@@ -94,7 +94,7 @@
                     <div class="form-group">
                         <label class="form-label">코스 사진 업로드</label>
                         <input type="file" class="form-control" name="upfile" multiple="multiple"/>
-                        Ctrl를 누른 채로 사진 여러 개 클릭
+                        컨트롤(Ctrl)을 누른 채로 사진 여러 개 클릭
                     </div>
                 </form>
             </div>
