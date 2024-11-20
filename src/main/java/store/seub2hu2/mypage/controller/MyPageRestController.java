@@ -49,9 +49,9 @@ public class MyPageRestController {
 
     @PutMapping("/detail/update/{no}")
     public ResponseEntity<Map<String,Object>> updatePost(@PathVariable("no") int no, //Path로 게시글 ID받기
-                                          @RequestParam String content, // 수정할 게시글 내용
-                                          @RequestParam(required = false) String thumbnailImage, // 수정할 썸네일 이미지
-                                          @RequestParam(required = false)MultipartFile[] files
+                                          @RequestParam("content") String content, // 수정할 게시글 내용
+                                          @RequestParam(name = "thumbnailImage", required = false) String thumbnailImage, // 수정할 썸네일 이미지
+                                          @RequestParam(name = "files", required = false )MultipartFile[] files
                                              ) {
         Map<String, Object> response = new HashMap<>();
 

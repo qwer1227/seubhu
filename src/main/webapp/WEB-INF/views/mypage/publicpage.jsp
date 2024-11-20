@@ -385,13 +385,26 @@
         Array.from(files).forEach((file, index) => {
             let reader = new FileReader();
             reader.onload = function (event) {
+                let wrapperDiv = document.createElement('div');
+                wrapperDiv.classList.add('image-preview-wrapper');
+
                 let img = document.createElement('img');
                 img.src = event.target.result;
                 img.setAttribute('data-index', index); // 고유한 data-index 추가
                 img.onclick = function() {
                     selectImageAsThumbnail(img);
                 };
-                previewContainer.appendChild(img);
+
+                let deleteBtn = document.createElement('button');
+                deleteBtn.classList.add('delete-btn');
+                deleteBtn.textContent = 'X';
+                deleteBtn.onclick = function () {
+                    wrapperDiv.remove();  // X 버튼 클릭 시 해당 이미지를 미리보기에서 제거
+                };
+
+                wrapperDiv.appendChild(img);
+                wrapperDiv.appendChild(deleteBtn);
+                previewContainer.appendChild(wrapperDiv);
             };
             reader.readAsDataURL(file);
         });
@@ -409,6 +422,74 @@
         // 기존의 썸네일 미리보기를 모두 초기화하고 선택된 이미지만 강조 표시
         previewContainer.find('img').removeClass('selected');
         $(selectedImage).addClass('selected');
+    }
+
+    // 게시글 수정 버튼 클릭 시 기존 이미지 미리보기 및 삭제 버튼 추가
+    $(document).on('click', '#postUpdate', function() {
+        const postId = $(this).data('post-id');
+
+        $.ajax({
+            url: "/mypage/detail/" + postId,
+            type: 'GET',
+            success: function(response) {
+                $('#postContent').val(response.postContent);  // 내용 필드에 내용 채우기
+                $('#thumbnailImage').val(response.thumbnail);  // 썸네일 필드에 내용 채우기
+
+                // 기존 이미지 리스트를 hidden 필드에 저장
+                let existingImages = response.images.map(image => image.imageUrl);
+                $('#existingImages').val(JSON.stringify(existingImages));
+
+                // 기존 이미지 미리보기 초기화
+                let previewContainer = $('#imagePreviewContainer');
+                previewContainer.empty();
+
+                // 기존 이미지 미리보기 표시
+                existingImages.forEach((image, index) => {
+                    let wrapperDiv = $('<div>', { class: 'image-preview-wrapper' });
+
+                    let img = $('<img>', {
+                        src: image,
+                        class: 'selected-preview',
+                        'data-index': index,
+                        click: function () {
+                            selectImageAsThumbnail(this);
+                        }
+                    });
+
+                    // 삭제 버튼 추가
+                    let deleteBtn = $('<button>', {
+                        class: 'delete-btn',
+                        text: 'X',
+                        click: function () {
+                            deleteImage(index, image); // 해당 이미지를 삭제하는 함수 호출
+                        }
+                    });
+
+                    wrapperDiv.append(img).append(deleteBtn);
+                    previewContainer.append(wrapperDiv);
+                });
+
+                $('#submitPostButton').text('게시글 수정');
+                $('#submitPostButton').attr('onclick', 'updatePost(' + postId + ')');
+                $('#newPostModal').modal('show');
+            },
+            error: function(xhr, status, error) {
+                console.error('게시글 정보를 가져오는 데 실패했습니다:', error);
+            }
+        });
+
+        $('#newPostModal').modal('show');
+    });
+
+    // 삭제할 이미지 처리
+    function deleteImage(index, imageUrl) {
+        // 기존 이미지 목록에서 해당 이미지를 제거
+        let existingImages = JSON.parse($('#existingImages').val());
+        existingImages.splice(index, 1);  // 배열에서 해당 이미지 제거
+        $('#existingImages').val(JSON.stringify(existingImages));  // 업데이트된 이미지 목록 저장
+
+        // 미리보기에서 해당 이미지 삭제
+        $('#imagePreviewContainer img[src="' + imageUrl + '"]').parent().remove();
     }
 
     // 게시글 작성

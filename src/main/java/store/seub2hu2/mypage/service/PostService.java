@@ -56,7 +56,7 @@ public class PostService {
         // 4. 기존 이미지를 삭제하고 새 이미지 처리 (선택 사항)
         if (files != null && files.length > 0) {
             // 기존 이미지 삭제
-            postMapper.deletePostImagesByPostNo(postId);  // postId에 해당하는 기존 이미지 삭제
+            //postMapper.deletePostImagesByPostNo(postId);  // postId에 해당하는 기존 이미지 삭제
 
             // 새 이미지 파일 처리
             for (MultipartFile file : files) {
