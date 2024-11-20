@@ -26,15 +26,13 @@ public interface UserMapper {
     // 사용자 이메일로 사용자 조회
     User findByEmail(@Param("email") String email);
 
-    // 사용자 이메일로 아이디 조회(아이디 찾기용)
-    User findIdByEmail(@Param("email") String email);
-
-    // 사용자 이메일, 아이디로 사용자 조회(비밀번호 찾기용) -->
-    User findByIdAndEmail(@Param("id") String id, @Param("email") String email);
-
     // 역할 이름으로 Role 객체 조회
     Role getRoleByName(@Param("roleName") String roleName);
 
 
+    User findByNickname(@Param("nickname") String nickname);
 
+    void updatePassword(String id, String hashedPassword);
+
+    User findUserByIdAndEmail(String id, String email);
 }

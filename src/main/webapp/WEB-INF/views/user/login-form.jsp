@@ -58,8 +58,8 @@
                     <label class="form-check-label" for="rememberMe">아이디 저장</label>
                 </div>
                 <div>
-                    <a href="/forgot-id" class="text-decoration-none">아이디 찾기</a> |
-                    <a href="/forgot-password" class="text-decoration-none">비밀번호 재설정</a>
+                    <a href="/find-id" class="text-decoration-none">아이디 찾기</a> |
+                    <a href="/find-password" class="text-decoration-none">비밀번호 재설정</a>
                 </div>
             </div>
         </form>

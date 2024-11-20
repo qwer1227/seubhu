@@ -6,12 +6,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.web.SecurityFilterChain;
-import store.seub2hu2.security.CustomAccessDeniedHandler;
-import store.seub2hu2.security.CustomAuthenticationEntryPoint;
+import store.seub2hu2.security.service.CustomOAuth2UserService;
 
 @Configuration
 @EnableWebSecurity
@@ -24,30 +23,14 @@ public class SecurityConfig {
     @Autowired
     private CustomAccessDeniedHandler customAccessDeniedHandler;
 
-
-    @Bean
-    public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .securityMatcher("/api/**")  // REST API에만 적용
-                .csrf(csrf -> csrf.disable()) // CSRF 비활성화
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll() // /auth/** 경로 허용
-                        // static 이하 /js/**, /css/**, /image/** 경로는 인증 없이 접근 가능
-                        .requestMatchers("/js/**", "/css/**", "/image/**").permitAll()
-                        .anyRequest().permitAll()) // 모든 API 요청은 인증 필요
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)); // 세션 사용 안 함
- //               .addFilter(new JwtAuthenticationFilter()) // JWT 인증 필터 추가
-
-        return http.build();
-    }
+    @Autowired
+    private CustomOAuth2UserService customOAuth2UserService;
 
     @Bean
     SecurityFilterChain webSecurityFilterChain(HttpSecurity http) throws Exception {
 
 // 세션 기반 일반 로그인 설정
         http
-                .securityMatcher("/**") // 웹 요청에만 적용
                 .csrf(csrf -> csrf.disable()) // CSRF 활성화
                 // 접근 인가정책을 설정한다.
                 .authorizeHttpRequests(auth -> auth
@@ -71,23 +54,26 @@ public class SecurityConfig {
                         // 로그인 실패 시 이동할 URL을 지정한다.
                         .failureUrl("/login?error=fail"))
 // 로그아웃 정책을 설정한다.
-            .logout(logout -> logout
+                .logout(logout -> logout
 // 로그아웃...
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/main")
-                .invalidateHttpSession(true))
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/main")
+                        .invalidateHttpSession(true))
+                .oauth2Login(oauth2Configurer -> oauth2Configurer
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/main")
+                        .failureUrl("/login")
+                        .userInfoEndpoint()
+                        .userService(customOAuth2UserService))
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         // 인증되지 않은 사용자가 인증이 필요한 리소스를 요청했을 때
                         .authenticationEntryPoint(customAuthenticationEntryPoint)
                         // 접근권한을 가지고 있지 않는 리소스를 요청했을 때
-                        .accessDeniedHandler(customAccessDeniedHandler))
-
-                // 세션 관리 (세션 기반 로그인과 REST 기반의 공존을 위한 분리)
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
+                        .accessDeniedHandler(customAccessDeniedHandler));
 
         return http.build();
     }
+
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

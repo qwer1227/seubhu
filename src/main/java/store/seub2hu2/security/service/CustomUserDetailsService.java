@@ -1,10 +1,11 @@
-package store.seub2hu2.security;
+package store.seub2hu2.security.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import store.seub2hu2.security.CustomUserDetails;
 import store.seub2hu2.user.mapper.UserMapper;
 import store.seub2hu2.user.vo.Role;
 import store.seub2hu2.user.vo.User;
