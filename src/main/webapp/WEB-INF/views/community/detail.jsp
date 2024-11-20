@@ -108,7 +108,7 @@
       <form method="get" action="add-reply">
         <input type="hidden" name="boardNo" value="${board.no}">
 <%--          <input type="hidden" name="userNo" value="${user.no}">--%>
-        <input type="hidden" name="userNo" value="3">
+        <input type="hidden" name="userNo" value="11">
         <div class="row">
           <div class="form-group col-11">
             <%--        <c:choose>--%>
@@ -120,9 +120,9 @@
             <%--          </c:otherwise>--%>
             <%--        </c:choose>--%>
           </div>
-        <div class="col">
-          <button class="btn btn-success" onclick="submitReply()">등록</button>
-        </div>
+          <div class="col">
+            <button class="btn btn-success" onclick="submitReply()">등록</button>
+          </div>
         </div>
       </form>
     </div>
@@ -167,8 +167,15 @@
                 <div class="comment-item m-1 rounded" style="padding-left:30px; text-align:start;">
                   ${reply.content}
                     <%--        <c:if test="${not empty LOGIN_USER}">--%>
-                  <button class="btn btn-outline-dark btn-sm d-flex justify-content-start">답글</button>
+                  <button class="btn btn-outline-dark btn-sm d-flex justify-content-start" onclick="appendComment(${reply.no})">답글</button>
                     <%--        </c:if>--%>
+                    
+                  <form method="post" action="add-comment" id="box-comments-${reply.no}" class="my-3 d-none">
+                            <input type="hidden" name="prevNo" value="${reply.no}">
+                            <input type="hidden" name="boardNo" value="${board.no}">
+                            <textarea name="content" class="form-control" rows="2" placeholder="답글을 작성하세요."></textarea>
+                            <button class="btn btn-outline-dark btn-sm d-flex justify-content-start">등록</button>
+                  </form>
                 </div>
               </div>
             </div>
@@ -194,8 +201,11 @@
         }
     }
 
-    function deleteReply() {
-        alert("해당 댓글을 삭제하시겠습니까?")
+    function deleteReply(replyNo) {
+        let result = confirm("해당 댓글을 삭제하시겠습니까?");
+        if (result){
+            window.location.href = "delete-reply?no=" + replyNo;
+        }
     }
     
     async function submitReply(){
@@ -213,7 +223,7 @@
       let jsonText = JSON.stringify(data);
       
       // POST 방식으로 객체를 JSON 형식의 데이터를 서버로 보내기
-      let response = await fetch("/community/addReply", {
+      let response = await fetch("/community/add-reply", {
         // 요청방식을 지정한다.
         method: "POST",
         // 요청메세지의 바디부에 포함된 컨텐츠의 형식을 지정한다.
@@ -228,6 +238,56 @@
         // 응답으로 새로 추가된 코멘트를 추가한다.
         let reply = await response.json();
       }
+    }
+
+    document.addEventListener("click", function (event) {
+        // 클릭된 요소가 '답글' 버튼인지 확인
+        if (event.target && event.target.classList.contains('btn-outline-dark')) {
+            let replyElement = event.target.closest('.comment-item'); // 댓글의 가장 가까운 부모 요소 찾기
+            if (replyElement) {
+                appendComment(replyElement);
+            }
+        }
+    });
+
+    function appendComment(replyNo) {
+        let box = document.querySelector("#box-comments-" + replyNo);
+        box.classList.toggle("d-none");
+     
+    }
+
+    async function submitComment(){
+        let value1 = document.querySelector("input[name=no]").value;
+        let value2 = document.querySelector("textarea[name=content]").value;
+        let value3 = document.querySelector("input[name=userNo]").value;
+        let value4 = document.querySelector("input[name=prevNo]").value;
+
+        let data = {
+            boardNo: value1,
+            content: value2,
+            userNo: value3,
+            prevNo: value4
+        }
+
+        // 자바스크립트 객체를 json형식의 텍스트로 변환한다.
+        let jsonText = JSON.stringify(data);
+
+        // POST 방식으로 객체를 JSON 형식의 데이터를 서버로 보내기
+        let response = await fetch("/community/add-comment", {
+            // 요청방식을 지정한다.
+            method: "POST",
+            // 요청메세지의 바디부에 포함된 컨텐츠의 형식을 지정한다.
+            headers: {
+                "Content-Type": "application/json"
+            },
+            // 요청메세지의 바디부에 서버로 전달할 json형식의 텍스트 데이터를 포함시킨다.
+            body: jsonText
+        });
+        // 서버가 보낸 응답데이터를 받는다.
+        if(response.ok){
+            // 응답으로 새로 추가된 코멘트를 추가한다.
+            let reply = await response.json();
+        }
     }
 </script>
 </html>
