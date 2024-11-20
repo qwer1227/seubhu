@@ -110,7 +110,7 @@
                                 <c:forEach var="u" items="${users }">
                                     <tr>
                                         <td>${u.no}</td>
-                                        <td>${u.username}</td>
+                                        <td>${u.name}</td>
                                         <td>${u.id}</td>
                                         <td>${u.nickname}</td>
                                         <td>${u.email}</td>
@@ -131,6 +131,7 @@
                     </div>
                 </div>
             </div>
+
             <!-- 페이징처리 -->
         <c:if test="${not empty users}">
             <div class="row mb-3">
