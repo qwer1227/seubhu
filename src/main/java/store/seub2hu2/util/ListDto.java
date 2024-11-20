@@ -12,6 +12,10 @@ public class ListDto<T> {
     Pagination paging;
 
 
+    public ListDto(List<T> data) {
+        this.data = data;
+    }
+
     public ListDto(List<T> data, Pagination paging) {
         this.data = data;
         this.paging = paging;

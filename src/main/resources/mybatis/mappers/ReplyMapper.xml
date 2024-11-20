@@ -12,37 +12,50 @@
       )
     values
       (
-        #{boardNo}
-      , #{reply}
-      , #{user.no}
+        #{reply.boardNo}
+      , #{reply.content}
+      , #{reply.userNo}
       )
   </insert>
 
   <!-- void insertComment(@Param("reply") Reply reply); -->
   <insert id="insertComment">
-
+    insert into BOARD_REPLIES
+    (
+      board_no
+    , prev_reply_no
+    , reply_content
+    , user_no
+    )
+    values
+      (
+        #{boardNo}
+      , #{prevReplyNo}
+      , #{reply}
+      , #{userNo}
+      )
   </insert>
 
-  <!-- List<Reply> getRepliesByBoardNo(@Param("no") int no); -->
+  <!-- List<Reply> getRepliesByBoardNo(@Param("no") int boardNo); -->
   <select id="getRepliesByBoardNo" resultType="store.seub2hu2.community.vo.Reply" parameterType="int">
     select
-      b.board_no                 as "board.no"
-      , u.user_no                as "user.no"
-      , u.user_nickname          as "user_nickname"
+      b.board_no                 as boardNo
+      , u.user_no                as userNo
+      , u.user_nickname          as "user.nickname"
       , br.reply_no              as no
       , br.prev_reply_no         as prevNo
       , br.reply_content         as content
       , br.reply_created_date    as createdDate
       , br.reply_updated_date    as updatedDate
-      , br.is_report             as isReport
+      , br.is_report             as report
       , br.board_reply_like      as replyLike
-      , br.is_deleted            as isDeleted
-    from BOARDS b join BOARDS_REPLIES br
+      , br.is_deleted            as deleted
+    from BOARDS b join BOARD_REPLIES br
          on b.board_no = br.board_no
       join USERS u
          on br.user_no = u.user_no
     where b.board_no = #{no}
-    order by br.reply_created_date asc
+    order by br.prev_reply_no asc, br.reply_no asc
   </select>
 
   <!-- void deleteReplyByNo(@Param("replyNo") int replyNo); -->

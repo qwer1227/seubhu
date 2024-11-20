@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="store.seub2hu2.community.mapper.UploadMapper">
+<mapper namespace="store.seub2hu2.community.mapper.BoardUploadMapper">
 
   <!-- void insertBoardFile(UploadFile uploadFile); -->
   <insert id="insertBoardFile" parameterType="store.seub2hu2.community.vo.UploadFile">
@@ -9,14 +9,12 @@
          board_no
         , file_original_name
         , file_save_name
-        , file_path
         )
     values
         (
-         #{uploadFile.no}
-        , #{uploadFile.originalFileName}
-        , #{uploadFile.saveFileName}
-        , #{uploadFile.saveFilePath}
+         #{uploadFile.boardNo}
+        , #{uploadFile.originalName}
+        , #{uploadFile.saveName}
         )
   </insert>
 
@@ -37,7 +35,6 @@
   </select>
 
   <!-- UploadFile getBoardFileByBoardNo(int boardNo); -->
-  <!-- 같은 게시글번호로 저장된 파일 중 가장 최근에 저장된 파일을 조회 -->
   <select id="getBoardFileByBoardNo" parameterType="int" resultType="store.seub2hu2.community.vo.UploadFile">
     with RankedFiles as (
       select

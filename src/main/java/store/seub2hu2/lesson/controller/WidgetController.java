@@ -30,11 +30,6 @@ public class WidgetController {
         return "lesson/pay/checkout";
     }
 
-    @GetMapping("/payment")
-    public String payment() {
-        return "lesson/pay/payment";
-    }
-
     @GetMapping("/success")
     public String getSuccess(HttpServletRequest request, Model model) {
         // 결제 완료 데이터를 처리하는 로직 (필요 시 추가)
