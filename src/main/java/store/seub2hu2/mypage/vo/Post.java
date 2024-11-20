@@ -2,8 +2,11 @@ package store.seub2hu2.mypage.vo;
 
 import lombok.*;
 
+import org.apache.ibatis.type.Alias;
 import store.seub2hu2.user.vo.User;
 
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 

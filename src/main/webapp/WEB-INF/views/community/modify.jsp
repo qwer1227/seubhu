@@ -37,7 +37,7 @@
             <label class="form-label" for="category">카테고리</label>
           </th>
           <td style="text-align: start">
-            <select id="category" name="category" class="form-control">
+            <select id="category" name="catName" class="form-control">
               <option hidden="hidden">게시판을 선택해주세요.</option>
               <option value="일반게시판" ${board.catName eq '일반게시판' ? 'selected' : ''}>일반</option>
               <option value="자랑게시판" ${board.catName eq '자랑게시판' ? 'selected' : ''}>자랑</option>
@@ -68,11 +68,19 @@
         </tr>
         <tr class="form-group">
           <th>
+            <label class="form-label">기존파일명</label>
+          </th>
+          <td colspan="3" style="text-align: start">
+            ${not empty board.uploadFile ? board.uploadFile.originalName : ''}
+            <button type="button" class="btn btn-outline-dark" onclick="deleteUploadFile(${board.uploadFile.no})">삭제</button>
+          </td>
+        </tr>
+        <tr class="form-group">
+          <th>
             <label class="form-label">첨부파일</label>
           </th>
           <td colspan="3">
-            <input type="file" class="form-control" name="filename"
-                   value="${board.uploadFile.originalName ? board.uploadFile.originalName : ""}"/>
+            <input type="file" class="form-control" name="upfile" />
           </td>
         </tr>
         </tbody>
@@ -93,8 +101,17 @@
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script type="text/javascript">
     function abort() {
-        alert("수정 중이던 글을 취소하시겠습니까?");
-        location.href = "detail?no=${board.no}";
+        let result = confirm("수정 중이던 글을 취소하시겠습니까?");
+        if (result){
+            window.location.href = "detail?no=${board.no}";
+        }
+    }
+    
+    function deleteUploadFile(no){
+        let result = confirm("기존에 등록된 첨부파일을 삭제하시겠습니까?");
+        if (result){
+          window.location.href = "deleteUploadFile?no=" + no;
+        }
     }
 </script>
 </body>

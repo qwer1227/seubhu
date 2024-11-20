@@ -23,14 +23,14 @@ public class Board {
     private int viewCnt;
 //    private Scrap scrap; // 구현할때 타입 변경
     private int like;
-    private String isDeleted;
-    private String isKeep;
-    private String insReport;
+    private String deleted;
+    private String keep;
+    private String report;
 //    private Hashtag hashtag;
     private List<Reply> reply;
 
     public String getOriginalFileName() {
-        if(uploadFile.getOriginalName() == null){
+        if(uploadFile.getSaveName() == null){
             return null;
         }
         return uploadFile.getSaveName().substring(13);

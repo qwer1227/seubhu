@@ -16,14 +16,14 @@ import java.util.Date;
 public class Reply {
     private int no;
     private int prevNo;
-    private Board board;
+    private int boardNo;
     private String content;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date createdDate;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date updatedDate;
-    private User user;
-    private String isReport;
+    private int userNo;
+    private String report;
     private int replyLike;
-    private String isDeleted;
+    private String deleted;
 }

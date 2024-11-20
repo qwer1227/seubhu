@@ -36,17 +36,16 @@ public class FeedRestController {
             Post post = new Post();
             post.setPostContent(postContent);
             post.setThumbnail(thumb);
-            int postNo = postService.insertPost(post);  // 게시글 생성 후 postNo 반환
-            post.setNo(postNo);
+//            int postNo = postService.insertPost(post);  // 게시글 생성 후 postNo 반환
 
             // 3. 파일 업로드 및 이미지 연결
-            Map<String,Object> fileResponse = fileUploadService.saveFile(files, postNo,thumb);  // postNo와 함께 이미지 업로드
+//            Map<String, Object> fileResponse = fileUploadService.saveFile(files, postNo, thumb);  // postNo와 함께 이미지 업로드
 
             // 4. 응답 반환
             Map<String, Object> response = new HashMap<>();
             response.put("message", "포스트 생성 완료");
-            response.put("PostNo", postNo);
-            response.put("thumb", thumb);
+//            response.put("PostNo", postNo);
+//            response.put("thumbnailFilename", fileResponse.get("thumbnailFilename"));
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
@@ -54,4 +53,5 @@ public class FeedRestController {
         }
     }
 }
+
 

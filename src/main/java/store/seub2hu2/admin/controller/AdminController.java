@@ -2,23 +2,21 @@ package store.seub2hu2.admin.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import store.seub2hu2.admin.dto.CourseRegisterForm;
 import store.seub2hu2.admin.service.AdminService;
 import store.seub2hu2.course.service.CourseService;
 import store.seub2hu2.course.vo.Course;
-import store.seub2hu2.lesson.service.LessonService;
-import store.seub2hu2.lesson.vo.Lesson;
+import store.seub2hu2.course.vo.Region;
 import store.seub2hu2.user.vo.User;
+import store.seub2hu2.util.FileUtils;
 import store.seub2hu2.util.ListDto;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +33,6 @@ public class AdminController {
     private final CourseService courseService;
 
     private final AdminService adminService;
-    private final LessonService lessonService;
 
     @GetMapping("/home")
     public String home() {
@@ -44,30 +41,7 @@ public class AdminController {
     }
 
     @GetMapping("/lesson")
-    public String lesson(@RequestParam(name = "opt", required = false) String opt,
-                         @RequestParam(name = "day", required = false)
-                         @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate day,
-                               @RequestParam(name = "value", required = false) String value,
-                               Model model) {
-
-        if (day == null) {
-            day = LocalDate.now();
-        }
-
-        String formattedDay = day.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-
-        Map<String, Object> condition = new HashMap<>();
-        condition.put("day", formattedDay);
-        if (StringUtils.hasText(value)) {
-            condition.put("opt", opt);
-            condition.put("value", value);
-        }
-
-        System.out.println("condition: " + condition);
-
-        List<Lesson> lessons = adminService.getLessons(condition);
-        model.addAttribute("lessons", lessons);
-
+    public String lesson() {
         return "admin/lessonlist";
     }
 
@@ -87,7 +61,7 @@ public class AdminController {
 
     /*코스 목록*/
     @GetMapping("/course")
-    public String course(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+    public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
                        @RequestParam(name = "distance", required = false) Double distance,
                        @RequestParam(name = "level", required = false) Integer level,
                        @RequestParam(name = "keyword", required = false) String keyword,
