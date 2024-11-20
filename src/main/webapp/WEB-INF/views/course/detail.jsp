@@ -59,8 +59,7 @@
     <div class="card mt-5" id="review">
         <div class="card-header">
             코스 리뷰
-<%--                <sec:authorize access="isAuthenticated()"> </sec:authorize>--%>
-                    <div class="text-end"><button class="btn btn-primary" onclick="openReviewFormModal()">리뷰 작성</button></div>
+                <div class="text-end"><button class="btn btn-primary" onclick="openReviewFormModal()">리뷰 작성</button></div>
         </div>
         <div class="card-body">
             <div class="row mb-3">
@@ -116,11 +115,17 @@
     }
 
     // 리뷰 목록이 화면에 표시된다.
-    // async function getReviews() {
-    //     document.querySelector("input[name=courseNo]").value;
-    //
-    //     let response = await fetch("/course/reviews");
-    // }
+    async function getReviews() {
+        let courseNo = document.querySelector("input[name=courseNo]").value;
+
+        let response = await fetch("/ajax/reviews/" + courseNo);
+        let reviews = await response.json();
+        for (let review of reviews) {
+            appendReview(review);
+        }
+    }
+
+    getReviews();
 
     // 입력한 코스 리뷰 정보(코스번호, 제목, 내용, 첨부파일)를 컨트롤러에 제출한다.
     async function submitReview() {
@@ -128,20 +133,21 @@
         let courseNo = document.querySelector("input[name=courseNo]").value;
         let title = document.querySelector("input[name=title]").value;
         let content = document.querySelector("textarea[name=content]").value;
-        let inputFile = document.querySelector("input[name=upfile]");
-        let files = inputFile.files;
+        let upfiles = document.querySelector("input[name=upfile]").files;
 
         let formData = new FormData();
 
         formData.append("courseNo", courseNo);
         formData.append("title", title);
         formData.append("content", content);
-        for (let file of files) {
-            formData.append("upfile", file);
+
+        for (let i = 0; i < upfiles.length; i++) {
+            let upfile = upfiles[i];
+            formData.append("upfiles", upfile);
         }
 
         // 2. formData(입력한 코스 리뷰 정보)를 서버에 보낸다.
-        let response = await fetch("/course/addReview", {
+        let response = await fetch("/ajax/addReview", {
             method: "POST",
             body: formData
         });
@@ -151,6 +157,8 @@
             let review = await response.json();
             console.log('응답으로 받은 데이터', review); // 응답 데이터 확인 용도
             appendReview(review);
+
+            reviewFormModal.hide();
         }
     }
 
@@ -160,13 +168,15 @@
 	        <div class="card mb-3" id="review-\${review.no}">
 	            <div class="card-header">
 	                <span>\${review.title}</span>
-	                    <span class="float-end">
-	                    <small>\${review.user.name}</small>
+	                <span class="float-end">
+	                    <small>\${review.user.nickname}</small>
 	                    <small>\${review.createdDate}</small>
+                        <button class="btn btn-primary">좋아요</button> 좋아요 수<small>\${review.likeCnt}</small>
 	                </span>
 	            </div>
 	            <div class="card-body">
 	                \${review.content}
+<!--                    <img src="C:\files\course\\${review.reviewImage.name}" />-->
 	            </div>
 	            <div class="card-footer text-end">
 	                <button class="btn btn-danger btn-sm"
@@ -176,7 +186,7 @@
 	    `;
 
         let box = document.querySelector("#box-reviews");
-        box.insertAdjacentHTML("beforeend", content)
+        box.insertAdjacentHTML("beforeend", content);
     }
 </script>
 </body>
