@@ -81,4 +81,30 @@
         where c.region_no = r.region_no
         and c.course_no = #{no}
     </select>
+    
+    <!--
+        void insertReview(@Param("review") Review review);
+    -->
+    <insert id="insertReview">
+        insert into COURSE_REVIEWS
+        (review_title
+         , review_content
+         , user_no
+         , course_no)
+        values
+        (#{review.title}
+         , #{review.content}
+         , #{review.user.no}
+         , #{review.course.no})
+    </insert>
+
+    <!--
+        void insertReviewImage(@Param("review") Review review);
+    -->
+    <insert id="insertReviewImage">
+        insert into COURSE_REVIEW_IMGS
+        (img_name)
+        values
+        (#{review.reviewImage.name})
+    </insert>
 </mapper>

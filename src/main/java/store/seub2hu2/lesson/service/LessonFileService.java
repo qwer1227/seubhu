@@ -10,6 +10,7 @@ import store.seub2hu2.lesson.mapper.LessonMapper;
 import store.seub2hu2.lesson.vo.LessonFile;
 import store.seub2hu2.util.FileUtils;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +26,7 @@ public class LessonFileService {
     private final LessonMapper lessonMapper;
     private final LessonFileMapper lessonFileMapper;
 
-    public void saveLessonImages(Integer lessonNo, MultipartFile thumbnail, MultipartFile mainImage) {
+    public void saveLessonImages(Integer lessonNo, MultipartFile thumbnail, MultipartFile mainImage)  {
         System.out.println("saveLessonImages lessonNo: " + lessonNo);
 
         if (thumbnail != null && !thumbnail.isEmpty()) {
@@ -43,6 +44,8 @@ public class LessonFileService {
             );
             lessonFileMapper.insertLessonFile(mainImageFile);
         }
+
+
     }
 
 //    public Map<String, LessonFile> findLessonImagesByLessonNo(Integer lessonNo) {

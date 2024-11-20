@@ -1,4 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
+
 <style>
     <%-- 폰트 스타일 --%>
     * {
@@ -26,7 +28,7 @@
 <nav class="navbar navbar-expand-lg bg-body-tertiary mb-5"
      style="border-top: 2px solid#0064FF; border-bottom:2px solid#0064FF;">
     <div class="container-xxl" style="height: 60px;">
-        <a class="navbar-brand" href="index.html" style="color: #0064FF;
+        <a class="navbar-brand" href="/main" style="color: #0064FF;
   font-size: 30px; font-weight: bolder;">습습후후</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
                 aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,11 +50,16 @@
                 <div class="divider" style="border-left: 1px solid #0e0d0d; margin: 0 7px;"></div>
                 <a class="nav-link" href="#">코스</a>
                 <div class="divider" style="border-left: 1px solid #0e0d0d; margin: 0 7px;"></div>
-                <a class="nav-link " href="#">레슨</a>
+                <a class="nav-link " href="/lesson">레슨</a>
                 <div class="divider" style="border-left: 1px solid #0e0d0d; margin: 0 7px;"></div>
                 <a class="nav-link " href="#">커뮤</a>
                 <div class="divider" style="border-left: 1px solid #0e0d0d; margin: 0 7px;"></div>
-                <a class="nav-link " href="#">로그인</a>
+                <security:authorize access="!isAuthenticated()">
+                    <a class="nav-link " href="/login">로그인</a>
+                </security:authorize>
+                <security:authorize access="isAuthenticated()">
+                    <a class="nav-link " href="/logout">로그아웃</a>
+                </security:authorize>
                 <div style="padding: 0 20px;"></div>
             </div>
         </div>

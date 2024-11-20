@@ -2,22 +2,25 @@ package store.seub2hu2.admin.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import store.seub2hu2.admin.dto.CourseRegisterForm;
 import store.seub2hu2.admin.service.AdminService;
 import store.seub2hu2.course.service.CourseService;
 import store.seub2hu2.course.vo.Course;
-import store.seub2hu2.course.vo.Region;
+import store.seub2hu2.lesson.service.LessonService;
+import store.seub2hu2.lesson.vo.Lesson;
 import store.seub2hu2.user.vo.User;
-import store.seub2hu2.util.FileUtils;
 import store.seub2hu2.util.ListDto;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -27,12 +30,12 @@ import java.util.Map;
 @Slf4j
 public class AdminController {
 
-    @Value("${project.upload.path}")
-    private String saveDirectory;
+
 
     private final CourseService courseService;
 
     private final AdminService adminService;
+    private final LessonService lessonService;
 
     @GetMapping("/home")
     public String home() {
@@ -40,59 +43,51 @@ public class AdminController {
         return "admin/home";
     }
 
+    @GetMapping("/lesson")
+    public String lesson(@RequestParam(name = "opt", required = false) String opt,
+                         @RequestParam(name = "day", required = false)
+                         @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate day,
+                               @RequestParam(name = "value", required = false) String value,
+                               Model model) {
+
+        if (day == null) {
+            day = LocalDate.now();
+        }
+
+        String formattedDay = day.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("day", formattedDay);
+        if (StringUtils.hasText(value)) {
+            condition.put("opt", opt);
+            condition.put("value", value);
+        }
+
+        System.out.println("condition: " + condition);
+
+        List<Lesson> lessons = adminService.getLessons(condition);
+        model.addAttribute("lessons", lessons);
+
+        return "admin/lessonlist";
+    }
+
     @GetMapping("/course-register-form")
     public String courseRegisterForm() {
-
         return "admin/course-register-form";
     }
 
     @PostMapping("/course-register-form")
     public String courseRegisterForm(CourseRegisterForm form) {
 
-        Course course = new Course();
-        course.setName(form.getName());
-        course.setTime(form.getTime());
-        Double distance = form.getDistance();
-        if (distance == null) {
-            distance = 0.0; // 기본값 설정 (필요에 따라 변경)
-        }
-        course.setDistance(distance);
 
+        adminService.checkNewRegion(form);
 
-        Region region = new Region();
-
-        region.setSi(form.getRegion().getSi());
-        region.setGu(form.getRegion().getGu());
-        region.setDong(form.getRegion().getDong());
-
-
-        /*course.setRegion(region);*/
-
-        MultipartFile multipartFile = form.getImage();
-        if (!multipartFile.isEmpty()) {
-
-            String originalFilename = multipartFile.getOriginalFilename();
-            String filename= System.currentTimeMillis() + originalFilename;
-
-            FileUtils.saveMultipartFile(multipartFile, saveDirectory, filename);
-
-            course.setFilename(filename);
-            System.out.println();
-        }
-        if(multipartFile.isEmpty()){
-            return "redirect:admin/course-register-form";
-        }
-        adminService.addNewRegion(region);
-
-
-        adminService.addNewCourse(course);
-
-        return "redirect:admin/course-register-form";
+        return "redirect:/admin/course";
     }
 
     /*코스 목록*/
     @GetMapping("/course")
-    public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+    public String course(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
                        @RequestParam(name = "distance", required = false) Double distance,
                        @RequestParam(name = "level", required = false) Integer level,
                        @RequestParam(name = "keyword", required = false) String keyword,
@@ -105,11 +100,6 @@ public class AdminController {
         if (StringUtils.hasText(keyword)) {
             condition.put("keyword", keyword);
         }
-        System.out.println("페이지:" + condition.get("page"));
-        System.out.println("거리:" + condition.get("distance"));
-        System.out.println("난이도:" + condition.get("level"));
-        System.out.println("검색어:" + condition.get("keyword"));
-
         // 2. 검색에 해당하는 코스 목록을 가져온다.
         ListDto<Course> dto = courseService.getAllCourses(condition);
 
@@ -128,16 +118,9 @@ public class AdminController {
         return user;
     }
 
-    @GetMapping("/user-form")
-    public String userForm() {
-
-        return "admin/user-form";
-    }
-
-    @GetMapping("/user-register-form")
-    public String userRegisterForm() {
-
-        return "admin/user-register-form";
+    @GetMapping("/blacklist")
+    public String blacklist() {
+        return "admin/blacklist";
     }
 
     @GetMapping("/user")

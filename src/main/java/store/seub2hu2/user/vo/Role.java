@@ -16,6 +16,7 @@ import lombok.ToString;
 @Alias("Role")
 public class Role {
 
-	private String name;
-	private String description;
+	private int no;           // ROLE_NO
+	private String name;      // ROLE_NAME
+	private String description; // ROLE_DESC
 }

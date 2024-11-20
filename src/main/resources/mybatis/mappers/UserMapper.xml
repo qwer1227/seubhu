@@ -2,85 +2,149 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="store.seub2hu2.user.mapper.UserMapper">
 
-    <!-- 결과 맵 설정 -->
-    <resultMap id="UserResultMap" type="store.seub2hu2.user.vo.User">
+    <!-- resultMap 정의 -->
+    <resultMap type="store.seub2hu2.user.vo.User" id="UserResultMap">
         <id property="no" column="USER_NO"/>
-        <result property="id" column="USER_ID"/>
-        <result property="username" column="USER_USERNAME"/>
-        <result property="password" column="USER_PASSWORD"/>
         <result property="email" column="USER_EMAIL"/>
+        <result property="password" column="PASSWORD"/>
         <result property="nickname" column="USER_NICKNAME"/>
-        <result property="type" column="USER_TYPE"/>
-        <result property="provider" column="USER_PROVIDER"/>
+        <result property="tel" column="USER_TEL"/>
         <result property="createdDate" column="USER_CREATED_DATE"/>
         <result property="updatedDate" column="USER_UPDATED_DATE"/>
-        <result property="address" column="USER_ADDRESS"/>
+        <result property="type" column="USER_TYPE"/>
+        <result property="provider" column="PROVIDER"/>
+        <result property="terms" column="USER_TERMS"/>
+        <result property="privacy" column="USER_PRIVACY"/>
+        <result property="referrer" column="USER_REFERRER"/>
     </resultMap>
 
-    <!-- 사용자 이름으로 사용자 조회 -->
-    <select id="getUserByUsername" resultMap="UserResultMap">
-        select
-            user_no as USER_NO,
-            user_id as USER_ID,
-            user_username as USER_USERNAME,
-            user_password as USER_PASSWORD,
-            user_email as USER_EMAIL,
-            user_nickname as USER_NICKNAME,
-            user_type as USER_TYPE,
-            user_provider as USER_PROVIDER,
-            user_created_date as USER_CREATED_DATE,
-            user_updated_date as USER_UPDATED_DATE,
-            user_address as USER_ADDRESS
-        from
-            users
-        where
-            user_username = #{username}
-    </select>
+    <!--
+    void insertUser(@Param("user") User user);
+ -->
+    <!-- 신규 사용자 정보 추가 -->
+    <insert id="insertUser" >
+        insert into USERS
+        (USER_ID, USER_NAME, PASSWORD, USER_NICKNAME, USER_TEL, USER_EMAIL, USER_TYPE, PROVIDER, USER_TERMS, USER_PRIVACY, USER_REFERRER)
+        values
+        (#{user.id}, #{user.name}, #{user.password}, #{user.nickname}, #{user.tel}, #{user.email}, #{user.type}, #{user.provider}, #{user.terms}, #{user.privacy}, #{user.referrer})
+
+        <selectKey resultType="int" keyProperty="user.no" keyColumn="USER_NO" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+    <!-- 사용자 역할 부여 -->
+    <insert id="insertUserRole">        <!-- USER_GRANTED_ROLES 테이블에 사용자 번호와 역할 번호를 추가 -->
+        INSERT INTO USER_GRANTED_ROLES (USER_NO, ROLE_NO)
+        VALUES (#{userRole.userNo}, #{userRole.role.no});
+    </insert>
+
 
     <!-- 사용자 번호로 역할 정보 조회 -->
     <select id="getRolesByUserNo" resultType="store.seub2hu2.user.vo.Role">
-        select
-            role_name as name,
-            role_description as description
+        select r.ROLE_NO as no,
+        r.ROLE_NAME as name,
+        r.ROLE_DESC as description
         from
-            spring_roles
+            ROLE r
+            join
+            USER_GRANTED_ROLES ugr
+        on r.ROLE_NO = ugr.ROLE_NO
         where
-            role_name in (
-                select role_name
-                from spring_user_roles
-                where user_no = #{no}
-            )
+            ugr.USER_NO = #{userNo}
+    </select>
+
+    <!-- 사용자 역할 명으로 역할 정보 조회 -->
+    <select id="getRoleByName" resultType="store.seub2hu2.user.vo.Role">
+        SELECT ROLE_NO as no, ROLE_NAME as name, ROLE_DESC as description
+        FROM ROLE
+        WHERE ROLE_NAME = #{roleName}
+    </select>
+
+
+    <!-- 사용자 번호로 사용자 조회 -->
+    <select id="getUserByNo" resultMap="UserResultMap">
+        select USER_NO as no,
+        USER_ID as id,
+        USER_NAME as name,
+        PASSWORD as password,
+        USER_EMAIL as email,
+        USER_NICKNAME as nickname,
+        USER_TEL as tel,
+        USER_TYPE as type,
+        PROVIDER as provider,
+        USER_CREATED_DATE as createdDate,
+        USER_UPDATED_DATE as updatedDate,
+        USER_TERMS as terms,
+        USER_PRIVACY as privacy,
+        USER_REFERRER as referrer
+        from
+            USERS
+        where
+            USER_NO = #{no}
     </select>
 
     <!-- 사용자 ID로 사용자 조회 -->
     <select id="findById" resultMap="UserResultMap">
         select
-            user_no as USER_NO,
-            user_id as USER_ID,
-            user_username as USER_USERNAME,
-            user_password as USER_PASSWORD,
-            user_email as USER_EMAIL,
-            user_nickname as USER_NICKNAME,
-            user_type as USER_TYPE,
-            user_provider as USER_PROVIDER,
-            user_created_date as USER_CREATED_DATE,
-            user_updated_date as USER_UPDATED_DATE,
-            user_address as USER_ADDRESS
+            USER_NO as no,
+        USER_ID as id,
+        USER_NAME as username,
+        USER_NAME as name,
+        PASSWORD as password,
+        USER_EMAIL as email,
+        USER_NICKNAME as nickname,
+        USER_TEL as tel,
+        USER_TYPE as type,
+        PROVIDER as provider,
+        USER_CREATED_DATE as createdDate,
+        USER_UPDATED_DATE as updatedDate,
+        USER_TERMS as terms,
+        USER_PRIVACY as privacy,
+        USER_REFERRER as referrer
         from
-            users
+            USERS
         where
-            user_id = #{userId}
+            USER_ID = #{id}
     </select>
 
-    <!-- 사용자 정보 업데이트 -->
-    <update id="updateUserInfo">
-        update users
-        set
-            user_username = #{username},
-            user_email = #{email},
-            user_address = #{address}
+    <!-- 사용자 이메일로 사용자 조회 -->
+    <select id="findByEmail" resultMap="UserResultMap">
+        select
+            USER_NO as no,
+        USER_ID as id,
+        USER_NAME as username,
+        USER_NAME as name,
+        PASSWORD as password,
+        USER_EMAIL as email,
+        USER_NICKNAME as nickname,
+        USER_TEL as tel,
+        USER_TYPE as type,
+        PROVIDER as provider,
+        USER_CREATED_DATE as createdDate,
+        USER_UPDATED_DATE as updatedDate,
+        USER_TERMS as terms,
+        USER_PRIVACY as privacy,
+        USER_REFERRER as referrer
+        from
+            USERS
         where
-            user_id = #{userId}
-    </update>
+            USER_EMAIL = #{email}
+    </select>
+
+    <!-- 사용자 이메일로 아이디 조회(아이디 찾기용) -->
+    <select id="findIdByEmail" resultType="store.seub2hu2.user.vo.User">
+        SELECT USER_NO as no, USER_ID as id
+        FROM USERS
+        WHERE USER_EMAIL = #{email}
+    </select>
+
+    <!-- 사용자 이메일, 아이디로 사용자 조회(비밀번호 찾기용) -->
+    <select id="findByIdAndEmail" resultType="store.seub2hu2.user.vo.User">
+        SELECT USER_NO as no
+        FROM USERS
+        WHERE USER_ID = #{id}
+        AND USER_EMAIL = #{email}
+    </select>
 
 </mapper>

@@ -1,86 +1,167 @@
 package store.seub2hu2.user.controller;
 
+import jakarta.mail.internet.MimeMessage;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import store.seub2hu2.security.CustomUserDetails;
-import store.seub2hu2.user.vo.User;
-import store.seub2hu2.user.dto.UserUpdateRequest;
+import store.seub2hu2.user.dto.UserJoinForm;
+import store.seub2hu2.user.exception.AlreadyUsedIdException;
+import store.seub2hu2.user.mapper.UserMapper;
 import store.seub2hu2.user.service.UserService;
+import store.seub2hu2.user.vo.User;
+
+import java.io.IOException;
+import java.util.Random;
+
+// 인증이 안된 사용자들이 출입할 수 있는 경로를 /auth/**허용
+// 그냥 주소가 / 이면 index.jsp 허용
+// static 이하에 있는 /js/**, /css/**, /image/** 허용
 
 @Controller
-@RequestMapping("/user")
 public class UserController {
 
-    private final UserService userService;
+    @Autowired
+    private UserService userService;
 
     @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
+    private UserMapper userMapper;
+
+    @Autowired
+    private JavaMailSender mailSender;
+
+    // 회원가입 폼 페이지
+    @GetMapping("/join")
+    public String joinForm(Model model) {
+        model.addAttribute("joinForm", new UserJoinForm());
+        return "user/join-form";
     }
 
-    // 회원 가입 화면 표시
-    @GetMapping("/register")
-    public String showRegistrationForm(Model model) {
-        model.addAttribute("user", new User()); // 'user' 객체를 모델에 추가
-        return "register-form"; // 회원 가입 JSP 페이지로 이동
-    }
+    // 회원가입 요청 처리
+    @PostMapping("/join")
+    public String join(@Valid @ModelAttribute("joinForm") UserJoinForm form, BindingResult errors) {
 
-    // 회원 가입 처리
-    @PostMapping("/register")
-    public String registerUser(@ModelAttribute("user") User user) {
+        // 유효성 검증을 통과하지 못하면 join-form.jsp로 내부이동시킨다.
+        if (errors.hasErrors()) {
+            return "user/join-form";
+        }
+
+        // 추가적인 유효성 검증 실시하기
+        if (!form.getPassword().equals(form.getPasswordConfirm())) {
+            errors.rejectValue("passwordConfirm", null, "비밀번호가 일치하지 않습니다.");
+            return "user/join-form";
+        }
+
         try {
-            userService.save(user); // 회원가입 처리
-            return "redirect:/success"; // 성공 시 리디렉션
-        } catch (Exception e) {
-            return "redirect:/register?error=" + e.getMessage(); // 실패 시 에러 메시지와 함께 다시 리디렉션
+            userService.insertUser(form);
+        } catch (AlreadyUsedIdException ex) {
+            errors.rejectValue("email", null, "이미 사용중인 이메일입니다.");
+            return "user/join-form";
+        }
+
+        return "redirect:/main";
+    }
+
+    // 로그인 폼 페이지
+    @GetMapping("/login")
+
+    public String loginform() {
+        return "user/login-form";
+    }
+
+    @PostMapping("/login")
+    public String login(@CookieValue(name = "key", required = false) String cookieId, Model model) {
+        if (cookieId != null) {
+            model.addAttribute("cookieId", cookieId);
+        }
+        // 로그인 처리
+        return "user/login-form";
+    }
+
+
+    // 로그아웃
+//@GetMapping("/logout")
+//public String logout() {
+// Spring Security의 자동 로그아웃 처리
+//    return "redirect:/main"; // 로그아웃 후 메인 페이지로 리다이렉트
+//}
+
+    // 아이디 찾기 폼
+    @GetMapping("/forgot-id")
+    public String forgotIdForm() {
+        return "user/forgot-id"; // 아이디 찾기 페이지로 이동
+    }
+
+    // 이메일로 아이디 찾기 처리
+    @PostMapping("/forgot-id")
+    public ResponseEntity<String> findIdByEmail(@RequestParam String email) {
+        String userId = userService.findIdByEmail(email);
+
+        if (userId != null) {
+            return ResponseEntity.ok("가입된 아이디는: " + userId + "입니다.");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 이메일로 가입된 아이디가 없습니다.");
         }
     }
 
-    // 사용자 정보 업데이트 엔드포인트
-    @PutMapping("/update")
-    public ResponseEntity<?> updateUser(
-            @AuthenticationPrincipal CustomUserDetails userDetails, // JWT에서 인증된 사용자 정보
-            @RequestBody UserUpdateRequest request) {
+    // 비밀번호 찾기
+    @GetMapping("/forgot-password")
+    public String forgotPasswordForm() {
+        return "user/forgot-password";
+    }
 
-        String userId = userDetails.getId(); // JWT에서 가져온 사용자 ID
+    @PostMapping("/forgot-password")
+    @ResponseBody
+    public String findByIdAndEmail(HttpServletRequest request, @RequestParam("id") String id, @RequestParam("email") String email) {
+
+        Random r = new Random();
+        int checkNum = r.nextInt(888888) + 111111;
+
+        String title = "습습후후 아이디/비밀번호 찾기 인증 이메일 입니다.";
+        String from = "@gmail.com";
+        String to = email;
+        String content =
+                System.getProperty("line.separator") +
+                        System.getProperty("line.separator") +
+                        "습습후후 임시 비밀번호입니다."
+                        + System.getProperty("line.separator") +
+                        System.getProperty("line.separator")
+                        + checkNum +
+                        System.getProperty("line.separator");
 
         try {
-            // 사용자 정보 업데이트 서비스 호출
-            userService.updateUserInfo(userId, request);
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper messageHelper = new MimeMessageHelper(message, true, "UTF-8");
 
-            // 업데이트 성공 시 200 OK 응답
-            return ResponseEntity.ok("User information updated successfully");
+            messageHelper.setFrom(from);
+            messageHelper.setTo(to);
+            messageHelper.setSubject(title);
+            messageHelper.setText(content);
+
+            mailSender.send(message);
 
         } catch (Exception e) {
-            // 예외 발생 시 400 Bad Request 응답
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Failed to update user information: " + e.getMessage());
+            System.out.println(e);
         }
-    }
-/*
-    // 이메일 중복 체크 AJAX 요청 처리
-    @RequestMapping("/ajax/check-email")
-    @ResponseBody
-    public Map<String, String> checkEmail(@RequestParam String email) {
-        Map<String, String> response = new HashMap<>();
-        boolean exists = userService.checkEmailExists(email);
-        response.put("data", exists ? "exists" : "none");
-        return response;
+        return checkNum + "";
     }
 
-    // 닉네임 중복 체크 AJAX 요청 처리
-    @RequestMapping("/ajax/check-nickname")
-    @ResponseBody
-    public Map<String, Boolean> checkNickname(@RequestParam String nickname) {
-        Map<String, Boolean> response = new HashMap<>();
-        boolean exists = userService.checkNicknameExists(nickname);
-        response.put("exists", exists);
-        return response;
-    }
- */
+
 }
+
+
+
+
+
+
+
+
+

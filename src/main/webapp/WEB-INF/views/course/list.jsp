@@ -15,7 +15,7 @@
     <%-- 카테고리 --%>
     <div class="row row-cols-2 row-cols-lg-4 g-2 g-lg-3">
         <div class="col " >
-            <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="#">나의 코스 기록</a>
+            <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="list">나의 코스 기록</a>
         </div>
         <div class="col " >
             <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="#">코스 목록</a>
@@ -36,13 +36,14 @@
                 <input type="hidden" name="page" />
                 <div class="row g-3 d-flex justify-content-center">
                     <div class="col-5">
-                        <label for="customRange2" class="form-label">거리</label>
+                        <label for="customRange2" class="form-label">거리(0~10KM)</label>
                         <input type="range" class="form-range" min="0" max="10" id="customRange2" name="distance"
-                               value="${param.distance }">
+                               value="${empty param.distance ? '10' : param.distance}">
                     </div>
                     <div class="col-1">
                         난이도
                         <select class="form-select" name="level">
+                            <option value=""> 전체</option>
                             <c:forEach var="num" begin="1" end="5">
                                 <option value="${num }" ${param.level eq num ? "selected" : ""}> ${num }단계</option>
                             </c:forEach>
@@ -60,9 +61,9 @@
     </div>
 
     <%-- 코스 목록 --%>
-    <div class="row row-cols-1 row-cols-md-3 g-4 mt-5 mb-5">
+    <div class="row row-cols-1 row-cols-md-4 g-4 mt-5 mb-3">
         <c:forEach var="course" items="${courses }">
-            <div class="col">
+            <div class="col-3">
                 <div class="card h-100">
                     <a class="text-decoration-none" href="detail?no=${course.no }">
                         <img src="/resources/images/course/${course.filename }" class="card-img-top" alt="...">

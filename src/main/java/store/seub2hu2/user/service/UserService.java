@@ -1,57 +1,99 @@
 package store.seub2hu2.user.service;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import store.seub2hu2.user.dto.LoginResponse;
+import store.seub2hu2.user.dto.SocialLoginRequest;
+import store.seub2hu2.user.dto.UserJoinForm;
+import store.seub2hu2.user.exception.AlreadyUsedIdException;
+import store.seub2hu2.user.exception.DataNotFoundException;
+import store.seub2hu2.user.vo.Role;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.user.mapper.UserMapper;
-import store.seub2hu2.user.dto.UserRegisterForm;
-import store.seub2hu2.user.dto.UserUpdateRequest;
+import store.seub2hu2.user.vo.UserRole;
+
+import java.util.Optional;
 
 @Service
+@Transactional
 public class UserService {
 
-    private final UserMapper userMapper;
+    @Autowired
+    private PasswordEncoder passwordEncoder; // PasswordEncoder bean 등록
 
     @Autowired
-    public UserService(UserMapper userMapper) {
-        this.userMapper = userMapper;
-    }
+    private UserMapper userMapper;
 
-    @Transactional
-    public void updateUserInfo(String userId, UserUpdateRequest request) {
-        User user = userMapper.findById(userId);
-        if (user == null) {
-            throw new RuntimeException("사용자를 찾을 수 없습니다.");
+    /**
+     * 신규 사용자 정보를 전달받아서 회원가입 시키는 서비스다.
+     *
+     */
+    public void insertUser(UserJoinForm form) {
+        // 사용자 ID 중복 체크
+
+        User savedUser = userMapper.findById(form.getId());
+        if (savedUser != null) {
+            throw new AlreadyUsedIdException(form.getId());
         }
 
-        // 요청 받은 값으로 사용자 정보 업데이트
-        user.setUsername(request.getUsername());
-        user.setEmail(request.getEmail());
-        // user.setAddress(request.getAddress());
+        // User 객체로 변환
+        User user = new User();
+        BeanUtils.copyProperties(form, user);
 
-        // 사용자 정보 업데이트 (MyBatis 매퍼를 이용한 SQL 실행)
-        userMapper.updateUserInfo(userId, request.getUsername(), request.getEmail(), request.getAddress());
+        // 비밀번호 암호화
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
+
+        // 사용자 정보를 테이블에 저장
+        userMapper.insertUser(user);
+
+        // 기본 사용자 역할 부여
+        addUserRole(user.getNo(),"ROLE_USER");
     }
 
-    // 회원가입 처리
-    public void save(User user) {
-        // 이메일 중복 체크 및 기타 유효성 검사 로직 추가 가능
-        if (userMapper.existsByEmail(user.getEmail())) {
-            throw new IllegalArgumentException("사용중인 이메일입니다.");
+
+    /**
+     * 사용자번호, 권한이름을 전달받아서 권한을 추가하는 서비스다.
+     *
+     * @param userNo   사용자번호
+     * @param roleName 권한이름
+     */
+
+    public void addUserRole(int userNo, String roleName) {
+        // roleName을 통해 Role 객체를 조회
+        Role role = userMapper.getRoleByName(roleName); // 역할 이름을 통해 Role 객체를 조회하는 메서드
+
+        // Role 객체를 UserRole에 포함시켜 역할 부여
+        UserRole userRole = new UserRole(userNo, role);
+
+        // 사용자 역할 추가 메서드 호출
+        userMapper.insertUserRole(userRole);
+    }
+
+    /**
+     * 소셜 로그인 처리 (현재는 구현되지 않음).
+     *
+     * @param request 소셜 로그인 요청
+     * @return 로그인 응답
+     */
+    public LoginResponse doSocialLogin(SocialLoginRequest request) {
+        // 소셜 로그인 처리 로직을 여기에 추가해야 합니다.
+        return null;  // 임시로 null 반환
+    }
+
+    /**
+     * 임시 비밀번호 발급 처리
+     * */
+
+
+    public String findIdByEmail(String email) {
+                User user = userMapper.findIdByEmail(email);
+                if (user != null) {
+                    return user.getId(); // VO에서 ID만 반환
+                }
+                return null; // 조회된 결과가 없으면 null 반환
+            }
         }
-        userMapper.insertUser(user); // 실제 데이터베이스에 저장
-    }
-
-    public void addNewUser(UserRegisterForm form) {
-
-    }
-
-    //public boolean checkEmailExists(String email) {
-    //     return userMapper.checkEmailExists(email);
-    // }
-
-    //public boolean checkNicknameExists(String nickname) {
-    //    return userMapper.checkNicknameExists(nickname);
-    //}
-}

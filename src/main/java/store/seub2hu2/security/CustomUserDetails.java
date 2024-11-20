@@ -1,41 +1,39 @@
 package store.seub2hu2.security;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import store.seub2hu2.user.vo.Role;
 import store.seub2hu2.user.vo.User;
 
-public class CustomUserDetails implements UserDetails {
+import java.util.*;
+import java.util.stream.Collectors;
 
-    private String id;            // 사용자의 고유 ID
-    private String username;  // 사용자가 설정한 이름
-    private String password;
-    private String email;     // 이메일
-    private String provider;  // 소셜 로그인 제공자
-    private Collection<? extends GrantedAuthority> authorities;
+public class CustomUserDetails extends LoginUser implements UserDetails, OAuth2User {
 
+    private final String id;   // 사용자 ID
+    private final String password; // 비밀번호
+    private final Collection<? extends GrantedAuthority> authorities; // 권한 목록
+    private Map<String, Object> attributes; // OAuth2User용 사용자 속성
+
+    // 공통 생성자
     public CustomUserDetails(User user, List<Role> roles) {
-        // 사용자 정보를 초기화
-        this.id = String.valueOf(user.getNo());  // 사용자의 고유 ID
-        this.username = user.getUsername(); // 사용자 고유 ID (no 필드를 사용하여 초기화)
+        super(user.getNo(), user.getEmail(), user.getNickname()); // LoginUser 초기화
+        this.id = user.getId();
         this.password = user.getPassword();
-        this.email = user.getEmail(); // 이메일도 저장
-        this.provider = user.getProvider(); // 소셜 로그인 제공자
-
-        // 권한 설정
-        List<SimpleGrantedAuthority> authoritiesList = new ArrayList<>();
-        for (Role role : roles) {
-            authoritiesList.add(new SimpleGrantedAuthority(role.getName()));
-        }
-        this.authorities = authoritiesList;
+        this.authorities = roles != null ? roles.stream()
+                .map(role -> new SimpleGrantedAuthority(role.getName()))
+                .collect(Collectors.toList()) : new ArrayList<>();
     }
 
+    // OAuth2User용 추가 생성자
+    public CustomUserDetails(User user, List<Role> roles, Map<String, Object> attributes) {
+        this(user, roles);
+        this.attributes = attributes;
+    }
+
+    // UserDetails 인터페이스 구현
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
@@ -48,41 +46,44 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return username;
-    }
-
-    // 사용자 고유 ID
-    public String getId() {
         return id;
     }
 
-    // 이메일도 필요할 경우 제공
-    public String getEmail() {
-        return email;
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
     }
 
-    // 소셜 로그인 제공자
-    public String getProvider() {
-        return provider;
-    }
-
-    // 사용자 계정이 잠겨 있지 않으면 true 반환
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
 
-    // 사용자 비밀번호가 만료되지 않았으면 true 반환
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
-    // 사용자가 활성화 되어 있으면 true 반환
     @Override
     public boolean isEnabled() {
         return true;
     }
 
-}
+    // OAuth2User 인터페이스 구현
+    @Override
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
 
+    @Override
+    public String getName() {
+        return String.valueOf(super.getNo());
+    }
+
+
+
+    // OAuth2 속성 추가 메서드
+    public void setAttributes(Map<String, Object> attributes) {
+        this.attributes = attributes;
+    }
+}

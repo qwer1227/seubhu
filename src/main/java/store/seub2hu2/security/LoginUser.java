@@ -9,11 +9,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class LoginUser {
+public abstract class LoginUser {
 
-	private int no;            // 유저 고유 ID
-	private String email;      // 이메일 (로그인용)
-	private String username;   // 사용자 이름
-	private String nickname;   // 닉네임
-
+	private int no;
+	private String email;
+	private String nickname;
 }

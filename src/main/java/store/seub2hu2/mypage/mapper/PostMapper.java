@@ -11,6 +11,10 @@ import java.util.Map;
 public interface PostMapper {
 
     Post getPostByNo(@Param("no") int no);
-    void insertPost(@Param("post") Post post);
-    void insertPostImages(List<Map<String, Object>> images);
+    List<Post> getPostsByNo(@Param("no") int userNo);
+    int insertPost(@Param("post") Post post);
+    int insertPostImages(List<Map<String, Object>> images);
+    int updatePost(@Param("post") Post post);
+    int deletePost(@Param("no") int postNo);
+    int deletePostImagesByPostNo(@Param("no") int postNo);
 }
