@@ -38,6 +38,7 @@
 <div class="container-xxl text-center" id="wrap">
   
   <h2> 커뮤니티 글 상세 </h2>
+  
   <div>
     <div class="col d-flex justify-content-left">
       <div>
@@ -125,73 +126,87 @@
     </div>
     
     <!-- 댓글 목록 -->
-    <div class="row comments rounded" style="background-color: #f2f2f2">
+    <c:if test="${not empty board.reply}">
+      <div class="row comments rounded" style="background-color: #f2f2f2">
       <!--댓글 내용 -->
-      <div class="comment pt-3">
-        <div class="row">
-          <div class="col">
-            <div class="col d-flex justify-content-between">
-              <div class="col-1">
-                <img src="https://github.com/mdo.png" alt="" style="width: 50px" class="rounded-circle">
-              </div>
-              <div class="col" style="text-align: start">
-                <strong>모모랜드</strong><br/>
-                <%--              <span><fmt:formatDate value="" pattern="yyyy.MM.dd hh:mm:ss"></span>--%>
-                <button type="button" class="btn"
-                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">신고
-                </button>
-              </div>
-              <div style="text-align: end">
-                <%--              <c:if test="${LOGIN_USER eq board.review.user.no}">--%>
-                <a href="modify-form" type="button" class="btn btn-warning btn-sm">수정</a>
-                <button class="btn btn-danger btn-sm" onclick="deleteReply()">삭제</button>
-                <%--              </c:if>--%>
+      <c:forEach var="reply" items="${replies}">
+<%--        <c:if test="${reply.prevNo}">--%>
+          <div class="comment pt-3">
+            <div class="row">
+              <div class="col">
+                <div class="col d-flex justify-content-between">
+                  <div class="col-1">
+                    <img src="https://github.com/mdo.png" alt="" style="width: 50px" class="rounded-circle">
+                  </div>
+                  <div class="col" style="text-align: start">
+                    <strong>${reply.user.nickname}</strong><br/>
+                    <span><fmt:formatDate value="${reply.createdDate}" pattern="yyyy.MM.dd hh:mm:ss"/></span>
+                    <button type="button" class="btn"
+                            style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">신고
+                    </button>
+                  </div>
+                  <div class="col-2" style="text-align: end">
+                    <%--              <c:if test="${LOGIN_USER eq board.review.user.no}">--%>
+                    <button class="btn btn-outline-dark btn-sm">
+                      <i class="bi bi-hand-thumbs-up"></i>
+                      <i class="bi bi-hand-thumbs-up-fill"></i>
+                    </button>
+                    <a href="modify-reply?no=${reply.no}" type="button" class="btn btn-warning btn-sm">수정</a>
+                    <button class="btn btn-danger btn-sm" onclick="deleteReply(${reply.no})">삭제</button>
+                    <%--              </c:if>--%>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
+            
+            <div class="comment-item m-1 rounded" style="padding-left:30px; text-align:start;">
+              ${reply.content}
+              <button class="btn btn-outline-dark btn-sm d-flex justify-content-start">답글</button>
+            </div>
+  <%--        <c:if test="${not empty LOGIN_USER}">--%>
+  
+  <%--        </c:if>--%>
         
-        <div class="comment-item mt-1 rounded" style="border: 1px solid gray;">
-          댓글 내용이오
-        </div>
-        <c:if test="${not empty LOGIN_USER}">
-          <button class="btn btn-outline-dark btn-sm d-flex justify-content-start">답글</button>
-        </c:if>
-      </div>
-      
-      <!-- 답글 내용 -->
-      <div class="row pt-1 pb-3">
-        <div class="col-1" style="text-align: end">
-          <i class="bi bi-arrow-return-right"></i>
-        </div>
-        <div class="col-11">
-          <div class="col d-flex justify-content-between">
-            <div class="col-1">
-              <img src="https://github.com/mdo.png" alt="" style="width: 50px" class="rounded-circle">
-            </div>
-            <div class="col" style="text-align: start">
-              <strong>모모랜드</strong><br/>
-              <div style="font-size: 10px; text-align: start">
-                <%--            <span><fmt:formatDate value="" pattern="yyyy.MM.dd hh:mm:ss"></span>--%>
-                <button type="button" class="btn"
-                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">신고
-                </button>
+          <!-- 답글 내용 -->
+          <c:if test="${not empty reply.prevNo}">
+            <div class="row pt-1 pb-3" style="margin-left: 30px">
+              <div class="col-12 d-flex justify-content-between">
+                <div class="col-1">
+                  <i class="bi bi-arrow-return-right"></i>
+                  <img src="https://github.com/mdo.png" alt="" style="width: 50px" class="rounded-circle">
+                </div>
+                <div class="col" style="text-align: start">
+                  <strong>${reply.user.nickname}</strong><br/>
+                  <div style="font-size: 10px; text-align: start">
+                    <span><fmt:formatDate value="${reply.createdDate}" pattern="yyyy.MM.dd hh:mm:ss"/></span>
+                    <button type="button" class="btn"
+                            style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">신고
+                    </button>
+                  </div>
+                </div>
+                <div class="col-2" style="text-align: end">
+                  <button class="btn btn-outline-dark btn-sm">
+                    <i class="bi bi-hand-thumbs-up"></i>
+                    <i class="bi bi-hand-thumbs-up-fill"></i>
+                  </button>
+                  <button class="btn btn-warning btn-sm">수정</button>
+                  <button class="btn btn-danger btn-sm" onclick="deleteReply()">삭제</button>
+                </div>
+              </div>
+              <div class="col-1"></div>
+              <div class="col-11 comment-item rounded mt-1" style="text-align: start; margin-left: 60px">
+                ${reply.content}
+    <%--          <c:if test="${not empty LOGIN_USER}">--%>
+                <button class="btn btn-outline-dark btn-sm d-flex justify-content-start">답글</button>
+    <%--          </c:if>--%>
               </div>
             </div>
-            <div class="col-2" style="text-align: end">
-              <button class="btn btn-warning btn-sm">수정</button>
-              <button class="btn btn-danger btn-sm" onclick="deleteReply()">삭제</button>
-            </div>
-          </div>
-          <div class="comment-item rounded mt-1" style="border: 1px solid gray;">
-            답글 내용이오
-          </div>
-          <c:if test="${not empty LOGIN_USER}">
-            <button class="btn btn-outline-dark btn-sm d-flex justify-content-start">답글</button>
           </c:if>
-        </div>
-      </div>
+          </div>
+<%--        </c:if>--%>
+      </c:forEach>
     </div>
+    </c:if>
   </div>
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>

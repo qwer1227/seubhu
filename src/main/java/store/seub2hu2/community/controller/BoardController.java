@@ -18,8 +18,10 @@ import org.springframework.web.servlet.ModelAndView;
 import store.seub2hu2.community.dto.RegisterBoardForm;
 import store.seub2hu2.community.dto.ModifyBoardForm;
 import store.seub2hu2.community.service.BoardService;
+import store.seub2hu2.community.service.ReplyService;
 import store.seub2hu2.community.view.FileDownloadView;
 import store.seub2hu2.community.vo.Board;
+import store.seub2hu2.community.vo.Reply;
 import store.seub2hu2.community.vo.UploadFile;
 import store.seub2hu2.util.FileUtils;
 import store.seub2hu2.util.ListDto;
@@ -27,6 +29,7 @@ import store.seub2hu2.util.ListDto;
 import java.io.File;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller("communityController")
@@ -39,8 +42,8 @@ public class BoardController {
     @Autowired
     public BoardService boardService;
 
-    //@Autowired
-    //public ReplyService replyService;
+    @Autowired
+    public ReplyService replyService;
 
     @Autowired
     public FileDownloadView fileDownloadView;
@@ -92,7 +95,10 @@ public class BoardController {
     @GetMapping("/detail")
     public String detail(@RequestParam("no") Integer no, Model model) {
         Board board = boardService.getBoardDetail(no);
+        List<Reply> replyList = replyService.getReplies(no);
+        board.setReply(replyList);
         model.addAttribute("board", board);
+        model.addAttribute("replies", replyList);
 
         return "community/detail";
     }
@@ -134,12 +140,12 @@ public class BoardController {
         return "redirect:main";
     }
 
-    @GetMapping("/deleteUploadFile")
-    public String deleteUploadFile(@RequestParam("no") int boardNo) {
-        boardService.deleteBoardFile(boardNo);
-
-        return "redirect:modify?no=" + boardNo;
-    }
+//    @GetMapping("/deleteUploadFile")
+//    public String deleteUploadFile(@RequestParam("no") int boardNo) {
+//        boardService.deleteBoardFile(boardNo);
+//
+//        return "redirect:modify?no=" + boardNo;
+//    }
 
     // 요청 URL : comm/filedown?no=xxx
     @GetMapping("/filedown")

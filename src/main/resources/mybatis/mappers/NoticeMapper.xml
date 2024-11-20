@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="store.seub2hu2.community.mapper.BoardMapper">
+<mapper namespace="store.seub2hu2.community.mapper.NoticeMapper">
 
   <!-- void insertNotice(@Param("notice") Notice notice); -->
   <insert id="insertNotice">
@@ -23,15 +23,19 @@
   <!-- List<Notice> getNotices(@Param("condition") Map<String, String> condition); -->
   <select id="getNotices" resultType="store.seub2hu2.community.vo.Notice">
     select
-        row_number() over(order by notice_created_date desc) rn
-        , notice_category           as category
-        , notice_title              as title
-        , notice_content            as content
-        , notice_created_date       as createdDate
-        , notice_first              as `first`
-        , notice_cnt                as viewCnt
-    from NOTICES
-    where rn between #{condition.begin} and #{condition.end}
+        *
+    from (
+           select
+             row_number() over(order by notice_created_date desc) rn
+                , notice_category           as category
+                , notice_title              as title
+                , notice_content            as content
+                , notice_created_date       as createdDate
+                , notice_first              as `first`
+                , notice_cnt                as viewCnt
+           from NOTICES
+         ) notice
+    where notice.rn between #{condition.begin} and #{condition.end}
   </select>
 
   <!-- int getTotalRowsForNotice(@Param("condition") Map<String, String> condition); -->

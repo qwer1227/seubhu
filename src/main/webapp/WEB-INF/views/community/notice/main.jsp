@@ -40,8 +40,8 @@
         <col width="10%">
         <col width="10%">
       </colgroup>
-      <thead class="text-start">
-      <tr>
+      <thead>
+      <tr style="text-align: center">
         <th>번호</th>
         <th>분류</th>
         <th>제목</th>
@@ -49,11 +49,11 @@
         <th>날짜</th>
       </tr>
       </thead>
-      <tbody class="text-start">
+      <tbody style="text-align: center">
       <tr>
         <td>1</td>
         <td>자유게시판</td>
-        <td id="content-title">
+        <td id="content-title" style="text-align: start">
           <a href="detail" style="text-decoration-line: none; color: black">재밌는이야기</a>
         </td>
         <td>5</td>

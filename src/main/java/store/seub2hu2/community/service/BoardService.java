@@ -11,6 +11,7 @@ import store.seub2hu2.community.dto.RegisterBoardForm;
 import store.seub2hu2.community.exception.CommunityException;
 import store.seub2hu2.community.mapper.BoardMapper;
 import store.seub2hu2.community.mapper.BoardUploadMapper;
+import store.seub2hu2.community.mapper.ReplyMapper;
 import store.seub2hu2.community.vo.Board;
 import store.seub2hu2.community.vo.UploadFile;
 import store.seub2hu2.util.FileUtils;
