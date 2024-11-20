@@ -99,6 +99,23 @@
          ProdDetailDto getProductByNo(int no);
     -->
     <select id="getProductByNo" resultType="store.seub2hu2.product.dto.ProdDetailDto">
-
+        SELECT
+            P.PROD_NO,
+            P.PROD_NAME,
+            P.PROD_PRICE,
+            P.PROD_STATUS,
+            P.PROD_CNT,
+            P.PROD_RATING,
+            PC.CAT_NAME,
+            PB.BRAND_NAME
+        FROM
+            PRODUCTS P
+        JOIN
+            PROD_CATEGORIES PC
+            ON P.CAT_NO = PC.CAT_NO
+        JOIN
+            PROD_BRANDS PB
+        ON P.BRAND_NO = PB.BRAND_NO
+        WHERE P.PROD_NO = #{no};
     </select>
 </mapper>

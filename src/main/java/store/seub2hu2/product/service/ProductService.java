@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import store.seub2hu2.product.dto.ProdDetailDto;
 import store.seub2hu2.product.dto.ProdListDto;
 import store.seub2hu2.product.mapper.ProductMapper;
 import store.seub2hu2.util.ListDto;
@@ -19,6 +20,13 @@ public class ProductService {
 
     @Autowired
     ProductMapper productMapper;
+
+
+    public ProdDetailDto getProductByNo(int no) {
+        ProdDetailDto prodDetailDto = productMapper.getProductByNo(no);
+
+        return prodDetailDto;
+    }
 
     /**
      * 모든 상품정보 목록을 제공하는 서비스 메서드입니다.

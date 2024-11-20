@@ -53,6 +53,12 @@
                                         <td colspan="3">199,000 원</td>
                                     </tr>
                                     <tr>
+                                        <th>브랜드명</th>
+                                        <td>브룩스</td>
+                                        <th>카테고리</th>
+                                        <td>러닝화</td>
+                                    </tr>
+                                    <tr>
                                         <th>평점</th>
                                         <td>4.8</td>
                                         <th>조회수</th>
