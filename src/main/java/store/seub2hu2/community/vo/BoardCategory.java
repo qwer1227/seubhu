@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 @Getter
 public enum BoardCategory {
 
-    NOMAL("일반", 100)
+    NORMAL("일반", 100)
     , PRIDE("자랑", 110)
     , QUESTION("질문", 120)
     , TRAINING_LOG("훈련일지", 130);

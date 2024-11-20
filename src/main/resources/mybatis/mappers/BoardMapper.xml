@@ -2,76 +2,122 @@
 <!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="store.seub2hu2.community.mapper.BoardMapper">
 
-    <!-- void insertBoard(@Param("board") Board board); -->
-    <insert id="insertBoard">
-        insert into BOARDS
-        (
-        board_cat_name
-        , user_nickname
-        , board_title
-        , board_content
-        <!--            <if test="board.filename != null">-->
-        <!--                , file_name-->
-        <!--            </if>-->
-        <!--            <if test="board.hashtag != null">-->
-        <!--                , is_hashtag-->
-        <!--            </if>-->
-        )
-        values
-        (
-        #{board.catName}
-        <!--             , #{board.user.nickname}-->
-        , '김정정'
-        , #{board.title}
-        , #{board.content, jdbcType=VARCHAR}
-        <!--            <if test="board.filename != null">-->
-        <!--                , 'Y'-->
-        <!--            </if>-->
-        <!--            <if test="board.hashtag != null">-->
-        <!--                , 'Y'-->
-        <!--            </if>-->
-        )
-    </insert>
+  <!-- void insertBoard(@Param("board") Board board); -->
+  <insert id="insertBoard">
+    insert into BOARDS
+    (
+    board_cat_name
+    , user_nickname
+    , board_title
+    , board_content
+    <if test="board.uploadFile != null">
+        , file_name
+    </if>
+    <!--            <if test="board.hashtag != null">-->
+    <!--                , is_hashtag-->
+    <!--            </if>-->
+    )
+    values
+    (
+    #{board.catName}
+    <!--             , #{board.user.nickname}-->
+    , '페이커'
+    , #{board.title}
+    , #{board.content, jdbcType=VARCHAR}
+    <if test="board.uploadFile != null">
+        , #{board.uploadFile.saveName}
+    </if>
+    <!--            <if test="board.hashtag != null">-->
+    <!--                , 'Y'-->
+    <!--            </if>-->
+    )
+  </insert>
 
-    <!-- List<Board> getBoards(@Param("condition") Map<String, Object> condition); -->
-    <select id="getBoards" resultType="store.seub2hu2.community.vo.Board">
-        select *
-        from (
-        select
-        row_number() over(order by b.board_no desc) rn
-        , b.board_no as no
-        , b.board_cat_name as catName
-        , b.board_title as title
-        , b.board_content as content
-        , b.board_cnt as viewCnt
-        , b.board_like as `like`
-        , b.is_deleted as isDeleted
-        , b.board_created_date as createdDate
-        , u.user_nickname as `user.nickname`
-        from
-        BOARDS b join USERS u
-        on b.user_nickname = u.user_nickname
-        where b.is_deleted = 'N'
+  <!-- List<Board> getBoards(@Param("condition") Map<String, Object> condition); -->
+  <select id="getBoards" resultType="store.seub2hu2.community.vo.Board">
+    select *
+    from (
+          select
+            <if test="condition.sort != null">
+              <choose>
+                <when test="condition.sort == 'date'">
+                  row_number() over(order by b.board_created_date desc) rn
+                </when>
+                <when test="condition.sort == 'like'">
+                  row_number() over(order by b.board_like desc) rn
+                </when>
+                <when test="condition.sort == 'viewCnt'">
+                  row_number() over(order by b.board_cnt desc) rn
+                </when>
+                <otherwise>
+                  row_number() over(order by b.board_no desc) rn
+                </otherwise>
+              </choose>
+            </if>
+            , b.board_no as no
+            , b.board_cat_name as catName
+            , b.board_title as title
+            , b.board_content as content
+            , b.board_cnt as viewCnt
+            , b.board_like as `like`
+            , b.is_deleted as isDeleted
+            , b.board_created_date as createdDate
+            , u.user_nickname as `user.nickname`
+          from
+            BOARDS b join USERS u
+                on b.user_nickname = u.user_nickname
+          where b.is_deleted = 'N'
+          <if test="condition.category != null">
+            and b.board_cat_name = #{condition.category}
+          </if>
+          <if test="condition.opt != null">
+            <choose>
+              <when test="condition.opt == 'title'">
+                and b.board_title like concat ('%', #{condition.keyword}, '%')
+              </when>
+              <when test="condition.opt == 'content'">
+                and b.board_content like concat('%', #{condition.keyword}, '%')
+              </when>
+              <when test="condition.opt == 'writer'">
+                and b.user_nickname like concat('%', #{condition.keyword}, '%')
+              </when>
+            </choose>
+          </if>
         ) as board
-        where rn between #{condition.begin} and #{condition.end}
-        <include refid="boardsFilterCondition1"/>
-        <include refid="boardsFilterCondition2"/>
-        <!--    <include refid="boardsFilterCondition3"/>-->
-    </select>
+    where rn between #{condition.begin} and #{condition.end}
+    order by rn
+  </select>
 
-    <!-- int getTotalRows(@Param("condition") Map<String, Object> condition); -->
-    <select id="getTotalRows" resultType="int">
-        select count(*)
-        from BOARDS
-        where is_deleted = 'N'
-    </select>
+  <!-- int getTotalRowsForBoard(@Param("condition") Map<String, Object> condition); -->
+  <select id="getTotalRowsForBoard" resultType="int">
+    select count(*)
+    from BOARDS board
+    where is_deleted = 'N'
+    <if test="condition.category != null">
+      and board.board_cat_name = #{condition.category}
+    </if>
+    <if test="condition.opt != null">
+      <choose>
+        <when test="condition.opt == 'title'">
+          and board.board_title like concat ('%', #{condition.keyword}, '%')
+        </when>
+        <when test="condition.opt == 'content'">
+          and board.board_content like concat('%', #{condition.keyword}, '%')
+        </when>
+        <when test="condition.opt == 'writer'">
+          and board.user_nickname like concat('%', #{condition.keyword}, '%')
+        </when>
+      </choose>
+    </if>
+  </select>
 
-    <!-- Board getBoardByNo(@Param("no") int no); -->
-    <select id="getBoardByNo" resultType="store.seub2hu2.community.vo.Board" parameterType="int">
-        select b.board_no as no
-            , c.board_cat_name          as catName
+  <!-- Board getBoardDetailByNo(@Param("no") int no); -->
+  <select id="getBoardDetailByNo" resultType="store.seub2hu2.community.vo.Board" parameterType="int">
+    select b.board_no                   as no
+            , b.board_cat_name          as catName
             , u.user_nickname           as "user.nickname"
             , b.board_title             as title
+            , b.file_name               as "uploadFile.saveName"
             , b.board_content           as content
             , b.file_name               as filename
             , b.board_created_date      as createdDate
@@ -83,83 +129,33 @@
             , b.is_keep                 as isKeep
             , b.is_report               as isReport
             , b.is_hashtag              as hashtag
-        from
-            BOARDS b join USERS u
-        on b.user_nickname = u.user_nickname
-            join BOARDS_CATEGORIES c
-            on b.board_cat_name = c.board_cat_name
-        where
-            b.is_deleted = 'N'
-          and b.board_no = ${no}
-    </select>
+    from
+      BOARDS b join USERS u
+    on b.user_nickname = u.user_nickname
+      join BOARD_CATEGORIES c
+      on b.board_cat_name = c.board_cat_name
+    where
+      b.is_deleted = 'N'
+      and b.board_no = ${no}
+  </select>
 
-    <!-- void updateBoard(@Param("board") Board board); -->
-    <update id="updateBoard" parameterType="store.seub2hu2.community.vo.Board">
-        update
-            BOARDS
-        set board_cat_name     = #{board.catName}
-          , board_title        = #{board.title}
-          , board_content      = #{board.content}
-          , BOARD_UPDATED_DATE = sysdate()
-          , is_deleted         = #{board.isDeleted}
-        where board_no = #{board.no}
-    </update>
+  <!-- void updateBoard(@Param("board") Board board); -->
+  <update id="updateBoard" parameterType="store.seub2hu2.community.vo.Board">
+    update
+      BOARDS
+    set
+      board_cat_name = #{board.catName}
+      , board_title = #{board.title}
+      , board_content = #{board.content}
+      , board_updated_date = sysdate()
+      , is_deleted = #{board.isDeleted}
+      , file_name = #{board.uploadFile.originalName}
+      , board_cnt = #{board.viewCnt}
+    where board_no = #{board.no}
+  </update>
 
-    <!-- void insertReply(@Param("reply") Board board); -->
+  <!-- void insertReply(@Param("reply") Board board); -->
 
-    <!-- List<Reply> getRepliesByBoardNo(@Param("boardNo") int boardNo); -->
+  <!-- List<Reply> getRepliesByBoardNo(@Param("boardNo") int boardNo); -->
 
-    <!-- 게시글 검색시 옵션 선택에 따른 SQL 구문 -->
-    <sql id="boardsFilterCondition1">
-        <if test="condition.opt != null">
-            <choose>
-                <when test="condition.opt == 'title'">
-                    and board.title like concat ('%', #{condition.keyword}, '%')
-                </when>
-                <when test="condition.opt == 'content'">
-                    and board.content like concat('%', #{condition.keyword}, '%')
-                </when>
-                <when test="condition.opt == 'writer'">
-                    and board.`user.nickname` like concat('%', #{condition.keyword}, '%')
-                </when>
-            </choose>
-        </if>
-    </sql>
-
-    <!-- 게시글 정렬시 옵션 선택에 따른 SQL 구문 -->
-    <sql id="boardsFilterCondition2">
-        <if test="condition.sort != null">
-            <choose>
-                <when test="condition.sort == 'date'">
-                    order by board.createdDate desc
-                </when>
-                <when test="condition.sort == 'like'">
-                    order by board.`like` desc
-                </when>
-                <when test="condition.sort == 'viewCnt'">
-                    order by board.viewCnt desc
-                </when>
-            </choose>
-        </if>
-    </sql>
-
-    <!--  &lt;!&ndash; 카테고리 선택에 따른 SQL 구문 &ndash;&gt;-->
-    <!--  <sql id="boardsFilterCondition3">-->
-    <!--    <if test="condition.category != null">-->
-    <!--      <choose>-->
-    <!--        <when test="condition.catetory == '일반게시판'">-->
-    <!--          and board.catName = '일반게시판'-->
-    <!--        </when>-->
-    <!--        <when test="condition.category == '자랑게시판'">-->
-    <!--          and board.catName = '자랑게시판'-->
-    <!--        </when>-->
-    <!--        <when test="condition.category == '질문게시판'">-->
-    <!--          and board.catName = '질문게시판'-->
-    <!--        </when>-->
-    <!--        <when test="condition.category == '훈련일지'">-->
-    <!--          and board.catName = '훈련일지'-->
-    <!--        </when>-->
-    <!--      </choose>-->
-    <!--    </if>-->
-    <!--  </sql>-->
 </mapper>
