@@ -131,7 +131,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- 페이징처리 -->
         <c:if test="${not empty users}">
             <div class="row mb-3">
