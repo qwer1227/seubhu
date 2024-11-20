@@ -58,76 +58,78 @@
           <div class="row mb-3">
             <div class="col-12">
               <form class="border bg-light p-3"
-                    method="post" action="/admin/course-register-form"
+                    method="post" action="/admin/lesson-register-form"
                     enctype="multipart/form-data">
                 <div class="form-group mb-3 col-4">
-                  <label class="form-label">코스명</label>
-                  <input type="text" class="form-control" name="name" />
+                  <label class="form-label">레슨명</label>
+                  <input type="text" class="form-control" name="title" />
                 </div>
                 <div class="form-group mb-3 col-4">
-                  <label class="form-label">걸리는 시간(분)</label>
-                  <input type="text" class="form-control" name="time" />
-                </div>
-                <div class="form-group mb-3 col-4">
-                  <label class="form-label">거리(km)</label>
-                  <input type="text" class="form-control" name="distance" />
-                </div>
-                <div class="col-4">
-                  <label class="form-label">시</label>
-                  <select class="form-control mb-3" name="si" >
-                    <option value="서울시" selected>서울시</option>
-                    <option value="경기도">경기도</option>
-                  </select>
-                </div>
-                <div class="col-4">
-                  <label class="form-label">구</label>
-                  <select class="form-control mb-3" name="gu" >
-                    <option value="강남구" selected>강남구</option>
-                    <option value="강동구">강동구</option>
-                    <option value="강북구">강북구</option>
-                    <option value="강서구">강서구</option>
-                    <option value="관악구">관악구</option>
-                    <option value="광진구">광진구</option>
-                    <option value="구로구">구로구</option>
-                    <option value="금천구">금천구</option>
-                    <option value="노원구">노원구</option>
-                    <option value="도봉구">도봉구</option>
-                    <option value="동대문구">동대문구</option>
-                    <option value="동작구">동작구</option>
-                    <option value="마포구">마포구</option>
-                    <option value="서대문구">서대문구</option>
-                    <option value="서초구">서초구</option>
-                    <option value="성동구">성동구</option>
-                    <option value="성북구">성북구</option>
-                    <option value="송파구">송파구</option>
-                    <option value="양천구">양천구</option>
-                    <option value="영등포구">영등포구</option>
-                    <option value="용산구">용산구</option>
-                    <option value="은평구">은평구</option>
-                    <option value="종로구">종로구</option>
-                    <option value="중구">중구</option>
-                    <option value="중랑구">중랑구</option>
-                  </select>
-                </div>
-                <div class="col-4">
-                  <label class="form-label">동</label>
-                  <input type="text" class="form-control" name="dong">
+                  <label class="form-label">가격</label>
+                  <input type="text" class="form-control" name="price" />
                 </div>
                 <div class="col-4 mt-4" >
                   <div class="row">
-                    <label class="col-3 mt-2 form-label">코스단계</label>
-                    <select class="col-2 form-control mb-3" name="level">
+                    <label class="col-4 mt-2 form-label">강사 선택</label>
+                    <select class="col-6 form-control mb-3" name="lecturerNo">
+                      <option value="29" selected>이상혁</option>
+                      <option value="30">고길동</option>
+                      <option value="27">정지훈</option>
+                      <option value="25">김미미</option>
+                      <option value="23">모시깽</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-4 mt-4" >
+                  <div class="row">
+                    <label class="col-4 mt-2 form-label">레슨 유형</label>
+                    <select class="col-6 form-control mb-3" name="subject">
+                      <option value="호흡" selected>호흡</option>
+                      <option value="자세">자세</option>
+                      <option value="운동">운동</option>
+                      <option value="3km">3km</option>
+                      <option value="5km">5km</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-4 mt-4" >
+                  <div class="row">
+                    <label class="col-4 mt-2 form-label">인원 설정</label>
+                    <select class="col-2 form-control mb-3" name="group">
                       <option value="1" selected>1</option>
                       <option value="2">2</option>
                       <option value="3">3</option>
                       <option value="4">4</option>
                       <option value="5">5</option>
                     </select>
-                    <div class="col-4 mt-2">레벨</div>
+                    <div class="col-4 mt-2">명(최대 5명)</div>
                   </div>
                 </div>
+                <div class="col-4 mt-4" >
+                  <div class="row">
+                    <label class="col-4 mt-2 form-label">모집 상태</label>
+                    <select class="col-6 form-control mb-3" name="status">
+                      <option value="모집중" selected>모집중</option>
+                      <option value="오픈 예정">오픈 예정</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row col-3 mb-4 pt-2">
+                  <div class="col mb-4 pt-2">
+                    <span>날짜</span>
+                  </div>
+                  <div class="row col-9 mb-4 pt-1">
+                    <div class="col">
+                      <input type="date" name="date" id="dateInput" value="${param.day}"/>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group mb-3 col-4">
+                  <label class="form-label">레슨 계획</label>
+                  <textarea name="plan" id="" cols="70" rows="5" class=""></textarea>
+                </div>
                 <div class="form-group col-4">
-                  <label class="form-label mb-3">코스 이미지</label>
+                  <label class="form-label mb-3">레슨 대표 이미지</label>
                   <input type="file" class="form-control" name="image"/>
                 </div>
                 <div class="text-end">
@@ -147,6 +149,10 @@
 <!-- End of Footer -->
 
 <%@include file="/WEB-INF/views/admincommon/common.jsp" %>
+
+<script>
+
+</script>
 
 </body>
 
