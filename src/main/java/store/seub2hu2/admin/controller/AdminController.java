@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import store.seub2hu2.admin.dto.CourseRegisterForm;
+import store.seub2hu2.admin.dto.LessonRegisterForm;
 import store.seub2hu2.admin.service.AdminService;
 import store.seub2hu2.course.service.CourseService;
 import store.seub2hu2.course.vo.Course;
@@ -40,6 +41,17 @@ public class AdminController {
     public String home() {
 
         return "admin/home";
+    }
+
+    @GetMapping("/lesson-register-form")
+    public String lessonRegisterForm() {
+        return "admin/lesson-register-form";
+    }
+
+    @PostMapping("/lesson-register-form")
+    public String lessonRegisterForm(LessonRegisterForm form) {
+
+        return "redirect:/admin/lessonlist";
     }
 
     @GetMapping("/lesson")
