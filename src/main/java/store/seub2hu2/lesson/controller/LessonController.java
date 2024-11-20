@@ -134,6 +134,6 @@ public class LessonController {
     // 결제용 임시 컨트롤러
     @GetMapping("/payment")
     public String pay() {
-        return "lesson/payment";
+        return "lesson/lesson-payment";
     }
 }

@@ -56,7 +56,7 @@
              , L.lesson_created_date as createdDate
              , L.PARTICIPANT         as participant
              , L.lesson_plan         as plan
-             , U.USER_NAME as 'lecturer.username'
+             , U.USER_NAME as 'lecturer.name'
         from LESSONS L
                  INNER JOIN USERS U
                             ON
@@ -76,7 +76,7 @@
              , L.USER_NO                          as "user.no"
              , L.lesson_status                    as "lesson.status"
              , L.lesson_created_date              as "lesson.createdDate"
-             , U.USER_NAME                        as "lesson.lecturer.username"
+             , U.USER_NAME                        as "lesson.lecturer.name"
         from LESSON_RESERVATIONS R
                  INNER JOIN LESSONS L
                             ON
@@ -121,7 +121,7 @@
         , L.USER_NO as "user.no"
         , L.lesson_status as "lesson.status"
         , date_format(L.lesson_created_date, '%Y-%m-%d')
-        , U.USER_NAME as "lesson.lecturer.username"
+        , U.USER_NAME as "lesson.lecturer.name"
         from LESSON_RESERVATIONS R
         INNER JOIN LESSONS L
         ON

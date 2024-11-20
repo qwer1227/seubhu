@@ -4,21 +4,15 @@
 <html lang="ko">
 <head>
     <%@include file="/WEB-INF/views/common/common.jsp" %>
-    <script src="https://js.tosspayments.com/v2/standard"></script>
-    <script src="https://cdn.portone.io/v2/browser-sdk.js"></script>
-    <style>
-        body {
-            background: #fafafa;
-        }
-    </style>
+
 </head>
 <body>
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
-<div class="container-xxl bg-white" id="wrap">
+<div class="container-xxl" id="wrap">
     <div class="row mb-5">
-        <h1 class="text-center mb-5 bg-black text-white">${lesson.title}</h1>
         <div class="col-2"></div>
-        <div class="col-3">
+        <div class="col">
+            <h1 class="text-center mb-5 bg-black text-white">${lesson.title}</h1>
             <a href="/lesson" class="btn btn-dark" style="text-decoration: none"><strong>일정보기</strong></a>
         </div>
         <div class="col-2"></div>
@@ -31,30 +25,26 @@
             </c:if>
         </div>
         <div class="col-4">
-            <table class="table text-start">
+            <table class="table">
+                <colgroup>
+                    <col width="20%">
+                    <col width="*%">
+                </colgroup>
                 <tr>
-                    <td class="badge bg-info">신규</td>
-                </tr>
-                <tr class="m-3">
+                    <th>레슨명</th>
                     <td>${lesson.title}</td>
                 </tr>
                 <tr>
-                    <td>강사 명 : ${lesson.lecturer.username}</td>
+                    <th>강사명</th>
+                    <td>${lesson.lecturer.name}</td>
                 </tr>
                 <tr>
-                    <td>장소 :중앙HTA</td>
+                    <th>레슨날짜</th>
+                    <td>ddd</td>
                 </tr>
                 <tr>
-                    <td colspan="2">클래스 일정 :중앙HTA</td>
-                </tr>
-                <tr>
-                    <td colspan="2">클래스 요일 :목요일</td>
-                </tr>
-                <tr>
-                    <td colspan="2">클래스 시간 :09:00</td>
-                </tr>
-                <tr>
-                    <td colspan="2">신청인원 :${lesson.participant}/5</td>
+                    <th>결제금액</th>
+                    <td>ddd</td>
                 </tr>
             </table>
         </div>
@@ -70,8 +60,7 @@
     <div class="row text-end mb-3">
         <div class="col-2"></div>
         <div class="col border-bottom border-dark border-2 pb-3">
-            <a href="/payments/checkout" class="btn btn-danger">수강신청</a>
-            <button class="btn btn-primary" id="pay" onclick="requestPay()">수강신청</button>
+            <a href="/lesson/payment" class="btn btn-primary">수강신청</a>
         </div>
         <div class="col-2"></div>
     </div>
@@ -108,40 +97,7 @@
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script>
 
-    // function requestPay() {
-    //     PortOne.requestPayment({
-    //         storeId: "store-217dbe0f-fbb7-4d16-bfff-f4a47ce92b0f",
-    //         paymentId: "testm3o7667l",
-    //         orderName: "짜장면 1개",
-    //         totalAmount: 30000,
-    //         currency: "KRW",
-    //         channelKey: "channel-key-ccf24b7f-9a39-41a2-940e-c394c6a8dee0",
-    //         productType: "REAL",
-    //         payMethod: "CARD",
-    //         card: {},
-    //     });
-    // }
 
-    document.getElementById("pay").addEventListener("click", function () {
-        const popupWidth = 600;
-        const popupHeight = 800;
-        const popupLeft = (window.screen.width / 2) - (popupWidth / 2);
-        const popupTop = (window.screen.height / 2) - (popupHeight / 2);
-
-        const popupWindow = window.open(
-            '/payments/checkout',
-            '결제 팝업',
-            `width=${popupWidth},height=${popupHeight},top=${popupTop},left=${popupLeft},resizable=no,scrollbars=yes`
-        );
-
-        if (popupWindow) {
-            popupWindow.onload = function() {
-                popupWindow.resizeTo(popupWidth, popupHeight); // 로드 후 크기 조정
-                popupWindow.moveTo(popupLeft, popupTop); // 위치 조정
-            };
-            popupWindow.focus();
-        }
-    });
 
 </script>
 </body>
