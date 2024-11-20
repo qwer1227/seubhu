@@ -50,10 +50,10 @@
         ${board.title}
       </div>
       <div class="ml-auto">
-        <%--        <c:if test="${empty board.updatedDate}">--%>
-        <%--          ${board.createdDate}--%>
-        <%--        </c:if>--%>
-        <%--        ${board.updatedDate}--%>
+        <button class="btn btn-outline-success btn-lg">
+          <i class="bi bi-bookmark"></i>
+          <i class="bi bi-bookmark-fill"></i>
+        </button>
       </div>
     </div>
     <div class="meta d-flex justify-content-between mb-3">
@@ -94,7 +94,7 @@
         <%--      </c:if>--%>
       </div>
       <div>
-        <button class="btn btn-outline-dark">
+        <button class="btn btn-outline-primary">
           <i class="bi bi-hand-thumbs-up"></i>
           <i class="bi bi-hand-thumbs-up-fill"></i>
         </button>
@@ -102,19 +102,21 @@
       </div>
     </div>
     
-    <!-- 댓글 작성 기능 -->
+    <!-- 댓글 작성 -->
     <div class="comment-form mb-4">
       <h5 style="text-align: start">댓글 작성</h5>
-      <form method="post" action="/community/addReply">
+      <form method="get" action="add-reply">
+        <input type="hidden" name="boardNo" value="${board.no}">
+<%--          <input type="hidden" name="userNo" value="${user.no}">--%>
+        <input type="hidden" name="userNo" value="3">
         <div class="row">
-          <input type="hidden" name="boardNo" value="${board.no}">
           <div class="form-group col-11">
             <%--        <c:choose>--%>
             <%--          <c:when test="${empty LOGIN_USER}">--%>
             <%--            <input class="form-control" disabled rows="3" placeholder="로그인 후 댓글 작성이 가능합니다." />--%>
             <%--          </c:when>--%>
             <%--          <c:otherwise>--%>
-            <textarea name="reply" class="form-control" rows="3" placeholder="댓글을 작성하세요."></textarea>
+            <textarea name="content" class="form-control" rows="3" placeholder="댓글을 작성하세요."></textarea>
             <%--          </c:otherwise>--%>
             <%--        </c:choose>--%>
           </div>
@@ -130,12 +132,14 @@
       <div class="row comments rounded" style="background-color: #f2f2f2">
       <!--댓글 내용 -->
       <c:forEach var="reply" items="${replies}">
-<%--        <c:if test="${reply.prevNo}">--%>
-          <div class="comment pt-3">
+          <div class="comment pt-3 ">
             <div class="row">
-              <div class="col">
-                <div class="col d-flex justify-content-between">
+              <div class="col ${reply.no ne reply.prevNo ? 'ps-5' : ''}">
+                <div class="col d-flex justify-content-between ">
                   <div class="col-1">
+                    <c:if test="${reply.no ne reply.prevNo}">
+                      <i class="bi bi-arrow-return-right"></i>
+                    </c:if>
                     <img src="https://github.com/mdo.png" alt="" style="width: 50px" class="rounded-circle">
                   </div>
                   <div class="col" style="text-align: start">
@@ -158,52 +162,17 @@
                 </div>
               </div>
             </div>
-            
-            <div class="comment-item m-1 rounded" style="padding-left:30px; text-align:start;">
-              ${reply.content}
-              <button class="btn btn-outline-dark btn-sm d-flex justify-content-start">답글</button>
-            </div>
-  <%--        <c:if test="${not empty LOGIN_USER}">--%>
-  
-  <%--        </c:if>--%>
-        
-          <!-- 답글 내용 -->
-          <c:if test="${not empty reply.prevNo}">
-            <div class="row pt-1 pb-3" style="margin-left: 30px">
-              <div class="col-12 d-flex justify-content-between">
-                <div class="col-1">
-                  <i class="bi bi-arrow-return-right"></i>
-                  <img src="https://github.com/mdo.png" alt="" style="width: 50px" class="rounded-circle">
-                </div>
-                <div class="col" style="text-align: start">
-                  <strong>${reply.user.nickname}</strong><br/>
-                  <div style="font-size: 10px; text-align: start">
-                    <span><fmt:formatDate value="${reply.createdDate}" pattern="yyyy.MM.dd hh:mm:ss"/></span>
-                    <button type="button" class="btn"
-                            style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">신고
-                    </button>
-                  </div>
-                </div>
-                <div class="col-2" style="text-align: end">
-                  <button class="btn btn-outline-dark btn-sm">
-                    <i class="bi bi-hand-thumbs-up"></i>
-                    <i class="bi bi-hand-thumbs-up-fill"></i>
-                  </button>
-                  <button class="btn btn-warning btn-sm">수정</button>
-                  <button class="btn btn-danger btn-sm" onclick="deleteReply()">삭제</button>
+            <div class="row">
+              <div class="col ${reply.no ne reply.prevNo ? 'ps-5' : ''}">
+                <div class="comment-item m-1 rounded" style="padding-left:30px; text-align:start;">
+                  ${reply.content}
+                    <%--        <c:if test="${not empty LOGIN_USER}">--%>
+                  <button class="btn btn-outline-dark btn-sm d-flex justify-content-start">답글</button>
+                    <%--        </c:if>--%>
                 </div>
               </div>
-              <div class="col-1"></div>
-              <div class="col-11 comment-item rounded mt-1" style="text-align: start; margin-left: 60px">
-                ${reply.content}
-    <%--          <c:if test="${not empty LOGIN_USER}">--%>
-                <button class="btn btn-outline-dark btn-sm d-flex justify-content-start">답글</button>
-    <%--          </c:if>--%>
-              </div>
             </div>
-          </c:if>
           </div>
-<%--        </c:if>--%>
       </c:forEach>
     </div>
     </c:if>
@@ -230,12 +199,14 @@
     }
     
     async function submitReply(){
-      let value1 = document.querySelector("textarea[name=reply]").value
-      let value2 = document.querySelector("input[name=boardNo]").value
+      let value1 = document.querySelector("input[name=boardNo]").value;
+      let value2 = document.querySelector("textarea[name=content]").value;
+      let value3 = document.querySelector("input[name=userNo]").value;
       
-      let date = {
-        content: value1,
-        boardNo: value2
+      let data = {
+        boardNo: value1,
+        content: value2,
+        userNo: value3
       }
       
       // 자바스크립트 객체를 json형식의 텍스트로 변환한다.

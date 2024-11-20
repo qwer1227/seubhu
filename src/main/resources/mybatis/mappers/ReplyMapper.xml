@@ -12,9 +12,9 @@
       )
     values
       (
-        #{boardNo}
-      , #{reply}
-      , #{user.no}
+        #{reply.boardNo}
+      , #{reply.content}
+      , #{reply.userNo}
       )
   </insert>
 
@@ -32,16 +32,16 @@
         #{boardNo}
       , #{prevReplyNo}
       , #{reply}
-      , #{user.no}
+      , #{userNo}
       )
   </insert>
 
   <!-- List<Reply> getRepliesByBoardNo(@Param("no") int boardNo); -->
   <select id="getRepliesByBoardNo" resultType="store.seub2hu2.community.vo.Reply" parameterType="int">
     select
-      b.board_no                 as "board.no"
-      , u.user_no                as "user.no"
-      , u.user_nickname          as "user_nickname"
+      b.board_no                 as boardNo
+      , u.user_no                as userNo
+      , u.user_nickname          as "user.nickname"
       , br.reply_no              as no
       , br.prev_reply_no         as prevNo
       , br.reply_content         as content
@@ -55,7 +55,7 @@
       join USERS u
          on br.user_no = u.user_no
     where b.board_no = #{no}
-    order by br.reply_created_date asc
+    order by br.prev_reply_no asc, br.reply_no asc
   </select>
 
   <!-- void deleteReplyByNo(@Param("replyNo") int replyNo); -->

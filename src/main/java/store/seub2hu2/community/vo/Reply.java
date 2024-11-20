@@ -22,7 +22,7 @@ public class Reply {
     private Date createdDate;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date updatedDate;
-    private User user;
+    private int userNo;
     private String report;
     private int replyLike;
     private String deleted;

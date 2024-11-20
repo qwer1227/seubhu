@@ -6,6 +6,8 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -17,12 +19,14 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import store.seub2hu2.community.dto.RegisterBoardForm;
 import store.seub2hu2.community.dto.ModifyBoardForm;
+import store.seub2hu2.community.dto.ReplyForm;
 import store.seub2hu2.community.service.BoardService;
 import store.seub2hu2.community.service.ReplyService;
 import store.seub2hu2.community.view.FileDownloadView;
 import store.seub2hu2.community.vo.Board;
 import store.seub2hu2.community.vo.Reply;
 import store.seub2hu2.community.vo.UploadFile;
+import store.seub2hu2.security.LoginUser;
 import store.seub2hu2.util.FileUtils;
 import store.seub2hu2.util.ListDto;
 
@@ -178,10 +182,12 @@ public class BoardController {
                 .body(resource);
     }
 
-//    @PostMapping("addReply")
-//    public Reply addNewReply(ReplyForm form) {
-//        Reply reply = replyService.addNewReply(form);
-//
-//        return reply;
-//    }
+    @GetMapping("add-reply")
+//    @PreAuthorize("isAuthenticated()")
+    public String addReply(ReplyForm form){
+//            , @AuthenticationPrincipal LoginUser loginUser) {
+        replyService.addNewReply(form, 3);
+
+        return "redirect:detail?no=" + form.getBoardNo();
+    }
 }
