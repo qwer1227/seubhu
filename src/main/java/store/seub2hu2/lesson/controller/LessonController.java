@@ -17,6 +17,7 @@ import store.seub2hu2.lesson.vo.*;
 import store.seub2hu2.user.vo.User;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,7 @@ public class LessonController {
 
     @GetMapping(value = {"/", "lessons", ""})
     public String lessonList() {
+
         return "lesson/lesson";
     }
 
@@ -53,6 +55,7 @@ public class LessonController {
             model.addAttribute("lessonNo", lessonNo);
             model.addAttribute("images", images);
 
+            log.info("lesson start = {}", lesson);
             return "lesson/lesson-detail";
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Invalid lessonNo: " + lessonNo);
@@ -113,6 +116,7 @@ public class LessonController {
         param.put("start", start);
         param.put("end", end);
         log.info("subject = {}", subject);
+        log.info("Start: {}, End: {}, Subject: {}", start, end, subject);
         List<Lesson> lessons = lessonService.getAllLessons(param, subject);
 
         return lessons;
@@ -134,8 +138,11 @@ public class LessonController {
 
     // 결제용 임시 컨트롤러
     @GetMapping("/payment")
-    public String pay(@ModelAttribute LessonDto lessonDto) {
+    public String pay(@ModelAttribute LessonDto lessonDto, Model model) {
         log.info("lessonDto = {}", lessonDto);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        model.addAttribute("lessonDto", lessonDto);
         return "lesson/lesson-payment";
     }
 }

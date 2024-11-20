@@ -17,7 +17,7 @@
                     <img src="${pageContext.request.contextPath}/resources/lessonImg/1.png"
                          alt="Main Image" style="width: 100%; height: 300px;"/>
         </div>
-        <div class="col-5 border border-dark border d-flex justify-content-center">
+        <div class="col-5 border border-dark border">
             <table class="table">
                 <colgroup>
                     <col width="15%">
@@ -25,19 +25,26 @@
                 </colgroup>
                 <tr>
                     <th>레슨명</th>
-                    <td>ddd</td>
+                    <td>${lessonDto.title}</td>
+                </tr>
+                <tr>
+                    <th>과정</th>
+                    <td>${lessonDto.subject}</td>
                 </tr>
                 <tr>
                     <th>강사명</th>
-                    <td>ddd</td>
+                    <td>${lessonDto.lecturerName}</td>
                 </tr>
                 <tr>
                     <th>레슨날짜</th>
-                    <td>ddd</td>
+                    <td>
+<%--                        <fmt:formatDate value="${lessonDto.startDate}" pattern="yyyy-MM-dd"></fmt:formatDate>--%>
+                        ${lessonDto.startDate}
+                    </td>
                 </tr>
                 <tr>
                     <th>결제금액</th>
-                    <td>ddd</td>
+                    <td><fmt:formatNumber value="${lessonDto.price}" pattern="#,###" /></td>
                 </tr>
             </table>
         </div>
@@ -62,7 +69,7 @@
         PortOne.requestPayment({
             storeId: "store-217dbe0f-fbb7-4d16-bfff-f4a47ce92b0f",
             paymentId: "testm3o7667l123213",
-            orderName: "짜장면 1개",
+            orderName: "${lessonDto.title}",
             totalAmount: 30000,
             currency: "KRW",
             channelKey: "channel-key-ccf24b7f-9a39-41a2-940e-c394c6a8dee0",

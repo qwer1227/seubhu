@@ -39,20 +39,15 @@
         <div class="col-2">
             <label for="subject">과정 선택:</label>
             <select id="subject" class="form-select">
-                <option>전체</option>
-                <option>호흡</option>
-                <option>자세</option>
-                <option>운동</option>
+                <option value="전체">전체</option>
+                <option value="호흡">호흡</option>
+                <option value="자세">자세</option>
+                <option value="운동">운동</option>
             </select>
         </div>
     </div>
     <div class="row mb-3">
         <div id='calendar'></div>
-    </div>
-    <div class="row">
-        <div class="col text-end">
-            <a href="/lesson/form" class="btn bg-black text-white">레슨 모집글 작성</a>
-        </div>
     </div>
 </div>
 
@@ -104,6 +99,7 @@
             },
         });
 
+
         function refreshEvents(info, successCallback, failureCallback) {
             let start = moment(info.start).format("YYYY-MM-DD");
             let end = moment(info.end).format("YYYY-MM-DD");
@@ -112,7 +108,7 @@
             let param = {
                 start: start,
                 end: end,
-                subject: subject // course 값을 추가
+                subject: subject // subject 값을 추가
             };
 
             $.ajax({
@@ -122,19 +118,44 @@
                 dataType: 'json'
             })
                 .done(function (events) {
-                    console.log(events); // Log the response to check the lessonNo
-                    var formattedEvents = events.map(event => ({
-                        title: event.title,
-                        start: event.start,
-                        end: event.end,
-                        textColor: 'white',
-                        borderColor: 'black',
-                        backgroundColor: 'black',
-                        display: 'block',
-                        extendedProps: {
-                            lessonNo: event.lessonNo,  // The lessonNo received from the database
-                        },
-                    }));
+                    console.log("Fetched Events:", events); // 데이터를 디버깅용으로 출력
+                    var formattedEvents = events.map(event => {
+                        // 조건별 색상 매핑
+                        const colorMap = {
+                            '호흡': 'green',
+                            '자세': 'blue',
+                            '운동': 'orange'
+                        };
+                        var backgroundColor = 'black'
+                        console.log(event.subject)
+                        if(event.subject == '호흡') {
+                             backgroundColor = '#AEDFF7';
+                        }
+                        if(event.subject == '자세') {
+                             backgroundColor = '#A8D5BA';
+                        }
+                        if(event.subject == '운동') {
+                             backgroundColor = '#D9C8F2';
+                        }
+                        const borderColor = backgroundColor; // 테두리 색상도 동일하게 설정
+
+                        return {
+                            title: event.title,
+                            start: event.start,
+                            end: event.end,
+                            textColor: 'black', // 텍스트 색상
+                            borderColor: borderColor,
+                            backgroundColor: backgroundColor, // 배경색
+                            display: 'block',
+                            extendedProps: {
+                                lessonNo: event.lessonNo,  // 추가 정보
+                                subject: event.subject // subject 포함
+                            },
+                        };
+                    });
+                    console.log("Formatted Events:", formattedEvents);
+
+                    // 캘린더에 렌더링할 이벤트 데이터 전달
                     successCallback(formattedEvents);
                 })
                 .fail(function () {
@@ -143,11 +164,21 @@
                 });
         }
 
+
+        function lessonDetail(lessonNo) {
+            if (lessonNo !== undefined && lessonNo !== null && lessonNo !== "") {  // Validate lessonNo
+                console.log("LessonNo:", lessonNo); // Log to ensure lessonNo is being passed as int
+                location.href =("/lesson/detail?lessonNo="+lessonNo);
+            } else {
+                console.error("Invalid lessonNo");
+            }
+        }
+
         calendar.render();
 
 
         $(document).on('change', '#subject', function () {
-            // 필터 변경 시 캘린더 다시 로드
+            console.log("Subject changed:", $('#subject').val());
             calendar.refetchEvents();
         });
     });

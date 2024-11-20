@@ -21,7 +21,7 @@
         <div class="col-4 border">
             <c:if test="${not empty images['THUMBNAIL']}">
                 <img src="${pageContext.request.contextPath}/resources/lessonImg/${images['THUMBNAIL']}"
-                     class="img-fluid" alt="Thumbnail" style="width: 100%; height: 300px;"/>
+                     class="img-fluid" alt="Thumbnail" style="width: 100%; height: 500px;"/>
             </c:if>
         </div>
         <div class="col-4">
@@ -43,8 +43,8 @@
                     <td>ddd</td>
                 </tr>
                 <tr>
-                    <th>결제금액</th>
-                    <td>ddd</td>
+                    <th>참여인원</th>
+                    <td>1/5</td>
                 </tr>
             </table>
         </div>
@@ -63,9 +63,10 @@
             <form name="lessonDto" method="get" action="/lesson/payment">
                 <input type="hidden" name="title" value="${lesson.title}">
                 <input type="hidden" name="price" value="${lesson.price}">
-                <input type="hidden" name="lecture" value="${lesson.lectureName}">
-                <input type="hidden" name="startDate" value="${lesson.startDate}">
-                <a href="/lesson/payment" class="btn btn-primary">수강신청</a>
+                <input type="hidden" name="lecturerName" value="${lesson.lecturer.name}">
+                <input type="hidden" name="startDate" value="${lesson.start}">
+                <input type="hidden" name="subject" value="${lesson.subject}">
+                <button type="submit" class="btn btn-primary">수강신청</button>
             </form>
         </div>
         <div class="col-2"></div>

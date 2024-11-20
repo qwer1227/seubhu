@@ -35,13 +35,13 @@
         LESSON_CREATED_DATE AS createdDate,
         LESSON_PLAN AS plan,
         LESSON_START_DATE AS start,
-        LESSON_END_DATE AS end,
-        LESSON_CATEGORY AS category
+        LESSON_END_DATE AS 'end',
+        LESSON_SUBJECT AS subject
         FROM LESSONS
         WHERE (LESSON_START_DATE between DATE_FORMAT(#{param.start}, '%Y-%m-%d') and DATE_FORMAT(#{param.end}, '%Y-%m-%d')
         or LESSON_END_DATE between DATE_FORMAT(#{param.start}, '%Y-%m-%d') and DATE_FORMAT(#{param.end}, '%Y-%m-%d'))
         <if test="subject != null and subject != '전체'">
-            AND LESSON_CATEGORY = #{subject}
+            AND LESSON_SUBJECT = #{subject}
         </if>
     </select>
 
@@ -54,8 +54,10 @@
              , L.LESSON_PRICE        as price
              , L.lesson_status       as status
              , L.lesson_created_date as createdDate
+             , L.LESSON_START_DATE   as start
              , L.PARTICIPANT         as participant
              , L.lesson_plan         as plan
+             , L.LESSON_SUBJECT      as subject
              , U.USER_NAME as 'lecturer.name'
         from LESSONS L
                  INNER JOIN USERS U
