@@ -44,7 +44,7 @@
         <!-- 로그인 폼 -->
         <form method="post" action="login">
             <div class="mb-3">
-                <input type="text" class="form-control" placeholder="아이디" name="id">
+                <input type="text" class="form-control" value="${cookieId}" placeholder="아이디" name="id">
             </div>
             <div class="mb-3">
                 <input type="password" class="form-control" placeholder="비밀번호" name="password">

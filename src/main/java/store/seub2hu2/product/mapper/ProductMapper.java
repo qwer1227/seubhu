@@ -2,6 +2,7 @@ package store.seub2hu2.product.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import store.seub2hu2.product.dto.ProdDetailDto;
 import store.seub2hu2.product.dto.ProdListDto;
 import store.seub2hu2.product.vo.Product;
 
@@ -16,7 +17,10 @@ public interface ProductMapper {
 
     // 상품 전체 목록 조회하기
     List<ProdListDto> getProducts(@Param("condition") Map<String, Object> condition);
-
-    // 카테고리별 상품 목록 조회하기
-    List<Product> getProductByCatNo(int catNo);
+    
+    // 상품 번호에 따른 상품 조회하기
+    ProdDetailDto getProductByNo(int no);
+    
+    // 상품 등록(임시: 관리자가 하기)
+    void insertProduct(Product product);
 }
