@@ -52,6 +52,11 @@ public class BoardController {
     @Autowired
     public FileDownloadView fileDownloadView;
 
+    @GetMapping("write")
+    public String write(){
+        return "community/write";
+    }
+
     @GetMapping("/main")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page
             , @RequestParam(name = "rows", required = false, defaultValue = "10") int rows
