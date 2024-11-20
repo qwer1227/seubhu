@@ -65,40 +65,7 @@ public class LessonController {
         return "lesson/payment";
     }
 
-    // 레슨 작성 폼
-    @GetMapping("/form")
-    public String form() {
-        return "lesson/lesson-form";
-    }
 
-    // 레슨 번호를 lessonFile 객체에 어떻게 전달?
-    @PostMapping("/form")
-    public String form(@ModelAttribute("form") LessonRegisterForm form, Model model) throws IOException {
-        // Lesson 객체 생성
-        int lessonNo = lessonService.getMostLatelyLessonNo();
-
-        Lesson lesson = new Lesson();
-        lesson.setLessonNo(lessonNo);
-        lesson.setTitle(form.getTitle());
-        lesson.setPrice(form.getPrice());
-        User user = new User();
-        user.setNo(5); // Or dynamically assign user ID
-        user.setId(form.getLecturerName());
-        lesson.setLecturer(user);
-        lesson.setCategory(form.getCategory());
-        lesson.setPlan(form.getPlan());
-        lesson.setStart(form.getDate());
-        lesson.setEnd(form.getDate());
-
-        // Get the uploaded file
-        MultipartFile thumbnail = form.getThumbnail();
-        MultipartFile mainImage = form.getMainImage();
-
-        lessonService.registerLesson(lesson, form);
-
-        // Redirect after successful form submission
-        return "redirect:lessons";
-    }
 
     // 레슨 수정 폼
     @GetMapping("/editForm")

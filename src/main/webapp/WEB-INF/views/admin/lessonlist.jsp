@@ -59,7 +59,7 @@
                 </div>
                 <div class="row col-9 mb-4 pt-1">
                   <div class="col">
-                    <input type="date" name="day" id="dateInput"/>
+                    <input type="date" name="day" id="dateInput" value="${param.day}"/>
                   </div>
                 </div>
             </div>
@@ -158,6 +158,20 @@
 
   // 'yyyy-mm-dd' 형식으로 변환
   const formattedDate = `${yyyy}-${mm}-${dd}`;
+
+  const dateInput = document.getElementById('dateInput');
+  if (!dateInput.value) { // 날짜 값이 비어 있으면 오늘 날짜를 기본값으로 설정
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1
+    const dd = String(today.getDate()).padStart(2, '0');
+
+    // 'yyyy-mm-dd' 형식으로 변환
+    const formattedDate = `${yyyy}-${mm}-${dd}`;
+    if (!dateInput.value) {
+      dateInput.value = formattedDate;
+    }
+  }
 
   // 기본값 설정
   document.getElementById('dateInput').value = formattedDate;

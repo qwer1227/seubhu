@@ -51,7 +51,6 @@
           <td colspan="3">
             <input type="text" class="form-control" style="width: 100%" id="title" name="title"
                    placeholder="제목을 입력해주세요." value="">
-                   ${board != null ? boardForm.title : ''}
           </td>
         </tr>
         <tr class="form-group">
@@ -61,8 +60,7 @@
           <td colspan="3">
             <textarea style="width: 100%" class="form-control" rows="10" id="content" name="content"
                       placeholder="내용을 입력해주세요."></textarea>
-                      ${board != null ? board.content : ''}
-            <!-- <%@include file="write.jsp" %> -->
+            <%@include file="write.jsp" %>
           </td>
         </tr>
         <tr class="form-group">

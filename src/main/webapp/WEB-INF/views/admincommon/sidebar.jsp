@@ -105,7 +105,7 @@
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">레슨</h6>
                 <a class="collapse-item" href="lesson">레슨 전체</a>
-                <a class="collapse-item" href="lesson">레슨 등록하기</a>
+                <a class="collapse-item" href="lesson-register-form">레슨 등록하기</a>
                 <a class="collapse-item" href="lesson">레슨 수정하기</a>
             </div>
         </div>
