@@ -31,42 +31,35 @@ public class ProductController {
     }
 
 
-    //  상품 전체 페이지 이동: 동적쿼리
+    //  상품 전체 페이지 이동
     @GetMapping("/list")
-    public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
-                       @RequestParam(name = "rows", required = false, defaultValue = "5") int rows,
-                       @RequestParam(name = "sort", required = false, defaultValue = "date") String sort,
-                       @RequestParam(name = "topNo", required = false) int topNo,
+    public String list(@RequestParam(name= "topNo") int topNo,
+                       @RequestParam(name = "catNo", required = false, defaultValue = "0") int catNo,
+                       @RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                       @RequestParam(name = "rows", required = false, defaultValue = "6") int rows,
+                       @RequestParam(name = "sort" , required = false, defaultValue = "date") String sort,
                        @RequestParam(name = "opt", required = false) String opt,
                        @RequestParam(name = "value", required = false) String value,
                        Model model) {
 
-
-        if(topNo == 10) {
-            topNo = 10;
-        } else if(topNo == 20) {
-            topNo = 20;
-        } else if(topNo == 30) {
-            topNo = 30;
-        }
-
-        // 조건들을 맵에 담기.
         Map<String, Object> condition = new HashMap<>();
+        condition.put("topNo", topNo);
+        if(catNo != 0) {
+            condition.put("catNo", catNo);
+        }
         condition.put("page", page);
         condition.put("rows", rows);
         condition.put("sort", sort);
-        condition.put("topNo", topNo);
-        if(StringUtils.hasText(value)) {
+        if(StringUtils.hasText(opt)) {
             condition.put("opt", opt);
             condition.put("value", value);
         }
 
-        // 관련 데이터와 페이징 데이터를 담는다.
         ListDto<ProdListDto> dto = productService.getProducts(condition);
-        model.addAttribute("products", dto.getData());
         model.addAttribute("topNo", topNo);
+        model.addAttribute("catNo", catNo);
+        model.addAttribute("products", dto.getData());
         model.addAttribute("paging", dto.getPaging());
-
 
         return "product/list";
     }

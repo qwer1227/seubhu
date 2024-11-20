@@ -13,11 +13,10 @@ import java.util.Date;
 @Setter
 public class UploadFile {
     private int no;
-    private Board board;
+    private int boardNo;
     private String originalName;
     private String saveName;
-    private String savePath;
-    private String isDeleted;
+    private String deleted;
     private Date createdDate;
     private Date updatedDate;
 }

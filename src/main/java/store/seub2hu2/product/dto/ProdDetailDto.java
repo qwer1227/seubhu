@@ -4,27 +4,22 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import store.seub2hu2.product.vo.Brand;
-import store.seub2hu2.product.vo.Category;
-import store.seub2hu2.product.vo.Image;
+import store.seub2hu2.product.vo.*;
 
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
+
 
 @NoArgsConstructor
 @ToString
 @Setter
 @Getter
-public class ProdListDto {
-
+public class ProdDetailDto {
     private int no;
     private String name;
     private int price;
     private String status;
-    private Date createdAt;
-    private String imgThum;
+    private int cnt;
+    private double rating;
     private Category category;
     private Brand brand;
-
 }
