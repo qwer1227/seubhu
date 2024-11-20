@@ -58,7 +58,26 @@ public class AuthController {
         }
         System.out.println("카카오 액세스 토큰: " + oauthToken.getAccessToken());
 
-        return response.getBody();
+        // POST 방식으로 key=value 데이터를 요청 (카카오쪽으로)
+        RestTemplate rt2 = new RestTemplate();
+
+        // HTTP 요청 헤더 생성
+        HttpHeaders headers2 = new HttpHeaders();
+        headers2.add("Authorization", "Bearer"+oauthToken.getAccessToken());
+        headers2.add("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
+
+        // 요청하기 위해 헤더(Header)와 데이터(Body)를 합친다.
+        HttpEntity<MultiValueMap<String, String>> kakaoProfileRequest2 = new HttpEntity<>(headers2);
+
+        // POST 방식으로 Http 요청한다.
+        ResponseEntity<String> response2 = rt2.exchange(
+                "https://kapi.kakao.com/v2/user/me",
+                HttpMethod.POST,
+                kakaoProfileRequest2,
+                String.class
+        );
+
+        return response2.getBody();
     }
 
 

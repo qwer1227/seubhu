@@ -94,19 +94,22 @@ public class UserController {
 //    return "redirect:/main"; // 로그아웃 후 메인 페이지로 리다이렉트
 //}
 
-    // 아이디 찾기
+    // 아이디 찾기 폼
     @GetMapping("/forgot-id")
     public String forgotIdForm() {
-        return "user/forgot-id";
+        return "user/forgot-id"; // 아이디 찾기 페이지로 이동
     }
 
+    // 이메일로 아이디 찾기 처리
     @PostMapping("/forgot-id")
     public ResponseEntity<String> findIdByEmail(@RequestParam String email) {
         String userId = userService.findIdByEmail(email);
+
         if (userId != null) {
             return ResponseEntity.ok("가입된 아이디는: " + userId + "입니다.");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 이메일로 가입된 아이디가 없습니다.");
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 이메일로 가입된 아이디가 없습니다.");
     }
 
     // 비밀번호 찾기
@@ -152,7 +155,7 @@ public class UserController {
     }
 
 
-    }
+}
 
 
 

@@ -9,10 +9,13 @@ import store.seub2hu2.user.dto.LoginResponse;
 import store.seub2hu2.user.dto.SocialLoginRequest;
 import store.seub2hu2.user.dto.UserJoinForm;
 import store.seub2hu2.user.exception.AlreadyUsedIdException;
+import store.seub2hu2.user.exception.DataNotFoundException;
 import store.seub2hu2.user.vo.Role;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.user.mapper.UserMapper;
 import store.seub2hu2.user.vo.UserRole;
+
+import java.util.Optional;
 
 @Service
 @Transactional
