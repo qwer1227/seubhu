@@ -19,7 +19,7 @@ import java.util.List;
 public class Lesson {
     private int lessonNo;
     private String title;
-    private String category;
+    private String subject;
     private int price;
     private int participant;
     private String plan;
@@ -28,7 +28,8 @@ public class Lesson {
     private Date updatedDate;
     private User lecturer;
     private String filename;
-
+    private Date startDate;
+    private Date endDate;
 
 
     public String getOriginalFilename() {

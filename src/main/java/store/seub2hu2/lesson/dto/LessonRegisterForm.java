@@ -18,8 +18,12 @@ public class LessonRegisterForm {
     private String title;
     private String plan;
     private int price;
-    private String category;
+    private String subject;
     private String lecturerName;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date startDate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date endDate;
     private MultipartFile thumbnail;
     private MultipartFile mainImage;
     @JsonFormat(pattern = "yyyy-MM-dd")

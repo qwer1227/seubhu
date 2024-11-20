@@ -61,7 +61,7 @@
     function requestPay() {
         PortOne.requestPayment({
             storeId: "store-217dbe0f-fbb7-4d16-bfff-f4a47ce92b0f",
-            paymentId: "testm3o7667l",
+            paymentId: "testm3o7667l123213",
             orderName: "짜장면 1개",
             totalAmount: 30000,
             currency: "KRW",

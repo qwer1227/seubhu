@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import store.seub2hu2.lesson.dto.LessonDto;
 import store.seub2hu2.lesson.dto.LessonRegisterForm;
 import store.seub2hu2.lesson.dto.ReservationSearchCondition;
 import store.seub2hu2.lesson.service.LessonFileService;
@@ -77,7 +78,7 @@ public class LessonController {
         user.setNo(5); // Or dynamically assign user ID
         user.setId(form.getLecturerName());
         lesson.setLecturer(user);
-        lesson.setCategory(form.getCategory());
+        lesson.setSubject(form.getSubject());
         lesson.setPlan(form.getPlan());
         lesson.setStart(form.getStartDate());
         lesson.setEnd(form.getEndDate());
@@ -107,12 +108,12 @@ public class LessonController {
     @ResponseBody
     public List<Lesson> lesson(@RequestParam("start") String start,
                                @RequestParam("end") String end,
-                               @RequestParam(value = "course", required = false, defaultValue = "전체") String course) {
+                               @RequestParam(value = "subject", required = false, defaultValue = "전체") String subject) {
         Map<String, Object> param = new HashMap<>();
         param.put("start", start);
         param.put("end", end);
-        log.info("course = {}", course);
-        List<Lesson> lessons = lessonService.getAllLessons(param, course);
+        log.info("subject = {}", subject);
+        List<Lesson> lessons = lessonService.getAllLessons(param, subject);
 
         return lessons;
     }
@@ -133,7 +134,8 @@ public class LessonController {
 
     // 결제용 임시 컨트롤러
     @GetMapping("/payment")
-    public String pay() {
+    public String pay(@ModelAttribute LessonDto lessonDto) {
+        log.info("lessonDto = {}", lessonDto);
         return "lesson/lesson-payment";
     }
 }

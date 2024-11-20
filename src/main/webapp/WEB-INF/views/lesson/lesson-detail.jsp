@@ -60,7 +60,13 @@
     <div class="row text-end mb-3">
         <div class="col-2"></div>
         <div class="col border-bottom border-dark border-2 pb-3">
-            <a href="/lesson/payment" class="btn btn-primary">수강신청</a>
+            <form name="lessonDto" method="get" action="/lesson/payment">
+                <input type="hidden" name="title" value="${lesson.title}">
+                <input type="hidden" name="price" value="${lesson.price}">
+                <input type="hidden" name="lecture" value="${lesson.lectureName}">
+                <input type="hidden" name="startDate" value="${lesson.startDate}">
+                <a href="/lesson/payment" class="btn btn-primary">수강신청</a>
+            </form>
         </div>
         <div class="col-2"></div>
     </div>
@@ -96,7 +102,6 @@
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script>
-
 
 
 </script>

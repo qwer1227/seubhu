@@ -26,8 +26,8 @@ public class LessonService {
     private final LessonFileMapper lessonFileMapper;
     private final LessonFileService lessonFileService;
 
-    public List<Lesson> getAllLessons(Map<String, Object> param) {
-        return lessonMapper.getAllLessons(param);
+    public List<Lesson> getAllLessons(Map<String, Object> param, String subject) {
+        return lessonMapper.getAllLessons(param, subject);
     }
 
     public Lesson getLessonByNo(int lessonNo) {
