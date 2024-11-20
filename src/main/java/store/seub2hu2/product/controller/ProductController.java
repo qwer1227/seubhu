@@ -8,12 +8,15 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import store.seub2hu2.product.dto.ColorProdImgDto;
+import store.seub2hu2.product.dto.ProdDetailDto;
 import store.seub2hu2.product.dto.ProdListDto;
 import store.seub2hu2.product.service.ProductService;
 import store.seub2hu2.util.ListDto;
 
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -27,7 +30,7 @@ public class ProductController {
     // 임시 홈 페이지 이동
     @GetMapping("/")
     public String home() {
-        return "home";
+        return "main";
     }
 
 
@@ -47,6 +50,7 @@ public class ProductController {
         if(catNo != 0) {
             condition.put("catNo", catNo);
         }
+
         condition.put("page", page);
         condition.put("rows", rows);
         condition.put("sort", sort);
@@ -66,8 +70,17 @@ public class ProductController {
 
     // 임시 상품 상세 페이지 이동
     @GetMapping("/detail")
-    public String detail() {
+    public String detail(@RequestParam("no") int no,
+                         @RequestParam("colorNo") int colorNo,
+                         Model model) {
 
+        ProdDetailDto prodDetailDto = productService.getProductByNo(no);
+        model.addAttribute("prodDetailDto", prodDetailDto);
+
+        List<ColorProdImgDto> colorProdImgDto = productService.getProdImgByColorNo(no);
+        model.addAttribute("colorProdImgDto", colorProdImgDto);
+
+        System.out.println("prodDetailDtao" + prodDetailDto);
         return "product/detail";
     }
 }

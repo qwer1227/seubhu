@@ -59,15 +59,16 @@
                         ROW_NUMBER() OVER(ORDER BY P.PROD_PRICE ASC) AS RN
                     </when>
                 </choose>
-            , P.PROD_NO AS NO,
-            P.PROD_NAME AS NAME,
-            P.PROD_PRICE AS PRICE,
-            P.PROD_STATUS AS STATUS,
-            P.PROD_CREATED_AT AS CREATEDAT,
-            P.PROD_IMG_THUM AS IMGTHUM,
-            PC.CAT_NO AS "CATEGORY.NO",
-            PC.CAT_NAME AS "CATEGORY.NAME",
-            PB.BRAND_NAME AS "BRAND.NAME"
+            , P.PROD_NO AS no,
+            P.PROD_NAME AS name,
+            P.PROD_PRICE AS price,
+            P.PROD_STATUS AS status,
+            P.PROD_COLOR_NUM AS colorNum,
+            P.PROD_CREATED_AT AS createdAt,
+            P.PROD_IMG_THUM AS imgThum,
+            PC.CAT_NO AS "category.no",
+            PC.CAT_NAME AS "category.name",
+            PB.BRAND_NAME AS "brand.name"
             FROM PRODUCTS P
                 JOIN PROD_CATEGORIES PC ON P.CAT_NO = PC.CAT_NO
                 JOIN PROD_BRANDS PB ON P.BRAND_NO = PB.BRAND_NO
@@ -100,14 +101,15 @@
     -->
     <select id="getProductByNo" resultType="store.seub2hu2.product.dto.ProdDetailDto">
         SELECT
-            P.PROD_NO,
-            P.PROD_NAME,
-            P.PROD_PRICE,
-            P.PROD_STATUS,
-            P.PROD_CNT,
-            P.PROD_RATING,
-            PC.CAT_NAME,
-            PB.BRAND_NAME
+            P.PROD_NO AS no,
+            P.PROD_NAME AS name,
+            P.PROD_CONTENT AS content,
+            P.PROD_PRICE AS price,
+            P.PROD_STATUS AS status,
+            P.PROD_CNT AS cnt,
+            P.PROD_RATING AS rating,
+            PC.CAT_NAME AS "category.name",
+            PB.BRAND_NAME AS "brand.name"
         FROM
             PRODUCTS P
         JOIN
@@ -118,4 +120,40 @@
         ON P.BRAND_NO = PB.BRAND_NO
         WHERE P.PROD_NO = #{no};
     </select>
+
+    <!--
+        ColorProdImgDto getColorImgByNo(@Param("no") int no);
+    -->
+    <resultMap id="ColorImg" type="store.seub2hu2.product.dto.ColorProdImgDto">
+        <id property="no" column="COLOR_NO"/>
+        <result property="name" column="COLOR_NAME"/>
+        <association property="product" javaType="store.seub2hu2.product.vo.Product">
+            <id property="no" column="PROD_NO"/>
+            <result property="name" column="PROD_NAME"/>
+        </association>
+        <collection property="images" ofType="store.seub2hu2.product.vo.Image">
+            <id property="no" column="IMG_NO"/>
+            <result property="url" column="IMG_URL"/>
+        </collection>
+    </resultMap>
+    <select id="getProdImgByColorNo" resultMap="ColorImg">
+        SELECT
+            PC.COLOR_NO,
+            PC.COLOR_NAME,
+            P.PROD_NO,
+            P.PROD_NAME,
+            PI.IMG_URL
+        FROM
+            PRODUCT_COLORS PC
+                JOIN PRODUCTS P
+                     ON
+                         PC.PROD_NO = P.PROD_NO
+                JOIN
+            PROD_IMGS PI
+            ON
+                PC.COLOR_NO = PI.COLOR_NO
+        WHERE P.PROD_NO = #{no}
+          AND PI.IMG_THUM = 'Y'
+    </select>
+
 </mapper>
