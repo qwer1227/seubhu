@@ -26,6 +26,8 @@ public class Lesson {
     private String status;
     private Date createdDate;
     private Date updatedDate;
+    private Date startDate;
+    private Date endDate;
     private User lecturer;
     private String filename;
 
