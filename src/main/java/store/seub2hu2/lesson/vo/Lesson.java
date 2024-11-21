@@ -6,6 +6,7 @@ import org.apache.ibatis.type.Alias;
 import org.springframework.format.annotation.DateTimeFormat;
 import store.seub2hu2.user.vo.User;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @NoArgsConstructor

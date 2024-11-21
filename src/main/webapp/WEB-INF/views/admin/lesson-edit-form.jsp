@@ -47,17 +47,17 @@
       <div class="container-fluid">
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-          <h1 class="h3 mb-0 text-gray-800">새 레슨 등록</h1>
+          <h1 class="h3 mb-0 text-gray-800">레슨 수정</h1>
         </div>
         <div class="container my-3">
           <div class="row mb-3">
             <div class="col">
-              <div class="border p-2 bg-dark text-white fw-bold">새 레슨 등록폼</div>
+              <div class="border p-2 bg-dark text-white fw-bold">레슨 수정 폼</div>
             </div>
           </div>
           <div class="row mb-3">
             <div class="col-12">
-              <form name="form" action="/admin/lesson-register-form" enctype="multipart/form-data" method="post">
+              <form name="form" action="/admin/lesson-edit-form" enctype="multipart/form-data" method="post">
                 <div class="row text-center p-3 ">
                   <h2>게시글 작성</h2>
                 </div>

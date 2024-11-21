@@ -52,8 +52,8 @@
         </div>
         <form id="form-search" method="get" action="/admin/lesson">
           <input type="hidden" name="page"/>
-          <div class="row mb-3 d-flex">
-            <div class="row col-3 mb-4 pt-2">
+          <div class="row g-3 d-flex">
+            <div class="row col-3 pt-2">
                 <div class="col mb-4 pt-2">
                   <span>날짜</span>
                 </div>
@@ -63,16 +63,16 @@
                   </div>
                 </div>
             </div>
-            <div class="col-2 mb-4 pt-2">
+            <div class="col-2 mb-2 pt-2">
               <select class="form-control" name="opt">
                 <option value="name">강사명</option>
                 <option value="lessonname">레슨명</option>
                 <option value="course">과목</option>
               </select>
             </div>
-            <div class="col-4 mb-4 pt-2">
-            <!-- Search -->
-            <%@include file="/WEB-INF/views/admincommon/searchbar.jsp" %>
+            <div class="col-4 mb-2 pt-2">
+              <!-- Search -->
+              <%@include file="/WEB-INF/views/admincommon/searchbar.jsp" %>
 
             </div>
           </div>
@@ -85,12 +85,13 @@
             <table class="table">
               <colgroup>
                 <col width="12%">
-                <col width="10%">
+                <col width="7%">
                 <col width="*%">
                 <col width="10%">
                 <col width="10%">
-                <col width="18%">
-                <col width="15%">
+                <col width="13%">
+                <col width="8%">
+                <col width="7%">
               </colgroup>
               <thead>
                 <tr>
@@ -101,16 +102,16 @@
                   <th>가격</th>
                   <th>예약인원</th>
                   <th>모집상태</th>
+                  <th>수정</th>
                 </tr>
               </thead>
               <tbody>
                 <c:forEach var="l" items="${lessons}">
                   <tr>
-
                     <td>
                       <fmt:formatDate value="${l.start}" pattern="yyyy-MM-dd" timeZone="GMT"/>
                     </td>
-                    <td><fmt:formatDate value="${l.start}" pattern="HH:mm:ss"  timeZone="GMT"/></td>
+                    <td><fmt:formatDate value="${l.start}" pattern="HH:mm"  timeZone="GMT"/></td>
                     <td>${l.title}</td>
                     <td>${l.lecturer.name}</td>
                     <td>${l.price}</td>
@@ -119,6 +120,12 @@
                               onclick="previewUser(${u.no})">회원보기</button>
                     </td>
                     <td>${l.status}</td>
+                    <td>
+                    <a href="/admin/lesson-edit-form?lesson_no=${l.lessonNo}">
+                      <button class="btn btn-outline btn-warning btn-sm "
+                              onclick="">수정</button>
+                    </a>
+                    </td>
                   </tr>
                 </c:forEach>
               </tbody>

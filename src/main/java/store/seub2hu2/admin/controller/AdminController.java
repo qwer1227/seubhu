@@ -49,6 +49,20 @@ public class AdminController {
         return "admin/home";
     }
 
+    @GetMapping("/lesson-edit-form")
+    public String lessonEditForm(@RequestParam("lessonNo")Integer lessonNo, Model model) {
+
+        Lesson lesson = lessonService.getLessonByNo(lessonNo);
+
+        return "admin/lesson-edit-form";
+    }
+
+    @PostMapping("/lesson-edit-form")
+    public String lessonEditForm(LessonRegisterForm form,Model model) {
+
+        return "admin/lesson-edit-form";
+    }
+
     @GetMapping("/lesson-register-form")
     public String lessonRegisterForm() {
         return "admin/lesson-register-form";
