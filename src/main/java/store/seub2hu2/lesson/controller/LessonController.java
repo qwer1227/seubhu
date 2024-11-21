@@ -78,7 +78,7 @@ public class LessonController {
         lesson.setTitle(form.getTitle());
         lesson.setPrice(form.getPrice());
         User user = new User();
-        user.setNo(5); // Or dynamically assign user ID
+        user.setNo(29); // Or dynamically assign user ID
         user.setId(form.getLecturerName());
         lesson.setLecturer(user);
         lesson.setSubject(form.getSubject());

@@ -125,7 +125,7 @@
         , date_format(L.lesson_created_date, '%Y-%m-%d')
         , U.USER_NAME as "lesson.lecturer.name"
         from LESSON_RESERVATIONS R
-        INNER JOIN LESSONS L
+        INNER JOIN LESSONS   L
         ON
         R.LESSON_NO = L.LESSON_NO
         INNER JOIN USERS U
@@ -140,14 +140,14 @@
                 AND L.LESSON_TITLE LIKE CONCAT('%', #{condition.searchKeyword}, '%')
             </when>
             <when test="condition.searchCondition == '과목' and condition.searchKeyword != null and condition.searchKeyword != ''">
-                AND L.LESSON_subject LIKE CONCAT('%', #{condition.searchKeyword}, '%')
+                AND L.LESSON_SUBJECT LIKE CONCAT('%', #{condition.searchKeyword}, '%')
             </when>
         </choose>
         <if test="condition.lessonStatus != null and condition.lessonStatus != '' and condition.lessonStatus != '모두'">
             AND L.LESSON_STATUS = #{condition.lessonStatus}
         </if>
-        <if test="condition.lessonsubject != null and condition.lessonsubject != '' and condition.lessonsubject != '모두'">
-            AND L.LESSON_subject = #{condition.lessonSubject}
+        <if test="condition.lessonSubject != null and condition.lessonSubject != '' and condition.lessonSubject != '모두'">
+            AND L.LESSON_SUBJECT = #{condition.lessonSubject}
         </if>
         <if test="condition.startDate != null">
             AND R.LESSON_RESERVATIONS_CREATED_DATE &gt;= #{condition.startDate}

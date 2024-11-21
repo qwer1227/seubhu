@@ -33,14 +33,14 @@
         </div>
     </div>
     <form form="condition" method="get" action="/lesson/reservation">
-        <input type="hidden" name="userNo" value="1">
+        <input type="hidden" name="userNo" value="11">
     <div class="row mb-3">
         <div class="col-4">
             <select>
                 <option>5개씩 보기</option>
                 <option>10개씩 보기</option>
             </select>
-            <select name="lessonCategory">
+            <select name="lessonSubject">
                 <option>모두</option>
                 <option>호흡</option>
                 <option>자세</option>
@@ -67,7 +67,7 @@
             </select>
         </div>
         <div class="col">
-            <input type="text" class="form-control border" name="searchData"/>
+            <input type="text" class="form-control border" name="searchKeyword"/>
         </div>
         <div class="col-1">
             <button type="submit" class="btn btn-primary">검색</button>
@@ -96,7 +96,7 @@
                 <tr>
                     <td>${reservation.no}</td>
                     <td><a href="/lesson/detail?lessonNo=${reservation.lesson.lessonNo}" style="text-decoration:none">${reservation.lesson.title}</a></td>
-                    <td>${reservation.lesson.lecturer.username}</td>
+                    <td>${reservation.lesson.lecturer.name}</td>
                     <td><fmt:formatNumber value="${reservation.lesson.price}" pattern="#,###" /></td>
                     <td>${reservation.lesson.status}</td>
                     <td><fmt:formatDate value="${reservation.reservationCreatedDate}" pattern="yyyy-MM-dd" /></td>
