@@ -20,6 +20,11 @@ public class ProductService {
     @Autowired
     ProductMapper productMapper;
 
+    /**
+     * 색상 번호에 따른 다양한 이미지 조회하기
+     * @param colorNo 색상 번호
+     * @return 해당 상품의 하나의 색상의 여러 이미지들 값
+     */
     public ProdImagesDto getProdImagesByColorNo(int colorNo) {
 
         ProdImagesDto prodImagesDto = productMapper.getProdImagesByColorNo(colorNo);

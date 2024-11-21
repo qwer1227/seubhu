@@ -65,7 +65,6 @@
                                         <th>상품 설명</th>
                                         <td colspan="3">${prodDetailDto.content}</td>
                                     </tr>
-
                                 </table>
                             </div>
                         </div>
@@ -94,7 +93,8 @@
                                                 <!-- 사이즈 버튼 -->
                                                 <c:forEach var="size" items="${sizeAmountDto.sizes }">
                                                     <div class="col">
-                                                        <input type="radio" class="btn-check" name="Size" id="size${size.size}" value="${size.size}" required onclick="function getCart() {}">
+                                                        <input type="radio" class="btn-check" name="size" id="size${size.size}" value="${size.size}" required onclick="addCart(${size.size})">
+                                                        <input type="hidden" name="amount" value="${size.amount}">
                                                         <label class="${size.amount == 0 ? "btn btn-outline-danger fixed-size w-100 d-flex align-items-center justify-content-between disabled": "btn btn-outline-secondary fixed-size w-100 d-flex align-items-center justify-content-between"}" for="size${size.size}">
                                                             <span class="ms-2">${size.size}</span>
                                                             <span class="badge bg-secondary">재고:${size.amount}</span>
@@ -104,6 +104,15 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <hr class="bg-primary border border-1">
+                                    <!--
+                                        선택한 상품과 수량
+                                    -->
+                                    <div id="cart">
+                                        <hr class="bg-primary border border-1">
+
+                                    </div>
+
                                     <hr class="bg-primary border border-1">
                                     <div class="text-end mb-3">
                                         <button class="btn btn-outline-secondary" type="submit" id="cart-add">장바구니 추가</button>
@@ -177,9 +186,13 @@
         commentFormModal.show();
     }
 
-    ${"#cart-add"}.click(function () {
-        alert("장바구니에 담겼습니다.")
-    })
+    function addCart(size) {
+        let name = $("#name").text();
+        let color = $("#color").text();
+
+        console.log(name);
+        
+    }
 
 
 </script>

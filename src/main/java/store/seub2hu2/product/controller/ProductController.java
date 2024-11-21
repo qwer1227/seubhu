@@ -66,7 +66,7 @@ public class ProductController {
         return "product/list";
     }
 
-    // 임시 상품 상세 페이지 이동
+    // 상품 상세 페이지 이동
     @GetMapping("/detail")
     public String detail(@RequestParam("no") int no,
                          @RequestParam("colorNo") int colorNo,

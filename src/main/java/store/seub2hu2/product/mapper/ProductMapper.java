@@ -24,7 +24,6 @@ public interface ProductMapper {
     List<ColorProdImgDto> getProdImgByColorNo(@Param("no") int no);
 
     // 색상번호에 따른 사이즈와 재고수량 조회하기
-
     SizeAmountDto getSizeAmountByColorNo(@Param("colorNo") int colorNo);
 
     // 색상 번호에 따른 이미지들 조회하기
