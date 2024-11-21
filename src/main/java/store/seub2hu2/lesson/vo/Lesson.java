@@ -28,10 +28,6 @@ public class Lesson {
     private Date updatedDate;
     private User lecturer;
     private String filename;
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date startDate;
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date endDate;
 
 
     public String getOriginalFilename() {
