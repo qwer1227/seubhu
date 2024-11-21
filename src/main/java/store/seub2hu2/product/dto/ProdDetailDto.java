@@ -6,7 +6,6 @@ import lombok.Setter;
 import lombok.ToString;
 import store.seub2hu2.product.vo.*;
 
-import java.util.List;
 
 
 @NoArgsConstructor
@@ -16,10 +15,12 @@ import java.util.List;
 public class ProdDetailDto {
     private int no;
     private String name;
+    private String content;
     private int price;
     private String status;
     private int cnt;
     private double rating;
+    private int colorNum;
     private Category category;
     private Brand brand;
 }

@@ -55,6 +55,7 @@ public class AdminService {
     }
 
 
+    // 코스 등록 전 새로운지역인지 기존지역인지 확인 후 등록
     public void checkNewRegion (CourseRegisterForm form) {
         Region region = new Region();
         region.setSi(form.getSi());
