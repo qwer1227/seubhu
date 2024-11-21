@@ -21,7 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 @Controller
-@RequestMapping("/payments")
+//@RequestMapping("/payments")
 public class WidgetController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
