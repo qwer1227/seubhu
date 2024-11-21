@@ -19,7 +19,7 @@ public class ReservationSearchCondition {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date startDate;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date  endDate;
+    private Date endDate;
 
 
 }

@@ -83,8 +83,8 @@ public class LessonController {
         lesson.setLecturer(user);
         lesson.setSubject(form.getSubject());
         lesson.setPlan(form.getPlan());
-        lesson.setStart(form.getStartDate());
-        lesson.setEnd(form.getEndDate());
+        lesson.setStart(form.getDate());
+        lesson.setEnd(form.getDate());
 
         // Get the uploaded file
         MultipartFile thumbnail = form.getThumbnail();

@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <script src="https://js.tosspayments.com/v2/standard"></script>
-    <link rel="stylesheet" type="text/css" href="/resources/css/style.css"/>
+    `<link rel="stylesheet" type="text/css" href="/resources/css/style.css"/>`
 </head>
 <body>
 <!-- 할인 쿠폰 -->
