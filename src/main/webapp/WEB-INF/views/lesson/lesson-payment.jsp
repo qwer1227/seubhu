@@ -6,6 +6,7 @@
     <%@include file="/WEB-INF/views/common/common.jsp" %>
 <%--    <script src="https://cdn.portone.io/v2/browser-sdk.js"></script>--%>
     <script src="https://js.tosspayments.com/v2/standard"></script>
+    <link rel="stylesheet" type="text/css" href="/resources/css/style.css"/>
 </head>
 <body>
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
@@ -128,9 +129,9 @@
         // ------ '결제하기' 버튼 누르면 결제창 띄우기 ------
         button.addEventListener("click", async function () {
             await widgets.requestPayment({
-                orderId: "hIO96V98QLSeSDovjnx_P132132",
+                orderId: "hIO96V98Q121325125LSeSDovjn21312123x_P132132",
                 orderName: "토스 티셔츠 외 2건",
-                successUrl: window.location.origin + "/success.html",
+                successUrl:  window.location.origin + "/payments/success",
                 failUrl: window.location.origin + "/fail.html",
                 customerEmail: "customer123@gmail.com",
                 customerName: "김토스",

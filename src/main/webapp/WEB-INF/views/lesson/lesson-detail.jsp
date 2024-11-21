@@ -80,9 +80,7 @@
         <div class="col-2"></div>
         <div class="col text-center border-bottom border-dark border-2 pb-3 mb-3 ">
             <p>
-                비고 시도합니다. 저에서도 키보드 탐색은 영향을 받지 않습니다. 따라서 확실하게 하려면 aria-disabled="true" 외에도 이러한 링크에 tabindex="-1" 속성을 포함하여
-                키보드
-                포커스를 받지 않도록 하고 사용자 지정 JavaScript를 사용하여 해당 기능을 완전히 비활성화해야
+                ${lesson.plan}
             </p>
             <p>
                 <c:if test="${not empty images.MAIN_IMAGE}">
