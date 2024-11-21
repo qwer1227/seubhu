@@ -114,7 +114,7 @@
     </if>
   </select>
 
-  <!-- Board getBoardDetailByNo(@Param("no") int no); -->
+  <!--  -->
   <update id="updateBoard" >
     update
     BOARDS

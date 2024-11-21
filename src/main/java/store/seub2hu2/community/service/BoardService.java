@@ -6,12 +6,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import store.seub2hu2.community.dto.ModifyBoardForm;
-import store.seub2hu2.community.dto.RegisterBoardForm;
+import store.seub2hu2.community.dto.BoardForm;
 import store.seub2hu2.community.exception.CommunityException;
 import store.seub2hu2.community.mapper.BoardMapper;
 import store.seub2hu2.community.mapper.BoardUploadMapper;
-import store.seub2hu2.community.mapper.ReplyMapper;
 import store.seub2hu2.community.vo.Board;
 import store.seub2hu2.community.vo.UploadFile;
 import store.seub2hu2.util.FileUtils;
@@ -36,9 +34,10 @@ public class BoardService {
     @Value("${upload.directory.community}")
     private String saveDirectory;
 
-    public void addNewBoard(RegisterBoardForm form){
+    public void addNewBoard(BoardForm form){
         // Board 객체를 생성하여 사용자가 입력한 제목과 내용을 저장한다.
         Board board = new Board();
+        board.setNo(form.getNo());
         board.setCatName(form.getCatName());
         board.setTitle(form.getTitle());
         board.setContent(form.getContent());
@@ -106,7 +105,7 @@ public class BoardService {
         return board;
     }
 
-    public void updateBoard(ModifyBoardForm form){
+    public void updateBoard(BoardForm form){
         Board savedBoard = boardMapper.getBoardDetailByNo(form.getNo());
         savedBoard.setTitle(form.getTitle());
         savedBoard.setContent(form.getContent());
@@ -152,7 +151,4 @@ public class BoardService {
         boardUploadMapper.updateBoardFile(savedFile);
     }
 
-    public Board getBoardByNo(int boardNo) {
-        return boardMapper.getBoardDetailByNo(boardNo);
-    }
 }

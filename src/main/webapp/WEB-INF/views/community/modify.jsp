@@ -66,15 +66,17 @@
             <!-- <%@include file="write.jsp" %> -->
           </td>
         </tr>
+        <c:if test="${not empty board.uploadFile}">
         <tr class="form-group">
           <th>
             <label class="form-label">기존파일명</label>
           </th>
           <td colspan="3" style="text-align: start">
-            ${not empty board.uploadFile ? board.uploadFile.originalName : ''}
+            ${board.uploadFile.originalName}
             <button type="button" class="btn btn-outline-dark" onclick="deleteUploadFile(${board.uploadFile.no})">삭제</button>
           </td>
         </tr>
+        </c:if>
         <tr class="form-group">
           <th>
             <label class="form-label">첨부파일</label>
