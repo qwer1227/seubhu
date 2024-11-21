@@ -40,7 +40,7 @@
                 </tr>
                 <tr>
                     <th>레슨날짜</th>
-                    <td>ddd</td>
+                    <td>${lesson.start}</td>
                 </tr>
                 <tr>
                     <th>참여인원</th>

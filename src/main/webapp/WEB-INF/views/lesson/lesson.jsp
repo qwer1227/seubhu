@@ -45,6 +45,9 @@
                 <option value="운동">운동</option>
             </select>
         </div>
+        <div class="col">
+            <div class="bg-dark">a</div>
+        </div>
     </div>
     <div class="row mb-3">
         <div id='calendar'></div>

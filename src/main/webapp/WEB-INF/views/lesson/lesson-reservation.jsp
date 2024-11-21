@@ -15,10 +15,6 @@
             font-size: 0.85rem;
         }
 
-        .datepicker {
-            margin-bottom: 3rem;
-        }
-
         body {
             background-color: #fafafa;
         }
