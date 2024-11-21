@@ -16,17 +16,14 @@
             <%--상품의 사진을 화면에 표시한다.--%>
             <div class="col-6">
                 <div class="mb-3">
-                    <img src="https://ecimg.cafe24img.com/pg90b05313110010/brooksrunning/web/product/big/20240102/6531af333e9506981bed79075102fe43.png"/>
+                    <img src="${prodImagesDto.images.get(0).url}" width="100%"/>
                 </div>
-                <div>
-                    <img src="https://ecimg.cafe24img.com/pg90b05313110010/brooksrunning/web/product/big/20240102/6531af333e9506981bed79075102fe43.png" width="20%" />
-                    <img src="https://ecimg.cafe24img.com/pg90b05313110010/brooksrunning/web/product/big/20240102/6531af333e9506981bed79075102fe43.png" width="20%" />
-                    <img src="https://ecimg.cafe24img.com/pg90b05313110010/brooksrunning/web/product/big/20240102/6531af333e9506981bed79075102fe43.png" width="20%" />
-                    <img src="https://ecimg.cafe24img.com/pg90b05313110010/brooksrunning/web/product/big/20240102/6531af333e9506981bed79075102fe43.png" width="20%" />
-                    <img src="https://ecimg.cafe24img.com/pg90b05313110010/brooksrunning/web/product/big/20240102/6531af333e9506981bed79075102fe43.png" width="20%" />
-                    <img src="https://ecimg.cafe24img.com/pg90b05313110010/brooksrunning/web/product/big/20240102/6531af333e9506981bed79075102fe43.png" width="20%" />
-                    <img src="https://ecimg.cafe24img.com/pg90b05313110010/brooksrunning/web/product/big/20240102/6531af333e9506981bed79075102fe43.png" width="20%" />
-                    <img src="https://ecimg.cafe24img.com/pg90b05313110010/brooksrunning/web/product/big/20240102/6531af333e9506981bed79075102fe43.png" width="20%" />
+                <div class="row">
+                    <c:forEach var="imgs" items="${prodImagesDto.images}">
+                        <div class="col-2">
+                            <img class="img-fluid" src="${imgs.url}" />
+                        </div>
+                    </c:forEach>
                 </div>
             </div>
             <div class="col-6">
@@ -97,10 +94,8 @@
                                                 <!-- 사이즈 버튼 -->
                                                 <c:forEach var="size" items="${sizeAmountDto.sizes }">
                                                     <div class="col">
-                                                        <input type="radio" class="btn-check" name="Size" id="size${size.size}" value="${size.size}" required onclick="function getCart() {
-
-                                                        }">
-                                                        <label class="btn btn-outline-secondary fixed-size w-100 d-flex align-items-center justify-content-between" for="size${size.size}">
+                                                        <input type="radio" class="btn-check" name="Size" id="size${size.size}" value="${size.size}" required onclick="function getCart() {}">
+                                                        <label class="${size.amount == 0 ? "btn btn-outline-danger fixed-size w-100 d-flex align-items-center justify-content-between disabled": "btn btn-outline-secondary fixed-size w-100 d-flex align-items-center justify-content-between"}" for="size${size.size}">
                                                             <span class="ms-2">${size.size}</span>
                                                             <span class="badge bg-secondary">재고:${size.amount}</span>
                                                         </label>
@@ -111,7 +106,7 @@
                                     </div>
                                     <hr class="bg-primary border border-1">
                                     <div class="text-end mb-3">
-                                        <button class="btn btn-outline-secondary" type="submit" >장바구니 추가</button>
+                                        <button class="btn btn-outline-secondary" type="submit" id="cart-add">장바구니 추가</button>
                                         <button class="btn btn-outline-secondary" type="submit" >위시리스트 추가</button>
                                     </div>
                                 </form>
@@ -181,6 +176,11 @@
     function openCommentFormModal() {
         commentFormModal.show();
     }
+
+    ${"#cart-add"}.click(function () {
+        alert("장바구니에 담겼습니다.")
+    })
+
 
 </script>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>

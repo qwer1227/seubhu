@@ -4,10 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import store.seub2hu2.product.dto.ColorProdImgDto;
-import store.seub2hu2.product.dto.ProdDetailDto;
-import store.seub2hu2.product.dto.ProdListDto;
-import store.seub2hu2.product.dto.SizeAmountDto;
+import store.seub2hu2.product.dto.*;
 import store.seub2hu2.product.mapper.ProductMapper;
 import store.seub2hu2.util.ListDto;
 import store.seub2hu2.util.Pagination;
@@ -23,6 +20,13 @@ public class ProductService {
     @Autowired
     ProductMapper productMapper;
 
+    public ProdImagesDto getProdImagesByColorNo(int colorNo) {
+
+        ProdImagesDto prodImagesDto = productMapper.getProdImagesByColorNo(colorNo);
+
+        return prodImagesDto;
+    }
+
     /**
      * 색상 번호에 따른 사이즈와 재고량 조회하기
      * @param colorNo 색상 번호
@@ -30,9 +34,9 @@ public class ProductService {
      */
     public SizeAmountDto getSizeAmountByColorNo(int colorNo) {
 
-        SizeAmountDto getSizeAmounts = productMapper.getSizeAmountByColorNo(colorNo);
+        SizeAmountDto getSizeAmount = productMapper.getSizeAmountByColorNo(colorNo);
 
-        return getSizeAmounts;
+        return getSizeAmount;
     }
 
     /**
