@@ -122,7 +122,7 @@
     </select>
 
     <!--
-        ColorProdImgDto getColorImgByNo(@Param("no") int no);
+        List<ColorProdImgDto> getProdImgByColorNo(@Param("no") int no);
     -->
     <resultMap id="ColorImg" type="store.seub2hu2.product.dto.ColorProdImgDto">
         <id property="no" column="COLOR_NO"/>
@@ -145,15 +145,40 @@
             PI.IMG_URL
         FROM
             PRODUCT_COLORS PC
-                JOIN PRODUCTS P
-                     ON
-                         PC.PROD_NO = P.PROD_NO
-                JOIN
+        JOIN PRODUCTS P
+        ON
+            PC.PROD_NO = P.PROD_NO
+        JOIN
             PROD_IMGS PI
-            ON
-                PC.COLOR_NO = PI.COLOR_NO
+        ON
+            PC.COLOR_NO = PI.COLOR_NO
         WHERE P.PROD_NO = #{no}
           AND PI.IMG_THUM = 'Y'
+    </select>
+
+    <!--
+        List<SizeAmountDto> getSizeAmountByColorNo(@Param("colorNo") int colorNo);
+    -->
+    <resultMap id="sizeAmountMap" type="store.seub2hu2.product.dto.SizeAmountDto">
+        <id property="no" column="COLOR_NO"/>
+        <result property="name" column="COLOR_NAME"/>
+        <collection property="sizes" ofType="store.seub2hu2.product.vo.Size">
+            <id property="no" column="SIZE_NO"/>
+            <result property="size" column="PROD_SIZE"/>
+            <result property="amount" column="PROD_AMOUNT"/>
+        </collection>
+    </resultMap>
+    <select id="getSizeAmountByColorNo" resultMap="sizeAmountMap">
+        SELECT
+            PC.COLOR_NO,
+            PC.COLOR_NAME,
+            PS.SIZE_NO,
+            PS.PROD_SIZE,
+            PS.PROD_AMOUNT
+        FROM PRODUCT_COLORS PC
+        JOIN PROD_SIZES PS
+        ON PC.COLOR_NO = PS.COLOR_NO
+        WHERE PS.COLOR_NO = #{colorNo}
     </select>
 
 </mapper>

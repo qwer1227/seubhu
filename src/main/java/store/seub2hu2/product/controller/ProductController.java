@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import store.seub2hu2.product.dto.ColorProdImgDto;
 import store.seub2hu2.product.dto.ProdDetailDto;
 import store.seub2hu2.product.dto.ProdListDto;
+import store.seub2hu2.product.dto.SizeAmountDto;
 import store.seub2hu2.product.service.ProductService;
 import store.seub2hu2.util.ListDto;
 
@@ -80,7 +81,10 @@ public class ProductController {
         List<ColorProdImgDto> colorProdImgDto = productService.getProdImgByColorNo(no);
         model.addAttribute("colorProdImgDto", colorProdImgDto);
 
-        System.out.println("prodDetailDtao" + prodDetailDto);
+        SizeAmountDto sizeAmountDto = productService.getSizeAmountByColorNo(colorNo);
+        model.addAttribute("sizeAmountDto", sizeAmountDto);
+
+        System.out.println("sizeAmountDto = " + sizeAmountDto);
         return "product/detail";
     }
 }

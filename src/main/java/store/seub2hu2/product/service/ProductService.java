@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import store.seub2hu2.product.dto.ColorProdImgDto;
 import store.seub2hu2.product.dto.ProdDetailDto;
 import store.seub2hu2.product.dto.ProdListDto;
+import store.seub2hu2.product.dto.SizeAmountDto;
 import store.seub2hu2.product.mapper.ProductMapper;
 import store.seub2hu2.util.ListDto;
 import store.seub2hu2.util.Pagination;
@@ -23,9 +24,21 @@ public class ProductService {
     ProductMapper productMapper;
 
     /**
-     * 상품 번호에 따른 다양한 색 그리고 대표 이미지 조회하기
+     * 색상 번호에 따른 사이즈와 재고량 조회하기
+     * @param colorNo 색상 번호
+     * @return 사이즈와 재고수량
+     */
+    public SizeAmountDto getSizeAmountByColorNo(int colorNo) {
+
+        SizeAmountDto getSizeAmounts = productMapper.getSizeAmountByColorNo(colorNo);
+
+        return getSizeAmounts;
+    }
+
+    /**
+     * 상품 번호에 따른 다양한 색 그리고 여러 이미지 중 대표 이미지 조회하기
      * @param no 상품 번호
-     * @return 다양한 색
+     * @return 다양한 색, 대표 이미지 하나
      */
     public List<ColorProdImgDto> getProdImgByColorNo(int no) {
 
@@ -33,8 +46,6 @@ public class ProductService {
 
         return colorImgByNo;
     }
-
-
 
     /**
      * 개별 상품 정보 조회
@@ -44,8 +55,6 @@ public class ProductService {
     public ProdDetailDto getProductByNo(int no) {
 
         ProdDetailDto prodDetailDto = productMapper.getProductByNo(no);
-
-        System.out.println("prodDetailDto"+prodDetailDto);
 
         return prodDetailDto;
     }

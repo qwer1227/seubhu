@@ -95,87 +95,17 @@
                                             <label class="form-label d-block">사이즈를 선택하세요:</label>
                                             <div class="row row-cols-5 g-3">
                                                 <!-- 사이즈 버튼 -->
-                                                <div class="col">
-                                                    <input type="radio" class="btn-check" name="shoeSize" id="size250" value="250" required onclick="function getCart() {
+                                                <c:forEach var="size" items="${sizeAmountDto.sizes }">
+                                                    <div class="col">
+                                                        <input type="radio" class="btn-check" name="Size" id="size${size.size}" value="${size.size}" required onclick="function getCart() {
 
-                                                }">
-                                                    <label class="btn btn-outline-secondary fixed-size w-100 d-flex align-items-center justify-content-between" for="size250">
-                                                        <span>250</span>
-                                                        <span class="badge bg-secondary">재고: 10</span>
-                                                    </label>
-                                                </div>
-                                                <div class="col">
-                                                    <input type="radio" class="btn-check" name="shoeSize" id="size255" value="255">
-                                                    <label class="btn btn-outline-secondary fixed-size w-100 d-flex align-items-center justify-content-between" for="size255">
-                                                        <span>255</span>
-                                                        <span class="badge bg-secondary">재고: 10</span>
-                                                    </label>
-                                                </div>
-                                                <div class="col">
-                                                    <input type="radio" class="btn-check" name="shoeSize" id="size260" value="260" disabled>
-                                                    <label class="btn btn-outline-danger fixed-size w-100 d-flex align-items-center justify-content-between" for="size260">
-                                                        <span>260</span>
-                                                        <span class="badge bg-danger">품절</span>
-                                                    </label>
-                                                </div>
-                                                <div class="col">
-                                                    <input type="radio" class="btn-check" name="shoeSize" id="size265" value="265">
-                                                    <label class="btn btn-outline-secondary fixed-size w-100 d-flex align-items-center justify-content-between" for="size265">
-                                                        <span>265</span>
-                                                        <span class="badge bg-secondary">재고: 10</span>
-                                                    </label>
-                                                </div>
-                                                <div class="col">
-                                                    <input type="radio" class="btn-check" name="shoeSize" id="size270" value="270">
-                                                    <label class="btn btn-outline-secondary fixed-size w-100 d-flex align-items-center justify-content-between" for="size270">
-                                                        <span>270</span>
-                                                        <span class="badge bg-secondary">재고: 10</span>
-                                                    </label>
-                                                </div>
-
-                                                <!-- 두 번째 줄 -->
-                                                <div class="col">
-                                                    <input type="radio" class="btn-check" name="shoeSize" id="size275" value="275">
-                                                    <label class="btn btn-outline-secondary fixed-size w-100 d-flex align-items-center justify-content-between" for="size275">
-                                                        <span>275</span>
-                                                        <span class="badge bg-secondary">재고: 10</span>
-                                                    </label>
-                                                </div>
-                                                <div class="col">
-                                                    <input type="radio" class="btn-check" name="shoeSize" id="size280" value="280">
-                                                    <label class="btn btn-outline-secondary fixed-size w-100 d-flex align-items-center justify-content-between" for="size280">
-                                                        <span>280</span>
-                                                        <span class="badge bg-secondary">재고: 10</span>
-                                                    </label>
-                                                </div>
-                                                <div class="col">
-                                                    <input type="radio" class="btn-check" name="shoeSize" id="size285" value="285">
-                                                    <label class="btn btn-outline-secondary fixed-size w-100 d-flex align-items-center justify-content-between" for="size285">
-                                                        <span>285</span>
-                                                        <span class="badge bg-secondary">재고: 10</span>
-                                                    </label>
-                                                </div>
-                                                <div class="col">
-                                                    <input type="radio" class="btn-check" name="shoeSize" id="size290" value="290">
-                                                    <label class="btn btn-outline-secondary fixed-size w-100 d-flex align-items-center justify-content-between" for="size290">
-                                                        <span>290</span>
-                                                        <span class="badge bg-secondary">재고: 10</span>
-                                                    </label>
-                                                </div>
-                                                <div class="col">
-                                                    <input type="radio" class="btn-check" name="shoeSize" id="size295" value="295">
-                                                    <label class="btn btn-outline-secondary fixed-size w-100 d-flex align-items-center justify-content-between" for="size295">
-                                                        <span>295</span>
-                                                        <span class="badge bg-secondary">재고: 10</span>
-                                                    </label>
-                                                </div>
-                                                <div class="col">
-                                                    <input type="radio" class="btn-check" name="shoeSize" id="size300" value="300">
-                                                    <label class="btn btn-outline-secondary fixed-size w-100 d-flex align-items-center justify-content-between" for="size300">
-                                                        <span>300</span>
-                                                        <span class="badge bg-secondary">재고: 10</span>
-                                                    </label>
-                                                </div>
+                                                        }">
+                                                        <label class="btn btn-outline-secondary fixed-size w-100 d-flex align-items-center justify-content-between" for="size${size.size}">
+                                                            <span class="ms-2">${size.size}</span>
+                                                            <span class="badge bg-secondary">재고:${size.amount}</span>
+                                                        </label>
+                                                    </div>
+                                                </c:forEach>
                                             </div>
                                         </div>
                                     </div>
