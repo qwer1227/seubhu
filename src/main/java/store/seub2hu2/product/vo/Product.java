@@ -15,8 +15,10 @@ public class Product {
 
     private int no;
     private String name;
+    private String content;
     private double price;
     private int stock;
+    private int colorNum;
     private boolean isNew;
     private String status;
     private Date createdAt;
