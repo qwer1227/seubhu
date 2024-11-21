@@ -88,22 +88,26 @@
     <insert id="insertLesson" useGeneratedKeys="true" keyProperty="lessonNo"
             parameterType="store.seub2hu2.lesson.vo.Lesson">
         insert into LESSONS
-        ( USER_NO
+        (
+         USER_NO
         , LESSON_TITLE
-        , LESSON_CATEGORY
         , LESSON_PRICE
+        , LESSON_SUBJECT
+        , PARTICIPANT
         , LESSON_PLAN
         , LESSON_START_DATE
         , LESSON_END_DATE
-        , LESSON_FILENAME)
-        values ( 5
+        )
+        values (
+                #{lesson.lecturer.no}
                , #{lesson.title}
-               , #{lesson.category}
                , #{lesson.price}
+               , #{lesson.subject}
+               , #{lesson.participant}
                , #{lesson.plan}
                , #{lesson.start}
                , #{lesson.end}
-               , #{lesson.filename})
+               )
     </insert>
 
     <select id="getReservationByCondition" resultType="store.seub2hu2.lesson.vo.LessonReservation">
@@ -114,7 +118,7 @@
         , L.LESSON_NO as "lesson.lessonNo"
         , L.LESSON_TITLE as "lesson.title"
         , L.LESSON_PRICE as "lesson.price"
-        , L.LESSON_CATEGORY as "lesson.category"
+        , L.LESSON_SUBJECT as "lesson.subject"
         , L.USER_NO as "user.no"
         , L.lesson_status as "lesson.status"
         , date_format(L.lesson_created_date, '%Y-%m-%d')
@@ -135,14 +139,14 @@
                 AND L.LESSON_TITLE LIKE CONCAT('%', #{condition.searchKeyword}, '%')
             </when>
             <when test="condition.searchCondition == '과목' and condition.searchKeyword != null and condition.searchKeyword != ''">
-                AND L.LESSON_CATEGORY LIKE CONCAT('%', #{condition.searchKeyword}, '%')
+                AND L.LESSON_SUBJECT LIKE CONCAT('%', #{condition.searchKeyword}, '%')
             </when>
         </choose>
         <if test="condition.lessonStatus != null and condition.lessonStatus != '' and condition.lessonStatus != '모두'">
             AND L.LESSON_STATUS = #{condition.lessonStatus}
         </if>
-        <if test="condition.lessonCategory != null and condition.lessonCategory != '' and condition.lessonCategory != '모두'">
-            AND L.LESSON_CATEGORY = #{condition.lessonCategory}
+        <if test="condition.lessonSubject != null and condition.lessonSubject != '' and condition.lessonSubject != '모두'">
+            AND L.LESSON_SUBJECT = #{condition.lessonsubject}
         </if>
         <if test="condition.startDate != null">
             AND R.LESSON_RESERVATIONS_CREATED_DATE &gt;= #{condition.startDate}

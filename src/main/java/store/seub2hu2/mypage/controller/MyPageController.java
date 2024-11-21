@@ -19,15 +19,15 @@ public class MyPageController {
     @GetMapping("")
     public String myPageList(Model model) {
         int userNo = 1;
-//        List<Post> posts = postService.getPostsByNo(userNo);
-//        model.addAttribute("posts",posts);
+        List<Post> posts = postService.getPostsByNo(userNo);
+        model.addAttribute("posts",posts);
 
         return "mypage/publicpage";
     }
 
     @GetMapping("/public/detail")
     public String detail(int no, Model model) {
-        Post post = postService.getPostDetail(89);
+        Post post = postService.getPostDetail(102);
         System.out.println(post.getImages());
         model.addAttribute(post);
 

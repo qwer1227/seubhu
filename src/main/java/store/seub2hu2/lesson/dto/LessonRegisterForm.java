@@ -16,10 +16,12 @@ import java.util.Date;
 @Setter
 public class LessonRegisterForm {
     private String title;
-    private String plan;
     private int price;
-    private String category;
-    private String lecturerName;
+    private int lecturerNo;
+    private String subject;
+    private int group;
+    private String status;
+    private String plan;
     private MultipartFile thumbnail;
     private MultipartFile mainImage;
     @JsonFormat(pattern = "yyyy-MM-dd")
