@@ -27,9 +27,32 @@ public class ReplyService {
         Reply reply = new Reply();
         reply.setBoardNo(form.getBoardNo());
         reply.setContent(form.getContent());
-        reply.setUserNo(userNo);
+
+        User user = new User();
+        user.setNo(userNo);
+        reply.setUser(user);
 
         replyMapper.insertReply(reply);
+
+        reply.setPrevNo(reply.getNo());
+        replyMapper.updateReply(reply);
+
+        return reply;
+    }
+
+    public Reply addNewComment(ReplyForm form, int userNo) {
+        Reply reply = new Reply();
+        reply.setBoardNo(form.getBoardNo());
+        reply.setContent(form.getContent());
+
+        User user = new User();
+        user.setNo(userNo);
+        reply.setUser(user);
+
+        replyMapper.insertReply(reply);
+
+        reply.setPrevNo(form.getPrevNo());
+        replyMapper.updateReply(reply);
 
         return reply;
     }
@@ -38,5 +61,11 @@ public class ReplyService {
         List<Reply> replyList = replyMapper.getRepliesByBoardNo(boardNo);
 
         return replyList;
+    }
+
+    public void deleteReply(@Param("no") int replyNo) {
+        Reply reply = replyMapper.getReplyByReplyNo(replyNo);
+        reply.setDeleted("Y");
+        replyMapper.deleteReplyByNo(reply.getNo());
     }
 }

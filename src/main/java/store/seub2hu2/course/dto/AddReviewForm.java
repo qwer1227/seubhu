@@ -16,5 +16,5 @@ public class AddReviewForm {
     private int courseNo;
     private String title;
     private String content;
-    List<MultipartFile> files;
+    List<MultipartFile> upfiles;
 }

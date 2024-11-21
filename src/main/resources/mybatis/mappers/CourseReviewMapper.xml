@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="store.seub2hu2.course.mapper.ReviewMapper">
+    <!--
+        List<Review> getReviewsByNo(@Param("no") int no);
+    -->
+    <resultMap id="ReviewResultMap" type="store.seub2hu2.course.vo.Review">
+        <id property="no" column="review_no"/>
+        <result property="title" column="review_title"/>
+        <result property="content" column="review_content"/>
+        <result property="likeCnt" column="review_like_cnt"/>
+        <result property="createdDate" column="review_created_date"/>
+        <association property="course" javaType="store.seub2hu2.course.vo.Course">
+            <id property="no" column="course_no"/>
+        </association>
+        <association property="reviewImage" javaType="store.seub2hu2.course.vo.ReviewImage">
+            <id property="no" column="img_no"/>
+            <result property="name" column="img_name"/>
+        </association>
+        <association property="user" javaType="store.seub2hu2.user.vo.User">
+            <id property="no" column="user_no"/>
+            <result property="nickname" column="user_nickname"/>
+        </association>
+    </resultMap>
+
+    <select id="getReviewsByNo" resultMap="ReviewResultMap">
+        select r.review_no
+             , r.review_title
+             , r.review_content
+             , r.review_like_cnt
+             , r.review_created_date
+             , r.course_no
+             , i.img_no
+             , i.img_name
+             , u.user_no
+             , u.user_nickname
+        from COURSE_REVIEWS r
+                 left join COURSE_REVIEW_IMGS i on r.review_no = i.review_no
+                 join USERS u on r.user_no = u.user_no
+        where r.course_no = #{no}
+    </select>
+
+    <!--
+    void insertReview(@Param("review") Review review);
+    -->
+    <insert id="insertReview">
+        insert into COURSE_REVIEWS
+        (review_title
+        , review_content
+        , user_no
+        , course_no)
+        values
+            (#{review.title}
+            , #{review.content}
+            , #{review.user.no}
+            , #{review.course.no})
+    </insert>
+
+    <!--
+        void insertReviewImage(@Param("reviewImage") ReviewImage reviewImage);
+    -->
+    <insert id="insertReviewImage">
+        insert into COURSE_REVIEW_IMGS
+            (img_name)
+        values
+            (#{reviewImage.name})
+    </insert>
+</mapper>
