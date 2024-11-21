@@ -30,9 +30,6 @@
                 <div class="col " >
                     <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="list?topNo=10&catNo=14">남성 아우터</a>
                 </div>
-                <div class="col " >
-                    <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="list?topNo=30">러닝용품</a>
-                </div>
             </div>
         </c:when>
         <c:when test="${topNo == 20}">
@@ -52,15 +49,18 @@
                 <div class="col " >
                     <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="list?topNo=20&catNo=24">여성 아우터</a>
                 </div>
-                <div class="col " >
-                    <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="list?topNo=30">러닝용품</a>
-                </div>
             </div>
         </c:when>
         <c:when test="${topNo == 30}">
             <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
                 <div class="col " >
-                <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="topNo=30">전체보기</a>
+                <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="list?topNo=30">전체보기</a>
+                </div>
+                <div class="col " >
+                    <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="list?topNo=30&catNo=31">양말</a>
+                </div>
+                <div class="col " >
+                    <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="list?topNo=30&catNo=32">모자</a>
                 </div>
             </div>
         </c:when>
