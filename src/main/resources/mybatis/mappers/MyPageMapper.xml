@@ -122,12 +122,15 @@
             post_no = #{no}
     </update>
 
-    <!-- int deletePostImagesByPostNo(@Param("no") int postNo); -->
+    <!-- int deletePostImagesByPostNo(@Param("no") int imageNo); -->
 
     <delete id="deletePostImagesByPostNo">
         DELETE FROM POST_IMAGES
-        WHERE post_no = #{no}
+        WHERE image_no = #{no}
     </delete>
+
+
+
 
 
 </mapper>

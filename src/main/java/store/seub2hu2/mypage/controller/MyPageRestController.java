@@ -1,16 +1,16 @@
 package store.seub2hu2.mypage.controller;
 
-import com.fasterxml.jackson.databind.ser.std.MapSerializer;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import store.seub2hu2.mypage.dto.ImageDeleteRequest;
 import store.seub2hu2.mypage.service.PostService;
 import store.seub2hu2.mypage.vo.Post;
 
 import java.util.HashMap;
 import java.util.Map;
+
 
 @RestController
 @RequestMapping("/mypage")
@@ -72,4 +72,19 @@ public class MyPageRestController {
             return ResponseEntity.status(500).body(response);
         }
     }
+
+    @DeleteMapping("/detail/imagedelete/{no}")
+    public ResponseEntity<Map<String,Object>> deleteImage(@PathVariable("no") int postNo,
+                                              @RequestBody ImageDeleteRequest request) {
+
+        int imageNo = request.getImageNo();
+
+        postService.imageDelete(imageNo);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "삭제성공");
+        
+        return ResponseEntity.ok(response);
+    }
+
 }

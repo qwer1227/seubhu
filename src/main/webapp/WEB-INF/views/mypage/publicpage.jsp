@@ -259,6 +259,7 @@
 
         // 새글 작성 모드로 버튼 텍스트 변경
         $('#submitPostButton').text('게시글 작성');  // 버튼 텍스트 변경
+        $('#newPostModalLabel').text('새 게시글 작성');
         $('#submitPostButton').attr('onclick', 'insertPost()');  // 클릭 시 새글 작성 동작으로 변경
 
         // 새글 작성 모달 표시
@@ -304,6 +305,7 @@
                 });
 
                 $('#submitPostButton').text('게시글 수정');
+                $('#newPostModalLabel').text('글 수정');
                 $('#submitPostButton').attr('onclick', 'updatePost(' + postId + ')');
                 $('#newPostModal').modal('show');
             },
@@ -428,6 +430,7 @@
     $(document).on('click', '#postUpdate', function() {
         const postId = $(this).data('post-id');
 
+
         $.ajax({
             url: "/mypage/detail/" + postId,
             type: 'GET',
@@ -451,6 +454,7 @@
                         src: image,
                         class: 'selected-preview',
                         'data-index': index,
+                        'data-image-no': response.images[index].no, //imageNo 추가
                         click: function () {
                             selectImageAsThumbnail(this);
                         }
@@ -461,7 +465,8 @@
                         class: 'delete-btn',
                         text: 'X',
                         click: function () {
-                            deleteImage(index, image); // 해당 이미지를 삭제하는 함수 호출
+                            let imageNo = $(this).siblings('img').data('image-no'); // data-image-no에서 imageNo 가져오기
+                            deleteImage(index, image, postId, imageNo); // 해당 이미지를 삭제하는 함수 호출
                         }
                     });
 
@@ -482,7 +487,7 @@
     });
 
     // 삭제할 이미지 처리
-    function deleteImage(index, imageUrl) {
+    function deleteImage(index, imageUrl, postId, imageNo) {
         // 기존 이미지 목록에서 해당 이미지를 제거
         let existingImages = JSON.parse($('#existingImages').val());
         existingImages.splice(index, 1);  // 배열에서 해당 이미지 제거
@@ -490,6 +495,26 @@
 
         // 미리보기에서 해당 이미지 삭제
         $('#imagePreviewContainer img[src="' + imageUrl + '"]').parent().remove();
+
+        let dataToSend = {
+            imageNo : imageNo
+        };
+
+
+        $.ajax({
+            url: '/mypage/detail/imagedelete/' + postId,
+            type: 'DELETE',
+            data: JSON.stringify(dataToSend), // JSON으로 변환하여 전송
+            dataType: 'json',
+            contentType: 'application/json', // JSON 형식으로 설정
+            success: function (response) {
+                alert("이미지가 삭제 성공")
+            },
+            error: function (xhr, status, error){
+                console.log('Error:', status,  error); //서버 오류 정보 로그
+                alert("이미지 삭제 실패")
+            }
+        })
     }
 
     // 게시글 작성

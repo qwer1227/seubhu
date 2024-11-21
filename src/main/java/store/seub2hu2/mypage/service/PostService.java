@@ -92,6 +92,12 @@ public class PostService {
         return true;
     }
 
+    public boolean imageDelete(int imageNo){
+        postMapper.deletePostImagesByPostNo(imageNo);
+
+        return true;
+    }
+
     // 파일을 base64로 변환하는 메소드 (MIME 타입 포함)
     private String convertFileToBase64(MultipartFile file) {
         try {

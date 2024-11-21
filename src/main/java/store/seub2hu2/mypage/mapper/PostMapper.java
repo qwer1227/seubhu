@@ -17,5 +17,5 @@ public interface PostMapper {
     int insertPostImages(List<Map<String, Object>> images);
     int updatePost(@Param("post") Post post);
     int deletePost(@Param("no") int postNo);
-    int deletePostImagesByPostNo(@Param("no") int postNo, @Param("files")MultipartFile[] files);
+    int deletePostImagesByPostNo(@Param("no") int imageNo);
 }
