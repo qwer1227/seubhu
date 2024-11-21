@@ -18,22 +18,22 @@
                     <div class="card-header">${course.name}</div>
                 </div>
                 <tbody>
-                    <tr>
-                        <th scope="row">코스 지역</th>
-                        <td>${course.region.si} ${course.region.gu} ${course.region.dong}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">코스 거리</th>
-                        <td>${course.distance}KM</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">평균 완주 시간</th>
-                        <td>${course.time}분</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">코스 난이도</th>
-                        <td>${course.level}단계</td>
-                    </tr>
+                <tr>
+                    <th scope="row">코스 지역</th>
+                    <td>${course.region.si} ${course.region.gu} ${course.region.dong}</td>
+                </tr>
+                <tr>
+                    <th scope="row">코스 거리</th>
+                    <td>${course.distance}KM</td>
+                </tr>
+                <tr>
+                    <th scope="row">평균 완주 시간</th>
+                    <td>${course.time}분</td>
+                </tr>
+                <tr>
+                    <th scope="row">코스 난이도</th>
+                    <td>${course.level}단계</td>
+                </tr>
                 </tbody>
             </table>
             <button type="button" class="btn btn-primary">
@@ -59,7 +59,8 @@
     <div class="card mt-5" id="review">
         <div class="card-header">
             코스 리뷰
-                <div class="text-end"><button class="btn btn-primary" onclick="openReviewFormModal()">리뷰 작성</button></div>
+            <%--                <sec:authorize access="isAuthenticated()"> </sec:authorize>--%>
+            <div class="text-end"><button class="btn btn-primary" onclick="openReviewFormModal()">리뷰 작성</button></div>
         </div>
         <div class="card-body">
             <div class="row mb-3">
@@ -118,14 +119,14 @@
     async function getReviews() {
         let courseNo = document.querySelector("input[name=courseNo]").value;
 
-        let response = await fetch("/ajax/reviews/" + courseNo);
-        let reviews = await response.json();
+        let response = await fetch("/course/reviews/" + courseNo);
+        let result = await response.json();
+
+        let reviews = result.data;
         for (let review of reviews) {
             appendReview(review);
         }
     }
-
-    getReviews();
 
     // 입력한 코스 리뷰 정보(코스번호, 제목, 내용, 첨부파일)를 컨트롤러에 제출한다.
     async function submitReview() {
@@ -133,21 +134,21 @@
         let courseNo = document.querySelector("input[name=courseNo]").value;
         let title = document.querySelector("input[name=title]").value;
         let content = document.querySelector("textarea[name=content]").value;
+        let inputFile = document.querySelector("input[name=upfile]");
         let upfiles = document.querySelector("input[name=upfile]").files;
 
         let formData = new FormData();
 
-        formData.append("courseNo", courseNo);
+        formData.append("no", courseNo);
         formData.append("title", title);
         formData.append("content", content);
-
         for (let i = 0; i < upfiles.length; i++) {
             let upfile = upfiles[i];
             formData.append("upfiles", upfile);
         }
 
         // 2. formData(입력한 코스 리뷰 정보)를 서버에 보낸다.
-        let response = await fetch("/ajax/addReview", {
+        let response = await fetch("/course/addReview", {
             method: "POST",
             body: formData
         });
@@ -186,7 +187,7 @@
 	    `;
 
         let box = document.querySelector("#box-reviews");
-        box.insertAdjacentHTML("beforeend", content);
+        box.insertAdjacentHTML("beforeend", content)
     }
 </script>
 </body>

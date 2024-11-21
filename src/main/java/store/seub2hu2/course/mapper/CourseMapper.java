@@ -14,7 +14,4 @@ public interface CourseMapper {
     int getTotalRows(@Param("condition") Map<String, Object> condition); // 전체 데이터 갯수
     List<Course> getCourses(@Param("condition") Map<String, Object> condition); // 코스 목록 가져오기
     Course getCourseByNo(@Param("no") int no); // 코스의 상세 정보 가져오기
-    List<Review> getReviewsByNo(@Param("no") int no); // 코스 리뷰 목록 가져오기
-    void insertReview(@Param("review") Review review); // 코스 리뷰 등록하기
-    void insertReviewImage(@Param("reviewImage") ReviewImage reviewImage); // 첨부 파일 등록하기
 }
