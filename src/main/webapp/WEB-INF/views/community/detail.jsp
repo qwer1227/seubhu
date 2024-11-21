@@ -171,10 +171,16 @@
                     <%--        </c:if>--%>
                     
                   <form method="post" action="add-comment" id="box-comments-${reply.no}" class="my-3 d-none">
-                            <input type="hidden" name="prevNo" value="${reply.no}">
-                            <input type="hidden" name="boardNo" value="${board.no}">
-                            <textarea name="content" class="form-control" rows="2" placeholder="답글을 작성하세요."></textarea>
-                            <button class="btn btn-outline-dark btn-sm d-flex justify-content-start">등록</button>
+                    <input type="hidden" name="prevNo" value="${reply.no}">
+                    <input type="hidden" name="boardNo" value="${board.no}">
+                    <div class="row">
+                      <div class="col-11">
+                        <textarea name="content" class="form-control" rows="2" placeholder="답글을 작성하세요."></textarea>
+                      </div>
+                      <div class="col">
+                        <button class="btn btn-success btn-sm d-flex justify-content-start">등록</button>
+                      </div>
+                    </div>
                   </form>
                 </div>
               </div>

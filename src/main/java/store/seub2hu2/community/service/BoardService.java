@@ -102,6 +102,7 @@ public class BoardService {
         }
 
         board.setViewCnt(board.getViewCnt() + 1);
+        boardMapper.updateBoard(board);
         return board;
     }
 

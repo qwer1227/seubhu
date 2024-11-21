@@ -24,6 +24,7 @@ import store.seub2hu2.community.service.BoardService;
 import store.seub2hu2.community.service.ReplyService;
 import store.seub2hu2.community.view.FileDownloadView;
 import store.seub2hu2.community.vo.Board;
+import store.seub2hu2.community.vo.BoardCategory;
 import store.seub2hu2.community.vo.Reply;
 import store.seub2hu2.community.vo.UploadFile;
 import store.seub2hu2.security.LoginUser;
