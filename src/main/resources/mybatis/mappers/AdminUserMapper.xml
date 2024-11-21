@@ -19,7 +19,6 @@
         where
             REGION_NO = (SELECT MAX(REGION_NO) FROM COURSE_REGION);
     </select>
-
     <!--
         코스등록
         void insertCourse(@Param("course") Course course);
@@ -164,6 +163,13 @@
     </select>
 
     <!--
+        void insertLesson(@Param("lesson") Lesson lesson);
+    -->
+    <insert id="insertLesson">
+
+    </insert>
+
+    <!--
         List<Lesson> getAllLessons(@Param("condition") Map<String, Object> condition);
     -->
 
@@ -181,7 +187,7 @@
                      , L.LESSON_PLAN         as plan
                      , L.LESSON_START_DATE   as startDate
                      , L.LESSON_END_DATE     as endDate
-                     , L.LESSON_CATEGORY     as category
+                     , L.LESSON_SUBJECT      as subject
                 from
                     LESSONS L, USERS U
                 where
@@ -195,7 +201,7 @@
                                 and L.lesson_title like CONCAT('%',#{condition.value},'%')
                             </when>
                             <when test="condition.opt == 'course'">
-                                and L.lesson_category like CONCAT('%',#{condition.value},'%')
+                                and L.lesson_subject like CONCAT('%',#{condition.value},'%')
                             </when>
                         </choose>
                     </if>

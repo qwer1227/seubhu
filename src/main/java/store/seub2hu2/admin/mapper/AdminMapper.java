@@ -43,4 +43,5 @@ public interface AdminMapper {
      * 레슨
      */
     List<Lesson> getAllLessons(@Param("condition") Map<String, Object> condition);
+
 }

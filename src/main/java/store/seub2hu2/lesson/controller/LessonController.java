@@ -62,51 +62,6 @@ public class LessonController {
         }
     }
 
-    // 레슨 작성 폼
-    @GetMapping("/form")
-    public String form() {
-        return "lesson/lesson-register-form";
-    }
-
-    @PostMapping("/form")
-    public String registerForm(@ModelAttribute("form") LessonRegisterForm form, Model model) throws IOException {
-        // Lesson 객체 생성
-        int lessonNo = lessonService.getMostLatelyLessonNo();
-
-        Lesson lesson = new Lesson();
-        lesson.setLessonNo(lessonNo);
-        lesson.setTitle(form.getTitle());
-        lesson.setPrice(form.getPrice());
-        User user = new User();
-        user.setNo(5); // Or dynamically assign user ID
-        user.setId(form.getLecturerName());
-        lesson.setLecturer(user);
-        lesson.setSubject(form.getSubject());
-        lesson.setPlan(form.getPlan());
-        lesson.setStart(form.getStartDate());
-        lesson.setEnd(form.getEndDate());
-
-        // Get the uploaded file
-        MultipartFile thumbnail = form.getThumbnail();
-        MultipartFile mainImage = form.getMainImage();
-
-        lessonService.registerLesson(lesson, form);
-
-        // Redirect after successful form submission
-        return "redirect:lessons";
-    }
-
-    // 레슨 수정 폼
-    @GetMapping("/editForm")
-    public String editForm(@RequestParam("lessonNo") int lessonNo, Model model) {
-        Lesson lesson = lessonService.getLessonByNo(lessonNo);
-        Map<String, String> lessonFileMap = lessonService.getImagesByLessonNo(lessonNo);
-        model.addAttribute("lesson", lesson);
-        model.addAttribute("lessonFileMap", lessonFileMap);
-        return "lesson/lesson-edit-form";
-    }
-
-
     @GetMapping("/list")
     @ResponseBody
     public List<Lesson> lesson(@RequestParam("start") String start,
@@ -129,7 +84,7 @@ public class LessonController {
 
         log.info("Start Date: {}", condition.getStartDate());
         log.info("End Date: {}", condition.getEndDate());
-
+        log.info("searchCondition: {}", condition.getSearchCondition());
         List<LessonReservation> lessons = lessonService.searchLessonReservationList(condition, userNo);
         model.addAttribute("lessons", lessons);
         return "lesson/lesson-reservation";

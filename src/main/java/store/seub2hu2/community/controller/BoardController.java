@@ -52,6 +52,11 @@ public class BoardController {
     @Autowired
     public FileDownloadView fileDownloadView;
 
+    @GetMapping("write")
+    public String write(){
+        return "community/write";
+    }
+
     @GetMapping("/main")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page
             , @RequestParam(name = "rows", required = false, defaultValue = "10") int rows
@@ -186,7 +191,23 @@ public class BoardController {
 //    @PreAuthorize("isAuthenticated()")
     public String addReply(ReplyForm form){
 //            , @AuthenticationPrincipal LoginUser loginUser) {
-        replyService.addNewReply(form, 3);
+        replyService.addNewReply(form, 11);
+
+        return "redirect:detail?no=" + form.getBoardNo();
+    }
+
+    @PostMapping("add-comment")
+    public String addComment(ReplyForm form){
+        replyService.addNewComment(form, 11);
+
+        return "redirect:detail?no=" + form.getBoardNo();
+    }
+
+    @GetMapping("delete-reply")
+    public String deleteReply(@RequestParam("no") int replyNo){
+        ReplyForm form = new ReplyForm();
+        form.setNo(replyNo);
+        replyService.deleteReply(replyNo);
 
         return "redirect:detail?no=" + form.getBoardNo();
     }

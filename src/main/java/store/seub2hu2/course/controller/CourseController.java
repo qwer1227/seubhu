@@ -1,25 +1,15 @@
 package store.seub2hu2.course.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import store.seub2hu2.course.dto.AddReviewForm;
 import store.seub2hu2.course.service.CourseService;
 import store.seub2hu2.course.vo.Course;
-import store.seub2hu2.course.vo.Review;
-import store.seub2hu2.course.vo.ReviewImage;
-import store.seub2hu2.security.LoginUser;
-import store.seub2hu2.user.vo.User;
-import store.seub2hu2.util.FileUtils;
 import store.seub2hu2.util.ListDto;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -74,15 +64,5 @@ public class CourseController {
 
         // 3. 뷰이름을 반환한다.
         return "course/detail";
-    }
-
-    @PostMapping("/addReview")
-    @ResponseBody
-    public Review addReview(AddReviewForm form, @AuthenticationPrincipal LoginUser loginUser) {
-        // 1. 등록할 리뷰 정보를 테이블에 저장한다.
-        Review review = courseService.addNewReview(form, loginUser.getNo());
-
-        // 2. 등록한 리뷰 정보를 반환한다.
-        return review;
     }
 }

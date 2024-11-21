@@ -21,7 +21,7 @@
     (
     #{board.catName}
     <!--             , #{board.user.nickname}-->
-    , '이은은'
+    , '모모'
     , #{board.title}
     , #{board.content, jdbcType=VARCHAR}
     <if test="board.uploadFile != null">
@@ -157,9 +157,4 @@
       b.is_deleted = 'N'
       and b.board_no = #{no}
   </select>
-
-  <!-- void insertReply(@Param("reply") Board board); -->
-
-  <!-- List<Reply> getRepliesByBoardNo(@Param("boardNo") int boardNo); -->
-
 </mapper>

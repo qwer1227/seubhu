@@ -1,54 +1,34 @@
 package store.seub2hu2.lesson.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
-import lombok.extern.slf4j.Slf4j;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Controller;
+import net.minidev.json.JSONObject;
+import net.minidev.json.parser.JSONParser;
+import net.minidev.json.parser.ParseException;
+import org.mybatis.logging.Logger;
+import org.mybatis.logging.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.ui.Model;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.io.*;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 @Controller
-@RequestMapping("/payments")
-@Slf4j
+//@RequestMapping("/payments")
 public class WidgetController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @GetMapping("/checkout")
-    public String checkout() {
+    public String payment() {
         return "lesson/pay/checkout";
-    }
-
-    @GetMapping("/success")
-    public String getSuccess(HttpServletRequest request, Model model) {
-        // 결제 완료 데이터를 처리하는 로직 (필요 시 추가)
-        return "lesson/pay/success"; // ViewResolver에 의해 /WEB-INF/views/lesson/pay/success.jsp로 매핑
-    }
-
-
-    @PostMapping("/success")
-    public String success(HttpServletRequest request, Model model) {
-        // 결제 완료 데이터를 처리하는 로직 (필요 시 추가)
-        return "lesson/pay/success"; // ViewResolver에 의해 /WEB-INF/views/lesson/pay/success.jsp로 매핑
-    }
-
-    @GetMapping("/fail")
-    public String getFail(@RequestParam("code") String code, @RequestParam("message") String message, Model model) {
-        model.addAttribute("code", code);
-        model.addAttribute("message", message);
-
-        return "lesson/pay/fail";
     }
 
     @RequestMapping(value = "/confirm")
@@ -58,7 +38,6 @@ public class WidgetController {
         String orderId;
         String amount;
         String paymentKey;
-
         try {
             // 클라이언트에서 받은 JSON 요청 바디입니다.
             JSONObject requestData = (JSONObject) parser.parse(jsonBody);

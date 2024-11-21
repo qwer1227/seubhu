@@ -21,6 +21,7 @@ public class ProdListDto {
     private int no;
     private String name;
     private int price;
+    private int colorNum;
     private String status;
     private Date createdAt;
     private String imgThum;
