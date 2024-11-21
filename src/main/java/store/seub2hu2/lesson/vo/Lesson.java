@@ -24,7 +24,8 @@ public class Lesson {
     private String status;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date createdDate;
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date StartDate;
+    private Date endDate;
     private Date updatedDate;
     private User lecturer;
     private String filename;

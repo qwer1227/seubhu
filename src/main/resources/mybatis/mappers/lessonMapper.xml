@@ -89,28 +89,6 @@
         where R.USER_NO = #{userNo}
     </select>
 
-    <!-- 레슨 추가하기 -->
-    <insert id="insertLesson" useGeneratedKeys="true" keyProperty="lessonNo"
-            parameterType="store.seub2hu2.lesson.vo.Lesson">
-        insert into LESSONS
-        ( USER_NO
-        , LESSON_TITLE
-        , LESSON_SUBJECT
-        , LESSON_PRICE
-        , LESSON_PLAN
-        , LESSON_START_DATE
-        , LESSON_END_DATE
-        , LESSON_FILENAME)
-        values ( 29
-               , #{lesson.title}
-               , #{lesson.subject}
-               , #{lesson.price}
-               , #{lesson.plan}
-               , #{lesson.start}
-               , #{lesson.end}
-               , #{lesson.filename})
-    </insert>
-
     <select id="getReservationByCondition" resultType="store.seub2hu2.lesson.vo.LessonReservation">
         select R.LESSON_RESERVATIONS_NO as "no"
         , R.USER_NO as "user.no"
