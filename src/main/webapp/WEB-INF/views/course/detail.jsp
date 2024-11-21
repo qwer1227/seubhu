@@ -128,6 +128,8 @@
         }
     }
 
+    getReviews();
+
     // 입력한 코스 리뷰 정보(코스번호, 제목, 내용, 첨부파일)를 컨트롤러에 제출한다.
     async function submitReview() {
         // 1. 입력한 코스 리뷰 정보를 가져오고, formData 객체에 저장한다.
@@ -139,7 +141,7 @@
 
         let formData = new FormData();
 
-        formData.append("no", courseNo);
+        formData.append("courseNo", courseNo);
         formData.append("title", title);
         formData.append("content", content);
         for (let i = 0; i < upfiles.length; i++) {
@@ -156,7 +158,6 @@
         // 3. 요청 처리 성공 확인 후, 입력한 리뷰를 화면에 표시한다.
         if (response.ok) {
             let review = await response.json();
-            console.log('응답으로 받은 데이터', review); // 응답 데이터 확인 용도
             appendReview(review);
 
             reviewFormModal.hide();
@@ -177,17 +178,17 @@
 	            </div>
 	            <div class="card-body">
 	                \${review.content}
-<!--                    <img src="C:\files\course\\${review.reviewImage.name}" />-->
+                    <img src="C:\files\course\\${review.reviewImage.name}">
 	            </div>
 	            <div class="card-footer text-end">
-	                <button class="btn btn-danger btn-sm"
-	                       onclick="removeReview(\${review.no})">삭제</button>
+                    <button class="btn btn-success btn-sm" onclick="modifyReview(\${review.no})">수정</button>
+	                <button class="btn btn-danger btn-sm" onclick="removeReview(\${review.no})">삭제</button>
 	            </div>
 	        </div>
 	    `;
 
         let box = document.querySelector("#box-reviews");
-        box.insertAdjacentHTML("beforeend", content)
+        box.insertAdjacentHTML("beforeend", content);
     }
 </script>
 </body>

@@ -30,14 +30,22 @@
              , r.review_like_cnt
              , r.review_created_date
              , r.course_no
-             , i.img_no
-             , i.img_name
              , u.user_no
              , u.user_nickname
         from COURSE_REVIEWS r
-                 left join COURSE_REVIEW_IMGS i on r.review_no = i.review_no
-                 join USERS u on r.user_no = u.user_no
+        inner join USERS u on r.user_no = u.user_no
         where r.course_no = #{no}
+    </select>
+
+    <!--
+        List<ReviewImage> getReviewImagesByNo(@Param("no") int no);
+    -->
+    <select id="getReviewImagesByNo" resultType="store.seub2hu2.course.vo.ReviewImage">
+        select i.img_no as no
+             , i.img_name as name
+        from COURSE_REVIEWS r
+        left join COURSE_REVIEW_IMGS i on r.review_no = i.review_no
+        where r.review_no = #{no}
     </select>
 
     <!--
@@ -54,6 +62,10 @@
             , #{review.content}
             , #{review.user.no}
             , #{review.course.no})
+
+        <selectKey keyProperty="review.no" resultType="int" keyColumn="review_no" order="AFTER">
+            select last_insert_id()
+        </selectKey>
     </insert>
 
     <!--
@@ -61,8 +73,10 @@
     -->
     <insert id="insertReviewImage">
         insert into COURSE_REVIEW_IMGS
-            (img_name)
+            (img_name
+            , review_no)
         values
-            (#{reviewImage.name})
+            (#{reviewImage.name}
+            , #{reviewImage.review.no})
     </insert>
 </mapper>
