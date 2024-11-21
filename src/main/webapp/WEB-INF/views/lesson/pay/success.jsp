@@ -1,70 +1,13 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="/WEB-INF/views/common/tags.jsp" %>
-<%--<!DOCTYPE html>--%>
-<%--<html lang="ko">--%>
-<%--<head>--%>
-<%--    <meta charset="utf-8" />--%>
-<%--    <script src="https://js.tosspayments.com/v2/standard"></script>--%>
-<%--    <title>결제 성공</title>--%>
-<%--</head>--%>
-<%--<body>--%>
-<%--<h2>결제 성공</h2>--%>
-<%--<p id="paymentKey">결제 키: </p>--%>
-<%--<p id="orderId">주문 번호: </p>--%>
-<%--<p id="amount">결제 금액: </p>--%>
 
-<%--<script>--%>
-<%--    // URL의 쿼리 파라미터에서 값 가져오기--%>
-<%--    const urlParams = new URLSearchParams(window.location.search);--%>
-<%--    const paymentKey = urlParams.get("paymentKey");--%>
-<%--    const orderId = urlParams.get("orderId");--%>
-<%--    const amount = urlParams.get("amount");--%>
-
-<%--    async function confirm() {--%>
-<%--        const requestData = {--%>
-<%--            paymentKey: paymentKey,--%>
-<%--            orderId: orderId,--%>
-<%--            amount: amount,--%>
-<%--        };--%>
-
-<%--        try {--%>
-<%--            const response = await fetch("/payments/confirm", {--%>
-<%--                method: "POST",--%>
-<%--                headers: {--%>
-<%--                    "Content-Type": "application/json",--%>
-<%--                },--%>
-<%--                body: JSON.stringify(requestData),--%>
-<%--            });--%>
-
-<%--            const json = await response.json();--%>
-
-<%--            if (response.ok) {--%>
-<%--                // 결제 성공 시 데이터 표시--%>
-<%--                document.getElementById("paymentKey").textContent = "결제 키: " + json.paymentKey;--%>
-<%--                document.getElementById("orderId").textContent = "주문 번호: " + json.orderId;--%>
-<%--                document.getElementById("amount").textContent = "결제 금액: " + json.amount;--%>
-<%--            } else {--%>
-<%--                // 실패 시 처리--%>
-<%--                console.error(json);--%>
-<%--                window.location.href = `/fail?message=${json.message}&code=${json.code}`;--%>
-<%--            }--%>
-<%--        } catch (error) {--%>
-<%--            console.error("Error during payment confirmation:", error);--%>
-<%--            alert("결제 확인 중 문제가 발생했습니다.");--%>
-<%--        }--%>
-<%--    }--%>
-
-<%--    confirm();--%>
-<%--</script>--%>
-<%--</body>--%>
-<%--</html>--%>
 
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="utf-8" />
     <link rel="icon" href="https://static.toss.im/icons/png/4x/icon-toss-logo.png" />
-    <link rel="stylesheet" type="text/css" href="style.css" />
+    <link rel="stylesheet" type="text/css" href="/resources/css/style.css"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>토스페이먼츠 샘플 프로젝트</title>
