@@ -100,15 +100,14 @@
         , LESSON_PLAN
         , LESSON_START_DATE
         , LESSON_END_DATE
-        , LESSON_FILENAME)
+        )
         values ( 29
                , #{lesson.title}
                , #{lesson.subject}
                , #{lesson.price}
                , #{lesson.plan}
                , #{lesson.start}
-               , #{lesson.end}
-               , #{lesson.filename})
+               , #{lesson.end})
     </insert>
 
     <select id="getReservationByCondition" resultType="store.seub2hu2.lesson.vo.LessonReservation">

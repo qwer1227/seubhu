@@ -13,6 +13,7 @@ import store.seub2hu2.admin.service.AdminService;
 import store.seub2hu2.course.service.CourseService;
 import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.lesson.dto.LessonRegisterForm;
+import store.seub2hu2.lesson.service.LessonFileService;
 import store.seub2hu2.lesson.service.LessonService;
 import store.seub2hu2.lesson.vo.Lesson;
 import store.seub2hu2.user.vo.User;
@@ -40,6 +41,7 @@ public class AdminController {
 
     private final AdminService adminService;
     private final LessonService lessonService;
+    private final LessonFileService lessonFileService;
 
     @GetMapping("/home")
     public String home() {
@@ -55,50 +57,24 @@ public class AdminController {
     @PostMapping("/lesson-register-form")
     public String form(@ModelAttribute("form") LessonRegisterForm form, Model model) throws IOException {
 
-
-        // Lesson 객체 생성
-        int lessonNo = lessonService.getMostLatelyLessonNo();
-
         Lesson lesson = new Lesson();
-        lesson.setLessonNo(lessonNo);
         lesson.setTitle(form.getTitle());
         lesson.setPrice(form.getPrice());
         User user = new User();
-        user.setNo(form.getLecturerNo()); // Or dynamically assign user ID
+        user.setNo(29); // Or dynamically assign user ID
+        user.setId(form.getLecturerName());
         lesson.setLecturer(user);
         lesson.setSubject(form.getSubject());
         lesson.setPlan(form.getPlan());
+        lesson.setStart(form.getStartDate());
+        lesson.setEnd(form.getEndDate());
 
-        // startDate를 원하는 형식으로 변환
-        Date startDate = form.getDate();
-        if (startDate != null) {
-            // SimpleDateFormat을 사용해 'yyyy-MM-dd' 형식으로 변환
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            String formattedStartDate = sdf.format(startDate);
-
-            // 문자열을 다시 Date 객체로 변환하여 lesson에 설정
-            try {
-                Date parsedStartDate = sdf.parse(formattedStartDate);
-                lesson.setStartDate(parsedStartDate);
-            } catch (Exception e) {
-                e.printStackTrace();
-                // 예외 처리 로직
-            }
-        }
-
-        lesson.setStartDate(startDate);
-
-
-
-        System.out.println("lesson: "+lesson);
-        // Get the uploaded file
-        MultipartFile thumbnail = form.getThumbnail();
-        MultipartFile mainImage = form.getMainImage();
+        System.out.println("lesson: " + lesson);
 
         lessonService.registerLesson(lesson, form);
 
         // Redirect after successful form submission
-        return "redirect:/admin/lessonlist";
+        return "redirect:/admin/lesson";
 
     }
     @GetMapping("/lesson")

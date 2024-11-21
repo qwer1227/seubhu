@@ -15,6 +15,7 @@ import java.util.Date;
 @Getter
 @Setter
 public class LessonRegisterForm {
+
     private String title;
     private int price;
     private int lecturerNo;
@@ -27,5 +28,9 @@ public class LessonRegisterForm {
     private MultipartFile mainImage;
     @JsonFormat(pattern = "yyyy-MM-dd")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date date;
+    private Date startDate;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date endDate;
+
 }

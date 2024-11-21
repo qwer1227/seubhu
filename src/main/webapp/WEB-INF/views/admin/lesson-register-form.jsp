@@ -57,83 +57,69 @@
           </div>
           <div class="row mb-3">
             <div class="col-12">
-              <form class="border bg-light p-3"
-                    method="post" action="/admin/lesson-register-form"
-                    enctype="multipart/form-data">
-                <div class="form-group mb-3 col-4">
-                  <label class="form-label">레슨명</label>
-                  <input type="text" class="form-control" name="title" />
+              <form name="form" action="/admin/lesson-register-form" enctype="multipart/form-data" method="post">
+                <div class="row text-center p-3 ">
+                  <h2>게시글 작성</h2>
                 </div>
-                <div class="form-group mb-3 col-4">
-                  <label class="form-label">가격</label>
-                  <input type="text" class="form-control" name="price" />
+                <div class="row p-3">
+                  <div class="col">
+                    <label for="title">레슨명</label>
+                    <input type="text" class="form-control" name="title" id="title">
+                  </div>
                 </div>
-                <div class="col-4 mt-4" >
-                  <div class="row">
-                    <label class="col-4 mt-2 form-label">강사 선택</label>
-                    <select class="col-6 form-control mb-3" name="lecturerNo">
-                      <option value="29" selected>이상혁</option>
-                      <option value="30">고길동</option>
-                      <option value="27">정지훈</option>
-                      <option value="25">김미미</option>
-                      <option value="23">모시깽</option>
+                <div class="row p-3">
+                  <div class="col-1">
+                    <label for="subject">과정</label>
+                    <select name="subject" class="form-select" id="subject">
+                      <option>호흡</option>
+                      <option>자세</option>
+                      <option>운동</option>
                     </select>
                   </div>
-                </div>
-                <div class="col-4 mt-4" >
-                  <div class="row">
-                    <label class="col-4 mt-2 form-label">레슨 유형</label>
-                    <select class="col-6 form-control mb-3" name="subject">
-                      <option value="호흡" selected>호흡</option>
-                      <option value="자세">자세</option>
-                      <option value="운동">운동</option>
-                      <option value="3km">3km</option>
-                      <option value="5km">5km</option>
-                    </select>
+                  <div class="col-2">
+                    <label for="lecturerName">강사명</label>
+                    <input type="text" class="form-control" name="lecturerName" id="lecturerName">
+                  </div>
+                  <div class="col-2">
+                    <label for="price">가격</label>
+                    <input type="number" class="form-control" name="price" id="price">
                   </div>
                 </div>
-                <div class="col-4 mt-4" >
-                  <div class="row">
-                    <label class="col-4 mt-2 form-label">인원 설정</label>
-                    <select class="col-2 form-control mb-3" name="group">
-                      <option value="1" selected>1</option>
-                      <option value="2">2</option>
-                      <option value="3">3</option>
-                      <option value="4">4</option>
-                      <option value="5">5</option>
-                    </select>
-                    <div class="col-4 mt-2">명(최대 5명)</div>
+                <div class="row row-cols-1 p-3">
+                  <div class="col-1 pb-3">
+                    게시글
+                  </div>
+                  <div class="col">
+                    <textarea class="form-control" rows="20" name="plan"></textarea>
                   </div>
                 </div>
-                <div class="col-4 mt-4" >
-                  <div class="row">
-                    <label class="col-4 mt-2 form-label">모집 상태</label>
-                    <select class="col-6 form-control mb-3" name="status">
-                      <option value="모집중" selected>모집중</option>
-                      <option value="오픈 예정">오픈 예정</option>
-                    </select>
+                <div class="row p-3">
+                  <div class="col-3">
+                    <label for="startDate">시작 시간</label>
+                    <input type="datetime-local" class="form-control" name="startDate" id="startDate">
+                  </div>
+                  <div class="col-3">
+                    <label for="endDate">종료 시간</label>
+                    <input type="datetime-local" class="form-control" name="endDate" id="endDate">
                   </div>
                 </div>
-                <div class="row col-3 mb-4 pt-2">
-                  <div class="col mb-4 pt-2">
-                    <span>날짜</span>
-                  </div>
-                  <div class="row col-9 mb-4 pt-1">
-                    <div class="col">
-                      <input type="date" name="date" id="dateInput" value="${param.day}"/>
-                    </div>
+                <div class="row p-3 ">
+                  <div class="col-5">
+                    <label for="thumbnail">썸네일 이미지</label>
+                    <input type="file" class="form-control" name="thumbnail" id="thumbnail"/>
                   </div>
                 </div>
-                <div class="form-group mb-3 col-4">
-                  <label class="form-label">레슨 계획</label>
-                  <textarea name="plan" id="" cols="70" rows="5" class=""></textarea>
+                <div class="row p-3 ">
+                  <div class="col-5">
+                    <label for="mainImage">본문 이미지</label>
+                    <input type="file" class="form-control" name="mainImage" id="mainImage"/>
+                  </div>
                 </div>
-                <div class="form-group col-4">
-                  <label class="form-label mb-3">레슨 대표 이미지</label>
-                  <input type="file" class="form-control" name="image"/>
-                </div>
-                <div class="text-end">
-                  <button type="submit" class="btn btn-primary">등록</button>
+                <div class="row p-3">
+                  <div class="col d-flex justify-content-end">
+                    <a href="/lesson" class="btn btn-secondary m-1">취소</a>
+                    <button type="submit" class="btn btn-primary m-1">등록</button>
+                  </div>
                 </div>
               </form>
             </div>

@@ -84,7 +84,7 @@
           <div class="border-bottom pt-4 pr-4 pl-4 bg-light">
             <table class="table">
               <colgroup>
-                <col width="10%">
+                <col width="12%">
                 <col width="10%">
                 <col width="*%">
                 <col width="10%">
@@ -108,9 +108,9 @@
                   <tr>
 
                     <td>
-                      <fmt:formatDate value="${l.startDate}" pattern="yyyy-MM-dd" timeZone="GMT"/>
+                      <fmt:formatDate value="${l.start}" pattern="yyyy-MM-dd" timeZone="GMT"/>
                     </td>
-                    <td><fmt:formatDate value="${l.startDate}" pattern="HH:mm:ss"  timeZone="GMT"/></td>
+                    <td><fmt:formatDate value="${l.start}" pattern="HH:mm:ss"  timeZone="GMT"/></td>
                     <td>${l.title}</td>
                     <td>${l.lecturer.name}</td>
                     <td>${l.price}</td>
