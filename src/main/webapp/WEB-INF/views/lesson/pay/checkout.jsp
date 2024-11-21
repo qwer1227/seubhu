@@ -72,7 +72,7 @@
         // ------ '결제하기' 버튼 누르면 결제창 띄우기 ------
         button.addEventListener("click", async function () {
             await widgets.requestPayment({
-                orderId: "bVpaU-s0YaInBuRJbuOgj",
+                orderId: "bVpaU-s0YaInBuRJbuOgj123",
                 orderName: "토스 티셔츠 외 2건",
                 successUrl: window.location.origin + "/success.html",
                 failUrl: window.location.origin + "/fail.html",
