@@ -19,4 +19,6 @@ public class Role {
 	private int no;           // ROLE_NO
 	private String name;      // ROLE_NAME
 	private String description; // ROLE_DESC
+
+
 }

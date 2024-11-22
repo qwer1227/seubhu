@@ -76,35 +76,37 @@
         </button>
     </a>
     <!-- 메인 이미지 캐러셀 -->
+    <section class="container my-5">
     <div id="main-carousel" class="carousel slide">
         <div class="carousel-indicators">
-            <button type="button" data-bs-target="#carouselIndicators" data-bs-slide-to="0" class="active"
+            <button type="button" data-bs-target="#main-carousel" data-bs-slide-to="0" class="active"
                     aria-current="true" aria-label="Slide 1"></button>
-            <button type="button" data-bs-target="#carouselIndicators" data-bs-slide-to="1"
+            <button type="button" data-bs-target="#main-carousel" data-bs-slide-to="1"
                     aria-label="Slide 2"></button>
-            <button type="button" data-bs-target="#carouselIndicators" data-bs-slide-to="2"
+            <button type="button" data-bs-target="#main-carousel" data-bs-slide-to="2"
                     aria-label="Slide 3"></button>
         </div>
         <div class="carousel-inner">
             <div class="carousel-item active">
-                <img src="../../resources/img/cat.png" class="d-block w-100" alt="...">
+                <img src="../../resources/img/nike.jpeg" class="d-block w-100" alt="...">
             </div>
             <div class="carousel-item">
-                <img src="../../resources/img/cat.png" class="d-block w-100" alt="...">
+                <img src="../../resources/img/adidas.jpeg" class="d-block w-100" alt="...">
             </div>
             <div class="carousel-item">
-                <img src="../../resources/img/cat.png" class="d-block w-100" alt="...">
+                <img src="../../resources/img/asics.jpeg" class="d-block w-100" alt="...">
             </div>
         </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselIndicators" data-bs-slide="prev">
+        <button class="carousel-control-prev" type="button" data-bs-target="#main-carousel" data-bs-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Previous</span>
         </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselIndicators" data-bs-slide="next">
+        <button class="carousel-control-next" type="button" data-bs-target="#main-carousel" data-bs-slide="next">
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Next</span>
         </button>
     </div>
+    </section>
 
     <!-- 알림형 광고배너 -->
     <section class="container my-5">
@@ -116,39 +118,36 @@
         </div>
     </section>
 
-    <!-- 베스트 상품 랭킹 -->
     <section class="container my-5">
         <div class="row">
             <div class="col-10 d-flex align-items-center">
                 <h3>베스트 상품 랭킹</h3>
             </div>
             <div class="col-2 d-flex justify-content-end">
-                <button class="btn btn-outline-dark" type="button" data-bs-target="#weeklyRankingCarousel"
-                        data-bs-slide="prev">Prev
+                <button class="btn btn-outline-dark" type="button" data-bs-target="#weeklyRankingCarousel" data-bs-slide="prev">
+                    <i class="bi bi-chevron-left"></i>
                 </button>
-                <button class="btn btn-outline-dark" type="button" data-bs-target="#weeklyRankingCarousel"
-                        data-bs-slide="next">Next
+                <button class="btn btn-outline-dark" type="button" data-bs-target="#weeklyRankingCarousel" data-bs-slide="next">
+                    <i class="bi bi-chevron-right"></i>
                 </button>
             </div>
         </div>
+
         <div id="weeklyRankingCarousel" class="carousel slide mt-3" data-bs-ride="carousel">
             <div class="carousel-inner">
+                <!-- 첫 번째 페이지 -->
                 <div class="carousel-item active">
                     <div class="row">
                         <div class="col-md-3">
                             <div class="card position-relative border-0">
-                                <!-- 이미지 -->
-                                <a href="https://example.com/product-detail">
-                                    <img src="../../resources/img/cat.png" class="card-img-top" alt="상품 1">
+                                <a href="#">
+                                    <img src="../../resources/img/nikeS.jpeg" class="card-img-top" alt="상품 1">
                                 </a>
-
-                                <!-- 아이콘 버튼을 이미지 위에 겹치게 배치 -->
                                 <div class="icon-overlay d-flex justify-content-center">
-                                    <button class="icon-button bt-sm" onclick="addToWishlist()">
+                                    <button class="icon-button btn-sm">
                                         <i class="bi bi-heart"></i>
                                     </button>
                                 </div>
-
                                 <div class="card-body">
                                     <h5 class="card-title">상품명 1</h5>
                                     <p class="card-text">₩12,000</p>
@@ -156,70 +155,81 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="col-md-3">
                             <div class="card position-relative border-0">
-                                <!-- 이미지 -->
-                                <a href="https://example.com/product-detail">
-                                    <img src="../../resources/img/cat.png" class="card-img-top" alt="상품 1">
+                                <a href="#">
+                                    <img src="../../resources/img/nikeS.jpeg" class="card-img-top" alt="상품 2">
                                 </a>
-
-                                <!-- 아이콘 버튼을 이미지 위에 겹치게 배치 -->
                                 <div class="icon-overlay d-flex justify-content-center">
-                                    <button class="icon-button bt-sm" onclick="addToWishlist()">
+                                    <button class="icon-button btn-sm">
                                         <i class="bi bi-heart"></i>
                                     </button>
                                 </div>
-
                                 <div class="card-body">
                                     <h5 class="card-title">상품명 2</h5>
-                                    <p class="card-text">₩12,000</p>
+                                    <p class="card-text">₩14,000</p>
                                     <span class="badge bg-dark">#2</span>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="card position-relative border-0">
-                                <!-- 이미지 -->
-                                <a href="https://example.com/product-detail">
-                                    <img src="../../resources/img/cat.png" class="card-img-top" alt="상품 1">
+                                <a href="#">
+                                    <img src="../../resources/img/nikeS.jpeg" class="card-img-top" alt="상품 3">
                                 </a>
-
-                                <!-- 아이콘 버튼을 이미지 위에 겹치게 배치 -->
                                 <div class="icon-overlay d-flex justify-content-center">
-                                    <button class="icon-button bt-sm" onclick="addToWishlist()">
+                                    <button class="icon-button btn-sm">
                                         <i class="bi bi-heart"></i>
                                     </button>
                                 </div>
-
                                 <div class="card-body">
                                     <h5 class="card-title">상품명 3</h5>
-                                    <p class="card-text">₩12,000</p>
+                                    <p class="card-text">₩15,000</p>
                                     <span class="badge bg-dark">#3</span>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="card position-relative border-0">
-                                <!-- 이미지 -->
-                                <a href="https://example.com/product-detail">
-                                    <img src="../../resources/img/cat.png" class="card-img-top" alt="상품 1">
+                                <a href="#">
+                                    <img src="../../resources/img/nikeS.jpeg" class="card-img-top" alt="상품 4">
                                 </a>
-
-                                <!-- 아이콘 버튼을 이미지 위에 겹치게 배치 -->
                                 <div class="icon-overlay d-flex justify-content-center">
-                                    <button class="icon-button bt-sm" onclick="addToWishlist()">
+                                    <button class="icon-button btn-sm">
                                         <i class="bi bi-heart"></i>
                                     </button>
                                 </div>
-
                                 <div class="card-body">
                                     <h5 class="card-title">상품명 4</h5>
-                                    <p class="card-text">₩12,000</p>
+                                    <p class="card-text">₩16,000</p>
                                     <span class="badge bg-dark">#4</span>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- 두 번째 페이지 -->
+                <div class="carousel-item">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="card position-relative border-0">
+                                <a href="#">
+                                    <img src="../../resources/img/nikeS.jpeg" class="card-img-top" alt="상품 5">
+                                </a>
+                                <div class="icon-overlay d-flex justify-content-center">
+                                    <button class="icon-button btn-sm">
+                                        <i class="bi bi-heart"></i>
+                                    </button>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">상품명 5</h5>
+                                    <p class="card-text">₩17,000</p>
+                                    <span class="badge bg-dark">#5</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 추가 상품들 -->
                     </div>
                 </div>
             </div>
@@ -235,7 +245,7 @@
                     <li class="list-group-item d-flex align-items-center border-0">
                         <span class="fw-bold me-3">1</span>
                         <a href="#" class="text-decoration-none">
-                            <img src="../../resources/img/img1.png" alt="러닝화 1" width="50" class="me-3">
+                            <img src="../../resources/img/nikeS.jpeg" alt="러닝화 1" width="50" class="me-3">
                             <span class="text-muted">러닝화 1</span>
                         </a>
                         <span class="ms-auto"><i class="bi bi-arrow-up"></i></span>
@@ -243,7 +253,7 @@
                     <li class="list-group-item d-flex align-items-center border-0">
                         <span class="fw-bold me-3">2</span>
                         <a href="#" class="text-decoration-none">
-                            <img src="../../resources/img/img1.png" alt="러닝화 2" width="50" class="me-3">
+                            <img src="../../resources/img/nikeS.jpeg" alt="러닝화 2" width="50" class="me-3">
                             <span class="text-muted">러닝화 2</span>
                         </a>
                         <span class="ms-auto"><i class="bi bi-arrow-down"></i></span>
@@ -251,7 +261,7 @@
                     <li class="list-group-item d-flex align-items-center border-0">
                         <span class="fw-bold me-3">3</span>
                         <a href="#" class="text-decoration-none">
-                            <img src="../../resources/img/img1.png" alt="러닝화 3" width="50" class="me-3">
+                            <img src="../../resources/img/nikeS.jpeg" alt="러닝화 3" width="50" class="me-3">
                             <span class="text-muted">러닝화 3</span>
                         </a>
                         <span class="ms-auto"><i class="bi bi-arrow-up"></i></span>
@@ -259,7 +269,7 @@
                     <li class="list-group-item d-flex align-items-center border-0">
                         <span class="fw-bold me-3">4</span>
                         <a href="#" class="text-decoration-none">
-                            <img src="../../resources/img/img1.png" alt="러닝화 4" width="50" class="me-3">
+                            <img src="../../resources/img/nikeS.jpeg" alt="러닝화 4" width="50" class="me-3">
                             <span class="text-muted">러닝화 4</span>
                         </a>
                         <span class="ms-auto"><i class="bi bi-arrow-down"></i></span>
@@ -267,7 +277,7 @@
                     <li class="list-group-item d-flex align-items-center border-0">
                         <span class="fw-bold me-3">5</span>
                         <a href="#" class="text-decoration-none">
-                            <img src="../../resources/img/img1.png" alt="러닝화 5" width="50" class="me-3">
+                            <img src="../../resources/img/nikeS.jpeg" alt="러닝화 5" width="50" class="me-3">
                             <span class="text-muted">러닝화 5</span>
                         </a>
                         <span class="ms-auto"><i class="bi bi-arrow-down"></i></span>
@@ -369,7 +379,6 @@
     </section>
 
 
-
     <!-- 레슨 목록 -->
     <section class="container my-5">
         <h3 class="text-muted">레슨 목록</h3>
@@ -378,6 +387,7 @@
                 <div class="card border-0">
                     <div class="card-body">
                         <a href="#" class="text-decoration-none">
+                            <img src="../../resources/img/adidas.jpeg" class="d-block w-100" alt="SEUB2HU2 ls">
                             <h5 class="card-title text-muted">레슨 1</h5>
                         </a>
                         <p class="card-text text-muted">내용 1</p>
@@ -389,6 +399,7 @@
                 <div class="card border-0">
                     <div class="card-body">
                         <a href="#" class="text-decoration-none">
+                            <img src="../../resources/img/adidas.jpeg" class="d-block w-100" alt="SEUB2HU2 ls">
                             <h5 class="card-title text-muted">레슨 2</h5>
                         </a>
                         <p class="card-text text-muted">내용 2</p>
@@ -400,6 +411,7 @@
                 <div class="card border-0">
                     <div class="card-body">
                         <a href="#" class="text-decoration-none">
+                            <img src="../../resources/img/adidas.jpeg" class="d-block w-100" alt="SEUB2HU2 ls">
                             <h5 class="card-title text-muted">레슨 3</h5>
                         </a>
                         <p class="card-text text-muted">내용 3</p>
@@ -411,13 +423,12 @@
     </section>
 
 
-
     <!-- 광고 팝업 -->
     <div class="ad-popup">
         <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner">
                 <div class="carousel-item active">
-                    <img src="../../resources/img/cat.png" class="d-block w-100" alt="SEUB2HU2 Ad">
+                    <img src="../../resources/img/nike.jpeg" class="d-block w-100" alt="SEUB2HU2 Ad">
                     <div class="icon-overlay d-flex justify-content-center">
                         <button type="button" class="btn-close" aria-label="Close"></button>
                     </div>
@@ -428,7 +439,7 @@
                     </div>
                 </div>
                 <div class="carousel-item">
-                    <img src="../../resources/img/cat.png" class="d-block w-100" alt="SEUB2HU2 Ad">
+                    <img src="../../resources/img/adidas.jpeg" class="d-block w-100" alt="SEUB2HU2 Ad">
                     <div class="popup-content text-center">
                         <h5>SEUB2HU2 RUNNING CLASS</h5>
                         <p>습습후후에서 진행하는 전문 레슨과 함께 달리기를 배워보세요.</p>
@@ -436,7 +447,7 @@
                     </div>
                 </div>
                 <div class="carousel-item">
-                    <img src="../../resources/img/cat.png" class="d-block w-100" alt="SEUB2HU2 Ad">
+                    <img src="../../resources/img/asics.jpeg" class="d-block w-100" alt="SEUB2HU2 Ad">
                     <div class="popup-content text-center">
                         <h5>SEUB2HU2 RUNNING CLASS</h5>
                         <p>습습후후에서 진행하는 전문 레슨과 함께 달리기를 배워보세요.</p>
@@ -475,16 +486,6 @@
 </main>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script>
-    function addToCart() {
-        // 장바구니 추가 로직
-        alert("상품이 장바구니에 담겼습니다.");
-    }
-
-    function addToWishlist() {
-        // 위시리스트 추가 로직
-        alert("상품이 위시리스트에 추가되었습니다.");
-    }
-
 </script>
 </body>
 </html>

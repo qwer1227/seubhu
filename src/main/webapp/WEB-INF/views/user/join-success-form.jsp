@@ -27,7 +27,7 @@
                 </div>
             </div>
         <div class="mt-4 col-2">
-            <a href="/main" class="color-black text-decoration-none fw-bold">메인으로 돌아가기</a>
+            <a href="/home" class="color-black text-decoration-none fw-bold">메인으로 돌아가기</a>
         </div>
         <div class="mt-4 col-2">
             <a href="/login" class="color-black text-decoration-none fw-bold">로그인하러 가기</a>

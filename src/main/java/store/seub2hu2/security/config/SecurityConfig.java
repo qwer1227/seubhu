@@ -1,4 +1,4 @@
-package store.seub2hu2.security;
+package store.seub2hu2.security.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -8,8 +8,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.web.SecurityFilterChain;
+import store.seub2hu2.security.CustomAccessDeniedHandler;
+import store.seub2hu2.security.CustomAuthenticationEntryPoint;
 import store.seub2hu2.security.service.CustomOAuth2UserService;
 
 @Configuration
@@ -50,21 +51,20 @@ public class SecurityConfig {
                         // 로그인 요청을 처리하는 url을 지정한다.
                         .loginProcessingUrl("/login")
                         // 로그인 성공 시 이동할 URL을 지정한다.
-                        .defaultSuccessUrl("/main", true)
+                        .defaultSuccessUrl("/home", true)
                         // 로그인 실패 시 이동할 URL을 지정한다.
                         .failureUrl("/login?error=fail"))
 // 로그아웃 정책을 설정한다.
                 .logout(logout -> logout
 // 로그아웃...
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/main")
+                        .logoutSuccessUrl("/home")
                         .invalidateHttpSession(true))
                 .oauth2Login(oauth2Configurer -> oauth2Configurer
                         .loginPage("/login")
-                        .defaultSuccessUrl("/main")
+                        .defaultSuccessUrl("/home")
                         .failureUrl("/login")
-                        .userInfoEndpoint()
-                        .userService(customOAuth2UserService))
+                        .userInfoEndpoint(userEndpoint -> userEndpoint.userService(customOAuth2UserService)))
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         // 인증되지 않은 사용자가 인증이 필요한 리소스를 요청했을 때
                         .authenticationEntryPoint(customAuthenticationEntryPoint)

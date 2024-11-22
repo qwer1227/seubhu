@@ -28,6 +28,7 @@ public class User {
     private String referrer;          // 추천인 아이디
     private String black;             // 블랙리스트
 
+
     @Builder.Default
     private Date createdDate = new Date();  // 계정 생성일, 기본값으로 현재 시간 설정
 

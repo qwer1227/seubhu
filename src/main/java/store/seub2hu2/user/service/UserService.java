@@ -25,35 +25,28 @@ public class UserService {
     @Autowired
     private UserMapper userMapper;
 
-    // 사용자 확인
-    public boolean isValidUser(String id, String email) {
-        return userMapper.findUserByIdAndEmail(id, email) != null;
-    }
+
 
     // 임시 비밀번호 생성
     public String generateTemporaryPassword() {
         return UUID.randomUUID().toString().substring(0, 8); // 8자리 비밀번호
     }
 
-    // 사용자 비밀번호 업데이트
-    public void updateUserPassword(String id, String newPassword) {
-        String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
-        userMapper.updatePassword(id, hashedPassword);
-    }
 
     // 아이디 중복 체크
     public boolean isIdExists(String id) {
-        return userMapper.findById(id) != null;
+        return userMapper.getUserById(id) != null;
     }
 
     // 닉네임 중복 체크
     public boolean isNicknameExists(String nickname) {
-        return userMapper.findByNickname(nickname) != null;
+        return false;
+        //return userMapper.getUserByNickname(nickname) != null;
     }
 
     // 이메일 중복 체크
     public boolean isEmailExists(String email) {
-        return userMapper.findByEmail(email) != null;
+        return userMapper.getUserByEmail(email) != null;
     }
 
     /**
@@ -62,7 +55,7 @@ public class UserService {
     public void insertUser(UserJoinForm form) {
         // 사용자 ID 중복 체크
 
-        User savedUser = userMapper.findById(form.getId());
+        User savedUser = userMapper.getUserById(form.getId());
         if (savedUser != null) {
             throw new AlreadyUsedIdException(form.getId());
         }
