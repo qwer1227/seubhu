@@ -7,7 +7,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import store.seub2hu2.admin.dto.CourseRegisterForm;
 import store.seub2hu2.admin.service.AdminService;
 import store.seub2hu2.course.service.CourseService;
@@ -20,10 +19,9 @@ import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.ListDto;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +50,35 @@ public class AdminController {
     @GetMapping("/lesson-edit-form")
     public String lessonEditForm(@RequestParam("lessonNo")Integer lessonNo, Model model) {
 
+        try {
+
+
+            // Lesson 정보 가져오기
+            Lesson lesson = lessonService.getLessonByNo(lessonNo);
+
+            // 이미지 파일 정보 가져오기
+            Map<String, String> images = lessonService.getImagesByLessonNo(lessonNo);
+
+            // 모델에 lesson과 images 정보 추가
+            model.addAttribute("lesson", lesson);
+            model.addAttribute("lessonNo", lessonNo);
+            model.addAttribute("images", images);
+
+
+
+            log.info("lesson start = {}", lesson);
+
+            return "admin/lesson-edit-form";
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid lessonNo: " + lessonNo);
+        }
+    }
+
+/*    @GetMapping("/lesson-edit-form")
+    public String lessonEditForm(@RequestParam("lessonNo")Integer lessonNo, Model model) {
+
         Lesson lesson = lessonService.getLessonByNo(lessonNo);
+
 
         return "admin/lesson-edit-form";
     }
@@ -61,7 +87,7 @@ public class AdminController {
     public String lessonEditForm(LessonRegisterForm form,Model model) {
 
         return "admin/lesson-edit-form";
-    }
+    }*/
 
     @GetMapping("/lesson-register-form")
     public String lessonRegisterForm() {
@@ -83,8 +109,8 @@ public class AdminController {
         lesson.setStart(form.getStartDate());
         lesson.setEnd(form.getEndDate());
 
-        System.out.println("lesson: " + lesson);
-
+        System.out.println("-------------------------------------레슨 시작 종료시간 알아보기: " + lesson);
+        
         lessonService.registerLesson(lesson, form);
 
         // Redirect after successful form submission
@@ -94,12 +120,12 @@ public class AdminController {
     @GetMapping("/lesson")
     public String lesson(@RequestParam(name = "opt", required = false) String opt,
                          @RequestParam(name = "day", required = false)
-                         @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate day,
+                         @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDateTime day,
                                @RequestParam(name = "value", required = false) String value,
                                Model model) {
 
         if (day == null) {
-            day = LocalDate.now();
+            day = LocalDateTime.now();
         }
 
         String formattedDay = day.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
@@ -161,7 +187,7 @@ public class AdminController {
 
     @GetMapping("/user/preview")
     @ResponseBody
-    public User preview(int no) {
+    public User preview(@RequestParam("no") int no) {
         User user = adminService.getUser(no);
 
         return user;

@@ -57,32 +57,29 @@
           </div>
           <div class="row mb-3">
             <div class="col-12">
-              <form name="form" action="/admin/lesson-edit-form" enctype="multipart/form-data" method="post">
-                <div class="row text-center p-3 ">
-                  <h2>게시글 작성</h2>
-                </div>
                 <div class="row p-3">
                   <div class="col-6">
                     <label for="title">레슨명</label>
-                    <input type="text" class="form-control" name="title" id="title">
+                    <input type="text" class="form-control" name="title" id="title" value="${lesson.title}">
                   </div>
                 </div>
                 <div class="row p-3">
                   <div class="col-2">
-                    <label for="subject">과정</label>
+                    <label>과정</label>
                     <select name="subject" class="form-control" id="subject">
-                      <option>호흡</option>
-                      <option>자세</option>
-                      <option>운동</option>
+                      <option value="${lesson.subject}">${lesson.subject}</option>
+                      <option value="호흡">호흡</option>
+                      <option value="자세">자세</option>
+                      <option value="운동">운동</option>
                     </select>
                   </div>
                   <div class="col-2">
                     <label for="lecturerName">강사명</label>
-                    <input type="text" class="form-control" name="lecturerName" id="lecturerName">
+                    <input type="text" class="form-control" name="lecturerName" id="lecturerName" value="${lesson.lecturer.name}">
                   </div>
                   <div class="col-2">
                     <label for="price">가격</label>
-                    <input type="number" class="form-control" name="price" id="price">
+                    <input type="number" class="form-control" name="price" id="price" value="${lesson.price}">
                   </div>
                 </div>
                 <div class="row row-cols-1 p-3">
@@ -90,38 +87,47 @@
                     게시글
                   </div>
                   <div class="col">
-                    <textarea class="form-control" rows="10" cols="10" name="plan"></textarea>
+                    <textarea class="form-control" rows="10" cols="10" name="plan">${lesson.plan}</textarea>
                   </div>
                 </div>
                 <div class="row p-3">
                   <div class="col-3">
-                    <label for="startDate">시작 시간</label>
-                    <input type="datetime-local" class="form-control" name="startDate" id="startDate">
+                    <label>시작 시간</label><br>
+                    <label>기존</label>
+                    <input type="datetime-local" class="form-control" name="start" id="startDate" value="${lesson.start}" timeZone="GMT">
                   </div>
                   <div class="col-3">
-                    <label for="endDate">종료 시간</label>
-                    <input type="datetime-local" class="form-control" name="endDate" id="endDate">
+                    <label>종료 시간</label><br>
+                    <label>기존</label>
+                    <input type="datetime-local" class="form-control" name="end" id="endDate" value="${lesson.end}" timeZone="GMT">
                   </div>
                 </div>
                 <div class="row p-3 ">
                   <div class="col-5">
-                    <label for="thumbnail">썸네일 이미지</label>
-                    <input type="file" class="form-control" name="thumbnail" id="thumbnail"/>
+                    <label>썸네일 이미지</label>
+                    <c:if test="${not empty images['THUMBNAIL']}">
+                      <img src="${pageContext.request.contextPath}/resources/lessonImg/${images['THUMBNAIL']}"
+                           class="img-fluid" alt="Thumbnail" style="width: 100%; height: 500px;"/>
+                    </c:if>
                   </div>
                 </div>
                 <div class="row p-3 ">
                   <div class="col-5">
-                    <label for="mainImage">본문 이미지</label>
-                    <input type="file" class="form-control" name="mainImage" id="mainImage"/>
+                    <label>본문 이미지</label>
+                      <c:if test="${not empty images.MAIN_IMAGE}">
+                        <img src="${pageContext.request.contextPath}/resources/lessonImg/${images['MAIN_IMAGE']}"
+                             alt="Main Image"/>
+                      </c:if>
                   </div>
                 </div>
                 <div class="row p-3">
                   <div class="col d-flex justify-content-end">
                     <a href="/lesson" class="btn btn-secondary m-1">취소</a>
-                    <button type="submit" class="btn btn-primary m-1">등록</button>
+                    <a href="/admin/lesson-edit-form?lessonNo=${lessonNo}">
+                      <button type="submit" class="btn btn-primary m-1">수정</button>
+                    </a>
                   </div>
                 </div>
-              </form>
             </div>
           </div>
         </div>
@@ -137,6 +143,20 @@
 <%@include file="/WEB-INF/views/admincommon/common.jsp" %>
 
 <script>
+
+  // ${lesson.subject} 값을 JavaScript 변수에 저장
+  const lessonSubject = "${lesson.subject}"; // 서버에서 전달된 값
+
+  // select 태그와 option 태그 가져오기
+  const subjectSelect = document.getElementById("subject");
+  const options = subjectSelect.querySelectorAll("option");
+
+  // 일치하는 옵션 숨기기
+  options.forEach(option => {
+    if (option.value === lessonSubject) {
+      option.style.display = "none"; // 화면에서 숨기기
+    }
+  });
 
 </script>
 

@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="/WEB-INF/views/common/tags.jsp" %>
+
 <!DOCTYPE html>
 <html lang="ko">
 
@@ -109,9 +110,11 @@
                 <c:forEach var="l" items="${lessons}">
                   <tr>
                     <td>
-                      <fmt:formatDate value="${l.start}" pattern="yyyy-MM-dd" timeZone="GMT"/>
+                      ${l.startDate}
                     </td>
-                    <td><fmt:formatDate value="${l.start}" pattern="HH:mm"  timeZone="GMT"/></td>
+                    <td>
+                      ${l.startTime}
+                    </td>
                     <td>${l.title}</td>
                     <td>${l.lecturer.name}</td>
                     <td>${l.price}</td>
@@ -121,10 +124,10 @@
                     </td>
                     <td>${l.status}</td>
                     <td>
-                    <a href="/admin/lesson-edit-form?lesson_no=${l.lessonNo}">
-                      <button class="btn btn-outline btn-warning btn-sm "
-                              onclick="">수정</button>
-                    </a>
+
+                      <button class="btn btn-outline btn-warning btn-sm"
+                              onclick="lessonEdit(${l.lessonNo})">수정</button>
+
                     </td>
                   </tr>
                 </c:forEach>
@@ -182,6 +185,16 @@
 
   // 기본값 설정
   document.getElementById('dateInput').value = formattedDate;
+
+  function lessonEdit(lessonNo) {
+    if (lessonNo !== undefined && lessonNo !== null && lessonNo !== "") {  // Validate lessonNo
+      console.log("LessonNo:", lessonNo); // Log to ensure lessonNo is being passed as int
+      location.href =("/admin/lesson-edit-form?lessonNo="+lessonNo);
+    } else {
+      console.error("Invalid lessonNo");
+    }
+  }
+
 </script>
 
 </body>

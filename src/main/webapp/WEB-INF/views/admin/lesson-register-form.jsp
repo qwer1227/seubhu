@@ -58,9 +58,6 @@
           <div class="row mb-3">
             <div class="col-12">
               <form name="form" action="/admin/lesson-register-form" enctype="multipart/form-data" method="post">
-                <div class="row text-center p-3 ">
-                  <h2>게시글 작성</h2>
-                </div>
                 <div class="row p-3">
                   <div class="col-6">
                     <label for="title">레슨명</label>

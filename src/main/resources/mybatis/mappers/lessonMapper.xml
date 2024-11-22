@@ -156,5 +156,27 @@
         </if>
     </select>
 
+    <!-- 레슨 수정 -->
+    <update id="updateLessonByNo">
+        UPDATE LESSONS
+        SET PARTICIPANT = #{lesson.participant} + 1
+          , LESSON_STATUS = #{lesson.status}
+          , USER_NO = #{lesson.lecturer.no}
+          , LESSON_TITLE = #{lesson.title}
+          , LESSON_PLAN = #{lesson.plan}
+          , LESSON_SUBJECT = #{lesson.subject}
+          , LESSON_PRICE = #{lesson.price}
+          , LESSON_START_DATE = DATE_FORMAT('#{lesson.start}' ,'%y-%m-%d %h:%m:%s')
+          , LESSON_END_DATE = DATE_FORMAT('#{lesson.end}' ,'%y-%m-%d %h:%m:%s')
+        WHERE LESSON_NO = #{lesson.no}
+    </update>
+
+    <!-- 레슨 삭제 -->
+    <update id="deleteLessonByNo">
+        UPDATE LESSONS
+        SET LESSON_DELETED = 'Y'
+        WHERE LESSON_NO = #{lesson.no}
+    </update>
+
 
 </mapper>
