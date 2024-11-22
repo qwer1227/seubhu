@@ -41,6 +41,25 @@
             border-radius: 8px;
         }
 
+        .comment-item {
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        .comment-actions {
+            display: none; /* 기본적으로 숨김 처리 */
+            position: absolute;
+            right: 0;
+            top: 0;
+        }
+
+        .comment-item:hover .comment-actions {
+            display: block; /* 마우스를 올리면 버튼 보이기 */
+        }
+
+        .comment-actions button {
+            font-size: 12px;
+
         /* 이미지 미리보기 */
         .image-preview-container {
             display: flex;
@@ -163,29 +182,28 @@
                     <div class="col-12 col-md-6 ps-3">
                         <!-- User info and action buttons (right side of the image) -->
                         <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0" id="detailPostWriter">김회원</h5>
+                            <h5 class="mb-0" id="detailPostWriter"></h5>
                             <div>
                                 <button class="btn btn-outline-secondary btn-sm" id="postUpdate" data-post-id="${post.no}">수정</button>
                                 <button class="btn btn-outline-danger btn-sm ms-2" id="postDelete" data-post-id="${post.no}">삭제</button>
                             </div>
                         </div>
                         <hr>
-                        <p id="detailPostContent">내용</p>
-                        <p id="detailCreatedDate">작성일</p>
+                        <p id="detailPostContent"></p>
+                        <p id="detailCreatedDate"></p>
                         <button class="btn btn-outline-primary">좋아요</button>
 
-                        <!-- Comments section -->
+                        <!-- 댓글 섹션 -->
                         <div class="mt-3">
                             <hr>
-                            <div>
-                                <p><strong>친구1:</strong> 멋진 사진이네요!</p>
-                                <p><strong>친구2:</strong> 저도 가보고 싶어요!</p>
+                            <div id="commentList">
+
                             </div>
 
-                            <!-- Comment input -->
+                            <!-- 댓글 입력 -->
                             <div class="mt-3">
-                                <input type="text" class="form-control" placeholder="댓글을 입력하세요...">
-                                <button class="btn btn-primary mt-2">댓글</button>
+                                <input type="text" id="postComment" class="form-control" placeholder="댓글을 입력하세요...">
+                                <button class="btn btn-primary mt-2" id="postCommentInsert" data-post-id="${post.no}">댓글</button>
                             </div>
                         </div>
                     </div>
@@ -205,6 +223,7 @@
 
         $('#postDelete').data('post-id', postId);
         $('#postUpdate').data('post-id', postId);
+        $('#postCommentInsert').data('post-id', postId);
 
         $.ajax({
             url: "/mypage/detail/" + postId,  // 서버로 AJAX 요청
@@ -214,6 +233,81 @@
                 $("#detailPostContent").text(response.postContent);
                 $("#detailCreatedDate").text(response.postCreatedDate);
                 $("#detailPostWriter").text(response.user.name);
+
+                // 서버에서 받은 댓글 데이터를 반복하면서 화면에 추가
+                const comments = response.postComment; // 서버에서 받은 댓글
+
+                console.log(comments)
+
+                $('#commentList').empty()
+
+                comments.forEach(function(comment) {
+                    const commentHTML = `
+                    <div class="comment-item">
+                       <div class="d-flex justify-content-between align-items-center">
+                            <p><strong>${comment.commentUserName}:</strong> ${comment.commentText}</p>
+                            <div class="comment-actions">
+                                <span>${comment.createdDate}</span>  <!-- 작성 시간 -->
+                                <button class="btn btn-outline-primary btn-sm ms-2">좋아요 (${comment.likes})</button>  <!-- 좋아요 버튼 -->
+                                <button class="btn btn-outline-secondary btn-sm ms-2" onclick="replyToComment(${comment.commentNo}, '${comment.commentUserName}')">답글 달기</button>  <!-- 답글 달기 버튼 -->
+
+                                <!-- 댓글 작성자 본인일 때 삭제, 남일 때 신고 버튼 표시 -->
+                                ${comment.isOwner ?
+                                    `<button class="btn btn-outline-danger btn-sm ms-2" onclick="deleteComment(${comment.commentNo})">삭제</button>` :
+                                    `<button class="btn btn-outline-warning btn-sm ms-2" onclick="reportComment(${comment.commentNo})">신고</button>`
+                                }
+                            </div>
+                        </div>
+                    </div>
+                `;
+                    $('#commentList').append(commentHTML);
+                });
+
+                // 답글 달기
+                function replyToComment(commentNo, userName) {
+                    const commentInput = $('#postComment');
+                    commentInput.val(`@${userName} `); // 입력란에 @username 추가
+                    commentInput.focus(); // 입력란에 포커스
+                }
+
+                // 댓글 삭제
+                function deleteComment(commentNo) {
+                    if (confirm("정말로 이 댓글을 삭제하시겠습니까?")) {
+                        // AJAX로 댓글 삭제 요청 보내기
+                        $.ajax({
+                            url: `/delete-comment/${commentNo}`,
+                            method: 'DELETE',
+                            success: function(response) {
+                                alert("댓글이 삭제되었습니다.");
+                                // 댓글 목록을 새로 고침
+                                loadComments();
+                            },
+                            error: function() {
+                                alert("댓글 삭제에 실패했습니다.");
+                            }
+                        });
+                    }
+                }
+
+                // 댓글 신고
+                function reportComment(commentNo) {
+                    if (confirm("이 댓글을 신고하시겠습니까?")) {
+                        // 신고 처리 로직
+                        $.ajax({
+                            url: `/report-comment/${commentNo}`,
+                            method: 'POST',
+                            success: function(response) {
+                                alert("댓글이 신고되었습니다.");
+                            },
+                            error: function() {
+                                alert("댓글 신고에 실패했습니다.");
+                            }
+                        });
+                    }
+                }
+
+
+
 
                 // 이미지 슬라이드 구성
 
@@ -338,6 +432,56 @@
             }
         })
     });
+
+    // 댓글 작성 함수
+    $(document).on('click', '#postCommentInsert', function (){
+        let postComment = $('#postComment').val(); // 입력된 댓글의 값
+        let postId = $(this).data('post-id'); // 클릭된 버튼의 data-post-id값
+        let userNo = 23;
+
+        // 댓글 내용이 비어있는지 확인
+        if (!postComment.trim()){
+            alert("댓글 내용을 입력해주세요");
+            return;
+        }
+
+        let jsonData = {
+          postComment : postComment,
+          postId : postId,
+          userNo : userNo
+        };
+
+        $.ajax({
+            url: 'mypage/detail/comment',
+            type: 'POST',
+            data: JSON.stringify(jsonData), // JSON으로 변환하여 전송
+            dataType: 'json',
+            contentType: 'application/json', // JSON 형식으로 설정
+            success: function (response){
+                console.log("댓글 작성에 성공하셨습니다");
+                console.log("서버 응답:", response);
+
+                // 서버에서 받은 userName과 commentText
+                const userName = response.userName;  // 서버에서 받은 유저 이름
+                const commentText = response.commentText;  // 서버에서 받은 댓글 텍스트
+
+                // 동적으로 댓글 추가
+                const newCommentHtml = `
+                <p><strong>\${userName}:</strong> \${commentText}</p>
+            `;
+
+                // 기존 댓글 목록에 추가
+                $('#postCommentInsert').closest('.mt-3').prev().append(newCommentHtml);
+
+                // 입력 필드 초기화
+                $('#postComment').val('');
+
+            },
+            error: function (xhr, status, error){
+                console.log("댓글 작성 실패", error);
+            }
+        })
+    })
 
     // 게시글 수정 함수
     function updatePost(postId) {

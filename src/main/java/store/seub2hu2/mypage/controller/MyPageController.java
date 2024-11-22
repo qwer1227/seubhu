@@ -16,6 +16,7 @@ public class MyPageController {
     @Autowired
     PostService postService;
 
+    // URL localhost/mypage 입력 시 유저의 No를 활용해 그 유저의 페이지를 보여줌
     @GetMapping("")
     public String myPageList(Model model) {
         int userNo = 1;
@@ -25,14 +26,14 @@ public class MyPageController {
         return "mypage/publicpage";
     }
 
-    @GetMapping("/public/detail")
-    public String detail(int no, Model model) {
-        Post post = postService.getPostDetail(102);
-        System.out.println(post.getImages());
-        model.addAttribute(post);
-
-        return "mypage/detail";
-    }
+//    @GetMapping("/public/detail")
+//    public String detail(int no, Model model) {
+//        Post post = postService.getPostDetail(102);
+//        System.out.println(post.getImages());
+//        model.addAttribute(post);
+//
+//        return "mypage/detail";
+//    }
 
 //    @GetMapping("/test")
 //    public String test(Model model){

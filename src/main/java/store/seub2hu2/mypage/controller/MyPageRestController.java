@@ -4,11 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import store.seub2hu2.mypage.dto.CommentRequest;
 import store.seub2hu2.mypage.dto.ImageDeleteRequest;
+import store.seub2hu2.mypage.service.FileUploadService;
 import store.seub2hu2.mypage.service.PostService;
 import store.seub2hu2.mypage.vo.Post;
+import store.seub2hu2.user.service.UserService;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -18,6 +22,38 @@ public class MyPageRestController {
 
     @Autowired
     private PostService postService;
+
+    @Autowired
+    private FileUploadService fileUploadService;
+    @Autowired
+    private UserService userService;
+
+    @PostMapping("/public/insert")
+    public ResponseEntity<Map<String, Object>> insertPost(@RequestParam("content") String postContent,
+                                                          @RequestParam("thumbnailImage") String thumb,
+                                                          @RequestParam("files") List<MultipartFile> files) {
+        try {
+            // 1. 게시글 생성
+            Post post = new Post();
+            post.setPostContent(postContent);
+            post.setThumbnail(thumb);
+            int postNo = postService.insertPost(post);  // 게시글 생성 후 postNo 반환
+            post.setNo(postNo);
+
+            // 2. 파일 업로드 및 이미지 연결
+            fileUploadService.saveFile(files, postNo,thumb);  // postNo와 함께 이미지 업로드
+
+            // 3. 응답 반환
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "포스트 생성 완료");
+            response.put("PostNo", postNo);
+            response.put("thumb", thumb);
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("message", "포스트 생성 실패: " + e.getMessage()));
+        }
+    }
 
     @GetMapping("/detail/{no}")
     public Post getPostdetail(@PathVariable("no") int no){
@@ -84,6 +120,29 @@ public class MyPageRestController {
         Map<String, Object> response = new HashMap<>();
         response.put("message", "삭제성공");
         
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/detail/comment")
+    public ResponseEntity<Map<String,Object>> addComment(@RequestBody CommentRequest request){
+
+        int postId = request.getPostId();
+        String commentText = request.getPostComment();
+        int userNo = request.getUserNo();
+
+        String userName = postService.getUserNameByUserNo(userNo);
+
+        postService.commentInsert(postId,userNo,commentText);
+
+        Map<String, Object> response = new HashMap<>();
+
+        response.put("message", "댓글성공");
+        response.put("postId", postId);
+        response.put("userNo", userNo);
+        response.put("userName", userName);
+        response.put("commentText", commentText);
+
+
         return ResponseEntity.ok(response);
     }
 
