@@ -93,7 +93,7 @@
         <%--      </c:if>--%>
       </div>
       <div>
-        <button class="btn btn-outline-primary" id="likeButton" onclick="likeButton()">
+        <button class="btn btn-outline-primary" id="likeButton" onclick="likeButton(${board.no})">
           <i id="likeIcon" class="bi bi-hand-thumbs-up"></i>
         </button>
         <a type="button" href="main" class="btn btn-secondary">목록</a>
@@ -267,21 +267,21 @@
         }
     }
 
-    function likeButton(likeCnt) {
+    function likeButton(boardNo) {
         let likeIcon = document.getElementById("likeIcon");
-        let updateLikeCnt;
         
+        let likeCnt = 0;
         if (likeIcon.classList.contains('bi-hand-thumbs-up')) {
             likeIcon.classList.remove('bi-hand-thumbs-up');
             likeIcon.classList.add('bi-hand-thumbs-up-fill');
-            updateLikeCnt = likeCnt + 1;
+            likeCnt = +1;
         } else {
             likeIcon.classList.remove('bi-hand-thumbs-up-fill');
             likeIcon.classList.add('bi-hand-thumbs-up');
-            updateLikeCnt = likeCnt - 1;
+            likeCnt = -1;
         }
         
-        window.location.href = `update-like?no=\${boardNo}&likeCnt=\${updateLikeCnt}`;
+        window.location.href = `update-like?no=\${boardNo}&likeCnt=\${likeCnt}`;
     }
 
     /* 댓글&답글 입력 폼이 클릭한 버튼 바로 아래 위치하도록 처리 */
