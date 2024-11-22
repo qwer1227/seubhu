@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="store.seub2hu2.lesson.mapper.PayMapper">
+
+    <!-- public void insertPay(@Param("pay") Payment payment); -->
+    <!-- 결제 정보 등록 -->
+    <insert id="insertPay">
+        INSERT INTO PAYMENT
+        ( PAY_NO
+        , USER_NO
+        , PAY_METHOD
+        , PAY_AMOUNT
+        , PAY_PRICE
+        , PAY_TYPE)
+        VALUES ( #{pay.no}
+               , #{pay.userNo}
+               , #{pay.payMethod}
+               , #{pay.amount}
+               , #{pay.price}
+               , #{pay.payType})
+    </insert>
+</mapper>

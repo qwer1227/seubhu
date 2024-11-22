@@ -15,7 +15,7 @@ public class ReservationSearchCondition {
     private String searchKeyword;
     private String searchCondition;
     private String lessonStatus;
-    private String lessonCategory;
+    private String lessonSubject;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date startDate;
     @DateTimeFormat(pattern = "yyyy-MM-dd")

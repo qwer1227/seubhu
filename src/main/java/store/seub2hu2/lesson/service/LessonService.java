@@ -97,4 +97,8 @@ public class LessonService {
         // MyBatis 매퍼 호출
         return lessonMapper.getReservationByCondition(condition, userNo);
     }
+
+    public void LessonsReservation(LessonReservation lessonReservation) {
+
+    }
 }

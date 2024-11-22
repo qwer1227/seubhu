@@ -2,8 +2,10 @@ package store.seub2hu2.mypage.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.web.multipart.MultipartFile;
+import store.seub2hu2.mypage.dto.CommentRequest;
 import store.seub2hu2.mypage.vo.Post;
+import store.seub2hu2.mypage.vo.PostComment;
+import store.seub2hu2.user.vo.User;
 
 import java.util.List;
 import java.util.Map;
@@ -17,5 +19,8 @@ public interface PostMapper {
     int insertPostImages(List<Map<String, Object>> images);
     int updatePost(@Param("post") Post post);
     int deletePost(@Param("no") int postNo);
-    int deletePostImagesByPostNo(@Param("no") int postNo, @Param("files")MultipartFile[] files);
+    int deletePostImagesByPostNo(@Param("no") int imageNo);
+    int insertComment(@Param("comment") CommentRequest commentRequest);
+    // 사용자 ID로 사용자 조회
+    String findByUserNo(@Param("no") int userNo);
 }
