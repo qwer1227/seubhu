@@ -43,6 +43,7 @@
     <select id="getReviewImagesByNo" resultType="store.seub2hu2.course.vo.ReviewImage">
         select i.img_no as no
              , i.img_name as name
+             , r.review_no as reviewNo
         from COURSE_REVIEWS r
         left join COURSE_REVIEW_IMGS i on r.review_no = i.review_no
         where r.review_no = #{no}
@@ -77,6 +78,10 @@
             , review_no)
         values
             (#{reviewImage.name}
-            , #{reviewImage.review.no})
+            , #{reviewImage.reviewNo})
+
+        <selectKey keyProperty="reviewImage.no" resultType="int" keyColumn="img_no" order="AFTER">
+            select last_insert_id()
+        </selectKey>
     </insert>
 </mapper>
