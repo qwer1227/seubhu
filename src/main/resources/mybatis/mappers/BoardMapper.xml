@@ -130,18 +130,19 @@
     where board_no = #{board.no}
   </update>
 
-  <!-- void updateBoardViewCnt(@Param("board") Board board); -->
-  <update id="updateBoardViewCnt">
+  <!-- void updateBoardCnt(@Param("board") Board board); -->
+  <update id="updateBoardCnt">
     update
         BOARDS
     set
         board_cnt = #{board.viewCnt}
+        , board_like = #{board.like}
     where board_no = #{board.no}
   </update>
 
   <!--  Board getBoardDetailByNo(@Param("no") int no); -->
   <select id="getBoardDetailByNo" resultType="store.seub2hu2.community.vo.Board" >
-    select b.board_no                   as no
+    select b.board_no            as no
      , b.board_cat_name          as catName
      , u.user_nickname           as "user.nickname"
      , b.board_title             as title
@@ -156,14 +157,11 @@
      , b.is_keep                 as `keep`
      , b.is_report               as report
      , b.is_hashtag              as hashtag
---      , bu.is_deleted             as "uploadFile.deleted"
     from
       BOARDS b join USERS u
     on b.user_nickname = u.user_nickname
       join BOARD_CATEGORIES c
       on b.board_cat_name = c.board_cat_name
---       join BOARD_UPLOADFILES bu
---       on b.board_no = bu.board_no
     where
       b.is_deleted = 'N'
       and b.board_no = #{no}

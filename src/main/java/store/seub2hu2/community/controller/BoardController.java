@@ -156,7 +156,7 @@ public class BoardController {
         return mav;
     }
 
-    @GetMapping("download")
+    @GetMapping("/download")
     public ResponseEntity<Resource> downloadFile(int boardNo) throws Exception{
         Board board = boardService.getBoardDetail(boardNo);
 
@@ -172,7 +172,7 @@ public class BoardController {
                 .body(resource);
     }
 
-    @GetMapping("add-reply")
+    @GetMapping("/add-reply")
 //    @PreAuthorize("isAuthenticated()")
     public String addReply(ReplyForm form){
 //            , @AuthenticationPrincipal LoginUser loginUser) {
@@ -181,14 +181,14 @@ public class BoardController {
         return "redirect:detail?no=" + form.getBoardNo();
     }
 
-    @PostMapping("add-comment")
+    @PostMapping("/add-comment")
     public String addComment(ReplyForm form){
         replyService.addNewComment(form, 11);
 
         return "redirect:detail?no=" + form.getBoardNo();
     }
 
-    @PostMapping("modify-reply")
+    @PostMapping("/modify-reply")
     public String modifyReply(@RequestParam("replyNo") int replyNo,
                               @RequestParam("boardNo") int boardNo,
                               @RequestParam("content") String replyContent){
@@ -203,7 +203,7 @@ public class BoardController {
         return "redirect:detail?no=" + form.getBoardNo();
     }
 
-    @GetMapping("delete-reply")
+    @GetMapping("/delete-reply")
     public String deleteReply(@RequestParam("rno") int replyNo,
                               @RequestParam("bno") int boardNo){
         ReplyForm form = new ReplyForm();
@@ -212,5 +212,12 @@ public class BoardController {
         replyService.deleteReply(replyNo);
 
         return "redirect:detail?no=" + form.getBoardNo();
+    }
+
+    @GetMapping("/update-like")
+    public String updateBoardLikeCnt(@RequestParam("no") int boardNo
+                                    ,@RequestParam("likeCnt") int likeCnt){
+        boardService.updateBoardLikeCnt(boardNo, likeCnt);
+        return "redirect:detail?no=" + boardNo;
     }
 }

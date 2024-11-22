@@ -50,9 +50,8 @@
         ${board.title}
       </div>
       <div class="ml-auto">
-        <button class="btn btn-outline-success btn-lg">
-          <i class="bi bi-bookmark"></i>
-          <i class="bi bi-bookmark-fill"></i>
+        <button class="btn btn-outline-success btn-lg" id="scrapButton" onclick="scrapButton()">
+          <i id="scrapIcon" class="bi bi-bookmark"></i>
         </button>
       </div>
     </div>
@@ -94,9 +93,8 @@
         <%--      </c:if>--%>
       </div>
       <div>
-        <button class="btn btn-outline-primary">
-          <i class="bi bi-hand-thumbs-up"></i>
-          <i class="bi bi-hand-thumbs-up-fill"></i>
+        <button class="btn btn-outline-primary" id="likeButton" onclick="likeButton()">
+          <i id="likeIcon" class="bi bi-hand-thumbs-up"></i>
         </button>
         <a type="button" href="main" class="btn btn-secondary">목록</a>
       </div>
@@ -255,6 +253,35 @@
         if (result) {
             window.location.href = "delete?no=" + boardNo;
         }
+    }
+    
+    function scrapButton() {
+        let scrapIcon = document.getElementById("scrapIcon");
+
+        if (scrapIcon.classList.contains('bi bi-bookmark')) {
+            scrapIcon.classList.remove('bi bi-bookmark');
+            scrapIcon.classList.add('bi bi-bookmark-fill');
+        } else {
+            scrapIcon.classList.remove('bi bi-bookmark-fill');
+            scrapIcon.classList.add('bi bi-bookmark');
+        }
+    }
+
+    function likeButton(likeCnt) {
+        let likeIcon = document.getElementById("likeIcon");
+        let updateLikeCnt;
+        
+        if (likeIcon.classList.contains('bi-hand-thumbs-up')) {
+            likeIcon.classList.remove('bi-hand-thumbs-up');
+            likeIcon.classList.add('bi-hand-thumbs-up-fill');
+            updateLikeCnt = likeCnt + 1;
+        } else {
+            likeIcon.classList.remove('bi-hand-thumbs-up-fill');
+            likeIcon.classList.add('bi-hand-thumbs-up');
+            updateLikeCnt = likeCnt - 1;
+        }
+        
+        window.location.href = `update-like?no=\${boardNo}&likeCnt=\${updateLikeCnt}`;
     }
 
     /* 댓글&답글 입력 폼이 클릭한 버튼 바로 아래 위치하도록 처리 */

@@ -106,7 +106,7 @@ public class BoardService {
 
         board.setViewCnt(board.getViewCnt() + 1);
         board.setUploadFile(uploadFile);
-        boardMapper.updateBoardViewCnt(board);
+        boardMapper.updateBoardCnt(board);
         return board;
     }
 
@@ -161,4 +161,11 @@ public class BoardService {
         boardUploadMapper.updateBoardFile(uploadFile);
     }
 
+    public void updateBoardLikeCnt(int boardNo, int cnt){
+        Board board = boardMapper.getBoardDetailByNo(boardNo);
+        board.setNo(boardNo);
+        board.setLike(cnt);
+
+        boardMapper.updateBoardCnt(board);
+    }
 }
