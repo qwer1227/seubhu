@@ -4,19 +4,15 @@
 <html lang="ko">
 <head>
     <%@include file="/WEB-INF/views/common/common.jsp" %>
-    <style>
-        body {
-            background: #fafafa;
-        }
-    </style>
+
 </head>
 <body>
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
-<div class="container-xxl bg-white" id="wrap">
+<div class="container-xxl" id="wrap">
     <div class="row mb-5">
-        <h1 class="text-center mb-5 bg-black text-white">${lesson.title}</h1>
         <div class="col-2"></div>
-        <div class="col-3">
+        <div class="col">
+            <h1 class="text-center mb-5 bg-black text-white">${lesson.title}</h1>
             <a href="/lesson" class="btn btn-dark" style="text-decoration: none"><strong>일정보기</strong></a>
         </div>
         <div class="col-2"></div>
@@ -25,34 +21,30 @@
         <div class="col-4 border">
             <c:if test="${not empty images['THUMBNAIL']}">
                 <img src="${pageContext.request.contextPath}/resources/lessonImg/${images['THUMBNAIL']}"
-                     class="img-fluid" alt="Thumbnail" style="width: 100%; height: 300px;"/>
+                     class="img-fluid" alt="Thumbnail" style="width: 100%; height: 500px;"/>
             </c:if>
         </div>
         <div class="col-4">
-            <table class="table text-start">
+            <table class="table">
+                <colgroup>
+                    <col width="20%">
+                    <col width="*%">
+                </colgroup>
                 <tr>
-                    <td class="badge bg-info">신규</td>
-                </tr>
-                <tr class="m-3">
+                    <th>레슨명</th>
                     <td>${lesson.title}</td>
                 </tr>
                 <tr>
-                    <td>강사 명 : ${lesson.lecturer.username}</td>
+                    <th>강사명</th>
+                    <td>${lesson.lecturer.name}</td>
                 </tr>
                 <tr>
-                    <td>장소 :중앙HTA</td>
+                    <th>레슨날짜</th>
+                    <td><fmt:formatDate value="${lesson.start}" pattern="yyyy-MM-dd"></fmt:formatDate></td>
                 </tr>
                 <tr>
-                    <td colspan="2">클래스 일정 :중앙HTA</td>
-                </tr>
-                <tr>
-                    <td colspan="2">클래스 요일 :목요일</td>
-                </tr>
-                <tr>
-                    <td colspan="2">클래스 시간 :09:00</td>
-                </tr>
-                <tr>
-                    <td colspan="2">신청인원 :${lesson.participant}/5</td>
+                    <th>참여인원</th>
+                    <td>1/5</td>
                 </tr>
             </table>
         </div>
@@ -68,7 +60,16 @@
     <div class="row text-end mb-3">
         <div class="col-2"></div>
         <div class="col border-bottom border-dark border-2 pb-3">
-            <button class="btn btn-primary" id="pay">수강신청</button>
+            <form name="lessonDto" method="get" action="/order/pay/form">
+                <input type="hidden" name="lessonNo" value="${lessonNo}">
+                <input type="hidden" name="title" value="${lesson.title}">
+                <input type="hidden" name="price" value="${lesson.price}">
+                <input type="hidden" name="lecturerName" value="${lesson.lecturer.name}">
+                <fmt:formatDate value="${lesson.start}" pattern="yyyy-MM-dd" var="startDate"/>
+                <input type="hidden" name="startDate" value="${startDate}">
+                <input type="hidden" name="subject" value="${lesson.subject}">
+                <button type="submit" class="btn btn-primary">수강신청</button>
+            </form>
         </div>
         <div class="col-2"></div>
     </div>
@@ -81,9 +82,7 @@
         <div class="col-2"></div>
         <div class="col text-center border-bottom border-dark border-2 pb-3 mb-3 ">
             <p>
-                비고 시도합니다. 저에서도 키보드 탐색은 영향을 받지 않습니다. 따라서 확실하게 하려면 aria-disabled="true" 외에도 이러한 링크에 tabindex="-1" 속성을 포함하여
-                키보드
-                포커스를 받지 않도록 하고 사용자 지정 JavaScript를 사용하여 해당 기능을 완전히 비활성화해야
+                ${lesson.plan}
             </p>
             <p>
                 <c:if test="${not empty images.MAIN_IMAGE}">
@@ -104,26 +103,7 @@
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script>
-    document.getElementById("pay").addEventListener("click", function () {
-        const popupWidth = 600;
-        const popupHeight = 800;
-        const popupLeft = (window.screen.width / 2) - (popupWidth / 2);
-        const popupTop = (window.screen.height / 2) - (popupHeight / 2);
 
-        const popupWindow = window.open(
-            '/payments/checkout',
-            '결제 팝업',
-            `width=${popupWidth},height=${popupHeight},top=${popupTop},left=${popupLeft},resizable=no,scrollbars=yes`
-        );
-
-        if (popupWindow) {
-            popupWindow.onload = function() {
-                popupWindow.resizeTo(popupWidth, popupHeight); // 로드 후 크기 조정
-                popupWindow.moveTo(popupLeft, popupTop); // 위치 조정
-            };
-            popupWindow.focus();
-        }
-    });
 
 </script>
 </body>

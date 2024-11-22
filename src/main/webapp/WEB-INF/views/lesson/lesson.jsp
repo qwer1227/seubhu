@@ -5,27 +5,20 @@
 <html lang="ko">
 <head>
     <%@include file="/WEB-INF/views/common/common.jsp" %>
-    <script src="https:/u/ajax.googleapis.com/ajax/libs/jqery/3.7.1/jquery.min.js"></script>
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
     <script src="https://cdn.jsdelivr.net/npm/moment@2.30.1/moment.min.js"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var calendarEl = document.getElementById('calendar');
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth'
-            });
-            calendar.render();
-        });
-    </script>
+
     <style>
         body {
             background-color: #fafafa;
         }
+
         .fc-day a {
-            color:black;
+            color: black;
             text-decoration: none;
         }
+
         .fc-day-sun a {
             color: red;
             text-decoration: none;
@@ -45,12 +38,32 @@
         <h2>레슨 일정 보기</h2>
     </div>
     <div class="row mb-3">
-        <div id='calendar'></div>
-    </div>
-    <div class="row">
-        <div class="col text-end">
-            <a href="/lesson/form" class="btn bg-black text-white">레슨 모집글 작성</a>
+        <div class="col-2">
+            <label for="subject">과정 선택:</label>
+            <select id="subject" class="form-select">
+                <option value="전체">전체</option>
+                <option value="호흡">호흡</option>
+                <option value="자세">자세</option>
+                <option value="운동">운동</option>
+            </select>
         </div>
+        <div class="col d-flex mt-2">
+            <div class="m-3 d-flex">
+                <div style="width: 30px; height:30px; border-radius: 5px; background: #AEDFF7"></div>
+                <span class="p-1">호흡</span>
+            </div>
+            <div class="m-3 d-flex">
+                <div style="width: 30px; height:30px; border-radius: 5px; background: #A8D5BA"></div>
+                <span class="p-1">자세</span>
+            </div>
+            <div class="m-3 d-flex">
+                <div style="width: 30px; height:30px; border-radius: 5px; background: #D9C8F2"></div>
+                <span class="p-1">운동</span>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div id='calendar'></div>
     </div>
 </div>
 
@@ -65,13 +78,14 @@
             headerToolbar: {
                 left: 'prev,next,today',
                 center: 'title',
-                right: 'dayGridMonth'
+                right: 'dayGridMonth,dayGridWeek,timeGridWeek'
             },
             buttonText: {
                 today: '현재날짜',
                 month: '월별',
-                week: '주',
-                day: '일',
+                week: '주별',
+                timeGridWeek: '주별시간',
+                day: '일별',
                 list: '목록',
             },
             views: {
@@ -79,6 +93,19 @@
                     titleFormat: {
                         year: 'numeric',
                         month: 'numeric',
+                    }
+                },
+                dayGridWeek: {
+                    titleFormat: {
+                        year: 'numeric',
+                        month: 'numeric',
+                    }
+                },
+                timeGridWeek: {
+                    titleFormat: {
+                        year: 'numeric',
+                        month: 'numeric',
+                        day: 'numeric',
                     }
                 }
             },
@@ -96,48 +123,63 @@
             },
         });
 
-        // Function to navigate to the detailed page with the clicked event's lessonNo
-        function lessonDetail(lessonNo) {
-            if (lessonNo !== undefined && lessonNo !== null && lessonNo !== "") {  // Validate lessonNo
-                console.log("LessonNo:", lessonNo); // Log to ensure lessonNo is being passed as int
-                location.href =(`/lesson/detail?lessonNo=`+lessonNo);
-            } else {
-                console.error("Invalid lessonNo");
-            }
-        }
 
-        // Function to fetch event data from the database
         function refreshEvents(info, successCallback, failureCallback) {
             let start = moment(info.start).format("YYYY-MM-DD");
             let end = moment(info.end).format("YYYY-MM-DD");
-
+            let subject = $('#subject').val(); // 선택된 과정 필터 값
 
             let param = {
                 start: start,
-                end: end
+                end: end,
+                subject: subject // subject 값을 추가
             };
 
             $.ajax({
                 type: 'get',
                 url: '/lesson/list',  // Server API endpoint
-                data: param,
+                data: param,         // param 객체를 data로 전달
                 dataType: 'json'
             })
                 .done(function (events) {
-                    console.log(events); // Log the response to check the lessonNo
-                    var formattedEvents = events.map(event => ({
-                        title: event.title,
-                        start: event.start,
-                        end: event.end,
-                        textColor: 'white',
-                        borderColor: 'black',
-                        backgroundColor: 'black',
-                        display: 'block',
-                        extendedProps: {
-                            lessonNo: event.lessonNo,  // The lessonNo received from the database
-                        },
+                    console.log("Fetched Events:", events); // 데이터를 디버깅용으로 출력
+                    var formattedEvents = events.map(event => {
+                        // 조건별 색상 매핑
+                        const colorMap = {
+                            '호흡': 'green',
+                            '자세': 'blue',
+                            '운동': 'orange'
+                        };
+                        var backgroundColor = 'black'
+                        console.log(event.subject)
+                        if (event.subject == '호흡') {
+                            backgroundColor = '#AEDFF7';
+                        }
+                        if (event.subject == '자세') {
+                            backgroundColor = '#A8D5BA';
+                        }
+                        if (event.subject == '운동') {
+                            backgroundColor = '#D9C8F2';
+                        }
+                        const borderColor = backgroundColor; // 테두리 색상도 동일하게 설정
 
-                    }));
+                        return {
+                            title: event.title,
+                            start: event.start,
+                            end: event.end,
+                            textColor: 'black', // 텍스트 색상
+                            borderColor: borderColor,
+                            backgroundColor: backgroundColor, // 배경색
+                            display: 'block',
+                            extendedProps: {
+                                lessonNo: event.lessonNo,  // 추가 정보
+                                subject: event.subject // subject 포함
+                            },
+                        };
+                    });
+                    console.log("Formatted Events:", formattedEvents);
+
+                    // 캘린더에 렌더링할 이벤트 데이터 전달
                     successCallback(formattedEvents);
                 })
                 .fail(function () {
@@ -146,7 +188,23 @@
                 });
         }
 
+
+        function lessonDetail(lessonNo) {
+            if (lessonNo !== undefined && lessonNo !== null && lessonNo !== "") {  // Validate lessonNo
+                console.log("LessonNo:", lessonNo); // Log to ensure lessonNo is being passed as int
+                location.href = ("/lesson/detail?lessonNo=" + lessonNo);
+            } else {
+                console.error("Invalid lessonNo");
+            }
+        }
+
         calendar.render();
+
+
+        $(document).on('change', '#subject', function () {
+            console.log("Subject changed:", $('#subject').val());
+            calendar.refetchEvents();
+        });
     });
 </script>
 </body>

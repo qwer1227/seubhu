@@ -52,55 +52,55 @@ public class AdminController {
         return "admin/lesson-register-form";
     }
 
-    @PostMapping("/lesson-register-form")
-    public String form(@ModelAttribute("form") LessonRegisterForm form, Model model) throws IOException {
-
-
-        // Lesson 객체 생성
-        int lessonNo = lessonService.getMostLatelyLessonNo();
-
-        Lesson lesson = new Lesson();
-        lesson.setLessonNo(lessonNo);
-        lesson.setTitle(form.getTitle());
-        lesson.setPrice(form.getPrice());
-        User user = new User();
-        user.setNo(form.getLecturerNo()); // Or dynamically assign user ID
-        lesson.setLecturer(user);
-        lesson.setSubject(form.getSubject());
-        lesson.setPlan(form.getPlan());
-
-        // startDate를 원하는 형식으로 변환
-        Date startDate = form.getDate();
-        if (startDate != null) {
-            // SimpleDateFormat을 사용해 'yyyy-MM-dd' 형식으로 변환
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            String formattedStartDate = sdf.format(startDate);
-
-            // 문자열을 다시 Date 객체로 변환하여 lesson에 설정
-            try {
-                Date parsedStartDate = sdf.parse(formattedStartDate);
-                lesson.setStartDate(parsedStartDate);
-            } catch (Exception e) {
-                e.printStackTrace();
-                // 예외 처리 로직
-            }
-        }
-
-        lesson.setStartDate(startDate);
-
-
-
-        System.out.println("lesson: "+lesson);
-        // Get the uploaded file
-        MultipartFile thumbnail = form.getThumbnail();
-        MultipartFile mainImage = form.getMainImage();
-
-        lessonService.registerLesson(lesson, form);
-
-        // Redirect after successful form submission
-        return "redirect:/admin/lessonlist";
-
-    }
+//    @PostMapping("/lesson-register-form")
+//    public String form(@ModelAttribute("form") LessonRegisterForm form, Model model) throws IOException {
+//
+//
+//        // Lesson 객체 생성
+//        int lessonNo = lessonService.getMostLatelyLessonNo();
+//
+//        Lesson lesson = new Lesson();
+//        lesson.setLessonNo(lessonNo);
+//        lesson.setTitle(form.getTitle());
+//        lesson.setPrice(form.getPrice());
+//        User user = new User();
+//        user.setNo(form.getLecturerNo()); // Or dynamically assign user ID
+//        lesson.setLecturer(user);
+//        lesson.setSubject(form.getSubject());
+//        lesson.setPlan(form.getPlan());
+//
+//        // startDate를 원하는 형식으로 변환
+//        Date startDate = form.getDate();
+//        if (startDate != null) {
+//            // SimpleDateFormat을 사용해 'yyyy-MM-dd' 형식으로 변환
+//            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//            String formattedStartDate = sdf.format(startDate);
+//
+//            // 문자열을 다시 Date 객체로 변환하여 lesson에 설정
+//            try {
+//                Date parsedStartDate = sdf.parse(formattedStartDate);
+//                lesson.setStartDate(parsedStartDate);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                // 예외 처리 로직
+//            }
+//        }
+//
+//        lesson.setStartDate(startDate);
+//
+//
+//
+//        System.out.println("lesson: "+lesson);
+//        // Get the uploaded file
+//        MultipartFile thumbnail = form.getThumbnail();
+//        MultipartFile mainImage = form.getMainImage();
+//
+//        lessonService.registerLesson(lesson, form);
+//
+//        // Redirect after successful form submission
+//        return "redirect:/admin/lessonlist";
+//
+//    }
     @GetMapping("/lesson")
     public String lesson(@RequestParam(name = "opt", required = false) String opt,
                          @RequestParam(name = "day", required = false)

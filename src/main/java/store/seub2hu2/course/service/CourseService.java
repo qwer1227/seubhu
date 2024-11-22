@@ -10,22 +10,18 @@ import store.seub2hu2.course.mapper.CourseMapper;
 import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.course.vo.Review;
 import store.seub2hu2.course.vo.ReviewImage;
-import store.seub2hu2.security.LoginUser;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.FileUtils;
 import store.seub2hu2.util.ListDto;
 import store.seub2hu2.util.Pagination;
 
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 @Service
 @Transactional
 public class CourseService {
-    @Value("${upload.directory.course}")
-    private String saveDirectory;
-
     @Autowired
     private CourseMapper courseMapper;
 
@@ -49,69 +45,23 @@ public class CourseService {
         // 4. 조회범위에 맞는 데이터를 조회한다.
         List<Course> courses = courseMapper.getCourses(condition);
 
-
-        // 6. ListDto 객체에 화면에 표시할 데이터(코스 목록, 페이징처리정보)를 담고, 반환한다.
+        // 5. ListDto 객체에 화면에 표시할 데이터(코스 목록, 페이징처리정보)를 담고, 반환한다.
         ListDto<Course> dto = new ListDto<>(courses, pagination);
         return dto;
     }
 
     /**
      * 코스 번호로 코스 상세 정보를 가져온다.
-     * @param no 코스 번호
+     * @param courseNo 코스 번호
      * @return 코스 상세 정보
      */
-    public Course getCourseDetail(int no) {
+    public Course getCourseDetail(int courseNo) {
         // 1. 코스 번호로 코스의 상세 정보를 가져온다.
-        Course course = courseMapper.getCourseByNo(no);
+        Course course = courseMapper.getCourseByNo(courseNo);
 
-        // 2. 없는 코스 번호로 코스 상세 페이지 접속 시, 예외를 던진다.
+        // 2. 없는 코스 번호로 코스 상세 페이지 접속 시, 오류 페이지로 이동한다.
 
         // 3. 코스의 상세 정보를 반환한다.
         return course;
-    }
-
-    /**
-     * 입력한 리뷰 정보를 등록한다.
-     * @param form 입력한 리뷰 정보
-     * @param userNo 사용자 번호
-     * @return 입력한 리뷰 정보
-     */
-    public Review addNewReview(AddReviewForm form, int userNo) {
-        // 1. 등록할 리뷰 정보를 리뷰 객체에 저장한다.
-        Review review = new Review();
-        review.setTitle(form.getTitle());
-        review.setContent(form.getContent());
-
-        Course course = new Course();
-        course.setNo(form.getCourseNo());
-        review.setCourse(course);
-
-        User user = new User();
-        user.setNo(userNo);
-        review.setUser(user);
-
-        // 2. 입력한 리뷰를 테이블에 저장한다.
-        courseMapper.insertReview(review);
-
-        // 3. 첨부 파일을 지정된 경로에 저장하고, 테이블에 저장한다.
-        List<MultipartFile> multipartFiles = form.getFiles();
-        ReviewImage reviewImage = new ReviewImage();
-        if (!multipartFiles.isEmpty()) {
-            for (MultipartFile multipartFile : multipartFiles) {
-                String originalFilename = FileUtils.saveMultipartFile(multipartFile, saveDirectory);
-                String filename = System.currentTimeMillis() + originalFilename;
-                reviewImage.setName(filename);
-                courseMapper.insertReviewImage(reviewImage);
-            }
-        }
-
-        /* 입력한 리뷰 정보가 객체에 잘 저장되었는지 확인 */
-        System.out.println("리뷰 정보: " + review.getTitle() + ", " + review.getContent());
-        System.out.println("리뷰 작성자 번호: " + user.getNo());
-        System.out.println("코스 정보: " + review.getCourse().getNo());
-        System.out.println("첨부 이미지: " + reviewImage.getName());
-
-        // 4. 등록한 리뷰 정보를 반환한다.
-        return review;
     }
 }

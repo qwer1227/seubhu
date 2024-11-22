@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import store.seub2hu2.product.dto.ColorProdImgDto;
 import store.seub2hu2.product.dto.ProdDetailDto;
 import store.seub2hu2.product.dto.ProdListDto;
 import store.seub2hu2.product.mapper.ProductMapper;
@@ -21,9 +22,30 @@ public class ProductService {
     @Autowired
     ProductMapper productMapper;
 
+    /**
+     * 상품 번호에 따른 다양한 색 그리고 대표 이미지 조회하기
+     * @param no 상품 번호
+     * @return 다양한 색
+     */
+    public List<ColorProdImgDto> getProdImgByColorNo(int no) {
 
+        List<ColorProdImgDto> colorImgByNo = productMapper.getProdImgByColorNo(no);
+
+        return colorImgByNo;
+    }
+
+
+
+    /**
+     * 개별 상품 정보 조회
+     * @param no 상품 번호
+     * @return 상품 상세 정보
+     */
     public ProdDetailDto getProductByNo(int no) {
+
         ProdDetailDto prodDetailDto = productMapper.getProductByNo(no);
+
+        System.out.println("prodDetailDto"+prodDetailDto);
 
         return prodDetailDto;
     }

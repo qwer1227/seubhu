@@ -46,27 +46,27 @@
                                     </colgroup>
                                     <tr>
                                         <th>상품 이름</th>
-                                        <td colspan="3">남성 글리세린 21 블랙 (MEDIUM)</td>
+                                        <td colspan="3">${prodDetailDto.name}</td>
                                     </tr>
                                     <tr>
                                         <th>상품 가격</th>
-                                        <td colspan="3">199,000 원</td>
+                                        <td colspan="3"><fmt:formatNumber value="${prodDetailDto.price }"/> 원</td>
                                     </tr>
                                     <tr>
                                         <th>브랜드명</th>
-                                        <td>브룩스</td>
+                                        <td>${prodDetailDto.brand.name}</td>
                                         <th>카테고리</th>
-                                        <td>러닝화</td>
+                                        <td>${prodDetailDto.category.name}</td>
                                     </tr>
                                     <tr>
                                         <th>평점</th>
-                                        <td>4.8</td>
+                                        <td>${prodDetailDto.rating}</td>
                                         <th>조회수</th>
-                                        <td>10</td>
+                                        <td>${prodDetailDto.cnt}</td>
                                     </tr>
                                     <tr>
                                         <th>상품 설명</th>
-                                        <td colspan="3">최상의 부드러움과 최고의 편안함으로 러너들의 사랑을 받고 있는 브룩스의 시그니처 러닝화 </td>
+                                        <td colspan="3">${prodDetailDto.content}</td>
                                     </tr>
 
                                 </table>
@@ -80,14 +80,14 @@
                             <div class="card-header">
                                 <h4>상품 옵션 선택</h4>
                             </div>
-                            <div>색상</div>
+                            <div>색상을 선택하세요:</div>
                             <div class="card-body">
                                 <div class="mb-4">
-                                    <a href="detail"><img src="https://shop-phinf.pstatic.net/20221201_200/1669892701251cgqk2_JPEG/71028484951174905_616546595.jpg?type=m510" width="15%"></a>
-                                    <a href="detail"><img src="https://shop-phinf.pstatic.net/20221201_200/1669892701251cgqk2_JPEG/71028484951174905_616546595.jpg?type=m510" width="15%"></a>
-                                    <a href="detail"><img src="https://shop-phinf.pstatic.net/20221201_200/1669892701251cgqk2_JPEG/71028484951174905_616546595.jpg?type=m510" width="15%"></a>
-                                    <a href="detail"><img src="https://shop-phinf.pstatic.net/20221201_200/1669892701251cgqk2_JPEG/71028484951174905_616546595.jpg?type=m510" width="15%"></a>
-                                    <a href="detail"><img src="https://shop-phinf.pstatic.net/20221201_200/1669892701251cgqk2_JPEG/71028484951174905_616546595.jpg?type=m510" width="15%"></a>
+                                    <c:forEach var="p" items="${colorProdImgDto}">
+                                            <c:forEach var="im" items="${p.images}">
+                                                <a href="detail?no=${p.product.no}&colorNo=${p.no}"><img src="${im.url}" width=15%/></a>
+                                            </c:forEach>
+                                    </c:forEach>
                                 </div>
                                 <form method="post">
                                     <div class="mb-4">
@@ -251,6 +251,7 @@
     function openCommentFormModal() {
         commentFormModal.show();
     }
+
 </script>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
