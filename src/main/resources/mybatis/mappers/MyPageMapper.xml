@@ -23,30 +23,36 @@
             <id property="no" column="IMAGE_NO"/>
             <result property="imageUrl" column="IMAGE_URL"/>
         </collection>
+        <collection property="postComment" ofType="store.seub2hu2.mypage.vo.PostComment">
+            <id property="no" column="comment_no"/>
+            <result property="commentText" column="comment_text"/>
+            <result property="commentUserName" column="comment_user_name"/>
+        </collection>
     </resultMap>
 
 
     <select id="getPostByNo" resultMap="PostResultMap">
         SELECT
-            b.post_no,
-            b.thumbnail_image,
-            b.post_context,
-            b.post_deleted,
-            b.created_date,
+            p.post_no,
+            p.thumbnail_image,
+            p.post_context,
+            p.post_deleted,
+            p.created_date,
             u.user_no ,
             u.user_name,
             i.image_no,
-            i.image_url
+            i.image_url,
+            c.comment_no,
+            c.comment_text,
+            cu.user_name AS comment_user_name
         FROM
-            POSTS b,
-            USERS u,
-            POST_IMAGES i
+            POSTS p
+            LEFT JOIN USERS u ON p.user_no = u.user_no  -- 사용자 정보
+            LEFT JOIN POST_IMAGES i ON p.post_no = i.post_no  -- 이미지 정보
+            LEFT JOIN POST_COMMENTS c ON p.post_no = c.post_no  -- 댓글 정보
+            LEFT JOIN USERS cu ON c.user_no = cu.user_no  -- 댓글 작성자 정보
         WHERE
-            b.user_no = u.user_no
-          AND
-            b.post_no = i.post_no
-          AND
-            b.post_no = #{no}
+            p.post_no = #{no};
     </select>
 
     <!-- List<Post> getPostsByNo(@Param("no") int userNo); -->
@@ -122,12 +128,34 @@
             post_no = #{no}
     </update>
 
-    <!-- int deletePostImagesByPostNo(@Param("no") int postNo); -->
+    <!-- int deletePostImagesByPostNo(@Param("no") int imageNo); -->
 
     <delete id="deletePostImagesByPostNo">
         DELETE FROM POST_IMAGES
-        WHERE post_no = #{no}
+        WHERE image_no = #{no}
     </delete>
+
+    <!-- int insertComment(@Param("comment") CommentRequest commentRequest); -->
+
+    <insert id="insertComment" parameterType="store.seub2hu2.mypage.vo.PostComment">
+        insert into POST_COMMENTS(COMMENT_TEXT, CREATED_DATE, POST_NO, USER_NO, COMMENT_NO2)
+        VALUES
+            (#{comment.postComment}, now(), #{comment.postId}, #{comment.userNo}, 1)
+    </insert>
+
+    <!-- User findByUserNo(@Param("no") String userNo); -->
+
+    <select id="findByUserNo" resultType="String">
+        select
+            USER_NAME
+        from
+            USERS
+        where
+            USER_NO = #{no}
+    </select>
+
+
+
 
 
 </mapper>

@@ -22,13 +22,11 @@ public class Lesson {
     private int participant;
     private String plan;
     private String status;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date createdDate;
     private Date updatedDate;
-    private Date startDate;
-    private Date endDate;
     private User lecturer;
     private String filename;
-
 
 
     public String getOriginalFilename() {

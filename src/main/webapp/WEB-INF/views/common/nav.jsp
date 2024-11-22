@@ -50,7 +50,7 @@
                 <div class="divider" style="border-left: 1px solid #0e0d0d; margin: 0 7px;"></div>
                 <a class="nav-link" href="#">코스</a>
                 <div class="divider" style="border-left: 1px solid #0e0d0d; margin: 0 7px;"></div>
-                <a class="nav-link " href="#">레슨</a>
+                <a class="nav-link " href="/lesson">레슨</a>
                 <div class="divider" style="border-left: 1px solid #0e0d0d; margin: 0 7px;"></div>
                 <a class="nav-link " href="#">커뮤</a>
                 <div class="divider" style="border-left: 1px solid #0e0d0d; margin: 0 7px;"></div>

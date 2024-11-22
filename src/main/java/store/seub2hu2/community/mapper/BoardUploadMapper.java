@@ -11,7 +11,6 @@ public interface BoardUploadMapper {
 
     void insertBoardFile(@Param("uploadFile") UploadFile uploadFile);
     List<UploadFile> getBoardFiles();
-    UploadFile getBoardFileByBoardNo(int boardNo);
+    UploadFile getFileByBoardNo(int boardNo);
     void updateBoardFile(UploadFile uploadFile);
-    void deleteBoardFile(int boardNo);
 }

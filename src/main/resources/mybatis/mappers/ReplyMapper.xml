@@ -6,7 +6,9 @@
         update BOARD_REPLIES
         set
             prev_reply_no = #{reply.prevNo}
+            , reply_content = #{reply.content}
             , is_deleted = #{reply.deleted}
+            , reply_updated_date = sysdate()
         where
             reply_no = #{reply.no}
   </update>
@@ -74,13 +76,15 @@
         join USERS u
             on br.user_no = u.user_no
     where
-        br.reply_no = #{reply.no}
+        br.reply_no = #{no}
+        and br.is_deleted = 'N'
   </select>
 
   <!-- void deleteReplyByNo(@Param("no") int replyNo); -->
   <update id="deleteReplyByNo" parameterType="int">
-    update BOARDS_REPLIES
+    update BOARD_REPLIES
     set is_deleted = 'Y'
-    where reply_no = #{reply.no}
+    where reply_no = #{no}
+
   </update>
 </mapper>

@@ -20,5 +20,6 @@ public class Post {
     private char postDeleted;
     private Date postCreatedDate;
     private User user;
+    private List<PostComment> postComment;
     private List<PostImage> images;
 }

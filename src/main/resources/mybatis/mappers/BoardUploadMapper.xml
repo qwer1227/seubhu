@@ -22,10 +22,10 @@
   <select id="getBoardFiles" resultType="store.seub2hu2.community.vo.UploadFile">
     select
         file_no                 as no
-        , board_no              as "board.no"
+        , board_no              as boardNo
         , file_original_name    as originalName
         , file_save_name        as saveName
-        , file_path             as savePath
+        , is_deleted            as deleted
         , file_created_date     as createdDate
     from
         BOARD_CATEGOIES
@@ -34,33 +34,21 @@
     order by file_no desc
   </select>
 
-  <!-- UploadFile getBoardFileByBoardNo(int boardNo); -->
-  <select id="getBoardFileByBoardNo" parameterType="int" resultType="store.seub2hu2.community.vo.UploadFile">
-    with RankedFiles as (
-      select
-        board_no
-         , file_no
-         , file_original_name
-         , file_save_name
-         , file_path
-         , file_created_date
-         , row_number() over (partition by board_no order by file_created_date desc) as rank
-      from
-        BOARD_UPLOADFILES
-    )
+  <!-- UploadFile getFileByBoardNo(int boardNo); -->
+  <select id="getFileByBoardNo" parameterType="int" resultType="store.seub2hu2.community.vo.UploadFile">
     select
-        b.board_no
-        , rf.file_no
-        , rf.file_original_name
-        , rf.file_save_name
-        , rf.file_path
-        , rf.file_created_date
+      b.board_no                        as boardNo
+         , bu.file_no                   as no
+         , bu.file_original_name        as originalName
+         , bu.file_save_name            as saveName
+         , bu.is_deleted                as deleted
+         , bu.file_created_date         as createdDate
     from
-        BOARDS b join RankedFiles rf
-            on b.board_no = rf.board_no
+      BOARDS b join BOARD_UPLOADFILES bu
+                    on b.board_no = bu.board_no
     where
-        b.board_no = #{uploadFile.board.no}
-        and rf.rank = 1
+      b.board_no = #{uploadFile.board.no}
+        and bu.is_deleted = 'N'
   </select>
 
   <!-- void updateBoardFile(UploadFile uploadFile); -->
@@ -68,21 +56,9 @@
     update
         BOARD_UPLOADFILES
     set
-        file_original_name = #{uploadFile.originalName}
-        , file_save_name = #{uploadFile.saveName}
-        , file_path = #{uploadFile.savePath}
+        is_deleted = #{deleted}
+        , file_updated_date = sysdate()
     where
-        file_board_no = #{uploadFile.board.no}
+        file_no = #{no}
   </update>
-
-  <!-- void deleteBoardFile(int boardNo); -->
-  <update id="deleteBoardFile" parameterType="int">
-    update
-        BOARD_UPLOADFILES
-    set
-        is_deleted = "Y"
-    where
-        file_board_no = #{uploadFile.board.no}
-  </update>
-
 </mapper>
