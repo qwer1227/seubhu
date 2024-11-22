@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import store.seub2hu2.lesson.dto.LessonDto;
@@ -17,7 +19,9 @@ import store.seub2hu2.lesson.vo.*;
 import store.seub2hu2.user.vo.User;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +37,7 @@ public class LessonController {
 
     private final LessonService lessonService;
     private final LessonFileService lessonFileService;
+
 
     @GetMapping(value = {"/", "lessons", ""})
     public String lessonList() {
@@ -92,12 +97,5 @@ public class LessonController {
 
 
     // 결제용 임시 컨트롤러
-    @GetMapping("/payment")
-    public String pay(@ModelAttribute LessonDto lessonDto, Model model) {
-        log.info("lessonDto = {}", lessonDto);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-        model.addAttribute("lessonDto", lessonDto);
-        return "lesson/lesson-payment";
-    }
 }

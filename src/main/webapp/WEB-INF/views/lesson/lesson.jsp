@@ -13,10 +13,12 @@
         body {
             background-color: #fafafa;
         }
+
         .fc-day a {
-            color:black;
+            color: black;
             text-decoration: none;
         }
+
         .fc-day-sun a {
             color: red;
             text-decoration: none;
@@ -45,8 +47,19 @@
                 <option value="운동">운동</option>
             </select>
         </div>
-        <div class="col">
-            <div class="bg-dark">a</div>
+        <div class="col d-flex mt-2">
+            <div class="m-3 d-flex">
+                <div style="width: 30px; height:30px; border-radius: 5px; background: #AEDFF7"></div>
+                <span class="p-1">호흡</span>
+            </div>
+            <div class="m-3 d-flex">
+                <div style="width: 30px; height:30px; border-radius: 5px; background: #A8D5BA"></div>
+                <span class="p-1">자세</span>
+            </div>
+            <div class="m-3 d-flex">
+                <div style="width: 30px; height:30px; border-radius: 5px; background: #D9C8F2"></div>
+                <span class="p-1">운동</span>
+            </div>
         </div>
     </div>
     <div class="row mb-3">
@@ -65,12 +78,13 @@
             headerToolbar: {
                 left: 'prev,next,today',
                 center: 'title',
-                right: 'dayGridMonth,dayGridWeek'
+                right: 'dayGridMonth,dayGridWeek,timeGridWeek'
             },
             buttonText: {
                 today: '현재날짜',
                 month: '월별',
                 week: '주별',
+                timeGridWeek: '주별시간',
                 day: '일별',
                 list: '목록',
             },
@@ -85,6 +99,13 @@
                     titleFormat: {
                         year: 'numeric',
                         month: 'numeric',
+                    }
+                },
+                timeGridWeek: {
+                    titleFormat: {
+                        year: 'numeric',
+                        month: 'numeric',
+                        day: 'numeric',
                     }
                 }
             },
@@ -131,14 +152,14 @@
                         };
                         var backgroundColor = 'black'
                         console.log(event.subject)
-                        if(event.subject == '호흡') {
-                             backgroundColor = '#AEDFF7';
+                        if (event.subject == '호흡') {
+                            backgroundColor = '#AEDFF7';
                         }
-                        if(event.subject == '자세') {
-                             backgroundColor = '#A8D5BA';
+                        if (event.subject == '자세') {
+                            backgroundColor = '#A8D5BA';
                         }
-                        if(event.subject == '운동') {
-                             backgroundColor = '#D9C8F2';
+                        if (event.subject == '운동') {
+                            backgroundColor = '#D9C8F2';
                         }
                         const borderColor = backgroundColor; // 테두리 색상도 동일하게 설정
 
@@ -171,7 +192,7 @@
         function lessonDetail(lessonNo) {
             if (lessonNo !== undefined && lessonNo !== null && lessonNo !== "") {  // Validate lessonNo
                 console.log("LessonNo:", lessonNo); // Log to ensure lessonNo is being passed as int
-                location.href =("/lesson/detail?lessonNo="+lessonNo);
+                location.href = ("/lesson/detail?lessonNo=" + lessonNo);
             } else {
                 console.error("Invalid lessonNo");
             }

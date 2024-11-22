@@ -5,9 +5,13 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import store.seub2hu2.lesson.dto.ApproveResponse;
+import store.seub2hu2.lesson.dto.LessonReservationPay;
 import store.seub2hu2.lesson.dto.ReadyResponse;
+import store.seub2hu2.lesson.vo.Lesson;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,20 +20,22 @@ import java.util.Map;
 @Service
 public class KakaoPayService {
 
-    // 카카오페이 결제창 연결
-    public ReadyResponse payReady(String name, int totalPrice) {
-    
+    // 카카오페이 결제 승인
+    // 사용자가 결제 수단을 선택하고 비밀번호를 입력해 결제 인증을 완료한 뒤,
+    // 최종적으로 결제 완료 처리를 하는 단계
+    public ReadyResponse payReady(LessonReservationPay lessonReservationPay, String name, int totalPrice) {
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("cid", "TC0ONETIME");                                    // 가맹점 코드(테스트용)
-        parameters.put("partner_order_id", "1234567890");                       // 주문번호
-        parameters.put("partner_user_id", "roommake");                          // 회원 아이디
-        parameters.put("item_name", name);                                      // 상품명
-        parameters.put("quantity", "1");                                        // 상품 수량
-        parameters.put("total_amount", String.valueOf(totalPrice));             // 상품 총액
-        parameters.put("tax_free_amount", "0");                                 // 상품 비과세 금액
-        parameters.put("approval_url", "http://localhost/order/pay/completed"); // 결제 성공 시 URL
-        parameters.put("cancel_url", "http://localhost/order/pay/cancel");      // 결제 취소 시 URL
-        parameters.put("fail_url", "http://localhost/order/pay/fail");          // 결제 실패 시 URL
+        parameters.put("cid", "TC0ONETIME");
+        parameters.put("partner_order_id", "1234567890");
+        parameters.put("partner_user_id", "roommake");
+        parameters.put("item_name", lessonReservationPay.getTitle());
+        parameters.put("item_code", String.valueOf(lessonReservationPay.getLessonNo()));
+        parameters.put("quantity", String.valueOf(1));
+        parameters.put("total_amount", String.valueOf(totalPrice));
+        parameters.put("tax_free_amount", "0");
+        parameters.put("approval_url", "http://localhost/order/pay/completed");
+        parameters.put("cancel_url", "http://localhost/order/pay/cancel");
+        parameters.put("fail_url", "http://localhost/order/pay/fail");
 
         // HttpEntity : HTTP 요청 또는 응답에 해당하는 Http Header와 Http Body를 포함하는 클래스
         HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(parameters, this.getHeaders());
@@ -66,7 +72,7 @@ public class KakaoPayService {
 
         return approveResponse;
     }
-    
+
     // 카카오페이 측에 요청 시 헤더부에 필요한 값
     private HttpHeaders getHeaders() {
         HttpHeaders headers = new HttpHeaders();

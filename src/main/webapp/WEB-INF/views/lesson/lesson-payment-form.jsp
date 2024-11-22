@@ -24,7 +24,7 @@
                 </colgroup>
                 <tr>
                     <th>레슨명</th>
-                    <td>${lessonDto.title}</td>
+                    <td><a href="/lesson/detail?lessonNo=${lessonDto.lessonNo}">${lessonDto.title}</td>
                 </tr>
                 <tr>
                     <th>과정</th>
@@ -37,8 +37,8 @@
                 <tr>
                     <th>레슨날짜</th>
                     <td>
-                        <%--                        <fmt:formatDate value="${lessonDto.startDate}" pattern="yyyy-MM-dd"></fmt:formatDate>--%>
-                        ${lessonDto.startDate}
+                        <fmt:formatDate value="${lessonDto.startDate}" pattern="yyyy-MM-dd"></fmt:formatDate>
+<%--                        ${lessonDto.startDate}--%>
                     </td>
                 </tr>
                 <tr>
@@ -65,8 +65,8 @@
     $(function () {
         $("#btn-pay-ready").click(function (e) {
             let data = {
-                name: '상품명',    // 카카오페이에 보낼 대표 상품명
-                totalPrice: 20000 // 총 결제금액
+                title: '러닝 호흡법',    // 카카오페이에 보낼 대표 상품명
+                price: 20000 // 총 결제금액
             };
 
             $.ajax({
@@ -79,9 +79,11 @@
                     let popupWidth = 600;
                     let popupHeight = 800;
 
-                    // 현재 브라우저 창 기준 중앙 위치 계산
-                    let left = window.screenX + (window.outerWidth - popupWidth) / 2;
-                    let top = window.screenY + (window.outerHeight - popupHeight) / 2.5;
+                    // 화면 크기 기준 중앙 위치 계산
+                    let screenWidth = window.innerWidth || document.documentElement.clientWidth || screen.width;
+                    let screenHeight = window.innerHeight || document.documentElement.clientHeight || screen.height;
+                    let left = (screenWidth - popupWidth) / 2 + window.screenX;
+                    let top = (screenHeight - popupHeight) / 2 + window.screenY;
 
                     // 팝업창 열기
                     let popup = window.open(
@@ -102,6 +104,7 @@
         });
     });
 </script>
+
 
 
 </body>

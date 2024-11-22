@@ -40,7 +40,7 @@
                 </tr>
                 <tr>
                     <th>레슨날짜</th>
-                    <td>${lesson.start}</td>
+                    <td><fmt:formatDate value="${lesson.start}" pattern="yyyy-MM-dd"></fmt:formatDate></td>
                 </tr>
                 <tr>
                     <th>참여인원</th>
@@ -60,11 +60,13 @@
     <div class="row text-end mb-3">
         <div class="col-2"></div>
         <div class="col border-bottom border-dark border-2 pb-3">
-            <form name="lessonDto" method="get" action="/lesson/payment">
+            <form name="lessonDto" method="get" action="/order/pay/form">
+                <input type="hidden" name="lessonNo" value="${lessonNo}">
                 <input type="hidden" name="title" value="${lesson.title}">
                 <input type="hidden" name="price" value="${lesson.price}">
                 <input type="hidden" name="lecturerName" value="${lesson.lecturer.name}">
-                <input type="hidden" name="startDate" value="${lesson.start}">
+                <fmt:formatDate value="${lesson.start}" pattern="yyyy-MM-dd" var="startDate"/>
+                <input type="hidden" name="startDate" value="${startDate}">
                 <input type="hidden" name="subject" value="${lesson.subject}">
                 <button type="submit" class="btn btn-primary">수강신청</button>
             </form>
