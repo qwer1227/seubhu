@@ -1,6 +1,8 @@
 package store.seub2hu2.lesson.service;
 
+
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,9 @@ import java.util.Map;
 @Slf4j
 @Service
 public class KakaoPayService {
+
+    @Value("{kakaopay.secretKey}")
+    String secretKey;
 
     // 카카오페이 결제 승인
     // 사용자가 결제 수단을 선택하고 비밀번호를 입력해 결제 인증을 완료한 뒤,
@@ -76,7 +81,7 @@ public class KakaoPayService {
     // 카카오페이 측에 요청 시 헤더부에 필요한 값
     private HttpHeaders getHeaders() {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "SECRET_KEY DEV9BFB903A27B097FCCA73ED87CBFF0F7E1FBAD");
+        headers.set("Authorization", "SECRET_KEY "+secretKey);
         headers.set("Content-type", "application/json");
 
         return headers;
