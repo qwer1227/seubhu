@@ -33,7 +33,7 @@
             <a href="/login" class="color-black text-decoration-none fw-bold">로그인하러 가기</a>
         </div>
     </div>
-
+    </div>
 </main>
 
 <!-- 푸터부 -->
