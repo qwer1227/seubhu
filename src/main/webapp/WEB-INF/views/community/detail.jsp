@@ -136,6 +136,9 @@
             <c:when test="${reply.deleted eq 'Y'}">
               <div class="row m-3" style="text-align: start">
                 <div class="col d-flex justify-content-between" style="text-align: start">
+                  <c:if test="${reply.no ne reply.prevNo}">
+                    <i class="bi bi-arrow-return-right"></i>
+                  </c:if>
                   <i class="bi bi-emoji-dizzy" style="font-size: 35px; margin-left: 5px;"></i>
                   <div class="col" style="margin-left: 15px">
                     <c:if test="${reply.no eq reply.prevNo}">
@@ -177,16 +180,9 @@
                         <button type="button" class="btn btn-warning btn-sm" id="replyModifyButton-${reply.no}"
                                 onclick="appendModify(${reply.no})">수정
                         </button>
-                        <c:if test="${reply.no ne reply.prevNo}">
                           <button type="button" class="btn btn-danger btn-sm"
                                   onclick="deleteReply(${reply.no}, ${reply.boardNo})">삭제
                           </button>
-                        </c:if>
-                        <c:if test="${reply.no eq reply.prevNo}">
-                          <button type="button" class="btn btn-danger btn-sm"
-                                  onclick="deleteReply(${reply.prevNo}, ${reply.boardNo})">삭제
-                          </button>
-                        </c:if>
                           <%--              </c:if>--%>
                       </div>
                     </div>
@@ -204,8 +200,7 @@
                             <textarea name="content" class="form-control" rows="2">${reply.content}</textarea>
                           </div>
                           <div class="col">
-                            <button class="btn btn-warning btn-sm d-flex justify-content-start"
-                                    onclick="modifyReply(${reply.no}, ${reply.boardNo})">
+                            <button class="btn btn-warning btn-sm d-flex justify-content-start" type="submit">
                               수정
                             </button>
                           </div>
@@ -219,16 +214,17 @@
                         <%--        </c:if>--%>
                       
                       <form method="post" action="add-comment" id="box-comments-${reply.no}" class="my-3 d-none">
-                        <input type="hidden" name="prevNo" value="${reply.no}">
+                        <input type="hidden" name="no" value="${reply.no}">
+                        <input type="hidden" name="prevNo" value="${reply.prevNo}">
                         <input type="hidden" name="boardNo" value="${board.no}">
                         <div class="row">
                           <div class="col-11">
                             <textarea name="content" class="form-control" rows="2" placeholder="답글을 작성하세요."></textarea>
                           </div>
                           <div class="col">
-                            <button type="button" class="btn btn-success d-flex justify-content-start"
+                            <button type="submit" class="btn btn-success d-flex justify-content-start"
                                     style="font-size: 15px">
-                              답글등록
+                              답글<br/>등록
                             </button>
                           </div>
                         </div>
@@ -261,14 +257,6 @@
         }
     }
 
-    /* 댓글&답글 삭제 */
-    function deleteReply(replyNo, boardNo) {
-        let result = confirm("해당 댓글을 삭제하시겠습니까?");
-        if (result) {
-            window.location.href = "delete-reply?rno=" + replyNo + "&bno=" + boardNo;
-        }
-    }
-
     /* 댓글&답글 입력 폼이 클릭한 버튼 바로 아래 위치하도록 처리 */
     document.addEventListener("click", function (event) {
         // 클릭된 요소가 '답글' 버튼인지 확인
@@ -280,7 +268,7 @@
             }
         }
     });
-
+    
     /* 댓글 제출(/community/add-reply로 데이터 전달) */
     async function submitReply() {
         let value1 = document.querySelector("input[name=boardNo]").value;
@@ -313,7 +301,15 @@
             let reply = await response.json();
         }
     }
-
+    
+    /* 댓글&답글 삭제 */
+    function deleteReply(replyNo, boardNo) {
+        let result = confirm("해당 댓글을 삭제하시겠습니까?");
+        if (result) {
+            window.location.href = "delete-reply?rno=" + replyNo + "&bno=" + boardNo;
+        }
+    }
+    
     /* 버튼 클릭 시 댓글 수정 입력 폼 활성화 */
     function appendModify(replyNo) {
         let box = document.querySelector("#box-reply-" + replyNo);
@@ -334,76 +330,10 @@
         }
     }
 
-    /* 댓글&답글 수정(/community/modify-reply로 데이터 전달) */
-    async function modifyReply(replyNo, boardNo) {
-        let content = document.querySelector(`#box-reply-${replyNo} textarea[name=content]`).value;
-
-        let data = {
-            replyNo,
-            boardNo,
-            content
-        }
-
-        // 자바스크립트 객체를 json형식의 텍스트로 변환한다.
-        let jsonText = JSON.stringify(data);
-
-        // POST 방식으로 객체를 JSON 형식의 데이터를 서버로 보내기
-        let response = await fetch("/community/modify-reply", {
-            // 요청방식을 지정한다.
-            method: "POST",
-            // 요청메세지의 바디부에 포함된 컨텐츠의 형식을 지정한다.
-            headers: {
-                "Content-Type": "application/json"
-            },
-            // 요청메세지의 바디부에 서버로 전달할 json형식의 텍스트 데이터를 포함시킨다.
-            body: jsonText
-        });
-        // 서버가 보낸 응답데이터를 받는다.
-        if (response.ok) {
-            // 응답으로 새로 추가된 코멘트를 추가한다.
-            let reply = await response.json();
-        }
-    }
-
     /* 버튼 클릭 시 답글 입력 폼 활성화 */
     function appendComment(replyNo) {
         let box = document.querySelector("#box-comments-" + replyNo);
         box.classList.toggle("d-none");
-    }
-
-    /* 답글 제출(/community/add-comment로 데이터 전달) */
-    async function submitComment() {
-        let boardNo = document.querySelector("input[name=no]").value;
-        let content = document.querySelector("textarea[name=content]").value;
-        let userNo = document.querySelector("input[name=userNo]").value;
-        let prevNo = document.querySelector("input[name=prevNo]").value;
-
-        let data = {
-            boardNo,
-            content,
-            userNo,
-            prevNo
-        }
-
-        // 자바스크립트 객체를 json형식의 텍스트로 변환한다.
-        let jsonText = JSON.stringify(data);
-
-        // POST 방식으로 객체를 JSON 형식의 데이터를 서버로 보내기
-        let response = await fetch("/community/add-comment", {
-            // 요청방식을 지정한다.
-            method: "POST",
-            // 요청메세지의 바디부에 포함된 컨텐츠의 형식을 지정한다.
-            headers: {
-                "Content-Type": "application/json"
-            },
-            // 요청메세지의 바디부에 서버로 전달할 json형식의 텍스트 데이터를 포함시킨다.
-            body: jsonText
-        });
-        // 서버가 보낸 응답데이터를 받는다.
-        if (response.ok) {
-            // 응답으로 새로 추가된 코멘트를 추가한다.
-            let reply = await response.json();
-        }
     }
 </script>
 </html>

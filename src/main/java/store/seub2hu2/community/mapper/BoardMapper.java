@@ -15,4 +15,5 @@ public interface BoardMapper {
     int getTotalRowsForBoard(@Param("condition") Map<String, Object> condition);
     Board getBoardDetailByNo(@Param("no") int no);
     void updateBoard(@Param("board") Board board); // 게시글 수정 및 삭제
+    void updateBoardViewCnt(@Param("board") Board board); // 게시글 조회수 증가
 }

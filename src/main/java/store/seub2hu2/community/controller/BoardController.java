@@ -21,6 +21,7 @@ import store.seub2hu2.community.service.ReplyService;
 import store.seub2hu2.community.view.FileDownloadView;
 import store.seub2hu2.community.vo.Board;
 import store.seub2hu2.community.vo.Reply;
+import store.seub2hu2.community.vo.UploadFile;
 import store.seub2hu2.util.ListDto;
 
 import java.io.File;
@@ -112,6 +113,7 @@ public class BoardController {
     @GetMapping("/modify")
     public String modifyForm(@RequestParam("no") Integer boardNo, Model model) {
         Board board = boardService.getBoardDetail(boardNo);
+
         model.addAttribute("board", board);
 
         return "community/modify";
@@ -131,12 +133,13 @@ public class BoardController {
         return "redirect:main";
     }
 
-//    @GetMapping("/deleteUploadFile")
-//    public String deleteUploadFile(@RequestParam("no") int boardNo) {
-//        boardService.deleteBoardFile(boardNo);
-//
-//        return "redirect:modify?no=" + boardNo;
-//    }
+    @GetMapping("/delete-file")
+    public String deleteUploadFile(@RequestParam("no") int boardNo
+                                   , @RequestParam("fileNo") int fileNo) {
+        boardService.deleteBoardFile(boardNo, fileNo);
+
+        return "redirect:modify?no=" + boardNo;
+    }
 
     // 요청 URL : comm/filedown?no=xxx
     @GetMapping("/filedown")
@@ -169,7 +172,6 @@ public class BoardController {
                 .body(resource);
     }
 
-
     @GetMapping("add-reply")
 //    @PreAuthorize("isAuthenticated()")
     public String addReply(ReplyForm form){
@@ -186,17 +188,6 @@ public class BoardController {
         return "redirect:detail?no=" + form.getBoardNo();
     }
 
-    @GetMapping("delete-reply")
-    public String deleteReply(@RequestParam("rno") int replyNo,
-                              @RequestParam("bno") int boardNo){
-        ReplyForm form = new ReplyForm();
-        form.setNo(replyNo);
-        form.setBoardNo(boardNo);
-        replyService.deleteReply(replyNo);
-
-        return "redirect:detail?no=" + form.getBoardNo();
-    }
-
     @PostMapping("modify-reply")
     public String modifyReply(@RequestParam("replyNo") int replyNo,
                               @RequestParam("boardNo") int boardNo,
@@ -208,6 +199,17 @@ public class BoardController {
         form.setUserNo(13);
 
         replyService.updateReply(form);
+
+        return "redirect:detail?no=" + form.getBoardNo();
+    }
+
+    @GetMapping("delete-reply")
+    public String deleteReply(@RequestParam("rno") int replyNo,
+                              @RequestParam("bno") int boardNo){
+        ReplyForm form = new ReplyForm();
+        form.setNo(replyNo);
+        form.setBoardNo(boardNo);
+        replyService.deleteReply(replyNo);
 
         return "redirect:detail?no=" + form.getBoardNo();
     }
