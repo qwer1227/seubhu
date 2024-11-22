@@ -23,8 +23,8 @@
   <div class="row p-3 m-3">
     <form id="form-register" action="modify" method="post" enctype="multipart/form-data">
       <input type="hidden" name="no" value="${board.no}">
+      <input type="hidden" name="fileNo" id="fileNo" value="${board.uploadFile.no}">
       <table id="community-table" style="width: 98%">
-       
         <colgroup>
           <col width="10%">
           <col width="40%">
@@ -53,7 +53,7 @@
           <td colspan="3">
             <input type="text" class="form-control" style="width: 100%" id="title" name="title"
                    placeholder="제목을 입력해주세요." value="${board.title}">
-                  
+          
           </td>
         </tr>
         <tr class="form-group">
@@ -61,26 +61,33 @@
             <label class="form-label" for="content">글내용</label>
           </th>
           <td colspan="3">
-            <textarea style="width: 100%" class="form-control" rows="10" id="content" name="content">${board.content}</textarea>
+            <textarea style="width: 100%" class="form-control" rows="10" id="content"
+                      name="content">${board.content}</textarea>
             
             <!-- <%@include file="write.jsp" %> -->
           </td>
         </tr>
-        <tr class="form-group">
-          <th>
-            <label class="form-label">기존파일명</label>
-          </th>
-          <td colspan="3" style="text-align: start">
-            ${not empty board.uploadFile ? board.uploadFile.originalName : ''}
-            <button type="button" class="btn btn-outline-dark" onclick="deleteUploadFile(${board.uploadFile.no})">삭제</button>
-          </td>
-        </tr>
+        <c:if test="${not empty board.uploadFile}">
+          <c:if test="${board.uploadFile.deleted eq 'N'}">
+          <tr class="form-group">
+            <th>
+              <label class="form-label">기존파일명</label>
+            </th>
+            <td colspan="3" style="text-align: start">
+                ${board.uploadFile.originalName}
+              <button type="button" class="btn btn-outline-dark" onclick="deleteUploadFile(${board.no}, ${board.uploadFile.no})">
+                삭제
+              </button>
+            </td>
+          </tr>
+          </c:if>
+        </c:if>
         <tr class="form-group">
           <th>
             <label class="form-label">첨부파일</label>
           </th>
           <td colspan="3">
-            <input type="file" class="form-control" name="upfile" />
+            <input type="file" class="form-control" name="upfile"/>
           </td>
         </tr>
         </tbody>
@@ -102,15 +109,15 @@
 <script type="text/javascript">
     function abort() {
         let result = confirm("수정 중이던 글을 취소하시겠습니까?");
-        if (result){
+        if (result) {
             window.location.href = "detail?no=${board.no}";
         }
     }
-    
-    function deleteUploadFile(no){
+
+    function deleteUploadFile(boardNo, fileNo) {
         let result = confirm("기존에 등록된 첨부파일을 삭제하시겠습니까?");
-        if (result){
-          window.location.href = "deleteUploadFile?no=" + no;
+        if (result) {
+            window.location.href = `delete-file?no=\${boardNo}&fileNo=\${fileNo}`;
         }
     }
 </script>

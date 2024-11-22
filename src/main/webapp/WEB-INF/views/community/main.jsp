@@ -47,40 +47,40 @@
     <div class="p-3 row row-cols-2 row-cols-lg-5 g-2 g-lg-3" id="category">
       <div class="col">
         <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
-        href="main">전체</a>
+           href="main">전체</a>
       </div>
       <div class="col">
         <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
-        href="javascript:void(0)" onclick="changeCategory('일반게시판')">일반</a>
+           href="javascript:void(0)" onclick="changeCategory('일반게시판')">일반</a>
       </div>
       <div class="col ">
         <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
-        href="javascript:void(0)" onclick="changeCategory('자랑게시판')">자랑</a>
+           href="javascript:void(0)" onclick="changeCategory('자랑게시판')">자랑</a>
       </div>
       <div class="col ">
         <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
-        href="javascript:void(0)" onclick="changeCategory('질문게시판')">질문</a>
+           href="javascript:void(0)" onclick="changeCategory('질문게시판')">질문</a>
       </div>
       <div class="col ">
         <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
-        href="javascript:void(0)" onclick="changeCategory('훈련일지')">훈련일지</a>
+           href="javascript:void(0)" onclick="changeCategory('훈련일지')">훈련일지</a>
       </div>
     </div>
-
+    
     <div class="p-1 col d-flex justify-content-end">
       <div class="form-check form-check-inline">
         <input class="form-check-input" type="radio" name="sort" value="date" onchange="changeSort()"
-               ${empty param.sort or param.sort eq 'date' ? 'checked' : ''}>
+        ${empty param.sort or param.sort eq 'date' ? 'checked' : ''}>
         <label class="form-check-label">최신순</label>
       </div>
       <div class="form-check-inline">
         <input class="form-check-input" type="radio" name="sort" value="like" onchange="changeSort()"
-               ${param.sort eq 'like' ? 'checked' : ''}>
+        ${param.sort eq 'like' ? 'checked' : ''}>
         <label class="form-check-label">추천순</label>
       </div>
       <div class="form-check-inline">
         <input class="form-check-input" type="radio" name="sort" value="viewCnt" onchange="changeSort()"
-               ${param.sort eq 'viewCnt' ? 'checked' : ''}>
+        ${param.sort eq 'viewCnt' ? 'checked' : ''}>
         <label class="form-check-label">조회순</label>
       </div>
       <div>
@@ -92,20 +92,20 @@
         </select>
       </div>
     </div>
-  
-  <!--  게시글 목록 -->
-  <div class="row p-3">
-    <table class="table">
-      <colgroup>
-        <col width="5%">
-        <col width="10%">
-        <col width="*%">
-        <col width="15%">
-        <col width="10%">
-        <col width="10%">
-        <col width="10%">
-      </colgroup>
-      <thead class="text-start">
+    
+    <!--  게시글 목록 -->
+    <div class="row p-3">
+      <table class="table">
+        <colgroup>
+          <col width="5%">
+          <col width="10%">
+          <col width="*%">
+          <col width="15%">
+          <col width="10%">
+          <col width="10%">
+          <col width="10%">
+        </colgroup>
+        <thead class="text-start">
         <tr style="text-align: center">
           <th>번호</th>
           <th>분류</th>
@@ -115,8 +115,8 @@
           <th>조회</th>
           <th>날짜</th>
         </tr>
-      </thead>
-      <tbody class="text-start">
+        </thead>
+        <tbody class="text-start">
         <c:choose>
           <c:when test="${empty boards}">
             <tr>
@@ -139,11 +139,11 @@
             </c:forEach>
           </c:otherwise>
         </c:choose>
-      </tbody>
-    </table>
-  </div>
-  
-  <!-- 검색 및 글쓰기 기능 -->
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- 검색 및 글쓰기 기능 -->
     <div class="row p-3 d-flex justify-content-left">
       <div class="col-2">
         <select class="form-control" name="opt">
@@ -167,31 +167,31 @@
         <a href="form" type="button" class="btn btn-primary">글쓰기</a>
       </div>
     </div>
-  
-  <!-- 페이징처리 -->
-  <div>
-    <ul class="pagination justify-content-center">
-      <li class="page-item ${paging.first ? 'disabled' : '' }">
-        <a class="page-link"
-           onclick="changePage(${paging.prevPage}, event)"
-           href="javascript:void(0)"><<</a>
-      </li>
-      
-      <c:forEach var="num" begin="${paging.beginPage }" end="${paging.endPage }">
-        <li class="page-item ${paging.page eq num ? 'active' : '' }">
+    
+    <!-- 페이징처리 -->
+    <div>
+      <ul class="pagination justify-content-center">
+        <li class="page-item ${paging.first ? 'disabled' : '' }">
           <a class="page-link"
-             onclick="changePage(${num }, event)"
-             href="javascript:void(0)">${num }</a>
+             onclick="changePage(${paging.prevPage}, event)"
+             href="javascript:void(0)"><<</a>
         </li>
-      </c:forEach>
-      
-      <li class="page-item ${paging.last ? 'disabled' : '' }">
-        <a class="page-link"
-           onclick="changePage(${paging.nextPage}, event)"
-           href="javascript:void(0)">>></a>
-      </li>
-    </ul>
-  </div>
+        
+        <c:forEach var="num" begin="${paging.beginPage }" end="${paging.endPage }">
+          <li class="page-item ${paging.page eq num ? 'active' : '' }">
+            <a class="page-link"
+               onclick="changePage(${num }, event)"
+               href="javascript:void(0)">${num }</a>
+          </li>
+        </c:forEach>
+        
+        <li class="page-item ${paging.last ? 'disabled' : '' }">
+          <a class="page-link"
+             onclick="changePage(${paging.nextPage}, event)"
+             href="javascript:void(0)">>></a>
+        </li>
+      </ul>
+    </div>
   </form>
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
@@ -238,16 +238,16 @@
         // 폼 제출
         form.submit();
     }
-    
+
     // 카테고리를 선택했을 때
-    function changeCategory(category){
+    function changeCategory(category) {
         let form = document.querySelector("#form-search");
         let catInput = document.querySelector("#categoryInput");
         let pageInput = document.querySelector("input[name=page]");
-        
+
         catInput.value = category;
         pageInput.value = 1;
-        
+
         form.submit();
     }
 </script>
