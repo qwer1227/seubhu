@@ -12,9 +12,11 @@ import store.seub2hu2.community.dto.BoardForm;
 import store.seub2hu2.community.exception.CommunityException;
 import store.seub2hu2.community.mapper.BoardMapper;
 import store.seub2hu2.community.mapper.BoardUploadMapper;
+import store.seub2hu2.community.mapper.ReplyMapper;
 import store.seub2hu2.community.vo.Board;
+import store.seub2hu2.community.vo.Reply;
 import store.seub2hu2.community.vo.UploadFile;
-import store.seub2hu2.security.LoginUser;
+import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.FileUtils;
 import store.seub2hu2.util.ListDto;
@@ -37,6 +39,8 @@ public class BoardService {
 
     @Value("${upload.directory.community}")
     private String saveDirectory;
+    @Autowired
+    private ReplyMapper replyMapper;
 
     public void addNewBoard(BoardForm form
                 , @AuthenticationPrincipal LoginUser loginUser) {
@@ -47,8 +51,11 @@ public class BoardService {
         board.setTitle(form.getTitle());
         board.setContent(form.getContent());
 
-        User user = User.builder().no(loginUser.getNo()).build();
+        User user = new User();
+        user.setNo(loginUser.getNo());
+        user.setNickname(loginUser.getNickname());
         board.setUser(user);
+
         MultipartFile multipartFile = form.getUpfile();
 
         // 첨부파일이 있으면 실행
@@ -102,6 +109,7 @@ public class BoardService {
     public Board getBoardDetail(int boardNo) {
         Board board = boardMapper.getBoardDetailByNo(boardNo);
         UploadFile uploadFile = boardUploadMapper.getFileByBoardNo(boardNo);
+        List<Reply> reply = replyMapper.getRepliesByBoardNo(boardNo);
 
 
         if (board == null) {
@@ -110,6 +118,13 @@ public class BoardService {
 
         board.setViewCnt(board.getViewCnt() + 1);
         board.setUploadFile(uploadFile);
+        board.setReply(reply);
+
+        User user = new User();
+        user.setNo(board.getUser().getNo());
+        user.setNickname(board.getUser().getNickname());
+        board.setUser(user);
+
         boardMapper.updateBoardCnt(board);
         return board;
     }

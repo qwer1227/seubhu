@@ -8,7 +8,7 @@
             prev_reply_no = #{reply.prevNo}
             , reply_content = #{reply.content}
             , is_deleted = #{reply.deleted}
-            , reply_updated_date = sysdate()
+            , reply_updated_date = #{reply.updatedDate}
         where
             reply_no = #{reply.no}
   </update>
@@ -38,7 +38,7 @@
   <select id="getRepliesByBoardNo" resultType="store.seub2hu2.community.vo.Reply" parameterType="int">
     select
       b.board_no                 as boardNo
-      , u.user_no                as userNo
+      , u.user_no                as "user.no"
       , u.user_nickname          as "user.nickname"
       , br.reply_no              as no
       , br.prev_reply_no         as prevNo

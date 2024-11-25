@@ -56,15 +56,16 @@
                 </otherwise>
               </choose>
             </if>
-            , b.board_no as no
-            , b.board_cat_name as catName
-            , b.board_title as title
-            , b.board_content as content
-            , b.board_cnt as viewCnt
-            , b.board_like as `like`
-            , b.is_deleted as deleted
-            , b.board_created_date as createdDate
-            , u.user_nickname as `user.nickname`
+            , b.board_no            as no
+            , b.board_cat_name      as catName
+            , b.board_title         as title
+            , b.board_content       as content
+            , b.board_cnt           as viewCnt
+            , b.board_like          as `like`
+            , b.is_deleted          as deleted
+            , b.board_created_date  as createdDate
+            , u.user_nickname       as "user.nickname"
+            , u.user_no             as "user.no"
           from
             BOARDS b join USERS u
                 on b.user_nickname = u.user_nickname
@@ -144,6 +145,7 @@
     select b.board_no            as no
      , b.board_cat_name          as catName
      , u.user_nickname           as "user.nickname"
+     , u.user_no                 as "user.no"
      , b.board_title             as title
      , b.file_name               as "uploadFile.originalName"
      , b.board_content           as content

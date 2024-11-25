@@ -1,20 +1,15 @@
 package store.seub2hu2.community.service;
 
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import store.seub2hu2.community.dto.ReplyForm;
-import store.seub2hu2.community.mapper.BoardMapper;
 import store.seub2hu2.community.mapper.ReplyMapper;
-import store.seub2hu2.community.vo.Board;
 import store.seub2hu2.community.vo.Reply;
-import store.seub2hu2.security.LoginUser;
+import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.vo.User;
-import store.seub2hu2.util.ListDto;
 
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class ReplyService {
@@ -37,6 +32,7 @@ public class ReplyService {
 
         reply.setPrevNo(reply.getNo());
         reply.setDeleted(reply.getDeleted());
+        reply.setUpdatedDate(null);
         replyMapper.updateReply(reply);
     }
 
@@ -55,6 +51,7 @@ public class ReplyService {
 
         reply.setPrevNo(form.getPrevNo());
         reply.setDeleted(reply.getDeleted());
+        reply.setUpdatedDate(null);
         replyMapper.updateReply(reply);
     }
 

@@ -107,7 +107,6 @@
       <h5 style="text-align: start">댓글 작성</h5>
       <form method="get" action="add-reply">
         <input type="hidden" name="boardNo" value="${board.no}">
-        <%--          <input type="hidden" name="userNo" value="${user.no}">--%>
         <input type="hidden" name="userNo" value="${loginUser.no}">
         <div class="row">
           <div class="form-group col-11">
@@ -172,18 +171,22 @@
                         </button>
                       </div>
                       <div class="col-2" style="text-align: end">
-                        <c:if test="${loginUser.no eq reply.user.no}">
+                        <c:if test="${loginUser.no ne reply.user.no}">
                           <button class="btn btn-outline-dark btn-sm">
                             <i class="bi bi-hand-thumbs-up"></i>
                             <i class="bi bi-hand-thumbs-up-fill"></i>
                           </button>
-                          <button type="button" class="btn btn-warning btn-sm" id="replyModifyButton-${reply.no}"
-                                  onclick="appendModify(${reply.no})">수정
-                          </button>
-                          <button type="button" class="btn btn-danger btn-sm"
-                                  onclick="deleteReply(${reply.no}, ${reply.boardNo})">삭제
-                          </button>
                         </c:if>
+                        <security:authorize access="isAuthenticated()">
+                          <c:if test="${loginUser.no eq reply.user.no}">
+                            <button type="button" class="btn btn-warning btn-sm" id="replyModifyButton-${reply.no}"
+                                    onclick="appendModify(${reply.no})">수정
+                            </button>
+                            <button type="button" class="btn btn-danger btn-sm"
+                                    onclick="deleteReply(${reply.no}, ${reply.boardNo})">삭제
+                            </button>
+                          </c:if>
+                        </security:authorize>
                       </div>
                     </div>
                   </div>

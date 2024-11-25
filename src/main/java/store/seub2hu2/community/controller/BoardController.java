@@ -23,9 +23,7 @@ import store.seub2hu2.community.service.ReplyService;
 import store.seub2hu2.community.view.FileDownloadView;
 import store.seub2hu2.community.vo.Board;
 import store.seub2hu2.community.vo.Reply;
-import store.seub2hu2.community.vo.UploadFile;
-import store.seub2hu2.security.LoginUser;
-import store.seub2hu2.user.vo.User;
+import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.util.ListDto;
 
 import java.io.File;
@@ -90,18 +88,11 @@ public class BoardController {
 
 
     @GetMapping("/detail")
-    public String detail(@RequestParam("no") Integer no
-            , @AuthenticationPrincipal LoginUser loginUser
+    public String detail(@RequestParam("no") int boardNo
             , Model model) {
-        System.out.println("로그인 유저 정보 = " + loginUser.getNo());
-        Board board = boardService.getBoardDetail(no);
-        List<Reply> replyList = replyService.getReplies(no);
+        Board board = boardService.getBoardDetail(boardNo);
+        List<Reply> replyList = replyService.getReplies(boardNo);
         board.setReply(replyList);
-
-        User user = new User();
-        user.setNo(loginUser.getNo());
-        user.setNickname(loginUser.getNickname());
-        board.setUser(user);
 
         model.addAttribute("board", board);
         model.addAttribute("replies", replyList);
@@ -189,9 +180,8 @@ public class BoardController {
     @PreAuthorize("isAuthenticated()")
     public String addReply(ReplyForm form
             , @AuthenticationPrincipal LoginUser loginUser) {
-        System.out.println("유저 정보 조회1 = " + loginUser.getNo());
+
         replyService.addNewReply(form, loginUser);
-        System.out.println("유저 정보 조회2 = " + loginUser.getNo());
 
         return "redirect:detail?no=" + form.getBoardNo();
     }
