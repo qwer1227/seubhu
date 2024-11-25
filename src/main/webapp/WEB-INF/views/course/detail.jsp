@@ -37,7 +37,7 @@
                 </tbody>
             </table>
             <button type="button" class="btn btn-primary">
-                <i class="bi bi-hand-thumbs-up"></i> 좋아요!
+                <i class="bi bi-hand-thumbs-up">좋아요!</i>
             </button>
             <span>좋아요 수 : ${course.likeCnt}개</span>
         </div>
@@ -62,7 +62,7 @@
             <div class="text-end">
                 <%-- <sec:authorize access="isAuthenticated()"> --%>
                     <%-- <sec:authentication property="principal" var="loginUser" /> --%>
-                    <button class="btn btn-primary" onclick="openReviewFormModal(25)">리뷰 작성</button> <%-- ${loginUser.no} --%>
+                    <button class="btn btn-primary" onclick="openReviewFormModal(27)">리뷰 작성</button> <%-- ${loginUser.no} --%>
                 <%-- </sec:authorize> --%>
             </div>
         </div>
@@ -191,7 +191,6 @@
     function appendReview(review) {
         // 1. 리뷰를 화면에 표시한다.
         let content = `
-            <input type="hidden" name="reviewNo" value="\${review.no}">
 	        <div class="card mb-3" id="review-\${review.no}">
 	            <div class="card-header">
 	                <span>\${review.title}</span>
@@ -232,12 +231,18 @@
         // 1. 리뷰 번호를 서버에 보낸다.
         let response = await fetch("/course/deleteReview/" + reviewNo);
 
-        // 2. 요청 처리 성공 확인 후, 리뷰를 삭제한다.
+        // 2. 로그인한 사용자와 리뷰 작성자가 동일한 지 확인 후, 리뷰를 삭제한다.
         if (response.ok) {
-            let div = document.querySelector("#review-" + reviewNo);
-            div.remove();
-        } else {
-            alert("로그인한 해당 리뷰 작성자만 삭제 가능합니다.");
+            let result = await response.json();
+            let status = result.status;
+
+            if (status === 500) {
+                let message = result.message;
+                alert(message);
+            } else {
+                let div = document.querySelector("#review-" + reviewNo);
+                div.remove();
+            }
         }
     }
 </script>

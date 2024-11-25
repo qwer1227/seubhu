@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import store.seub2hu2.admin.mapper.AdminMapper;
 import store.seub2hu2.course.dto.AddReviewForm;
+import store.seub2hu2.course.exception.CourseReviewException;
 import store.seub2hu2.course.mapper.ReviewMapper;
 import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.course.vo.Review;
@@ -118,6 +119,9 @@ public class ReviewService {
         Review review = reviewMapper.getReviewByNo(reviewNo);
 
         // 2. 리뷰 작성자와 로그인한 사용자가 동일한지 확인한다.
+        if (review.getUser().getNo() != userNo) {
+            throw new CourseReviewException("로그인한 해당 리뷰 작성자만 삭제 가능합니다.");
+        }
 
         // 3. 리뷰를 삭제한다.
         reviewMapper.deleteReview(reviewNo);
