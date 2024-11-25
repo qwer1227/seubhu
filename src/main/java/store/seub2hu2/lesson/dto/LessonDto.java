@@ -7,8 +7,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Date;
 import java.util.List;
 
-@NoArgsConstructor
+
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @ToString
@@ -20,6 +21,7 @@ public class LessonDto {
     private String lecturerName;
     private String subject;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private String startDate;
+    private Date startDate;
+
     private int price;
 }

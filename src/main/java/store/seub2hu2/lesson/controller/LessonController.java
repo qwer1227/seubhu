@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import store.seub2hu2.lesson.dto.LessonDto;
@@ -17,7 +19,9 @@ import store.seub2hu2.lesson.vo.*;
 import store.seub2hu2.user.vo.User;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +37,7 @@ public class LessonController {
 
     private final LessonService lessonService;
     private final LessonFileService lessonFileService;
+
 
     @GetMapping(value = {"/", "lessons", ""})
     public String lessonList() {
@@ -62,51 +67,6 @@ public class LessonController {
         }
     }
 
-    // 레슨 작성 폼
-    @GetMapping("/form")
-    public String form() {
-        return "lesson/lesson-register-form";
-    }
-
-//    @PostMapping("/form")
-//    public String registerForm(@ModelAttribute("form") LessonRegisterForm form, Model model) throws IOException {
-//        // Lesson 객체 생성
-//        int lessonNo = lessonService.getMostLatelyLessonNo();
-//
-//        Lesson lesson = new Lesson();
-//        lesson.setLessonNo(lessonNo);
-//        lesson.setTitle(form.getTitle());
-//        lesson.setPrice(form.getPrice());
-//        User user = new User();
-//        user.setNo(29); // Or dynamically assign user ID
-//        user.setId(form.getLecturerName());
-//        lesson.setLecturer(user);
-//        lesson.setSubject(form.getSubject());
-//        lesson.setPlan(form.getPlan());
-//        lesson.setStart(form.getDate());
-//        lesson.setEnd(form.getDate());
-//
-//        // Get the uploaded file
-//        MultipartFile thumbnail = form.getThumbnail();
-//        MultipartFile mainImage = form.getMainImage();
-//
-//        lessonService.registerLesson(lesson, form);
-//
-//        // Redirect after successful form submission
-//        return "redirect:lessons";
-//    }
-
-    // 레슨 수정 폼
-    @GetMapping("/editForm")
-    public String editForm(@RequestParam("lessonNo") int lessonNo, Model model) {
-        Lesson lesson = lessonService.getLessonByNo(lessonNo);
-        Map<String, String> lessonFileMap = lessonService.getImagesByLessonNo(lessonNo);
-        model.addAttribute("lesson", lesson);
-        model.addAttribute("lessonFileMap", lessonFileMap);
-        return "lesson/lesson-edit-form";
-    }
-
-
     @GetMapping("/list")
     @ResponseBody
     public List<Lesson> lesson(@RequestParam("start") String start,
@@ -129,7 +89,7 @@ public class LessonController {
 
         log.info("Start Date: {}", condition.getStartDate());
         log.info("End Date: {}", condition.getEndDate());
-
+        log.info("searchCondition: {}", condition.getSearchCondition());
         List<LessonReservation> lessons = lessonService.searchLessonReservationList(condition, userNo);
         model.addAttribute("lessons", lessons);
         return "lesson/lesson-reservation";
@@ -137,12 +97,5 @@ public class LessonController {
 
 
     // 결제용 임시 컨트롤러
-    @GetMapping("/payment")
-    public String pay(@ModelAttribute LessonDto lessonDto, Model model) {
-        log.info("lessonDto = {}", lessonDto);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-        model.addAttribute("lessonDto", lessonDto);
-        return "lesson/lesson-payment";
-    }
 }

@@ -1,5 +1,6 @@
 package store.seub2hu2.course.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +14,7 @@ import store.seub2hu2.course.vo.ReviewImage;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.FileUtils;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -22,8 +24,10 @@ public class ReviewService {
     @Value("${upload.directory.course}")
     private String saveDirectory;
 
+    @Autowired
     private ReviewMapper reviewMapper;
 
+    @Autowired
     private AdminMapper adminMapper;
 
     /**
@@ -32,8 +36,21 @@ public class ReviewService {
      * @return 리뷰 목록
      */
     public List<Review> getReviews(int courseNo) {
-        // 코스에 등록된 리뷰 목록을 가져온다.
-        return reviewMapper.getReviewsByNo(courseNo);
+        // 1. 코스에 등록된 리뷰 목록, 첨부 파일 목록을 가져온다.
+        List<Review> reviews = reviewMapper.getReviewsByNo(courseNo);
+
+        // 2. 첨부 파일 목록이 있다면, 리뷰 객체에 저장한다.
+        for (Review review : reviews) {
+            int reviewNo = review.getNo();
+            List<ReviewImage> reviewImages  = reviewMapper.getReviewImagesByNo(reviewNo);
+            if (reviewImages.getFirst().getNo() != 0) {
+                review.setReviewImage(reviewImages);
+            }
+        }
+        System.out.println("리뷰 목록: " + reviews);
+
+        // 3. 리뷰 객체를 반환한다.
+        return reviews;
     }
 
     /**
@@ -61,16 +78,26 @@ public class ReviewService {
 
         // 3. 첨부 파일을 지정된 경로에 저장하고, 테이블에 저장한다.
         List<MultipartFile> multipartFiles = form.getUpfiles();
-        ReviewImage reviewImage = new ReviewImage();
-        if (multipartFiles != null && !multipartFiles.isEmpty()) {
+        List<ReviewImage> reviewImages = new ArrayList<>();
+        if (multipartFiles != null) {
             for (MultipartFile multipartFile : multipartFiles) {
-                String originalFilename = FileUtils.saveMultipartFile(multipartFile, saveDirectory);
-                String filename = System.currentTimeMillis() + originalFilename;
+                // 첨부 파일을 지정된 경로에 저장 후, 파일 이름을 가져온다.
+                String filename = System.currentTimeMillis() + multipartFile.getOriginalFilename();
+                System.out.println("파일명:" + filename);
+                FileUtils.saveMultipartFile(multipartFile, saveDirectory, filename);
+
+                // 코스 리뷰 이미지 테이블에 데이터를 추가한다.
+                ReviewImage reviewImage = new ReviewImage();
                 reviewImage.setName(filename);
+                reviewImage.setReviewNo(review.getNo());
+
                 reviewMapper.insertReviewImage(reviewImage);
-                review.getReviewImage().add(reviewImage);
+
+                reviewImages.add(reviewImage);
             }
+            review.setReviewImage(reviewImages);
         }
+        System.out.println("코스에 등록한 리뷰  : " + review);
 
         // 4. 등록한 리뷰 정보를 반환한다.
         return review;

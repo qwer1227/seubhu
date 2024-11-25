@@ -19,5 +19,4 @@ public class ColorProdImgDto {
     private String name;
     private Product product;
     private List<Image> images;
-
 }

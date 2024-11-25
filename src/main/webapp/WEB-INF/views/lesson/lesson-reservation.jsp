@@ -15,10 +15,6 @@
             font-size: 0.85rem;
         }
 
-        .datepicker {
-            margin-bottom: 3rem;
-        }
-
         body {
             background-color: #fafafa;
         }
@@ -34,45 +30,49 @@
     </div>
     <form form="condition" method="get" action="/lesson/reservation">
         <input type="hidden" name="userNo" value="11">
-    <div class="row mb-3">
-        <div class="col-4">
-            <select>
-                <option>5개씩 보기</option>
-                <option>10개씩 보기</option>
-            </select>
-            <select name="lessonSubject">
-                <option>모두</option>
-                <option>호흡</option>
-                <option>자세</option>
-                <option>운동</option>
-            </select>
-            <select name="lessonStatus">
-                <option>모두</option>
-                <option>예약</option>
-                <option>수료</option>
-                <option>취소</option>
-            </select>
+        <div class="row mb-3">
+            <div class="col-1">
+                <label for="subject">과목</label>
+                <select name="lessonSubject" class="form-select" id="subject">
+                    <option>모두</option>
+                    <option>호흡</option>
+                    <option>자세</option>
+                    <option>운동</option>
+                </select>
+            </div>
+            <div class="col-1">
+                <label for="status">예약상태</label>
+                <select name="lessonStatus" class="form-select" id="status">
+                    <option>모두</option>
+                    <option>예약</option>
+                    <option>수료</option>
+                    <option>취소</option>
+                </select>
+            </div>
+            <div class="col-2">
+                <label for="startDate">시작</label>
+                <input type="date" id='startDate' name="startDate" class="form-select">
+            </div>
+            <div class="col-2">
+                <label for="endDate">종료</label>
+                <input type="date" id="endDate" name="startDate" class="form-select">
+            </div>
+            <div class="col text-end">
+                <label for="searchCondition">검색조건</label>
+                <select name="searchCondition" id="searchCondition" class="form-select">
+                    <option>강사명</option>
+                    <option>레슨명</option>
+                    <option>과목</option>
+                </select>
+            </div>
+            <div class="col pt-4">
+                <input type="text" class="form-control border" name="searchKeyword"/>
+            </div>
+            <div class="col-1 pt-4">
+                <label for="search"> </label>
+                <button type="submit" class="btn btn-primary" id="search">검색</button>
+            </div>
         </div>
-        날짜 선택
-        <div class="col-3">
-            <input type="date" name="startDate">
-            -
-            <input type="date" name="endDate">
-        </div>
-        <div class="col text-end">
-            <select name="searchCondition">
-                <option>강사명</option>
-                <option>레슨명</option>
-                <option>과목</option>
-            </select>
-        </div>
-        <div class="col">
-            <input type="text" class="form-control border" name="searchKeyword"/>
-        </div>
-        <div class="col-1">
-            <button type="submit" class="btn btn-primary">검색</button>
-        </div>
-    </div>
     </form>
     <div class="row">
         <table class="table">
@@ -95,11 +95,12 @@
             <c:forEach var="reservation" items="${lessons}" varStatus="loop">
                 <tr>
                     <td>${reservation.no}</td>
-                    <td><a href="/lesson/detail?lessonNo=${reservation.lesson.lessonNo}" style="text-decoration:none">${reservation.lesson.title}</a></td>
+                    <td><a href="/lesson/detail?lessonNo=${reservation.lesson.lessonNo}"
+                           style="text-decoration:none">${reservation.lesson.title}</a></td>
                     <td>${reservation.lesson.lecturer.name}</td>
-                    <td><fmt:formatNumber value="${reservation.lesson.price}" pattern="#,###" /></td>
+                    <td><fmt:formatNumber value="${reservation.lesson.price}" pattern="#,###"/></td>
                     <td>${reservation.lesson.status}</td>
-                    <td><fmt:formatDate value="${reservation.reservationCreatedDate}" pattern="yyyy-MM-dd" /></td>
+                    <td><fmt:formatDate value="${reservation.reservationCreatedDate}" pattern="yyyy-MM-dd"/></td>
                 </tr>
             </c:forEach>
         </table>

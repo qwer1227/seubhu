@@ -8,9 +8,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import store.seub2hu2.product.dto.ColorProdImgDto;
-import store.seub2hu2.product.dto.ProdDetailDto;
-import store.seub2hu2.product.dto.ProdListDto;
+import store.seub2hu2.product.dto.*;
 import store.seub2hu2.product.service.ProductService;
 import store.seub2hu2.util.ListDto;
 
@@ -68,7 +66,7 @@ public class ProductController {
         return "product/list";
     }
 
-    // 임시 상품 상세 페이지 이동
+    // 상품 상세 페이지 이동
     @GetMapping("/detail")
     public String detail(@RequestParam("no") int no,
                          @RequestParam("colorNo") int colorNo,
@@ -80,7 +78,12 @@ public class ProductController {
         List<ColorProdImgDto> colorProdImgDto = productService.getProdImgByColorNo(no);
         model.addAttribute("colorProdImgDto", colorProdImgDto);
 
-        System.out.println("prodDetailDtao" + prodDetailDto);
+        SizeAmountDto sizeAmountDto = productService.getSizeAmountByColorNo(colorNo);
+        model.addAttribute("sizeAmountDto", sizeAmountDto);
+
+        ProdImagesDto prodImagesDto = productService.getProdImagesByColorNo(colorNo);
+        model.addAttribute("prodImagesDto", prodImagesDto);
+
         return "product/detail";
     }
 }
