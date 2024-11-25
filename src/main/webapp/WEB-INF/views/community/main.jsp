@@ -163,9 +163,14 @@
       <div class="col d-flex justify-content-center">
       
       </div>
-      <div class="col d-flex justify-content-end">
-        <a href="form" type="button" class="btn btn-primary">글쓰기</a>
-      </div>
+      <security:authorize access="isAuthenticated()">
+        <security:authentication property="principal" var="loginUser"/>
+        <div class="col d-flex justify-content-end">
+          <c:if test="${not empty loginUser}">
+            <a href="form" type="button" class="btn btn-primary">글쓰기</a>
+          </c:if>
+        </div>
+      </security:authorize>
     </div>
     
     <!-- 페이징처리 -->

@@ -24,6 +24,7 @@ import store.seub2hu2.community.view.FileDownloadView;
 import store.seub2hu2.community.vo.Board;
 import store.seub2hu2.community.vo.Reply;
 import store.seub2hu2.security.user.LoginUser;
+import store.seub2hu2.user.service.UserService;
 import store.seub2hu2.util.ListDto;
 
 import java.io.File;
@@ -89,10 +90,21 @@ public class BoardController {
 
     @GetMapping("/detail")
     public String detail(@RequestParam("no") int boardNo
-            , Model model) {
+                         , @AuthenticationPrincipal LoginUser loginUser
+                         , Model model) {
         Board board = boardService.getBoardDetail(boardNo);
         List<Reply> replyList = replyService.getReplies(boardNo);
         board.setReply(replyList);
+
+        if (loginUser != null) {
+            int boardResult = boardService.getCheckLike(boardNo, loginUser);
+            model.addAttribute("boardLiked", boardResult);
+
+            for (Reply reply : replyList) {
+                int replyResult = replyService.getCheckLike(reply.getNo(), loginUser);
+                model.addAttribute("replyLiked", replyResult);
+            }
+        }
 
         model.addAttribute("board", board);
         model.addAttribute("replies", replyList);
@@ -106,7 +118,7 @@ public class BoardController {
     }
 
     @PostMapping("/register")
-    @PreAuthorize("isAuthenticated()")
+//    @PreAuthorize("isAuthenticated()")
     public String register(BoardForm form
             , @AuthenticationPrincipal LoginUser loginUser) {
         boardService.addNewBoard(form, loginUser);
@@ -115,7 +127,9 @@ public class BoardController {
     }
 
     @GetMapping("/modify")
-    public String modifyForm(@RequestParam("no") Integer boardNo, Model model) {
+    public String modifyForm(@RequestParam("no") Integer boardNo
+            , @AuthenticationPrincipal LoginUser loginUser
+            , Model model) {
         Board board = boardService.getBoardDetail(boardNo);
 
         model.addAttribute("board", board);
@@ -147,7 +161,8 @@ public class BoardController {
 
     // 요청 URL : comm/filedown?no=xxx
     @GetMapping("/filedown")
-    public ModelAndView download(@RequestParam("no") int boardNo) {
+    public ModelAndView download(@RequestParam("no") int boardNo
+                                , @AuthenticationPrincipal LoginUser loginUser) {
         Board board = boardService.getBoardDetail(boardNo);
 
         ModelAndView mav = new ModelAndView();
@@ -161,7 +176,8 @@ public class BoardController {
     }
 
     @GetMapping("/download")
-    public ResponseEntity<Resource> downloadFile(int boardNo) throws Exception{
+    public ResponseEntity<Resource> downloadFile(int boardNo
+                                        , @AuthenticationPrincipal LoginUser loginUser) throws Exception{
         Board board = boardService.getBoardDetail(boardNo);
 
         String fileName = board.getUploadFile().getSaveName();
@@ -176,6 +192,10 @@ public class BoardController {
                 .body(resource);
     }
 
+    @GetMapping("/login")
+    public String login(){
+        return "redirect:/user/login";
+    }
     @GetMapping("/add-reply")
     @PreAuthorize("isAuthenticated()")
     public String addReply(ReplyForm form
@@ -224,10 +244,37 @@ public class BoardController {
         return "redirect:detail?no=" + form.getBoardNo();
     }
 
-    @GetMapping("/update-like")
-    public String updateBoardLikeCnt(@RequestParam("no") int boardNo
-                                    ,@RequestParam("likeCnt") int likeCnt){
-        boardService.updateBoardLikeCnt(boardNo, likeCnt);
+    @GetMapping("/update-board-like")
+    public String updateBoardLike(@RequestParam("no") int boardNo
+            , @AuthenticationPrincipal LoginUser loginUser){
+        boardService.updateBoardLike(boardNo, loginUser);
+        return "redirect:detail?no=" + boardNo;
+    }
+
+    @GetMapping("/update-board-unlike")
+    public String updateBoardUnlike(@RequestParam("no") int boardNo
+            , @AuthenticationPrincipal LoginUser loginUser){
+        boardService.updateBoardUnlike(boardNo, loginUser);
+        return "redirect:detail?no=" + boardNo;
+    }
+
+    @GetMapping("/update-reply-like")
+    public String updateReplyLke(@RequestParam("no") int boardNo
+                                , @RequestParam("rno") int replyNo
+                                , @AuthenticationPrincipal LoginUser loginUser){
+
+        System.out.println("===================reply 번호 : " + replyNo);
+        System.out.println("===================user 번호 : " + loginUser.getNo());
+
+        replyService.updateReplyLike(replyNo, loginUser);
+        return "redirect:detail?no=" + boardNo;
+    }
+
+    @GetMapping("/update-reply-unlike")
+    public String updateReplyUnlike(@RequestParam("no") int boardNo
+                                    , @RequestParam("rno") int replyNo
+                                    , @AuthenticationPrincipal LoginUser loginUser){
+        replyService.updateReplyUnlike(replyNo, loginUser);
         return "redirect:detail?no=" + boardNo;
     }
 }

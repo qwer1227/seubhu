@@ -111,7 +111,6 @@ public class BoardService {
         UploadFile uploadFile = boardUploadMapper.getFileByBoardNo(boardNo);
         List<Reply> reply = replyMapper.getRepliesByBoardNo(boardNo);
 
-
         if (board == null) {
             throw new CommunityException("존재하지 않는 게시글입니다.");
         }
@@ -180,7 +179,24 @@ public class BoardService {
         boardUploadMapper.updateBoardFile(uploadFile);
     }
 
-    public void updateBoardLikeCnt(int boardNo, int cnt){
+    public int getCheckLike(int boardNo
+                            , @AuthenticationPrincipal LoginUser loginUser) {
+         return boardMapper.hasUserLikedBoard(boardNo, loginUser.getNo());
+    }
+
+    public void updateBoardLike(int boardNo
+                            , @AuthenticationPrincipal LoginUser loginUser) {
+        boardMapper.insertLike(boardNo, loginUser.getNo());
+    }
+
+    public void updateBoardUnlike(int boardNo
+                            , @AuthenticationPrincipal LoginUser loginUser) {
+        boardMapper.deleteLike(boardNo, loginUser.getNo());
+    }
+
+    public void updateBoardLikeCnt(int boardNo
+            , @AuthenticationPrincipal LoginUser loginUser
+            , int cnt){
         Board board = boardMapper.getBoardDetailByNo(boardNo);
         board.setNo(boardNo);
         board.setLike(cnt);

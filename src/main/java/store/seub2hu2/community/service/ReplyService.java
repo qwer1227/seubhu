@@ -1,5 +1,6 @@
 package store.seub2hu2.community.service;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
@@ -72,5 +73,20 @@ public class ReplyService {
         reply.setContent(form.getContent());
 
         replyMapper.updateReply(reply);
+    }
+
+    public int getCheckLike(int replyNo
+                            , @AuthenticationPrincipal LoginUser loginUser) {
+        return replyMapper.hasUserLikedReply(replyNo, loginUser.getNo());
+    }
+
+    public void updateReplyLike(int replyNo
+            , @AuthenticationPrincipal LoginUser loginUser) {
+        replyMapper.insertReplyLike(replyNo, loginUser.getNo());
+    }
+
+    public void updateReplyUnlike(int replyNo
+            , @AuthenticationPrincipal LoginUser loginUser) {
+        replyMapper.deleteReplyLike(replyNo, loginUser.getNo());
     }
 }

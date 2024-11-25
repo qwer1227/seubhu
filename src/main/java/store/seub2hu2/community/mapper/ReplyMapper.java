@@ -16,4 +16,7 @@ public interface ReplyMapper {
     List<Reply> getRepliesByBoardNo(@Param("no") int boardNo);
     Reply getReplyByReplyNo(@Param("no") int replyNo);
     void deleteReplyByNo(@Param("no") int replyNo);
+    int hasUserLikedReply(@Param("rno") int replyNo, @Param("userNo") int userNo);
+    void insertReplyLike(@Param("rno") int replyNo, @Param("userNo") int userNo);
+    void deleteReplyLike(@Param("rno") int replyNo, @Param("userNo") int userNo);
 }

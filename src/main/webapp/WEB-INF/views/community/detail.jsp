@@ -82,22 +82,25 @@
       <div>
         <!-- 로그인 여부를 체크하기 위해 먼저 선언 -->
         <security:authorize access="isAuthenticated()">
-          <!-- principal 프로퍼티 안의 loginUser 정보를 가져옴 -->
-          <security:authentication property="principal" var="loginUser"/>
-          <!-- loginUser.no를 가져와서 조건문 실행 -->
-          <c:if test="${loginUser.no == board.user.no}">
-            <button class="btn btn-warning" onclick="updateBoard(${board.no})">수정</button>
-            <button class="btn btn-danger" onclick="deleteBoard(${board.no})">삭제</button>
-          </c:if>
-          <c:if test="${loginUser.no != board.user.no}">
-            <button class="btn btn-danger">신고</button>
-          </c:if>
-        </security:authorize>
+        <!-- principal 프로퍼티 안의 loginUser 정보를 가져옴 -->
+        <security:authentication property="principal" var="loginUser"/>
+        <!-- loginUser.no를 가져와서 조건문 실행 -->
+        <c:if test="${loginUser.no == board.user.no}">
+          <button class="btn btn-warning" onclick="updateBoard(${board.no})">수정</button>
+          <button class="btn btn-danger" onclick="deleteBoard(${board.no})">삭제</button>
+        </c:if>
+        <c:if test="${loginUser.no != board.user.no}">
+          <button class="btn btn-danger">신고</button>
+        </c:if>
+      
       </div>
       <div>
-        <button class="btn btn-outline-primary" id="likeButton" onclick="likeButton(${board.no})">
-          <i id="likeIcon" class="bi bi-hand-thumbs-up"></i>
+        <button class="btn btn-outline-primary" id="likeCnt"
+                onclick="boardLikeButton(${board.no}, ${loginUser.getNo()})">
+          <i id="icon-heart"
+             class="bi ${boardLiked == '1' ? 'bi-heart-fill' : (boardLiked == '0' ? 'bi-heart' : 'bi-heart')}"></i>
         </button>
+        </security:authorize>
         <a type="button" href="main" class="btn btn-secondary">목록</a>
       </div>
     </div>
@@ -109,19 +112,24 @@
         <input type="hidden" name="boardNo" value="${board.no}">
         <input type="hidden" name="userNo" value="${loginUser.no}">
         <div class="row">
-          <div class="form-group col-11">
-            <c:choose>
-              <c:when test="${empty loginUser}">
-                <input class="form-control" disabled rows="3" placeholder="로그인 후 댓글 작성이 가능합니다."/>
-              </c:when>
-              <c:otherwise>
+          <c:choose>
+            <c:when test="${empty loginUser}">
+              <div class="form-group col-11">
+                <input class="form-control" disabled placeholder="로그인 후 댓글 작성이 가능합니다."/>
+              </div>
+              <div class="col">
+                <button type="button" class="btn btn-outline-success" onclick="goLogin()">등록</button>
+              </div>
+            </c:when>
+            <c:otherwise>
+              <div class="form-group col-11">
                 <textarea name="content" class="form-control" rows="3" placeholder="댓글을 작성하세요."></textarea>
-              </c:otherwise>
-            </c:choose>
-          </div>
-          <div class="col">
-            <button class="btn btn-success" onclick="submitReply()">등록</button>
-          </div>
+              </div>
+              <div class="col">
+                <button type="submit" class="btn btn-success" onclick="submitReply()">등록</button>
+              </div>
+            </c:otherwise>
+          </c:choose>
         </div>
       </form>
     </div>
@@ -172,9 +180,10 @@
                       </div>
                       <div class="col-2" style="text-align: end">
                         <c:if test="${loginUser.no ne reply.user.no}">
-                          <button class="btn btn-outline-dark btn-sm">
-                            <i class="bi bi-hand-thumbs-up"></i>
-                            <i class="bi bi-hand-thumbs-up-fill"></i>
+                          <button class="btn btn-outline-primary btn-sm" id="replyLikeCnt"
+                                  onclick="replyLikeButton(${board.no}, ${reply.no}, ${loginUser.getNo()})">
+                            <i id="icon-thumbs"
+                               class="bi ${replyLiked == '1' ? 'bi-hand-thumbs-up-fill' : (boardLiked == '0' ? 'bi-hand-thumbs-up' : 'bi-hand-thumbs-up')}"></i>
                           </button>
                         </c:if>
                         <security:authorize access="isAuthenticated()">
@@ -272,21 +281,29 @@
         }
     }
 
-    function likeButton(boardNo) {
-        let likeIcon = document.getElementById("likeIcon");
-
-        let likeCnt = 0;
-        if (likeIcon.classList.contains('bi-hand-thumbs-up')) {
-            likeIcon.classList.remove('bi-hand-thumbs-up');
-            likeIcon.classList.add('bi-hand-thumbs-up-fill');
-            likeCnt = +1;
+    function boardLikeButton(boardNo, userNo) {
+        let heart = document.querySelector("#icon-heart");
+        if (heart.classList.contains("bi-heart")) {
+            window.location.href = `update-board-like?no=\${boardNo}&userNo=\${userNo}`;
         } else {
-            likeIcon.classList.remove('bi-hand-thumbs-up-fill');
-            likeIcon.classList.add('bi-hand-thumbs-up');
-            likeCnt = -1;
+            window.location.href = `update-board-unlike?no=\${boardNo}&userNo=\${userNo}`;
         }
+    }
+    
+    function replyLikeButton(boardNo, replyNo, userNo) {
+        let heart = document.querySelector("#icon-thumbs");
+        if (heart.classList.contains("bi-heart")) {
+            window.location.href = `update-board-like?no=\${boardNo}&rno=\${replyNo}&userNo=\${userNo}`;
+        } else {
+            window.location.href = `update-board-unlike?no=\${boardNo}&rno=\${replyNo}&userNo=\${userNo}`;
+        }
+    }
 
-        window.location.href = `update-like?no=\${boardNo}&likeCnt=\${likeCnt}`;
+    function goLogin() {
+        let result = confirm("로그인하시겠습니까?");
+        if (result) {
+            window.location.href = "/login";
+        }
     }
 
     /* 댓글&답글 입력 폼이 클릭한 버튼 바로 아래 위치하도록 처리 */

@@ -141,7 +141,7 @@
   </update>
 
   <!--  Board getBoardDetailByNo(@Param("no") int no); -->
-  <select id="getBoardDetailByNo" resultType="store.seub2hu2.community.vo.Board" >
+  <select id="getBoardDetailByNo" resultType="store.seub2hu2.community.vo.Board">
     select b.board_no            as no
      , b.board_cat_name          as catName
      , u.user_nickname           as "user.nickname"
@@ -153,11 +153,17 @@
      , b.board_updated_date      as updatedDate
      , b.board_cnt               as viewCnt
      , b.scrap_cnt               as scrap
-     , b.board_like              as `like`
      , b.is_deleted              as deleted
      , b.is_keep                 as `keep`
      , b.is_report               as report
      , b.is_hashtag              as hashtag
+     , (select
+            count(*) as board_cnt
+        from
+            BOARDS b join BOARD_LIKES bl
+            on b.board_no = bl.board_no
+        where b.board_no = #{no}
+        )                        as `like`
     from
       BOARDS b join USERS u
     on b.user_nickname = u.user_nickname
@@ -167,4 +173,34 @@
       b.is_deleted = 'N'
       and b.board_no = #{no}
   </select>
+
+  <!-- int hasUserLikedBoard(@Param("no") int boardNo, @Param("userNo") int userNo); -->
+  <select id="hasUserLikedBoard" resultType="int">
+    select EXISTS (
+      SELECT 1
+      FROM BOARD_LIKES
+      WHERE board_no = #{no} and user_no = #{userNo}
+    )
+  </select>
+
+  <!-- void insertLike(@Param("no") int boardNo, @Param("userNo") int userNo); -->
+  <insert id="insertLike">
+    insert into BOARD_LIKES
+        (
+         board_no
+          , user_no
+        )
+    values
+        (
+         #{no}
+          , #{userNo}
+        )
+  </insert>
+
+  <!-- void deleteLike(@Param("no") int boardNo, @Param("userNo") int userNo); -->
+  <delete id="deleteLike">
+    delete from BOARD_LIKES
+    where board_no = #{no}
+        and user_no = #{userNo}
+  </delete>
 </mapper>

@@ -87,4 +87,35 @@
     where reply_no = #{no}
 
   </update>
+
+  <!-- int hasUserLikedReply(@Param("rno") int replyNo, @Param("userNo") int userNo); -->
+  <select id="hasUserLikedReply" resultType="int">
+    select EXISTS (
+      SELECT 1
+      FROM BOARD_LIKES
+      WHERE reply_no = #{rno} and user_no = #{userNo}
+    )
+  </select>
+
+  <!-- void insertReplyLike(@Param("rno") int replyNo, @Param("userNo") int userNo); -->
+  <insert id="insertReplyLike">
+    insert into BOARD_REPLY_LIKES
+        (
+         reply_no
+          , user_no
+        )
+    values
+        (
+         #{rno}
+          , #{userNo}
+        )
+  </insert>
+
+  <!-- void deleteReplyLike(@Param("rno") int replyNo, @Param("userNo") int userNo); -->
+  <delete id="deleteReplyLike">
+    delete from BOARD_REPLY_LIKES
+    where reply_no = #{rno}
+        and user_no = #{userNo}
+  </delete>
+
 </mapper>
