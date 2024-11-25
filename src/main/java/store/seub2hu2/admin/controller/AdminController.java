@@ -7,22 +7,21 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import store.seub2hu2.admin.dto.CourseRegisterForm;
 import store.seub2hu2.admin.service.AdminService;
 import store.seub2hu2.course.service.CourseService;
 import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.lesson.dto.LessonRegisterForm;
+import store.seub2hu2.lesson.service.LessonFileService;
 import store.seub2hu2.lesson.service.LessonService;
 import store.seub2hu2.lesson.vo.Lesson;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.ListDto;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +39,7 @@ public class AdminController {
 
     private final AdminService adminService;
     private final LessonService lessonService;
+    private final LessonFileService lessonFileService;
 
     @GetMapping("/home")
     public String home() {
@@ -47,69 +47,85 @@ public class AdminController {
         return "admin/home";
     }
 
+    @GetMapping("/lesson-edit-form")
+    public String lessonEditForm(@RequestParam("lessonNo")Integer lessonNo, Model model) {
+
+        try {
+
+
+            // Lesson 정보 가져오기
+            Lesson lesson = lessonService.getLessonByNo(lessonNo);
+
+            // 이미지 파일 정보 가져오기
+            Map<String, String> images = lessonService.getImagesByLessonNo(lessonNo);
+
+            // 모델에 lesson과 images 정보 추가
+            model.addAttribute("lesson", lesson);
+            model.addAttribute("lessonNo", lessonNo);
+            model.addAttribute("images", images);
+
+
+
+            log.info("lesson start = {}", lesson);
+
+            return "admin/lesson-edit-form";
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid lessonNo: " + lessonNo);
+        }
+    }
+
+/*    @GetMapping("/lesson-edit-form")
+    public String lessonEditForm(@RequestParam("lessonNo")Integer lessonNo, Model model) {
+
+        Lesson lesson = lessonService.getLessonByNo(lessonNo);
+
+
+        return "admin/lesson-edit-form";
+    }
+
+    @PostMapping("/lesson-edit-form")
+    public String lessonEditForm(LessonRegisterForm form,Model model) {
+
+        return "admin/lesson-edit-form";
+    }*/
+
     @GetMapping("/lesson-register-form")
     public String lessonRegisterForm() {
         return "admin/lesson-register-form";
     }
 
-//    @PostMapping("/lesson-register-form")
-//    public String form(@ModelAttribute("form") LessonRegisterForm form, Model model) throws IOException {
-//
-//
-//        // Lesson 객체 생성
-//        int lessonNo = lessonService.getMostLatelyLessonNo();
-//
-//        Lesson lesson = new Lesson();
-//        lesson.setLessonNo(lessonNo);
-//        lesson.setTitle(form.getTitle());
-//        lesson.setPrice(form.getPrice());
-//        User user = new User();
-//        user.setNo(form.getLecturerNo()); // Or dynamically assign user ID
-//        lesson.setLecturer(user);
-//        lesson.setSubject(form.getSubject());
-//        lesson.setPlan(form.getPlan());
-//
-//        // startDate를 원하는 형식으로 변환
-//        Date startDate = form.getDate();
-//        if (startDate != null) {
-//            // SimpleDateFormat을 사용해 'yyyy-MM-dd' 형식으로 변환
-//            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-//            String formattedStartDate = sdf.format(startDate);
-//
-//            // 문자열을 다시 Date 객체로 변환하여 lesson에 설정
-//            try {
-//                Date parsedStartDate = sdf.parse(formattedStartDate);
-//                lesson.setStartDate(parsedStartDate);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//                // 예외 처리 로직
-//            }
-//        }
-//
-//        lesson.setStartDate(startDate);
-//
-//
-//
-//        System.out.println("lesson: "+lesson);
-//        // Get the uploaded file
-//        MultipartFile thumbnail = form.getThumbnail();
-//        MultipartFile mainImage = form.getMainImage();
-//
-//        lessonService.registerLesson(lesson, form);
-//
-//        // Redirect after successful form submission
-//        return "redirect:/admin/lessonlist";
-//
-//    }
+    @PostMapping("/lesson-register-form")
+    public String form(@ModelAttribute("form") LessonRegisterForm form, Model model) throws IOException {
+
+        Lesson lesson = new Lesson();
+        lesson.setTitle(form.getTitle());
+        lesson.setPrice(form.getPrice());
+        User user = new User();
+        user.setNo(29); // Or dynamically assign user ID
+        user.setId(form.getLecturerName());
+        lesson.setLecturer(user);
+        lesson.setSubject(form.getSubject());
+        lesson.setPlan(form.getPlan());
+        lesson.setStart(form.getStartDate());
+        lesson.setEnd(form.getEndDate());
+
+        System.out.println("-------------------------------------레슨 시작 종료시간 알아보기: " + lesson);
+        
+        lessonService.registerLesson(lesson, form);
+
+        // Redirect after successful form submission
+        return "redirect:/admin/lesson";
+
+    }
     @GetMapping("/lesson")
     public String lesson(@RequestParam(name = "opt", required = false) String opt,
                          @RequestParam(name = "day", required = false)
-                         @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate day,
+                         @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDateTime day,
                                @RequestParam(name = "value", required = false) String value,
                                Model model) {
 
         if (day == null) {
-            day = LocalDate.now();
+            day = LocalDateTime.now();
         }
 
         String formattedDay = day.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
@@ -171,7 +187,7 @@ public class AdminController {
 
     @GetMapping("/user/preview")
     @ResponseBody
-    public User preview(int no) {
+    public User preview(@RequestParam("no") int no) {
         User user = adminService.getUser(no);
 
         return user;

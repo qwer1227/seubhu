@@ -16,17 +16,14 @@
             <%--상품의 사진을 화면에 표시한다.--%>
             <div class="col-6">
                 <div class="mb-3">
-                    <img src="https://ecimg.cafe24img.com/pg90b05313110010/brooksrunning/web/product/big/20240102/6531af333e9506981bed79075102fe43.png"/>
+                    <img src="${prodImagesDto.images.get(0).url}" width="100%"/>
                 </div>
-                <div>
-                    <img src="https://ecimg.cafe24img.com/pg90b05313110010/brooksrunning/web/product/big/20240102/6531af333e9506981bed79075102fe43.png" width="20%" />
-                    <img src="https://ecimg.cafe24img.com/pg90b05313110010/brooksrunning/web/product/big/20240102/6531af333e9506981bed79075102fe43.png" width="20%" />
-                    <img src="https://ecimg.cafe24img.com/pg90b05313110010/brooksrunning/web/product/big/20240102/6531af333e9506981bed79075102fe43.png" width="20%" />
-                    <img src="https://ecimg.cafe24img.com/pg90b05313110010/brooksrunning/web/product/big/20240102/6531af333e9506981bed79075102fe43.png" width="20%" />
-                    <img src="https://ecimg.cafe24img.com/pg90b05313110010/brooksrunning/web/product/big/20240102/6531af333e9506981bed79075102fe43.png" width="20%" />
-                    <img src="https://ecimg.cafe24img.com/pg90b05313110010/brooksrunning/web/product/big/20240102/6531af333e9506981bed79075102fe43.png" width="20%" />
-                    <img src="https://ecimg.cafe24img.com/pg90b05313110010/brooksrunning/web/product/big/20240102/6531af333e9506981bed79075102fe43.png" width="20%" />
-                    <img src="https://ecimg.cafe24img.com/pg90b05313110010/brooksrunning/web/product/big/20240102/6531af333e9506981bed79075102fe43.png" width="20%" />
+                <div class="row">
+                    <c:forEach var="imgs" items="${prodImagesDto.images}">
+                        <div class="col-2">
+                            <img class="img-fluid" src="${imgs.url}" />
+                        </div>
+                    </c:forEach>
                 </div>
             </div>
             <div class="col-6">
@@ -68,7 +65,6 @@
                                         <th>상품 설명</th>
                                         <td colspan="3">${prodDetailDto.content}</td>
                                     </tr>
-
                                 </table>
                             </div>
                         </div>
@@ -89,102 +85,48 @@
                                             </c:forEach>
                                     </c:forEach>
                                 </div>
-                                <form method="post">
                                     <div class="mb-4">
                                         <div class="mb-4">
                                             <label class="form-label d-block">사이즈를 선택하세요:</label>
                                             <div class="row row-cols-5 g-3">
                                                 <!-- 사이즈 버튼 -->
-                                                <div class="col">
-                                                    <input type="radio" class="btn-check" name="shoeSize" id="size250" value="250" required onclick="function getCart() {
-
-                                                }">
-                                                    <label class="btn btn-outline-secondary fixed-size w-100 d-flex align-items-center justify-content-between" for="size250">
-                                                        <span>250</span>
-                                                        <span class="badge bg-secondary">재고: 10</span>
-                                                    </label>
-                                                </div>
-                                                <div class="col">
-                                                    <input type="radio" class="btn-check" name="shoeSize" id="size255" value="255">
-                                                    <label class="btn btn-outline-secondary fixed-size w-100 d-flex align-items-center justify-content-between" for="size255">
-                                                        <span>255</span>
-                                                        <span class="badge bg-secondary">재고: 10</span>
-                                                    </label>
-                                                </div>
-                                                <div class="col">
-                                                    <input type="radio" class="btn-check" name="shoeSize" id="size260" value="260" disabled>
-                                                    <label class="btn btn-outline-danger fixed-size w-100 d-flex align-items-center justify-content-between" for="size260">
-                                                        <span>260</span>
-                                                        <span class="badge bg-danger">품절</span>
-                                                    </label>
-                                                </div>
-                                                <div class="col">
-                                                    <input type="radio" class="btn-check" name="shoeSize" id="size265" value="265">
-                                                    <label class="btn btn-outline-secondary fixed-size w-100 d-flex align-items-center justify-content-between" for="size265">
-                                                        <span>265</span>
-                                                        <span class="badge bg-secondary">재고: 10</span>
-                                                    </label>
-                                                </div>
-                                                <div class="col">
-                                                    <input type="radio" class="btn-check" name="shoeSize" id="size270" value="270">
-                                                    <label class="btn btn-outline-secondary fixed-size w-100 d-flex align-items-center justify-content-between" for="size270">
-                                                        <span>270</span>
-                                                        <span class="badge bg-secondary">재고: 10</span>
-                                                    </label>
-                                                </div>
-
-                                                <!-- 두 번째 줄 -->
-                                                <div class="col">
-                                                    <input type="radio" class="btn-check" name="shoeSize" id="size275" value="275">
-                                                    <label class="btn btn-outline-secondary fixed-size w-100 d-flex align-items-center justify-content-between" for="size275">
-                                                        <span>275</span>
-                                                        <span class="badge bg-secondary">재고: 10</span>
-                                                    </label>
-                                                </div>
-                                                <div class="col">
-                                                    <input type="radio" class="btn-check" name="shoeSize" id="size280" value="280">
-                                                    <label class="btn btn-outline-secondary fixed-size w-100 d-flex align-items-center justify-content-between" for="size280">
-                                                        <span>280</span>
-                                                        <span class="badge bg-secondary">재고: 10</span>
-                                                    </label>
-                                                </div>
-                                                <div class="col">
-                                                    <input type="radio" class="btn-check" name="shoeSize" id="size285" value="285">
-                                                    <label class="btn btn-outline-secondary fixed-size w-100 d-flex align-items-center justify-content-between" for="size285">
-                                                        <span>285</span>
-                                                        <span class="badge bg-secondary">재고: 10</span>
-                                                    </label>
-                                                </div>
-                                                <div class="col">
-                                                    <input type="radio" class="btn-check" name="shoeSize" id="size290" value="290">
-                                                    <label class="btn btn-outline-secondary fixed-size w-100 d-flex align-items-center justify-content-between" for="size290">
-                                                        <span>290</span>
-                                                        <span class="badge bg-secondary">재고: 10</span>
-                                                    </label>
-                                                </div>
-                                                <div class="col">
-                                                    <input type="radio" class="btn-check" name="shoeSize" id="size295" value="295">
-                                                    <label class="btn btn-outline-secondary fixed-size w-100 d-flex align-items-center justify-content-between" for="size295">
-                                                        <span>295</span>
-                                                        <span class="badge bg-secondary">재고: 10</span>
-                                                    </label>
-                                                </div>
-                                                <div class="col">
-                                                    <input type="radio" class="btn-check" name="shoeSize" id="size300" value="300">
-                                                    <label class="btn btn-outline-secondary fixed-size w-100 d-flex align-items-center justify-content-between" for="size300">
-                                                        <span>300</span>
-                                                        <span class="badge bg-secondary">재고: 10</span>
-                                                    </label>
-                                                </div>
+                                                <c:forEach var="size" items="${sizeAmountDto.sizes }" varStatus="loop">
+                                                    <div class="col">
+                                                        <input type="radio" class="btn-check" name="size" id="size${size.size}" value="${size.size}" required
+                                                        onchange="fn(this)"
+                                                        data-name="${prodDetailDto.name}"
+                                                        data-size="${size.size}"
+                                                        data-size-no="${loop.count}"
+                                                        data-color="${sizeAmountDto.name}"
+                                                        data-no="${prodDetailDto.no}"
+                                                        >
+                                                        <label class="${size.amount == 0 ? "btn btn-outline-danger fixed-size w-100 d-flex align-items-center justify-content-between disabled": "btn btn-outline-secondary fixed-size w-100 d-flex align-items-center justify-content-between"}" for="size${size.size}">
+                                                            <span class="ms-2">${size.size}</span>
+                                                            <span class="badge bg-secondary">재고:${size.amount}</span>
+                                                        </label>
+                                                    </div>
+                                                </c:forEach>
                                             </div>
                                         </div>
                                     </div>
                                     <hr class="bg-primary border border-1">
-                                    <div class="text-end mb-3">
-                                        <button class="btn btn-outline-secondary" type="submit" >장바구니 추가</button>
-                                        <button class="btn btn-outline-secondary" type="submit" >위시리스트 추가</button>
-                                    </div>
-                                </form>
+                                    <!--
+                                        선택한 상품과 수량
+                                    -->
+                                    <form method="post">
+                                        <div id="cart" class="d-flex justify-content-between align-items-center p-2 border row">
+
+                                        </div>
+                                        <hr class="bg-primary border border-1">
+
+                                        <div class="text-end mb-3">
+                                            총액: <strong>5,000,000</strong> 원 (0 개)
+                                        </div>
+                                        <div class="text-end mb-3">
+                                            <button class="btn btn-outline-secondary" type="submit" id="cart-add">장바구니 추가</button>
+                                            <button class="btn btn-outline-secondary" type="submit" >위시리스트 추가</button>
+                                        </div>
+                                    </form>
                             </div>
                         </div>
                     </div>
@@ -246,10 +188,75 @@
     </div>
 </div>
 <script type="text/javascript">
+    // 댓글 폼
     const commentFormModal = new bootstrap.Modal('#form-review-modal');
 
+    // 댓글 폼 모달 열기
     function openCommentFormModal() {
         commentFormModal.show();
+    }
+
+
+    function fn(el) {
+        let no = el.getAttribute("data-no")
+        let size = el.getAttribute("data-size");
+        let sizeNo = el.getAttribute("data-size-no");
+        let name = el.getAttribute("data-name");
+        let color = el.getAttribute("data-color");
+
+        let content = `
+                 <div>
+                      <input type="hidden" name="no" value="\${no}"/>
+                      <input type="hidden" name="size" value="\${size}"/>
+                     <span><small>\${name} </small></span>
+                     <p><small>- \${color} / \${size}</small></p>
+                     <input type="button" value=" - " name="minus" data-no="\${sizeNo}">
+                     <input type="text" name="stock" value="1" id="stock-\${sizeNo}" size="3" max="" style="width: 3rem; text-align: center">
+                     <input type="button" value=" + " name="plus" data-no="\${sizeNo}">
+                 </div>
+                 <div>
+                     <small><strong id="price-\${sizeNo}"><fmt:formatNumber value="${prodDetailDto.price }"/></strong>원</small>
+                 </div>
+                 <hr class="bg-primary border border-1">
+        `
+
+        $("#cart").append(content);
+    }
+
+    $("#cart").on('click', 'input[name=minus]', function(){
+        let no = $(this).attr("data-no");
+        // 수량
+        let amountInput = document.querySelector('#stock-' + no);
+        let currentValue = parseInt(amountInput.value);
+
+        if(currentValue > 1) {
+            amountInput.value = currentValue - 1;
+            updatePrice(no)
+        }
+    })
+
+    $("#cart").on('click', 'input[name=plus]', function(){
+        let no = $(this).attr("data-no");
+        let amountInput = document.querySelector('#stock-' + no);
+        let currentValue = parseInt(amountInput.value);
+        amountInput.value = currentValue + 1;
+        updatePrice(no);
+    })
+
+
+
+    // 금액 업데이트 함수
+    const updatePrice = (no) => {
+        // 수량
+        let amountInput = document.querySelector('#stock-' + no);
+        // 단가
+        let eachPrice = ${prodDetailDto.price};
+        // 총액
+        let totalPrice = document.getElementById('price-' + no);
+        let quantity = parseInt(amountInput.value) || 1;
+        let total = eachPrice * quantity;
+
+        totalPrice.textContent = total.toLocaleString();
     }
 
 </script>

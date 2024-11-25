@@ -3,8 +3,12 @@ package store.seub2hu2.mypage.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import store.seub2hu2.mypage.dto.CommentRequest;
 import store.seub2hu2.mypage.mapper.PostMapper;
 import store.seub2hu2.mypage.vo.Post;
+import store.seub2hu2.mypage.vo.PostComment;
+import store.seub2hu2.user.service.UserService;
+import store.seub2hu2.user.vo.User;
 
 import java.io.IOException;
 import java.util.*;
@@ -15,6 +19,8 @@ public class PostService {
 
     @Autowired
     PostMapper postMapper;
+    @Autowired
+    UserService userService;
 
 
     public Post getPostDetail(int postNo){
@@ -90,6 +96,35 @@ public class PostService {
         postMapper.deletePost(postNo);
 
         return true;
+    }
+
+    public boolean imageDelete(int imageNo){
+        postMapper.deletePostImagesByPostNo(imageNo);
+
+        return true;
+    }
+
+    public boolean commentInsert(int postNo, int userNo, String comment){
+
+        CommentRequest postComment = new CommentRequest();
+
+
+
+        // Post 번호 설정
+        postComment.setPostId(postNo);
+        postComment.setUserNo(userNo);
+        // 댓글 내용 설정
+        postComment.setPostComment(comment);
+
+        postMapper.insertComment(postComment);
+
+        return true;
+    }
+
+    public String getUserNameByUserNo(int userNo){
+        String userName = postMapper.findByUserNo(userNo);
+
+        return userName;
     }
 
     // 파일을 base64로 변환하는 메소드 (MIME 타입 포함)

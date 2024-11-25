@@ -163,13 +163,6 @@
     </select>
 
     <!--
-        void insertLesson(@Param("lesson") Lesson lesson);
-    -->
-    <insert id="insertLesson">
-
-    </insert>
-
-    <!--
         List<Lesson> getAllLessons(@Param("condition") Map<String, Object> condition);
     -->
 
@@ -185,8 +178,8 @@
                      , L.LESSON_STATUS       as status
                      , L.LESSON_CREATED_DATE as createdDate
                      , L.LESSON_PLAN         as plan
-                     , L.LESSON_START_DATE   as startDate
-                     , L.LESSON_END_DATE     as endDate
+                     , L.LESSON_START_DATE   as start
+                     , L.LESSON_END_DATE     as end
                      , L.LESSON_SUBJECT      as subject
                 from
                     LESSONS L, USERS U
