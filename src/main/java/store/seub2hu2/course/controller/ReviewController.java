@@ -7,8 +7,9 @@ import org.springframework.web.bind.annotation.*;
 import store.seub2hu2.course.dto.AddReviewForm;
 import store.seub2hu2.course.service.ReviewService;
 import store.seub2hu2.course.vo.Review;
-import store.seub2hu2.security.LoginUser;
+import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.security.dto.RestResponseDto;
+
 
 import java.util.List;
 
