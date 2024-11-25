@@ -27,4 +27,5 @@ public class Product {
     private int cnt;
     private double rating;
     private Category category;
+    private Brand brand;
 }

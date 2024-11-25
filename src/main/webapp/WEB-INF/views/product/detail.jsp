@@ -205,7 +205,7 @@
         let color = el.getAttribute("data-color"); // 상품 색상명
 
         let content = `
-                 <div>
+                 <div id="item-\${sizeNo}">
                       <input type="hidden" name="no" value="\${no}"/>
                       <input type="hidden" name="size" value="\${size}"/>
                      <span><small>\${name} </small></span>
@@ -213,16 +213,24 @@
                      <input type="button" value=" - " name="minus" data-no="\${sizeNo}">
                      <input type="text" name="stock" value="1" id="stock-\${sizeNo}" size="3" max="" style="width: 3rem; text-align: center">
                      <input type="button" value=" + " name="plus" data-no="\${sizeNo}">
+                     <div class="text-end">
+                        <small><strong id="price-\${sizeNo}"><fmt:formatNumber value="${prodDetailDto.price }"/></strong>원</small>
+                        <button type="button" class="btn btn-lg delete-button" data-target-id="#item-\${sizeNo}"><i class="bi bi-x"></i></button>
+                     </div>
+                     <hr class="bg-primary border border-1">
                  </div>
-                 <div class="text-end">
-                     <small><strong id="price-\${sizeNo}"><fmt:formatNumber value="${prodDetailDto.price }"/></strong>원</small>
-                 </div>
-                 <hr class="bg-primary border border-1">
+
         `
 
         $("#cart").append(content);
         updateTotals();
     }
+
+    $("#cart").on('click', '.delete-button', function() {
+        let id = $(this).data("target-id");
+        $(id).remove();
+        updateTotals();
+    })
 
     $("#cart").on('click', 'input[name=minus]', function(){
         let no = $(this).attr("data-no");
@@ -244,6 +252,7 @@
         amountInput.value = currentValue + 1;
         updatePrice(no);
         updateTotals();
+
     })
 
 

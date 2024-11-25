@@ -58,4 +58,11 @@ public class MyPageController {
 
         return "mypage/wish";
     }
+
+    // 주문결제 화면으로 간다.
+    @GetMapping("/order")
+    public String order() {
+
+        return "mypage/order";
+    }
 }
