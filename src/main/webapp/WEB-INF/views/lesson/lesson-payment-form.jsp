@@ -7,12 +7,12 @@
 </head>
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
 <body>
-<div class="container-xxl" id="wrap">
+<div class="container-xxl border align-content-center" id="wrap">
     <div class="row text-center mb-5">
         <h1>레슨 예약 정보</h1>
     </div>
     <div class="row d-flex justify-content-center mb-3">
-        <div class="col-4 border border-dark">
+        <div class="col-5 border border-dark">
             <img src="${pageContext.request.contextPath}/resources/lessonImg/1.png"
                  alt="Main Image" style="width: 100%; height: 300px;"/>
         </div>
@@ -38,7 +38,6 @@
                     <th>레슨날짜</th>
                     <td>
                         <fmt:formatDate value="${lessonDto.startDate}" pattern="yyyy-MM-dd"></fmt:formatDate>
-<%--                        ${lessonDto.startDate}--%>
                     </td>
                 </tr>
                 <tr>
@@ -49,11 +48,11 @@
         </div>
     </div>
     <div class="row">
-        <div>
-        </div>
+        <div class="col-1"></div>
         <div class="col">
             <button type="button" id="btn-pay-ready" class="btn btn-dark w-100">결제하기</button>
         </div>
+        <div class="col-1"></div>
     </div>
 
 
@@ -65,8 +64,10 @@
     $(function () {
         $("#btn-pay-ready").click(function (e) {
             let data = {
-                title: '러닝 호흡법',    // 카카오페이에 보낼 대표 상품명
-                price: 20000 // 총 결제금액
+                lessonNo: ${lessonDto.lessonNo},
+                title: '${lessonDto.title}',    // 카카오페이에 보낼 대표 상품명
+                price: ${lessonDto.price},
+                quantity: 1 // 총 결제금액
             };
 
             $.ajax({

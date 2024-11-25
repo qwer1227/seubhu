@@ -92,7 +92,7 @@
                 <th>상태</th>
                 <th>예약날짜</th>
             </tr>
-            <c:forEach var="reservation" items="${lessons}" varStatus="loop">
+            <c:forEach var="reservation" items="${lessonReservations}" varStatus="loop">
                 <tr>
                     <td>${reservation.no}</td>
                     <td><a href="/lesson/detail?lessonNo=${reservation.lesson.lessonNo}"

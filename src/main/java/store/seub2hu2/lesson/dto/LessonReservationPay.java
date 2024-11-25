@@ -15,4 +15,5 @@ public class LessonReservationPay {
     private int userNo;
     // tid
     private String payNo;
+    private int quantity;
 }

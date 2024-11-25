@@ -31,15 +31,9 @@ public class OrderController {
     
     @PostMapping("/pay/ready")
     public @ResponseBody ReadyResponse payReady(@RequestBody LessonReservationPay lessonReservationPay) {
-        
-        String name = lessonReservationPay.getTitle();
-        int totalPrice = lessonReservationPay.getPrice();
-        
-        log.info("예약 레슨 이름: " + name);
-        log.info("레슨 금액: " + totalPrice);
 
         // 카카오 결제 준비하기
-        ReadyResponse readyResponse = kakaoPayService.payReady(lessonReservationPay, name, totalPrice);
+        ReadyResponse readyResponse = kakaoPayService.payReady(lessonReservationPay);
         // 세션에 결제 고유번호(tid) 저장
         SessionUtils.addAttribute("tid", readyResponse.getTid());
         log.info("결제 고유번호: " + readyResponse.getTid());
@@ -54,25 +48,22 @@ public class OrderController {
         log.info("결제승인 요청을 인증하는 토큰: " + pgToken);
         log.info("결제 고유번호: " + tid);
 
-
         // 카카오 결제 요청하기
         ApproveResponse approveResponse = kakaoPayService.payApprove(tid, pgToken);
 
         LessonReservationPay lessonReservationPay = new LessonReservationPay();
         lessonReservationPay.setPayNo(tid);
-        lessonReservationPay.setPrice(20000);
-        lessonReservationPay.setLessonNo(10);
+        lessonReservationPay.setPrice(approveResponse.getAmount().getTotal());
+        lessonReservationPay.setLessonNo(Integer.parseInt(approveResponse.getItem_code()));
 
         log.info("lessonReservationPay = {}", lessonReservationPay);
         lessonReservationService.saveLessonReservation(lessonReservationPay);
-
 
         return "redirect:/order/completed?id=" + tid;
     }
 
     @GetMapping("/completed")
     public String completed(@RequestParam("id") String orderId, Model model) {
-
 
         return "lesson/lesson-pay-completed";
     }

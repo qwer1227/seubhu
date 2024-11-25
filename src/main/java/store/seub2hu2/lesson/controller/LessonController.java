@@ -90,8 +90,8 @@ public class LessonController {
         log.info("Start Date: {}", condition.getStartDate());
         log.info("End Date: {}", condition.getEndDate());
         log.info("searchCondition: {}", condition.getSearchCondition());
-        List<LessonReservation> lessons = lessonService.searchLessonReservationList(condition, userNo);
-        model.addAttribute("lessons", lessons);
+        List<LessonReservation> lessonReservations = lessonService.searchLessonReservationList(condition, userNo);
+        model.addAttribute("lessonReservations", lessonReservations);
         return "lesson/lesson-reservation";
     }
 

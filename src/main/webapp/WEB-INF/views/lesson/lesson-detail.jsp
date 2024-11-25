@@ -21,7 +21,7 @@
         <div class="col-4 border">
             <c:if test="${not empty images['THUMBNAIL']}">
                 <img src="${pageContext.request.contextPath}/resources/lessonImg/${images['THUMBNAIL']}"
-                     class="img-fluid" alt="Thumbnail" style="width: 100%; height: 500px;"/>
+                     class="img-fluid" alt="Thumbnail" id= "Thumbnail" style="width: 100%; height: 500px;"/>
             </c:if>
         </div>
         <div class="col-4">
@@ -61,7 +61,7 @@
         <div class="col-2"></div>
         <div class="col border-bottom border-dark border-2 pb-3">
             <form name="lessonDto" method="get" action="/order/pay/form">
-                <input type="hidden" name="lessonNo" value="${lessonNo}">
+                <input type="hidden" name="lessonNo" value="${lesson.lessonNo}">
                 <input type="hidden" name="title" value="${lesson.title}">
                 <input type="hidden" name="price" value="${lesson.price}">
                 <input type="hidden" name="lecturerName" value="${lesson.lecturer.name}">
@@ -103,7 +103,7 @@
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script>
-
+    $('Thumbnail')
 
 </script>
 </body>

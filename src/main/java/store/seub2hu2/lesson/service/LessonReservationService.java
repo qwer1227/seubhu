@@ -24,7 +24,7 @@ public class LessonReservationService {
 
 
     public void saveLessonReservation(LessonReservationPay lessonReservationPay) {
-        Lesson lesson = lessonService.getLessonByNo(57);
+        Lesson lesson = lessonService.getLessonByNo(lessonReservationPay.getLessonNo());
 
         log.info("lesson = {}", lesson);
         if(lesson.getParticipant() != 5) {
