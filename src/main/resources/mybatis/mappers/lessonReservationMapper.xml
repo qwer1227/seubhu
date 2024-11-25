@@ -1,16 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="store.seub2hu2.lesson.mapper.LessonReservationMapper">
+
+    <!--
+        public void insertLessonReservation(@Param("lessonReservationPaymentDto") LessonReservationPay lessonReservationPaymentDto);
+        public LessonReservation getLessonReservationByPayNo (@Param("payNo")int payNo);
+    -->
     <insert id="insertLessonReservation">
         INSERT INTO LESSON_RESERVATIONS
-        (
-         USER_NO
+        ( USER_NO
         , LESSON_NO
         , PAY_NO)
-        VALUES
-        (
-        #{lessonReservationPay.userNo}
-        ,#{lessonReservationPay.lessonNo}
-        ,#{lessonReservationPay.payNo})
+        VALUES ( #{lessonReservationPaymentDto.userNo}
+               , #{lessonReservationPaymentDto.lessonNo}
+               , #{lessonReservationPaymentDto.payNo})
     </insert>
+
+    <select id="getLessonReservationByPayNo" resultType="store.seub2hu2.lesson.vo.Lesson">
+        select L.LESSON_TITLE       as title
+             , L.LESSON_PRICE       as price
+             , L.LESSON_START_DATE  as start
+             , L.LESSON_SUBJECT     as subject
+             , L.LESSON_END_DATE    as 'end'
+             , U.USER_NAME          as 'lesson.lecturer.name'
+        from LESSON_RESERVATIONS R
+            INNER JOIN LESSONS L
+        ON R.LESSON_NO = L.LESSON_NO
+            INNER JOIN USERS U
+            ON L.USER_NO = U.USER_NO
+        where
+            R.PAY_NO = #{payNo}
+    </select>
+
 </mapper>

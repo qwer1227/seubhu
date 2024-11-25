@@ -21,6 +21,8 @@ import store.seub2hu2.user.vo.User;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -51,12 +53,16 @@ public class LessonController {
         try {
             // Lesson 정보 가져오기
             Lesson lesson = lessonService.getLessonByNo(lessonNo);
+            String startDate = lesson.getStartDate();
+            String startTime = lesson.getStartTime();
 
             // 이미지 파일 정보 가져오기
             Map<String, String> images = lessonService.getImagesByLessonNo(lessonNo);
 
             // 모델에 lesson과 images 정보 추가
             model.addAttribute("lesson", lesson);
+            model.addAttribute("startDate", startDate);
+            model.addAttribute("startTime", startTime);
             model.addAttribute("lessonNo", lessonNo);
             model.addAttribute("images", images);
 

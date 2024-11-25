@@ -7,13 +7,10 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import store.seub2hu2.lesson.dto.ApproveResponse;
-import store.seub2hu2.lesson.dto.LessonReservationPay;
+import store.seub2hu2.lesson.dto.LessonReservationPaymentDto;
 import store.seub2hu2.lesson.dto.ReadyResponse;
-import store.seub2hu2.lesson.vo.Lesson;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,21 +25,21 @@ public class KakaoPayService {
     // 카카오페이 결제 승인
     // 사용자가 결제 수단을 선택하고 비밀번호를 입력해 결제 인증을 완료한 뒤,
     // 최종적으로 결제 완료 처리를 하는 단계
-    public ReadyResponse payReady(LessonReservationPay lessonReservationPay) {
+    public ReadyResponse payReady(LessonReservationPaymentDto lessonReservationPaymentDto) {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("cid", "TC0ONETIME");
         parameters.put("partner_order_id", "1234567890");
         parameters.put("partner_user_id", "seub2hu2");
-        parameters.put("item_name", lessonReservationPay.getTitle());
-        parameters.put("item_code", String.valueOf(lessonReservationPay.getLessonNo()));
-        parameters.put("quantity", String.valueOf(lessonReservationPay.getQuantity()));
-        parameters.put("total_amount", String.valueOf(lessonReservationPay.getPrice()));
+        parameters.put("item_name", lessonReservationPaymentDto.getTitle());
+        parameters.put("item_code", String.valueOf(lessonReservationPaymentDto.getLessonNo()));
+        parameters.put("quantity", String.valueOf(lessonReservationPaymentDto.getQuantity()));
+        parameters.put("total_amount", String.valueOf(lessonReservationPaymentDto.getPrice()));
         parameters.put("tax_free_amount", "0");
         parameters.put("approval_url", "http://localhost/order/pay/completed");
         parameters.put("cancel_url", "http://localhost/order/pay/cancel");
         parameters.put("fail_url", "http://localhost/order/pay/fail");
 
-        log.info("lessonReservationPay lessonNo = {}" , lessonReservationPay.getLessonNo());
+        log.info("lessonReservationPay lessonNo = {}", lessonReservationPaymentDto.getLessonNo());
 
 
         // HttpEntity : HTTP 요청 또는 응답에 해당하는 Http Header와 Http Body를 포함하는 클래스
@@ -84,7 +81,7 @@ public class KakaoPayService {
     // 카카오페이 측에 요청 시 헤더부에 필요한 값
     private HttpHeaders getHeaders() {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "SECRET_KEY "+ secretKey);
+        headers.set("Authorization", "SECRET_KEY " + secretKey);
         headers.set("Content-type", "application/json");
 
         return headers;

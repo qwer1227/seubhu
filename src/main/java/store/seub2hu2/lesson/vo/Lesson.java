@@ -8,6 +8,7 @@ import store.seub2hu2.user.vo.User;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 @NoArgsConstructor
 @AllArgsConstructor

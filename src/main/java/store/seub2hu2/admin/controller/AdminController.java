@@ -120,12 +120,12 @@ public class AdminController {
     @GetMapping("/lesson")
     public String lesson(@RequestParam(name = "opt", required = false) String opt,
                          @RequestParam(name = "day", required = false)
-                         @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDateTime day,
+                         @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate day,
                                @RequestParam(name = "value", required = false) String value,
                                Model model) {
 
         if (day == null) {
-            day = LocalDateTime.now();
+            day = LocalDate.now();
         }
 
         String formattedDay = day.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));

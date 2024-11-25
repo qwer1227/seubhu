@@ -7,13 +7,13 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
-public class LessonReservationPay {
-    private String title;
+public class LessonReservationPaymentDto {
     private int price;
     private String type;
+    private int productNo;
+    private String title;
     private int lessonNo;
     private int userNo;
-    // tid
     private String payNo;
     private int quantity;
 }

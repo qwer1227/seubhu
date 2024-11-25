@@ -4,6 +4,7 @@ import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -20,8 +21,9 @@ public class LessonDto {
     private String name;
     private String lecturerName;
     private String subject;
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date startDate;
+    private int userNo;
+    private String startDate;
+    private String startTime;
 
     private int price;
 }

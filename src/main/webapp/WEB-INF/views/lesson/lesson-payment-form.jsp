@@ -9,7 +9,7 @@
 <body>
 <div class="container-xxl border align-content-center" id="wrap">
     <div class="row text-center mb-5">
-        <h1>레슨 예약 정보</h1>
+        <h1>레슨 예약</h1>
     </div>
     <div class="row d-flex justify-content-center mb-3">
         <div class="col-5 border border-dark">
@@ -37,7 +37,7 @@
                 <tr>
                     <th>레슨날짜</th>
                     <td>
-                        <fmt:formatDate value="${lessonDto.startDate}" pattern="yyyy-MM-dd"></fmt:formatDate>
+                        ${lessonDto.startDate} ${lessonDto.startTime}
                     </td>
                 </tr>
                 <tr>
@@ -54,9 +54,6 @@
         </div>
         <div class="col-1"></div>
     </div>
-
-
-</div>
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 
@@ -67,7 +64,8 @@
                 lessonNo: ${lessonDto.lessonNo},
                 title: '${lessonDto.title}',    // 카카오페이에 보낼 대표 상품명
                 price: ${lessonDto.price},
-                quantity: 1 // 총 결제금액
+                quantity: 1, // 총 개수
+                userNo: ${lessonDto.userNo}
             };
 
             $.ajax({
@@ -105,7 +103,6 @@
         });
     });
 </script>
-
 
 
 </body>

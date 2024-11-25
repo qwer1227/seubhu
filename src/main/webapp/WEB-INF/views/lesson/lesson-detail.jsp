@@ -8,6 +8,7 @@
 </head>
 <body>
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
+<security:authentication property="principal" var="loginUser"/>
 <div class="container-xxl" id="wrap">
     <div class="row mb-5">
         <div class="col-2"></div>
@@ -21,7 +22,7 @@
         <div class="col-4 border">
             <c:if test="${not empty images['THUMBNAIL']}">
                 <img src="${pageContext.request.contextPath}/resources/lessonImg/${images['THUMBNAIL']}"
-                     class="img-fluid" alt="Thumbnail" id= "Thumbnail" style="width: 100%; height: 500px;"/>
+                     class="img-fluid" alt="Thumbnail" id="Thumbnail" style="width: 100%; height: 500px;"/>
             </c:if>
         </div>
         <div class="col-4">
@@ -40,11 +41,11 @@
                 </tr>
                 <tr>
                     <th>레슨날짜</th>
-                    <td><fmt:formatDate value="${lesson.start}" pattern="yyyy-MM-dd"></fmt:formatDate></td>
+                    <td>${startDate} ${startTime}</td>
                 </tr>
                 <tr>
                     <th>참여인원</th>
-                    <td>1/5</td>
+                    <td>${lesson.participant}/5</td>
                 </tr>
             </table>
         </div>
@@ -60,13 +61,14 @@
     <div class="row text-end mb-3">
         <div class="col-2"></div>
         <div class="col border-bottom border-dark border-2 pb-3">
-            <form name="lessonDto" method="get" action="/order/pay/form">
+            <form name="lessonDto" method="get" action="/order/pay/form" id="hidden-form">
                 <input type="hidden" name="lessonNo" value="${lesson.lessonNo}">
+<%--                <input type="hidden" name="userNo" value="${loginUser.no}" />--%>
                 <input type="hidden" name="title" value="${lesson.title}">
                 <input type="hidden" name="price" value="${lesson.price}">
                 <input type="hidden" name="lecturerName" value="${lesson.lecturer.name}">
-                <fmt:formatDate value="${lesson.start}" pattern="yyyy-MM-dd" var="startDate"/>
                 <input type="hidden" name="startDate" value="${startDate}">
+                <input type="hidden" name="startTime" value="${startTime}">
                 <input type="hidden" name="subject" value="${lesson.subject}">
                 <button type="submit" class="btn btn-primary">수강신청</button>
             </form>
@@ -103,7 +105,6 @@
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script>
-    $('Thumbnail')
 
 </script>
 </body>

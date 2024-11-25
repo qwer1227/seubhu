@@ -9,4 +9,5 @@ public interface PayMapper {
 
     public void insertPay(@Param("pay") Payment payment);
 
+
 }
