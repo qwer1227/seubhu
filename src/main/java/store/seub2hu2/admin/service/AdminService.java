@@ -7,12 +7,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import store.seub2hu2.admin.dto.CourseRegisterForm;
+import store.seub2hu2.admin.dto.ProductRegisterForm;
 import store.seub2hu2.admin.mapper.AdminMapper;
 import store.seub2hu2.course.mapper.CourseMapper;
 import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.course.vo.Region;
 import store.seub2hu2.lesson.mapper.LessonMapper;
 import store.seub2hu2.lesson.vo.Lesson;
+import store.seub2hu2.product.vo.Brand;
+import store.seub2hu2.product.vo.Category;
+import store.seub2hu2.product.vo.Product;
+import store.seub2hu2.product.vo.Size;
 import store.seub2hu2.user.mapper.UserMapper;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.FileUtils;
@@ -174,7 +179,23 @@ public class AdminService {
             return adminMapper.getUserByNo(no);
     }
 
-/*    public ListDto<Product> getAllProduct(Map<String, Object> condition) {
+    public void addProduct(ProductRegisterForm form) {
 
-    }*/
+        Product product = new Product();
+        product.setName(form.getName());
+        product.setPrice(form.getPrice());
+        product.setContent(form.getContent());
+
+        Category category = new Category();
+        category.setNo(form.getCategoryDetailNo());
+        category.setTopNo(form.getCategoryNo());
+        product.setCategory(category);
+
+        Brand brand = new Brand();
+        brand.setNo(form.getBrandNo());
+
+        Size size = new Size();
+
+    }
+
 }

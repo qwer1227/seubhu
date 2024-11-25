@@ -19,9 +19,6 @@ import java.util.*;
 @Slf4j
 public class LessonService {
 
-    @Value("${file.upload-dir}")
-    private String saveDirectory;
-
     private final LessonMapper lessonMapper;
     private final LessonFileMapper lessonFileMapper;
     private final LessonFileService lessonFileService;

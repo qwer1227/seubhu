@@ -38,7 +38,6 @@ public class Lesson {
         return filename.substring(13);
     }
 
-
     public String getStartDate() {
         return LocalDateTime.from(start).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }

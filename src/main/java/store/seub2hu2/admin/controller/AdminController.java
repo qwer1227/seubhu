@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import store.seub2hu2.admin.dto.CourseRegisterForm;
+import store.seub2hu2.admin.dto.ProductRegisterForm;
 import store.seub2hu2.admin.service.AdminService;
 import store.seub2hu2.course.service.CourseService;
 import store.seub2hu2.course.vo.Course;
@@ -15,6 +16,8 @@ import store.seub2hu2.lesson.dto.LessonRegisterForm;
 import store.seub2hu2.lesson.service.LessonFileService;
 import store.seub2hu2.lesson.service.LessonService;
 import store.seub2hu2.lesson.vo.Lesson;
+import store.seub2hu2.product.dto.ProdListDto;
+import store.seub2hu2.product.service.ProductService;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.ListDto;
 
@@ -40,6 +43,7 @@ public class AdminController {
     private final AdminService adminService;
     private final LessonService lessonService;
     private final LessonFileService lessonFileService;
+    private final ProductService productService;
 
     @GetMapping("/home")
     public String home() {
@@ -120,12 +124,12 @@ public class AdminController {
     @GetMapping("/lesson")
     public String lesson(@RequestParam(name = "opt", required = false) String opt,
                          @RequestParam(name = "day", required = false)
-                         @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDateTime day,
+                         @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate day,
                                @RequestParam(name = "value", required = false) String value,
                                Model model) {
 
         if (day == null) {
-            day = LocalDateTime.now();
+            day = LocalDate.now();
         }
 
         String formattedDay = day.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
@@ -224,26 +228,50 @@ public class AdminController {
         return "admin/userlist";
     }
 
+    @GetMapping("/product-register-form")
+    public String productRegisterForm() {
+
+        return "admin/product-register-form";
+    }
+
+    @PostMapping("/product-register-form")
+    public String productRegisterForm(ProductRegisterForm form, Model model) {
+
+        adminService.addProduct(form);
+
+         return "redirect: /product-register-form";
+    }
+
     @GetMapping("/product")
-    public String product() {
-        /*@RequestParam(name="page", required = false, defaultValue = "1") int page,
-        @RequestParam(name="rows", required = false, defaultValue = "10") int rows,
-        @RequestParam(name = "opt", required = false) String opt,
-        @RequestParam(name= "value", required = false) String value,
-        Model model) {
+    public String list(@RequestParam(name= "topNo") int topNo,
+                       @RequestParam(name = "catNo", required = false, defaultValue = "0") int catNo,
+                       @RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                       @RequestParam(name = "rows", required = false, defaultValue = "6") int rows,
+                       @RequestParam(name = "sort" , required = false, defaultValue = "date") String sort,
+                       @RequestParam(name = "opt", required = false) String opt,
+                       @RequestParam(name = "value", required = false) String value,
+                       Model model) {
+
         Map<String, Object> condition = new HashMap<>();
+        condition.put("topNo", topNo);
+        if(catNo != 0) {
+            condition.put("catNo", catNo);
+        }
+
         condition.put("page", page);
         condition.put("rows", rows);
-        if (StringUtils.hasText(value)) {
+        condition.put("sort", sort);
+        if(StringUtils.hasText(opt)) {
             condition.put("opt", opt);
             condition.put("value", value);
         }
-        // 검색조건을 전달해서 게시글 목록 조회
-        ListDto<Product> dto = adminService.getAllProduct(condition);
-        // List<Product>를 "products"로 모델에 저장
+
+        ListDto<ProdListDto> dto = productService.getProducts(condition);
+        model.addAttribute("topNo", topNo);
+        model.addAttribute("catNo", catNo);
         model.addAttribute("products", dto.getData());
-        // Pagination을 "paging"로 모델에 저장
-        model.addAttribute("paging", dto.getPaging());*/
+        model.addAttribute("paging", dto.getPaging());
+
         return "admin/productlist";
     }
 
