@@ -8,7 +8,7 @@ import store.seub2hu2.mypage.mapper.PostMapper;
 import store.seub2hu2.mypage.vo.Post;
 import store.seub2hu2.mypage.vo.PostComment;
 import store.seub2hu2.user.service.UserService;
-import store.seub2hu2.user.vo.User;
+
 
 import java.io.IOException;
 import java.util.*;
@@ -104,17 +104,12 @@ public class PostService {
         return true;
     }
 
-    public boolean commentInsert(int postNo, int userNo, String comment){
+    public boolean commentInsert(CommentRequest commentRequest, String username){
 
-        CommentRequest postComment = new CommentRequest();
-
-
-
+        PostComment postComment = new PostComment();
         // Post 번호 설정
-        postComment.setPostId(postNo);
-        postComment.setUserNo(userNo);
-        // 댓글 내용 설정
-        postComment.setPostComment(comment);
+        postComment.setCommentRequest(commentRequest);
+        postComment.setUserName(username);
 
         postMapper.insertComment(postComment);
 

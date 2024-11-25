@@ -130,10 +130,12 @@ public class MyPageRestController {
         String commentText = request.getPostComment();
         int userNo = request.getUserNo();
 
-        String userName = postService.getUserNameByUserNo(userNo);
+        String userName = postService.getUserNameByUserNo(userNo); //22
 
-        postService.commentInsert(postId,userNo,commentText);
+        postService.commentInsert(request,userName);
 
+        // todo 리스폰스DTO를 활용해서 수정/입력/삭제 될때 새로고침해서 클라이언트에게 보내주는 작업이 필요함
+        
         Map<String, Object> response = new HashMap<>();
 
         response.put("message", "댓글성공");

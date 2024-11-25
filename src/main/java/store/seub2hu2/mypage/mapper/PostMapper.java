@@ -20,7 +20,7 @@ public interface PostMapper {
     int updatePost(@Param("post") Post post);
     int deletePost(@Param("no") int postNo);
     int deletePostImagesByPostNo(@Param("no") int imageNo);
-    int insertComment(@Param("comment") CommentRequest commentRequest);
+    int insertComment(@Param("comment") PostComment postComment);
     // 사용자 ID로 사용자 조회
     String findByUserNo(@Param("no") int userNo);
 }

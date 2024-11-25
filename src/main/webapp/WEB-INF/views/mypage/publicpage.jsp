@@ -184,8 +184,8 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="mb-0" id="detailPostWriter"></h5>
                             <div>
-                                <button class="btn btn-outline-secondary btn-sm" id="postUpdate" data-post-id="${post.no}">수정</button>
-                                <button class="btn btn-outline-danger btn-sm ms-2" id="postDelete" data-post-id="${post.no}">삭제</button>
+                                <button class="btn btn-outline-secondary btn-sm" id="postUpdate">수정</button>
+                                <button class="btn btn-outline-danger btn-sm ms-2" id="postDelete">삭제</button>
                             </div>
                         </div>
                         <hr>
@@ -245,17 +245,17 @@
                     const commentHTML = `
                     <div class="comment-item">
                        <div class="d-flex justify-content-between align-items-center">
-                            <p><strong>${comment.commentUserName}:</strong> ${comment.commentText}</p>
+                            <p><strong>\${comment.userName}:</strong> \${comment.commentRequest.postComment}</p>
                             <div class="comment-actions">
                                 <span>${comment.createdDate}</span>  <!-- 작성 시간 -->
                                 <button class="btn btn-outline-primary btn-sm ms-2">좋아요 (${comment.likes})</button>  <!-- 좋아요 버튼 -->
                                 <button class="btn btn-outline-secondary btn-sm ms-2" onclick="replyToComment(${comment.commentNo}, '${comment.commentUserName}')">답글 달기</button>  <!-- 답글 달기 버튼 -->
 
                                 <!-- 댓글 작성자 본인일 때 삭제, 남일 때 신고 버튼 표시 -->
-                                ${comment.isOwner ?
+                                <%--${comment.isOwner ?
                                     `<button class="btn btn-outline-danger btn-sm ms-2" onclick="deleteComment(${comment.commentNo})">삭제</button>` :
                                     `<button class="btn btn-outline-warning btn-sm ms-2" onclick="reportComment(${comment.commentNo})">신고</button>`
-                                }
+                                }--%>
                             </div>
                         </div>
                     </div>
