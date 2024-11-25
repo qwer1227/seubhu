@@ -173,7 +173,6 @@
                 <div class="modal-header">
                     <h1 class="modal-title fs-5" id="modal-title-preview-user">회원정보 미리보기</h1>
                     <button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close">
-
                     </button>
                 </div>
                 <div class="modal-body">
@@ -188,7 +187,7 @@
                             <th>번호</th>
                             <td><span id="u-no"></span></td>
                             <th>이름</th>
-                            <td><span id="u-username"></span></td>
+                            <td><span id="u-name"></span></td>
                         </tr>
                         <tr>
                             <th>아이디</th>
@@ -236,7 +235,7 @@
          let data = await response.json();
 
          document.getElementById("u-no").textContent = data.no;
-         document.getElementById("u-username").textContent = data.username;
+         document.getElementById("u-name").textContent = data.name;
          document.getElementById("u-id").textContent = data.id;
          document.getElementById("u-nickname").textContent = data.nickname;
          document.getElementById("u-email").textContent = data.email;
