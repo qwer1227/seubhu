@@ -110,8 +110,8 @@ public class AdminController {
         lesson.setLecturer(user);
         lesson.setSubject(form.getSubject());
         lesson.setPlan(form.getPlan());
-        lesson.setStart(form.getStartDate());
-        lesson.setEnd(form.getEndDate());
+        lesson.setStart(form.getStart());
+        lesson.setEnd(form.getEnd());
 
         System.out.println("-------------------------------------레슨 시작 종료시간 알아보기: " + lesson);
         

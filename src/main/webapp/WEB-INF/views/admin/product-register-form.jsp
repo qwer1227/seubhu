@@ -284,6 +284,7 @@
         option.textContent = detail.text;
         categoryDetail.appendChild(option);
 
+        updateSize();
       });
     }
   }

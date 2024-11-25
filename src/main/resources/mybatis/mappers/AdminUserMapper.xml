@@ -5,6 +5,31 @@
 
 
     <!--
+        void insertProduct(@Param("condition") HashMap<String, Object> condition);
+    -->
+    <insert id="insertProduct">
+        insert into PRODUCTS
+        (
+         cat_no
+         , brand_no
+         , prod_name
+         , prod_price
+         , prod_content
+         , prod_img_thum
+         , color_name
+        )
+        values
+            (
+        #{condition.catNo}
+        , #{condition.brandNo}
+        , #{condition.name}
+        , #{condition.price}
+        , #{condition.content}
+        , #{condition.image}
+        , #{condition.color}
+            )
+    </insert>
+    <!--
 
         List<Region> getRegions(@Param("region") Region region);
     -->
