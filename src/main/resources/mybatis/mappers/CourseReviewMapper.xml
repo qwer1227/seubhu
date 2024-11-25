@@ -10,12 +10,9 @@
         <result property="content" column="review_content"/>
         <result property="likeCnt" column="review_like_cnt"/>
         <result property="createdDate" column="review_created_date"/>
+        <result property="isDeleted" column="is_deleted"/>
         <association property="course" javaType="store.seub2hu2.course.vo.Course">
             <id property="no" column="course_no"/>
-        </association>
-        <association property="reviewImage" javaType="store.seub2hu2.course.vo.ReviewImage">
-            <id property="no" column="img_no"/>
-            <result property="name" column="img_name"/>
         </association>
         <association property="user" javaType="store.seub2hu2.user.vo.User">
             <id property="no" column="user_no"/>
@@ -29,12 +26,14 @@
              , r.review_content
              , r.review_like_cnt
              , r.review_created_date
+             , r.is_deleted
              , r.course_no
              , u.user_no
              , u.user_nickname
-        from COURSE_REVIEWS r
-        inner join USERS u on r.user_no = u.user_no
+        from COURSE_REVIEWS r inner join USERS u
+        on r.user_no = u.user_no
         where r.course_no = #{no}
+        and r.is_deleted = 'N'
     </select>
 
     <!--
@@ -44,9 +43,26 @@
         select i.img_no as no
              , i.img_name as name
              , r.review_no as reviewNo
-        from COURSE_REVIEWS r
-        left join COURSE_REVIEW_IMGS i on r.review_no = i.review_no
+        from COURSE_REVIEWS r left join COURSE_REVIEW_IMGS i
+        on r.review_no = i.review_no
         where r.review_no = #{no}
+    </select>
+
+    <!--
+        Review getReviewByNo(@Param("no") int no);
+    -->
+    <select id="getReviewByNo" resultMap="ReviewResultMap">
+        select r.review_no
+             , r.review_title
+             , r.review_content
+             , r.review_like_cnt
+             , r.review_created_date
+             , r.course_no
+             , u.user_no
+             , u.user_nickname
+        from COURSE_REVIEWS r inner join USERS u
+        on r.user_no = u.user_no
+        where review_no = #{no}
     </select>
 
     <!--
@@ -84,4 +100,13 @@
             select last_insert_id()
         </selectKey>
     </insert>
+
+    <!--
+        void deleteReview(@Param("no") int no);
+    -->
+    <delete id="deleteReview">
+        update COURSE_REVIEWS
+        set is_deleted = 'Y'
+        where review_no = #{no}
+    </delete>
 </mapper>
