@@ -1,4 +1,4 @@
-package store.seub2hu2.security;
+package store.seub2hu2.security.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -16,6 +15,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import store.seub2hu2.security.CustomAccessDeniedHandler;
 import store.seub2hu2.security.CustomAuthenticationEntryPoint;
+import store.seub2hu2.security.service.CustomOAuth2UserService;
 
 import java.util.List;
 
@@ -30,6 +30,8 @@ public class SecurityConfig {
     @Autowired
     private CustomAccessDeniedHandler customAccessDeniedHandler;
 
+    @Autowired
+    private CustomOAuth2UserService customOAuth2UserService;
     // 스마트 에디터 적용 코드
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
@@ -69,7 +71,6 @@ public class SecurityConfig {
 
 // 세션 기반 일반 로그인 설정
         http
-                .securityMatcher("/**") // 웹 요청에만 적용
                 .csrf(csrf -> csrf.disable()) // CSRF 활성화
                 // 접근 인가정책을 설정한다.
                 .authorizeHttpRequests(auth -> auth
@@ -89,27 +90,29 @@ public class SecurityConfig {
                         // 로그인 요청을 처리하는 url을 지정한다.
                         .loginProcessingUrl("/login")
                         // 로그인 성공 시 이동할 URL을 지정한다.
-                        .defaultSuccessUrl("/main", true)
+                        .defaultSuccessUrl("/home", true)
                         // 로그인 실패 시 이동할 URL을 지정한다.
                         .failureUrl("/login?error=fail"))
 // 로그아웃 정책을 설정한다.
-            .logout(logout -> logout
+                .logout(logout -> logout
 // 로그아웃...
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/main")
-                .invalidateHttpSession(true))
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/home")
+                        .invalidateHttpSession(true))
+                .oauth2Login(oauth2Configurer -> oauth2Configurer
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/home")
+                        .failureUrl("/login")
+                        .userInfoEndpoint(userEndpoint -> userEndpoint.userService(customOAuth2UserService)))
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         // 인증되지 않은 사용자가 인증이 필요한 리소스를 요청했을 때
                         .authenticationEntryPoint(customAuthenticationEntryPoint)
                         // 접근권한을 가지고 있지 않는 리소스를 요청했을 때
-                        .accessDeniedHandler(customAccessDeniedHandler))
-
-                // 세션 관리 (세션 기반 로그인과 REST 기반의 공존을 위한 분리)
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
+                        .accessDeniedHandler(customAccessDeniedHandler));
 
         return http.build();
     }
+
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
