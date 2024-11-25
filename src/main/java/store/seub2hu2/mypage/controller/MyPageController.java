@@ -44,4 +44,18 @@ public class MyPageController {
 //
 //        return "mypage/test";
 //    }
+
+    // 장바구니 화면으로 간다.
+    @GetMapping("/cart")
+    public String cart() {
+
+        return "mypage/cart";
+    }
+
+    // 위시리스트 화면으로 간다.
+    @GetMapping("/wish")
+    public String wish() {
+
+        return "mypage/wish";
+    }
 }

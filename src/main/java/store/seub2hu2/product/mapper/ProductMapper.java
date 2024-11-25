@@ -2,9 +2,7 @@ package store.seub2hu2.product.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import store.seub2hu2.product.dto.ColorProdImgDto;
-import store.seub2hu2.product.dto.ProdDetailDto;
-import store.seub2hu2.product.dto.ProdListDto;
+import store.seub2hu2.product.dto.*;
 import store.seub2hu2.product.vo.Product;
 
 import java.util.List;
@@ -24,6 +22,12 @@ public interface ProductMapper {
 
     // 상품번호에 따른 색상과 이미지 조회하기
     List<ColorProdImgDto> getProdImgByColorNo(@Param("no") int no);
+
+    // 색상번호에 따른 사이즈와 재고수량 조회하기
+    SizeAmountDto getSizeAmountByColorNo(@Param("colorNo") int colorNo);
+
+    // 색상 번호에 따른 이미지들 조회하기
+    ProdImagesDto getProdImagesByColorNo(@Param("colorNo") int colorNo);
 
     // 상품 등록(임시: 관리자가 하기)
     void insertProduct(Product product);
