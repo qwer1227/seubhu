@@ -80,17 +80,19 @@
     
     <div class="actions d-flex justify-content-between mb-4">
       <div>
-        <%--      <c:if test="${empty LOGIN_USER ? '' : 'disabled'}">--%>
-        <%--        <c:choose>--%>
-        <%--          <c:when test="${LOGINED_USER eq board.user.no ? '' : 'disabled'}">--%>
-        <button class="btn btn-warning" onclick="updateBoard(${board.no})">수정</button>
-        <button class="btn btn-danger" onclick="deleteBoard(${board.no})">삭제</button>
-        <%--          </c:when>--%>
-        <%--          <c:otherwise>--%>
-        <button class="btn btn-danger">신고</button>
-        <%--          </c:otherwise>--%>
-        <%--        </c:choose>--%>
-        <%--      </c:if>--%>
+        <!-- 로그인 여부를 체크하기 위해 먼저 선언 -->
+        <security:authorize access="isAuthenticated()">
+          <!-- principal 프로퍼티 안의 loginUser 정보를 가져옴 -->
+          <security:authentication property="principal" var="loginUser"/>
+          <!-- loginUser.no를 가져와서 조건문 실행 -->
+          <c:if test="${loginUser.no == board.user.no}">
+            <button class="btn btn-warning" onclick="updateBoard(${board.no})">수정</button>
+            <button class="btn btn-danger" onclick="deleteBoard(${board.no})">삭제</button>
+          </c:if>
+          <c:if test="${loginUser.no != board.user.no}">
+            <button class="btn btn-danger">신고</button>
+          </c:if>
+        </security:authorize>
       </div>
       <div>
         <button class="btn btn-outline-primary" id="likeButton" onclick="likeButton(${board.no})">
@@ -106,17 +108,17 @@
       <form method="get" action="add-reply">
         <input type="hidden" name="boardNo" value="${board.no}">
         <%--          <input type="hidden" name="userNo" value="${user.no}">--%>
-        <input type="hidden" name="userNo" value="11">
+        <input type="hidden" name="userNo" value="${loginUser.no}">
         <div class="row">
           <div class="form-group col-11">
-            <%--        <c:choose>--%>
-            <%--          <c:when test="${empty LOGIN_USER}">--%>
-            <%--            <input class="form-control" disabled rows="3" placeholder="로그인 후 댓글 작성이 가능합니다." />--%>
-            <%--          </c:when>--%>
-            <%--          <c:otherwise>--%>
-            <textarea name="content" class="form-control" rows="3" placeholder="댓글을 작성하세요."></textarea>
-            <%--          </c:otherwise>--%>
-            <%--        </c:choose>--%>
+            <c:choose>
+              <c:when test="${empty loginUser}">
+                <input class="form-control" disabled rows="3" placeholder="로그인 후 댓글 작성이 가능합니다."/>
+              </c:when>
+              <c:otherwise>
+                <textarea name="content" class="form-control" rows="3" placeholder="댓글을 작성하세요."></textarea>
+              </c:otherwise>
+            </c:choose>
           </div>
           <div class="col">
             <button class="btn btn-success" onclick="submitReply()">등록</button>
@@ -170,18 +172,18 @@
                         </button>
                       </div>
                       <div class="col-2" style="text-align: end">
-                          <%--              <c:if test="${LOGIN_USER eq board.review.user.no}">--%>
-                        <button class="btn btn-outline-dark btn-sm">
-                          <i class="bi bi-hand-thumbs-up"></i>
-                          <i class="bi bi-hand-thumbs-up-fill"></i>
-                        </button>
-                        <button type="button" class="btn btn-warning btn-sm" id="replyModifyButton-${reply.no}"
-                                onclick="appendModify(${reply.no})">수정
-                        </button>
+                        <c:if test="${loginUser.no eq reply.user.no}">
+                          <button class="btn btn-outline-dark btn-sm">
+                            <i class="bi bi-hand-thumbs-up"></i>
+                            <i class="bi bi-hand-thumbs-up-fill"></i>
+                          </button>
+                          <button type="button" class="btn btn-warning btn-sm" id="replyModifyButton-${reply.no}"
+                                  onclick="appendModify(${reply.no})">수정
+                          </button>
                           <button type="button" class="btn btn-danger btn-sm"
                                   onclick="deleteReply(${reply.no}, ${reply.boardNo})">삭제
                           </button>
-                          <%--              </c:if>--%>
+                        </c:if>
                       </div>
                     </div>
                   </div>
@@ -204,12 +206,12 @@
                           </div>
                         </div>
                       </form>
-                        <%--        <c:if test="${not empty LOGIN_USER}">--%>
-                      <button type="button" class="btn btn-outline-dark btn-sm d-flex justify-content-start mb-3"
-                              name="replyContent" onclick="appendComment(${reply.no})">
-                        답글
-                      </button>
-                        <%--        </c:if>--%>
+                      <c:if test="${not empty loginUser}">
+                        <button type="button" class="btn btn-outline-dark btn-sm d-flex justify-content-start mb-3"
+                                name="replyContent" onclick="appendComment(${reply.no})">
+                          답글
+                        </button>
+                      </c:if>
                       
                       <form method="post" action="add-comment" id="box-comments-${reply.no}" class="my-3 d-none">
                         <input type="hidden" name="no" value="${reply.no}">
@@ -254,7 +256,7 @@
             window.location.href = "delete?no=" + boardNo;
         }
     }
-    
+
     function scrapButton() {
         let scrapIcon = document.getElementById("scrapIcon");
 
@@ -269,7 +271,7 @@
 
     function likeButton(boardNo) {
         let likeIcon = document.getElementById("likeIcon");
-        
+
         let likeCnt = 0;
         if (likeIcon.classList.contains('bi-hand-thumbs-up')) {
             likeIcon.classList.remove('bi-hand-thumbs-up');
@@ -280,7 +282,7 @@
             likeIcon.classList.add('bi-hand-thumbs-up');
             likeCnt = -1;
         }
-        
+
         window.location.href = `update-like?no=\${boardNo}&likeCnt=\${likeCnt}`;
     }
 
@@ -295,17 +297,17 @@
             }
         }
     });
-    
+
     /* 댓글 제출(/community/add-reply로 데이터 전달) */
     async function submitReply() {
-        let value1 = document.querySelector("input[name=boardNo]").value;
-        let value2 = document.querySelector("textarea[name=content]").value;
-        let value3 = document.querySelector("input[name=userNo]").value;
+        let boardNo = document.querySelector("input[name=boardNo]").value;
+        let content = document.querySelector("textarea[name=content]").value;
+        let userNo = document.querySelector("input[name=userNo]").value;
 
         let data = {
-            boardNo: value1,
-            content: value2,
-            userNo: value3
+            boardNo,
+            content,
+            userNo
         }
 
         // 자바스크립트 객체를 json형식의 텍스트로 변환한다.
@@ -328,7 +330,7 @@
             let reply = await response.json();
         }
     }
-    
+
     /* 댓글&답글 삭제 */
     function deleteReply(replyNo, boardNo) {
         let result = confirm("해당 댓글을 삭제하시겠습니까?");
@@ -336,7 +338,7 @@
             window.location.href = "delete-reply?rno=" + replyNo + "&bno=" + boardNo;
         }
     }
-    
+
     /* 버튼 클릭 시 댓글 수정 입력 폼 활성화 */
     function appendModify(replyNo) {
         let box = document.querySelector("#box-reply-" + replyNo);

@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.tags.shaded.org.apache.bcel.generic.IF_ACMPEQ;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,6 +14,8 @@ import store.seub2hu2.community.mapper.BoardMapper;
 import store.seub2hu2.community.mapper.BoardUploadMapper;
 import store.seub2hu2.community.vo.Board;
 import store.seub2hu2.community.vo.UploadFile;
+import store.seub2hu2.security.LoginUser;
+import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.FileUtils;
 import store.seub2hu2.util.ListDto;
 import store.seub2hu2.util.Pagination;
@@ -35,7 +38,8 @@ public class BoardService {
     @Value("${upload.directory.community}")
     private String saveDirectory;
 
-    public void addNewBoard(BoardForm form) {
+    public void addNewBoard(BoardForm form
+                , @AuthenticationPrincipal LoginUser loginUser) {
         // Board 객체를 생성하여 사용자가 입력한 제목과 내용을 저장한다.
         Board board = new Board();
         board.setNo(form.getNo());
@@ -43,8 +47,8 @@ public class BoardService {
         board.setTitle(form.getTitle());
         board.setContent(form.getContent());
 
-//        User user = User.builder().no(loginUser.getNo()).build();
-//        board.setUser(user);
+        User user = User.builder().no(loginUser.getNo()).build();
+        board.setUser(user);
         MultipartFile multipartFile = form.getUpfile();
 
         // 첨부파일이 있으면 실행

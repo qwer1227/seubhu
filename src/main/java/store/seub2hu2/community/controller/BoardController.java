@@ -6,6 +6,8 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -22,6 +24,8 @@ import store.seub2hu2.community.view.FileDownloadView;
 import store.seub2hu2.community.vo.Board;
 import store.seub2hu2.community.vo.Reply;
 import store.seub2hu2.community.vo.UploadFile;
+import store.seub2hu2.security.LoginUser;
+import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.ListDto;
 
 import java.io.File;
@@ -86,10 +90,19 @@ public class BoardController {
 
 
     @GetMapping("/detail")
-    public String detail(@RequestParam("no") Integer no, Model model) {
+    public String detail(@RequestParam("no") Integer no
+            , @AuthenticationPrincipal LoginUser loginUser
+            , Model model) {
+        System.out.println("로그인 유저 정보 = " + loginUser.getNo());
         Board board = boardService.getBoardDetail(no);
         List<Reply> replyList = replyService.getReplies(no);
         board.setReply(replyList);
+
+        User user = new User();
+        user.setNo(loginUser.getNo());
+        user.setNickname(loginUser.getNickname());
+        board.setUser(user);
+
         model.addAttribute("board", board);
         model.addAttribute("replies", replyList);
 
@@ -102,10 +115,10 @@ public class BoardController {
     }
 
     @PostMapping("/register")
-//    @PreAuthorize("isAuthenticated()")
-    public String register(BoardForm form){
-//                          , @AuthenticationPrincipal LoginUser loginUser) {
-        boardService.addNewBoard(form);
+    @PreAuthorize("isAuthenticated()")
+    public String register(BoardForm form
+            , @AuthenticationPrincipal LoginUser loginUser) {
+        boardService.addNewBoard(form, loginUser);
 
         return "redirect:main";
     }
@@ -173,30 +186,36 @@ public class BoardController {
     }
 
     @GetMapping("/add-reply")
-//    @PreAuthorize("isAuthenticated()")
-    public String addReply(ReplyForm form){
-//            , @AuthenticationPrincipal LoginUser loginUser) {
-        replyService.addNewReply(form, 11);
+    @PreAuthorize("isAuthenticated()")
+    public String addReply(ReplyForm form
+            , @AuthenticationPrincipal LoginUser loginUser) {
+        System.out.println("유저 정보 조회1 = " + loginUser.getNo());
+        replyService.addNewReply(form, loginUser);
+        System.out.println("유저 정보 조회2 = " + loginUser.getNo());
 
         return "redirect:detail?no=" + form.getBoardNo();
     }
 
     @PostMapping("/add-comment")
-    public String addComment(ReplyForm form){
-        replyService.addNewComment(form, 11);
+    @PreAuthorize("isAuthenticated()")
+    public String addComment(ReplyForm form
+            , @AuthenticationPrincipal LoginUser loginUser){
+        replyService.addNewComment(form, loginUser);
 
         return "redirect:detail?no=" + form.getBoardNo();
     }
 
     @PostMapping("/modify-reply")
-    public String modifyReply(@RequestParam("replyNo") int replyNo,
-                              @RequestParam("boardNo") int boardNo,
-                              @RequestParam("content") String replyContent){
+    @PreAuthorize("isAuthenticated()")
+    public String modifyReply(@RequestParam("replyNo") int replyNo
+                              , @RequestParam("boardNo") int boardNo
+                              , @RequestParam("content") String replyContent
+                              , @AuthenticationPrincipal LoginUser loginUser){
         ReplyForm form = new ReplyForm();
         form.setNo(replyNo);
         form.setBoardNo(boardNo);
         form.setContent(replyContent);
-        form.setUserNo(13);
+        form.setUserNo(loginUser.getNo());
 
         replyService.updateReply(form);
 
@@ -204,6 +223,7 @@ public class BoardController {
     }
 
     @GetMapping("/delete-reply")
+    @PreAuthorize("isAuthenticated()")
     public String deleteReply(@RequestParam("rno") int replyNo,
                               @RequestParam("bno") int boardNo){
         ReplyForm form = new ReplyForm();

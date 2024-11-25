@@ -2,12 +2,14 @@ package store.seub2hu2.community.service;
 
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import store.seub2hu2.community.dto.ReplyForm;
 import store.seub2hu2.community.mapper.BoardMapper;
 import store.seub2hu2.community.mapper.ReplyMapper;
 import store.seub2hu2.community.vo.Board;
 import store.seub2hu2.community.vo.Reply;
+import store.seub2hu2.security.LoginUser;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.ListDto;
 
@@ -18,19 +20,17 @@ import java.util.Map;
 public class ReplyService {
 
     @Autowired
-    private BoardMapper boardMapper;
-
-    @Autowired
     private ReplyMapper replyMapper;
 
-    public void addNewReply(ReplyForm form, int userNo) {
+    public void addNewReply(ReplyForm form
+            , @AuthenticationPrincipal LoginUser loginUser) {
         Reply reply = new Reply();
         reply.setBoardNo(form.getBoardNo());
         reply.setContent(form.getContent());
         reply.setDeleted("N");
 
         User user = new User();
-        user.setNo(userNo);
+        user.setNo(loginUser.getNo());
         reply.setUser(user);
 
         replyMapper.insertReply(reply);
@@ -40,14 +40,15 @@ public class ReplyService {
         replyMapper.updateReply(reply);
     }
 
-    public void addNewComment(ReplyForm form, int userNo) {
+    public void addNewComment(ReplyForm form
+            , @AuthenticationPrincipal LoginUser loginUser) {
         Reply reply = new Reply();
         reply.setBoardNo(form.getBoardNo());
         reply.setContent(form.getContent());
         reply.setDeleted("N");
 
         User user = new User();
-        user.setNo(userNo);
+        user.setNo(loginUser.getNo());
         reply.setUser(user);
 
         replyMapper.insertReply(reply);
