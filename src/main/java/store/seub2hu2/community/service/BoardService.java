@@ -189,7 +189,7 @@ public class BoardService {
         boardMapper.insertLike(boardNo, loginUser.getNo());
     }
 
-    public void updateBoardUnlike(int boardNo
+    public void deleteBoardLike(int boardNo
                             , @AuthenticationPrincipal LoginUser loginUser) {
         boardMapper.deleteLike(boardNo, loginUser.getNo());
     }

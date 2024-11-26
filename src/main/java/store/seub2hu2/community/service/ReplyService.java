@@ -92,7 +92,7 @@ public class ReplyService {
         replyMapper.insertReplyLike(replyNo, loginUser.getNo());
     }
 
-    public void updateReplyUnlike(int replyNo
+    public void deleteReplyLike(int replyNo
             , @AuthenticationPrincipal LoginUser loginUser) {
         replyMapper.deleteReplyLike(replyNo, loginUser.getNo());
     }

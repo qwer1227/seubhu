@@ -40,6 +40,7 @@
   <h2> 커뮤니티 글 상세 </h2>
   
   <div>
+    <security:authentication property="principal" var="loginUser"/>
     <div class="col d-flex justify-content-left">
       <div>
         <a href="main?category=${board.catName}" style="text-decoration-line: none">${board.catName}</a>
@@ -50,9 +51,13 @@
         ${board.title}
       </div>
       <div class="ml-auto">
-        <button class="btn btn-outline-success btn-lg" id="scrapButton" onclick="scrapButton()">
-          <i id="scrapIcon" class="bi bi-bookmark"></i>
-        </button>
+        <security:authorize access="isAuthenticated()">
+          <button class="btn btn-outline-success btn-lg" id="scrapButton"
+                  onclick="scrapButton(${board.no}, ${loginUser.getNo()})">
+            <i id="icon-scrap"
+               class="bi ${Scrapped == '1' ? 'bi-bookmark-fill' : (Scrapped == '0' ? 'bi-bookmark' : 'bi-bookmark')}"></i>
+          </button>
+        </security:authorize>
       </div>
     </div>
     <div class="meta d-flex justify-content-between mb-3">
@@ -83,7 +88,6 @@
         <!-- 로그인 여부를 체크하기 위해 먼저 선언 -->
         <security:authorize access="isAuthenticated()">
         <!-- principal 프로퍼티 안의 loginUser 정보를 가져옴 -->
-        <security:authentication property="principal" var="loginUser"/>
         <!-- loginUser.no를 가져와서 조건문 실행 -->
         <c:if test="${loginUser.no == board.user.no}">
           <button class="btn btn-warning" onclick="updateBoard(${board.no})">수정</button>
@@ -270,15 +274,12 @@
         }
     }
 
-    function scrapButton() {
-        let scrapIcon = document.getElementById("scrapIcon");
-
-        if (scrapIcon.classList.contains('bi bi-bookmark')) {
-            scrapIcon.classList.remove('bi bi-bookmark');
-            scrapIcon.classList.add('bi bi-bookmark-fill');
+    function scrapButton(boardNo, userNo) {
+        let scrap = document.querySelector("#icon-scrap");
+        if (scrap.classList.contains("bi-bookmark")) {
+            window.location.href = `update-board-scrap?no=\${boardNo}&userNo=\${userNo}`;
         } else {
-            scrapIcon.classList.remove('bi bi-bookmark-fill');
-            scrapIcon.classList.add('bi bi-bookmark');
+            window.location.href = `delete-board-scrap?no=\${boardNo}&userNo=\${userNo}`;
         }
     }
 
@@ -287,7 +288,7 @@
         if (heart.classList.contains("bi-heart")) {
             window.location.href = `update-board-like?no=\${boardNo}&userNo=\${userNo}`;
         } else {
-            window.location.href = `update-board-unlike?no=\${boardNo}&userNo=\${userNo}`;
+            window.location.href = `delete-board-like?no=\${boardNo}&userNo=\${userNo}`;
         }
     }
 
@@ -296,7 +297,7 @@
         if (heart.classList.contains("bi-hand-thumbs-up")) {
             window.location.href = `update-reply-like?no=\${boardNo}&rno=\${replyNo}&userNo=\${userNo}`;
         } else {
-            window.location.href = `update-reply-unlike?no=\${boardNo}&rno=\${replyNo}&userNo=\${userNo}`;
+            window.location.href = `delete-reply-like?no=\${boardNo}&rno=\${replyNo}&userNo=\${userNo}`;
         }
     }
 

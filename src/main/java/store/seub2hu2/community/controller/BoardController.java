@@ -18,8 +18,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import store.seub2hu2.community.dto.BoardForm;
 import store.seub2hu2.community.dto.ReplyForm;
+import store.seub2hu2.community.mapper.BoardScrapMapper;
 import store.seub2hu2.community.service.BoardService;
 import store.seub2hu2.community.service.ReplyService;
+import store.seub2hu2.community.service.ScrapService;
 import store.seub2hu2.community.view.FileDownloadView;
 import store.seub2hu2.community.vo.Board;
 import store.seub2hu2.community.vo.Reply;
@@ -47,7 +49,10 @@ public class BoardController {
     public FileDownloadView fileDownloadView;
 
     @Autowired
-    private ReplyService replyService;
+    public ReplyService replyService;
+
+    @Autowired
+    private ScrapService scrapService;
 
     @GetMapping("write")
     public String write(){
@@ -99,6 +104,9 @@ public class BoardController {
         if (loginUser != null) {
             int boardResult = boardService.getCheckLike(boardNo, loginUser);
             model.addAttribute("boardLiked", boardResult);
+
+            int scrapResult = scrapService.getCheckScrap(boardNo, loginUser);
+            model.addAttribute("Scrapped", scrapResult);
 
             for (Reply reply : replyList) {
                 int replyResult = replyService.getCheckLike(reply.getNo(), loginUser);
@@ -251,10 +259,10 @@ public class BoardController {
         return "redirect:detail?no=" + boardNo;
     }
 
-    @GetMapping("/update-board-unlike")
+    @GetMapping("/delete-board-like")
     public String updateBoardUnlike(@RequestParam("no") int boardNo
             , @AuthenticationPrincipal LoginUser loginUser){
-        boardService.updateBoardUnlike(boardNo, loginUser);
+        boardService.deleteBoardLike(boardNo, loginUser);
         return "redirect:detail?no=" + boardNo;
     }
 
@@ -263,22 +271,32 @@ public class BoardController {
                                 , @RequestParam("rno") int replyNo
                                 , @AuthenticationPrincipal LoginUser loginUser){
 
-        System.out.println("===========like========reply 번호 : " + replyNo);
-        System.out.println("===========like========user 번호 : " + loginUser.getNo());
-
         replyService.updateReplyLike(replyNo, loginUser);
         return "redirect:detail?no=" + boardNo;
     }
 
-    @GetMapping("/update-reply-unlike")
+    @GetMapping("/delete-reply-like")
     public String updateReplyUnlike(@RequestParam("no") int boardNo
                                     , @RequestParam("rno") int replyNo
                                     , @AuthenticationPrincipal LoginUser loginUser){
 
-        System.out.println("===========unlike========reply 번호 : " + replyNo);
-        System.out.println("===========unlike========user 번호 : " + loginUser.getNo());
+        replyService.deleteReplyLike(replyNo, loginUser);
+        return "redirect:detail?no=" + boardNo;
+    }
 
-        replyService.updateReplyUnlike(replyNo, loginUser);
+    @GetMapping("/update-board-scrap")
+    public String updateScrap(@RequestParam("no") int boardNo
+                            , @AuthenticationPrincipal LoginUser loginUser){
+
+        scrapService.updateBoardScrap(boardNo, loginUser);
+        return "redirect:detail?no=" + boardNo;
+    }
+
+    @GetMapping("/delete-board-scrap")
+    public String deleteScrap(@RequestParam("no") int boardNo
+                            , @AuthenticationPrincipal LoginUser loginUser){
+
+        scrapService.deleteBoardScrap(boardNo, loginUser);
         return "redirect:detail?no=" + boardNo;
     }
 }
