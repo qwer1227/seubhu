@@ -5,28 +5,59 @@
 
 
     <!--
+        int getColorNo(@Param("color")HashMap<String, Object> condition);
+    -->
+    <select id="getColorNo" resultType="Integer">
+        select color_no
+        from PROD_COLORS
+        where prod_no = #{condition.no}
+        and color_name = #{condition.color};
+    </select>
+
+    <!--
+         void insertColor(@Param("condition") HashMap<String, Object> condition);
+    -->
+    <insert id="insertColor" parameterType="store.seub2hu2.product.vo.Color">
+        insert into PROD_COLORS
+            (PROD_NO, COLOR_NAME)
+        VALUES
+            (#{condition.no}, #{condition.color});
+    </insert>
+    <!--
+        카테고리에 해당하는 상위 카테고리 조회
+        Category getTopCategoryNo(@Param("category")int categoryNo);
+    -->
+        <select id="getTopCategoryNo" resultType="store.seub2hu2.product.vo.Category">
+            select
+                cat_no as no
+                , cat_name as name
+                , top_cat_no as topNo
+            from
+                PROD_CATEGORIES
+            where
+                cat_no = #{categoryNo}
+        </select>
+    <!--
         void insertProduct(@Param("condition") HashMap<String, Object> condition);
     -->
     <insert id="insertProduct">
         insert into PRODUCTS
-        (
-         cat_no
-         , brand_no
-         , prod_name
-         , prod_price
-         , prod_content
-         , prod_img_thum
-         , color_name
-        )
+            (
+             prod_name
+            , prod_price
+            , brand_no
+            , cat_no
+            , prod_content
+            , prod_img_thum
+            )
         values
             (
-        #{condition.catNo}
-        , #{condition.brandNo}
-        , #{condition.name}
-        , #{condition.price}
-        , #{condition.content}
-        , #{condition.image}
-        , #{condition.color}
+            #{condition.name}
+            , #{condition.price}
+            , #{condition.brandNo}
+            , #{condition.categoryNo}
+            , #{condition.content}
+            , #{condition.thumbnail}
             )
     </insert>
     <!--

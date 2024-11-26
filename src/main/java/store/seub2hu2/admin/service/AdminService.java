@@ -14,6 +14,8 @@ import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.course.vo.Region;
 import store.seub2hu2.lesson.mapper.LessonMapper;
 import store.seub2hu2.lesson.vo.Lesson;
+import store.seub2hu2.product.vo.Category;
+import store.seub2hu2.product.vo.Color;
 import store.seub2hu2.user.mapper.UserMapper;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.FileUtils;
@@ -23,6 +25,7 @@ import store.seub2hu2.util.Pagination;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -177,63 +180,37 @@ public class AdminService {
 
             return adminMapper.getUserByNo(no);
     }
-
+    // 상품등록
     public void addProduct(ProductRegisterForm form) {
 
-//        Product product = new Product();
-//        product.setName(form.getName());
-//        product.setPrice(form.getPrice());
-//        product.setContent(form.getContent());
-//
-//        Category category = new Category();
-//        category.setNo(form.getCategoryDetailNo());
-//        category.setTopNo(form.getCategoryNo());
-//
-//        product.setCategory(category);
-//
-//        adminMapper.insertProduct(product);
-//
-//        Brand brand = new Brand();
-//        brand.setNo(form.getBrandNo());
-//
-//        adminMapper.insertBrand();
-//
-//        Size size = new Size();
         HashMap<String, Object> condition = new HashMap<String, Object>();
 
         condition.put("name", form.getName());
         condition.put("price", form.getPrice());
-        condition.put("content", form.getContent());
-        condition.put("catNo", form.getCategoryDetailNo());
-        condition.put("topNo", form.getCategoryNo());
         condition.put("brandNo", form.getBrandNo());
+        condition.put("categoryNo", form.getCategoryNo());
+        condition.put("content", form.getContent());
+        condition.put("thumbnail", form.getThumbnail());
 
-        condition.put("color", form.getColor());
-
-        MultipartFile multipartFile1 = form.getThumbnail();
-        if (multipartFile1 != null) {
-            String originalFilename = multipartFile1.getOriginalFilename();
-            String filename1 = System.currentTimeMillis() + originalFilename;
-
-            FileUtils.saveMultipartFile(multipartFile1, saveProductDirectory, filename1);
-
-            condition.put("thumbnail", filename1);
-        }
-
-        MultipartFile multipartFile2 = form.getImage();
-        if (multipartFile2 != null) {
-            String originalFilename = multipartFile2.getOriginalFilename();
-            String filename2 = System.currentTimeMillis() + originalFilename;
-
-            FileUtils.saveMultipartFile(multipartFile2, saveProductDirectory, filename2);
-
-            condition.put("image", filename2);
-        }
-
-
-
-        adminMapper.insertColor();
+        System.out.println("condition: " + condition);
         adminMapper.insertProduct(condition);
     }
 
+    // 카테고리 조회
+    public Category getCategory(int categoryNo) {
+        return adminMapper.getTopCategoryNo(categoryNo);
+    }
+
+    // 컬러 번호 조회
+    public int getColor(Map<String, Object> condition) {
+
+        Integer colorNo = adminMapper.getColorNo((HashMap<String, Object>) condition);
+        return Optional.ofNullable(colorNo).orElse(0); // 결과가 없으면 0 반환
+    }
+
+    // 상품 컬러 추가
+    public void addColor(Map<String, Object> condition) {
+
+        adminMapper.insertColor((HashMap<String, Object>) condition);
+    }
 }
