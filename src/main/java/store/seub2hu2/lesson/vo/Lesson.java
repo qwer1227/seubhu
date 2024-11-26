@@ -30,6 +30,7 @@ public class Lesson {
     private LocalDateTime updatedDate;
     private User lecturer;
     private String filename;
+    private String place;
 
 
     public String getOriginalFilename() {

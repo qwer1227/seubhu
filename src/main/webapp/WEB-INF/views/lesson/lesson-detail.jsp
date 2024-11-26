@@ -19,10 +19,10 @@
         <div class="col-2"></div>
     </div>
     <div class="row mb-3 d-flex justify-content-center">
-        <div class="col-4 border">
+        <div class="col-4">
             <c:if test="${not empty images['THUMBNAIL']}">
-                <img src="${pageContext.request.contextPath}/resources/lessonImg/${images['THUMBNAIL']}"
-                     class="img-fluid" alt="Thumbnail" id="Thumbnail" style="width: 100%; height: 500px;"/>
+                <img src="${pageContext.request.contextPath}/resources/images/lesson/${images['THUMBNAIL']}"
+                     alt="Thumbnail" id="Thumbnail" style="width: 100%; height: 300px;"/>
             </c:if>
         </div>
         <div class="col-4">
@@ -36,8 +36,16 @@
                     <td>${lesson.title}</td>
                 </tr>
                 <tr>
+                    <th>과목</th>
+                    <td>${lesson.subject}</td>
+                </tr>
+                <tr>
                     <th>강사명</th>
                     <td>${lesson.lecturer.name}</td>
+                </tr>
+                <tr>
+                    <th>장소</th>
+                    <td>${lesson.place}</td>
                 </tr>
                 <tr>
                     <th>레슨날짜</th>
@@ -47,29 +55,35 @@
                     <th>참여인원</th>
                     <td>${lesson.participant}/5</td>
                 </tr>
+                <tr>
+                    <th>결제금액</th>
+                    <td><fmt:formatNumber value="${lesson.price}" pattern="#,###"/></td>
+                </tr>
             </table>
         </div>
     </div>
-    <div class="row text-white text-start mb-3">
-        <div class="col-2"></div>
-        <div class="col-4 bg-black">${lesson.title}</div>
-        <div class="col-1 bg-black">결제 금액</div>
-        <div class="col-1 bg-black">${lesson.price}</div>
-        <div class="col-2 bg-black"></div>
-        <div class="col-2"></div>
-    </div>
+<%--    <div class="row text-white text-start mb-3">--%>
+<%--        <div class="col-2"></div>--%>
+<%--        <div class="col-4 bg-black">${lesson.title}</div>--%>
+<%--        <div class="col-1 bg-black">결제 금액</div>--%>
+<%--        <div class="col-1 bg-black">${lesson.price}</div>--%>
+<%--        <div class="col-2 bg-black"></div>--%>
+<%--        <div class="col-2"></div>--%>
+<%--    </div>--%>
     <div class="row text-end mb-3">
         <div class="col-2"></div>
         <div class="col border-bottom border-dark border-2 pb-3">
             <form name="lessonDto" method="get" action="/order/pay/form" id="hidden-form">
                 <input type="hidden" name="lessonNo" value="${lesson.lessonNo}">
-<%--                <input type="hidden" name="userNo" value="${loginUser.no}" />--%>
+                <%--                <input type="hidden" name="userNo" value="${loginUser.no}" />--%>
                 <input type="hidden" name="title" value="${lesson.title}">
                 <input type="hidden" name="price" value="${lesson.price}">
                 <input type="hidden" name="lecturerName" value="${lesson.lecturer.name}">
                 <input type="hidden" name="startDate" value="${startDate}">
                 <input type="hidden" name="startTime" value="${startTime}">
                 <input type="hidden" name="subject" value="${lesson.subject}">
+                <input type="hidden" name="place" value="${lesson.place}">
+                <input type="hidden" name="participant" value="${lesson.participant}">
                 <button type="submit" class="btn btn-primary">수강신청</button>
             </form>
         </div>
@@ -88,20 +102,20 @@
             </p>
             <p>
                 <c:if test="${not empty images.MAIN_IMAGE}">
-                    <img src="${pageContext.request.contextPath}/resources/lessonImg/${images['MAIN_IMAGE']}"
+                    <img src="${pageContext.request.contextPath}/resources/images/lesson/${images['MAIN_IMAGE']}"
                          alt="Main Image"/>
                 </c:if>
             </p>
         </div>
         <div class="col-2"></div>
     </div>
-    <div class="row">
-        <div class="col-2"></div>
-        <div class="col text-end">
-            <a href="/lesson/editForm?lessonNo=${lessonNo}" class="btn btn-primary">수정</a>
-        </div>
-        <div class="col-2"></div>
-    </div>
+<%--    <div class="row">--%>
+<%--        <div class="col-2"></div>--%>
+<%--        <div class="col text-end">--%>
+<%--            <a href="/lesson/editForm?lessonNo=${lessonNo}" class="btn btn-primary">수정</a>--%>
+<%--        </div>--%>
+<%--        <div class="col-2"></div>--%>
+<%--    </div>--%>
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script>

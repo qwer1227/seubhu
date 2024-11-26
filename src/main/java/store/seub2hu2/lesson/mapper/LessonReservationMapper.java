@@ -8,7 +8,7 @@ import store.seub2hu2.lesson.vo.Lesson;
 @Mapper
 public interface LessonReservationMapper {
 
-    public void insertLessonReservation(@Param("lessonReservationPay") LessonReservationPaymentDto lessonReservationPaymentDto);
+    public void insertLessonReservation(@Param("lessonReservationPaymentDto") LessonReservationPaymentDto lessonReservationPaymentDto);
 
     public Lesson getLessonReservationByPayNo (@Param("payNo") String payNo);
 }

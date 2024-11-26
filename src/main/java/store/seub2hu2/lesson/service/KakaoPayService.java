@@ -7,6 +7,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import store.seub2hu2.lesson.dto.ApproveResponse;
 import store.seub2hu2.lesson.dto.LessonReservationPaymentDto;
@@ -50,6 +51,34 @@ public class KakaoPayService {
         //   REST API 호출 이후 응답을 받을 때까지 기다리는 동기 방식 (json, xml 응답)
         RestTemplate template = new RestTemplate();
         String url = "https://open-api.kakaopay.com/online/v1/payment/ready";
+        // RestTemplate의 postForEntity : POST 요청을 보내고 ResponseEntity로 결과를 반환받는 메소드
+        ResponseEntity<ReadyResponse> responseEntity = template.postForEntity(url, requestEntity, ReadyResponse.class);
+        log.info("결제준비 응답객체: " + responseEntity.getBody());
+
+        return responseEntity.getBody();
+    }
+
+    // 카카오페이 결제 취소
+    // 사용자가 결제 수단을 선택하고 비밀번호를 입력해 결제 인증을 완료한 뒤,
+    // 최종적으로 결제 취소 처리를 하는 단계
+    public ReadyResponse payCancel(LessonReservationPaymentDto lessonReservationPaymentDto, String tid) {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("cid", "TC0ONETIME");
+        parameters.put("tid", tid);
+        parameters.put("cancel_amount", String.valueOf(lessonReservationPaymentDto.getQuantity()));
+        parameters.put("cancel_tax_free_amount", String.valueOf(0));
+        parameters.put("quantity", String.valueOf(lessonReservationPaymentDto.getQuantity()));
+        log.info("결제 취소 = {}" , lessonReservationPaymentDto);
+
+
+        // HttpEntity : HTTP 요청 또는 응답에 해당하는 Http Header와 Http Body를 포함하는 클래스
+        HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(parameters, this.getHeaders());
+
+        // RestTemplate
+        // : Rest 방식 API를 호출할 수 있는 Spring 내장 클래스
+        //   REST API 호출 이후 응답을 받을 때까지 기다리는 동기 방식 (json, xml 응답)
+        RestTemplate template = new RestTemplate();
+        String url = "https://open-api.kakaopay.com/online/v1/payment/cancel";
         // RestTemplate의 postForEntity : POST 요청을 보내고 ResponseEntity로 결과를 반환받는 메소드
         ResponseEntity<ReadyResponse> responseEntity = template.postForEntity(url, requestEntity, ReadyResponse.class);
         log.info("결제준비 응답객체: " + responseEntity.getBody());

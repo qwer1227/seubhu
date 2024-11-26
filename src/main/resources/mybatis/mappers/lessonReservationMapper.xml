@@ -16,6 +16,8 @@
                , #{lessonReservationPaymentDto.payNo})
     </insert>
 
+
+
     <select id="getLessonReservationByPayNo" resultType="store.seub2hu2.lesson.vo.Lesson">
         select L.LESSON_TITLE       as title
              , L.LESSON_PRICE       as price

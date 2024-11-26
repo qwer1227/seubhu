@@ -22,8 +22,11 @@ public class LessonDto {
     private String lecturerName;
     private String subject;
     private int userNo;
+    private String place;
     private String startDate;
     private String startTime;
+    private String participant;
+
 
     private int price;
 }

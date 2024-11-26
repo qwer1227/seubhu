@@ -9,11 +9,9 @@ import lombok.*;
 @ToString
 public class LessonReservationPaymentDto {
     private int price;
-    private String type;
-    private int productNo;
     private String title;
     private int lessonNo;
     private int userNo;
-    private String payNo;
+    private String payNo; // tid
     private int quantity;
 }
