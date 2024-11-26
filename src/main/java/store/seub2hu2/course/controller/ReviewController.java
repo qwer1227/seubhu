@@ -41,13 +41,13 @@ public class ReviewController {
         return review;
     }
 
-//    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/deleteReview/{no}")
     public ResponseEntity<RestResponseDto<String>> deleteReview(@PathVariable("no") int reviewNo,
                                                                 @AuthenticationPrincipal LoginUser loginUser) {
         // 1. 로그인한 사용자와 리뷰 작성자가 동일하면 리뷰를 삭제한다.
         try {
-            reviewService.deleteReview(reviewNo, 30); // loginUser.getNo()
+            reviewService.deleteReview(reviewNo, loginUser.getNo());
         } catch (CourseReviewException ex) {
             return ResponseEntity.ok(RestResponseDto.fail(ex.getMessage()));
         }

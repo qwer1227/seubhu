@@ -52,7 +52,6 @@ public class ReviewService {
                 review.setReviewImage(reviewImages);
             }
         }
-        System.out.println("리뷰 목록: " + reviews);
 
         // 3. 리뷰 객체를 반환한다.
         return reviews;
@@ -103,7 +102,6 @@ public class ReviewService {
             }
             review.setReviewImage(reviewImages);
         }
-        System.out.println("코스에 등록한 리뷰  : " + review);
 
         // 4. 등록한 리뷰 정보를 반환한다.
         return review;
