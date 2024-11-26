@@ -13,10 +13,17 @@ import java.util.Date;
 @AllArgsConstructor
 @Getter
 @Setter
-public class Scrap {
-    private int no;
-    private Board board;
+public class Report {
+
+    private int id;
+    private String type;
+    private String reason;
     private User user;
+    private int adminNo;
+    private int boardNo;
+    private int replyNo;
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date scrappedDate;
+    private Date createdDate;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private Date resolvedDate;
 }

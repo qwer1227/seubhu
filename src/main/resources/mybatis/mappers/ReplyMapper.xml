@@ -80,6 +80,15 @@
         and br.is_deleted = 'N'
   </select>
 
+  <!-- int getReplyCntByBoardNo(@Param("no") int boardNo); -->
+  <select id="getReplyCntByBoardNo" parameterType="int">
+    select
+        count(*)
+    from
+        BOARD_REPLIES
+    where board_no = #{no}
+  </select>
+
   <!-- void deleteReplyByNo(@Param("no") int replyNo); -->
   <update id="deleteReplyByNo" parameterType="int">
     update BOARD_REPLIES

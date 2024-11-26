@@ -62,6 +62,10 @@ public class ReplyService {
         return replyList;
     }
 
+    public int getReplyCnt(int boardNo) {
+        return replyMapper.getReplyCntByBoardNo(boardNo);
+    }
+
     public void deleteReply(int replyNo) {
         Reply reply = replyMapper.getReplyByReplyNo(replyNo);
         reply.setBoardNo(reply.getBoardNo());
@@ -87,8 +91,6 @@ public class ReplyService {
     public void updateReplyLike(int replyNo
             , @AuthenticationPrincipal LoginUser loginUser) {
 
-        System.out.println("=================== replyNo:" + replyNo);
-        System.out.println("=================== loginUser:" + loginUser.getNo());
         replyMapper.insertReplyLike(replyNo, loginUser.getNo());
     }
 

@@ -68,7 +68,7 @@
       <span>
         <i class="bi bi-eye"></i> ${board.viewCnt}
         <i class="bi bi-hand-thumbs-up"></i> ${board.like}
-        <i class="bi bi-chat-square-text"></i> 5
+        <i class="bi bi-chat-square-text"></i> ${replyCnt}
       </span>
     </div>
     
@@ -94,7 +94,7 @@
           <button class="btn btn-danger" onclick="deleteBoard(${board.no})">삭제</button>
         </c:if>
         <c:if test="${loginUser.no != board.user.no}">
-          <button class="btn btn-danger">신고</button>
+          <button type="button" class="btn btn-danger" onclick="report('board', ${board.no}, ${loginUser.getNo()})">신고</button>
         </c:if>
       
       </div>
@@ -178,7 +178,7 @@
                         <strong>${reply.user.nickname}</strong><br/>
                         <span><fmt:formatDate value="${reply.createdDate}" pattern="yyyy.MM.dd hh:mm:ss"/></span>
                         <button type="button" class="btn"
-                                style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+                                style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;" onclick="report('reply', ${reply.no}, ${loginUser.getNo()})">
                           신고
                         </button>
                       </div>
@@ -256,10 +256,70 @@
       </div>
     </c:if>
   </div>
+  
+  <!-- 신고 모달 창 -->
+  <div class="modal" tabindex="-1" id="modal-reporter">
+    <input type="hidden" name="no" value="${type eq 'board' ? 'boardNo' : 'replyNo'}">
+    <input type="hidden" name="type" value="${type}">
+    <div class="modal-dialog">
+      <div class="modal-content" style="text-align: start">
+        <div class="modal-header">
+          <h5 class="modal-title">신고 사유</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body ">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="report-spam">
+            <label class="form-check-label" for="report-spam">
+              스팸홍보/도배글입니다.
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="report-injustice">
+            <label class="form-check-label" for="report-injustice">
+              불법정보를 포함하고 있습니다.
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="report-bad-language">
+            <label class="form-check-label" for="report-bad-language">
+              욕설/생명경시/혐오/차별적 표현입니다.
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="report-leak">
+            <label class="form-check-label" for="report-leak">
+              개인정보 노출 게시물입니다.
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="report-rude">
+            <label class="form-check-label" for="report-rude">
+              불쾌한 표현이 있습니다.
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="report-etc">
+            <label class="form-check-label" for="report-etc">
+              <input type="text" placeholder="신고사유를 직접 작성해주세요.">
+            </label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+          <button type="button" class="btn btn-primary" onclick="reportButton()">신고</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
 <script type="text/javascript">
+
+    const myModalRepoter = new bootstrap.Modal('#modal-reporter')
+    
     function updateBoard(boardNo) {
         let result = confirm("해당 게시글을 수정하시겠습니까?");
         if (result) {
@@ -271,6 +331,21 @@
         let result = confirm("해당 게시글을 삭제하시겠습니까?");
         if (result) {
             window.location.href = "delete?no=" + boardNo;
+        }
+    }
+    
+    function report(type, no, userNo){
+        myModalRepoter.show();
+    }
+    
+    function reportButton(type, no, userNo){
+        let reportType = document.querySelector("#modal-reporter input[name=no]").val();
+        
+        if (reportType === 'board'){
+            window.location.href = `report-board?no=\${no}&userNo=\${userNo}`;
+        }
+        if (reportType === 'reply'){
+            window.location.href = `report-reply?no=\${no}&userNo=\${userNo}`;
         }
     }
 

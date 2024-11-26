@@ -18,9 +18,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import store.seub2hu2.community.dto.BoardForm;
 import store.seub2hu2.community.dto.ReplyForm;
+import store.seub2hu2.community.dto.ReportForm;
 import store.seub2hu2.community.mapper.BoardScrapMapper;
 import store.seub2hu2.community.service.BoardService;
 import store.seub2hu2.community.service.ReplyService;
+import store.seub2hu2.community.service.ReportService;
 import store.seub2hu2.community.service.ScrapService;
 import store.seub2hu2.community.view.FileDownloadView;
 import store.seub2hu2.community.vo.Board;
@@ -52,7 +54,10 @@ public class BoardController {
     public ReplyService replyService;
 
     @Autowired
-    private ScrapService scrapService;
+    public ScrapService scrapService;
+
+    @Autowired
+    public ReportService reportService;
 
     @GetMapping("write")
     public String write(){
@@ -100,6 +105,7 @@ public class BoardController {
         Board board = boardService.getBoardDetail(boardNo);
         List<Reply> replyList = replyService.getReplies(boardNo);
         board.setReply(replyList);
+        int replyCnt = replyService.getReplyCnt(boardNo);
 
         if (loginUser != null) {
             int boardResult = boardService.getCheckLike(boardNo, loginUser);
@@ -116,6 +122,7 @@ public class BoardController {
 
         model.addAttribute("board", board);
         model.addAttribute("replies", replyList);
+        model.addAttribute("replyCnt", replyCnt);
 
         return "community/detail";
     }
@@ -129,9 +136,9 @@ public class BoardController {
 //    @PreAuthorize("isAuthenticated()")
     public String register(BoardForm form
             , @AuthenticationPrincipal LoginUser loginUser) {
-        boardService.addNewBoard(form, loginUser);
+        Board board = boardService.addNewBoard(form, loginUser);
 
-        return "redirect:main";
+        return "redirect:detail?no=" + board.getNo();
     }
 
     @GetMapping("/modify")
@@ -298,5 +305,20 @@ public class BoardController {
 
         scrapService.deleteBoardScrap(boardNo, loginUser);
         return "redirect:detail?no=" + boardNo;
+    }
+
+    @GetMapping("/report-board")
+    public String reportBoard(ReportForm form
+                              , @AuthenticationPrincipal LoginUser loginUser){
+
+        reportService.registerReport(form, loginUser);
+        return "redirect:detail?no=" + form.getBoardNo();
+    }
+
+    @GetMapping("report-reply")
+    public String reportReply(ReportForm form
+                                , @AuthenticationPrincipal LoginUser loginUser){
+        reportService.registerReport(form, loginUser);
+        return "redirect:detail?no=" + form.getBoardNo();
     }
 }

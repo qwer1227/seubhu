@@ -42,7 +42,7 @@ public class BoardService {
     @Autowired
     private ReplyMapper replyMapper;
 
-    public void addNewBoard(BoardForm form
+    public Board addNewBoard(BoardForm form
                 , @AuthenticationPrincipal LoginUser loginUser) {
         // Board 객체를 생성하여 사용자가 입력한 제목과 내용을 저장한다.
         Board board = new Board();
@@ -84,6 +84,8 @@ public class BoardService {
             // UploadFile 테이블에 저장
             boardUploadMapper.insertBoardFile(uploadFile);
         }
+
+        return board;
     }
 
     public ListDto<Board> getBoards(Map<String, Object> condition) {
@@ -187,11 +189,21 @@ public class BoardService {
     public void updateBoardLike(int boardNo
                             , @AuthenticationPrincipal LoginUser loginUser) {
         boardMapper.insertLike(boardNo, loginUser.getNo());
+
+        Board board = boardMapper.getBoardDetailByNo(boardNo);
+        board.setLike((board.getLike() + 1));
+        board.setScrapCnt(board.getScrapCnt());
+        boardMapper.updateCnt(board);
     }
 
     public void deleteBoardLike(int boardNo
                             , @AuthenticationPrincipal LoginUser loginUser) {
         boardMapper.deleteLike(boardNo, loginUser.getNo());
+
+        Board board = boardMapper.getBoardDetailByNo(boardNo);
+        board.setLike((board.getLike() - 1));
+        board.setScrapCnt(board.getScrapCnt());
+        boardMapper.updateCnt(board);
     }
 
     public void updateBoardLikeCnt(int boardNo
