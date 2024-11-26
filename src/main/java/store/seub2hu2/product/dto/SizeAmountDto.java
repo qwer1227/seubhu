@@ -15,7 +15,7 @@ import java.util.List;
 @Getter
 public class SizeAmountDto {
 
-    private int no;
-    private String name;
-    private List<Size> sizes;
+    private int no; // 사이즈 번호
+    private String name; // 사이즈 명(?)
+    private List<Size> sizes; //사이즈별 사이즈
 }

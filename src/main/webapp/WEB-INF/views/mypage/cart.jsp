@@ -49,7 +49,7 @@
                         </td>
                         <td>
                             <input type="button" value=" - " name="minus">
-                            <input type="text" name="stock" value="1" id="stock-\${sizeNo}" size="3" max="" style="width: 3rem; text-align: center">
+                            <input type="text" name="stock" value="1" id="stock-\${sizeNo}" size="3" max="" style=" width: 3rem; text-align: center">
                             <input type="button" value=" + " name="plus">
                         </td>
                         <td>

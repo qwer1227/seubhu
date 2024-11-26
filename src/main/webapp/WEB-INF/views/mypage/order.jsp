@@ -56,9 +56,67 @@
                     <th colspan="3">배송지 정보</th>
                 </tr>
                 </thead>
+                <colgroup>
+                    <col width="20%"/>
+                    <col width="50%"/>
+                    <col width="25%">
+                </colgroup>
                 <tbody>
                     <tr>
-                        <td>받으실 분 <input type="text"></td>
+                        <th><a href="#" class="text-secondary">최신 배송지</a></th>
+                        <th><a href="#" class="text-secondary">신규 입력</a></th>
+                    </tr>
+                    <tr>
+                        <th>받으실 분</th>
+                        <td>
+                            <input type="text" class="form-control me-2" placeholder="이름을 입력하세요" required>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>주소</th>
+                        <td>
+                            <div class="d-flex align-items-center mb-2">
+                                <input type="text" class="form-control me-2" name="zipcode" placeholder="우편번호" required readonly>
+                                <input type="button" class="btn btn-secondary" value="우편번호검색">
+                            </div>
+                                <input type="text" class="form-control mb-2" placeholder="나머지 주소(선택입력 가능)"/>
+                                <input type="text" class="form-control" placeholder="기본주소"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><label>휴대폰 번호</label></th>
+                        <td>
+                            <div class="d-flex">
+                                <input type="text" class="form-control">
+                                <input type="text" class="form-control">
+                                <input type="text" class="form-control">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><label>추가 번호</label></th>
+                        <td>
+                            <div class="d-flex">
+                                <input type="text" class="form-control">
+                                <input type="text" class="form-control">
+                                <input type="text" class="form-control">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><label>이메일</label></th>
+                        <td>
+                            <div class="d-flex">
+                                <input type="email" class="form-control"> @
+                                <input type="email" class="form-control">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><label>배송 메모</label></th>
+                        <td>
+                            <input type="text" class="form-control">
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -81,7 +139,21 @@
                 </tr>
                 </thead>
                 <tbody>
-
+                    <tr>
+                        <th><label>쿠폰</label></th>
+                        <td>
+                            <input type="text" class="form-control mb-3">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><label>적립금</label></th>
+                        <td>
+                            <div class="d-flex align-items-center mb-3">
+                                <input type="text" class="form-control me-2"/>
+                                <input type="button" class="btn btn-secondary" value="모두 사용">
+                            </div>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -93,9 +165,9 @@
         <div class="col">
             <table class="table align-middle mt-2 md-2">
                 <colgroup>
-                    <col width="5%"/>
+                    <col width="10%"/>
                     <col width="50%"/>
-                    <col width="45%">
+                    <col width="35%">
                 </colgroup>
                 <thead class="table-secondary">
                 <tr class="text-start">
@@ -103,7 +175,9 @@
                 </tr>
                 </thead>
                 <tbody>
-
+                    <tr>
+                        <th><label>결제 수단</label></th>
+                    </tr>
                 </tbody>
             </table>
         </div>

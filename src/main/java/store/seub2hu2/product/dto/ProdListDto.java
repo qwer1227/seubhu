@@ -18,14 +18,14 @@ import java.util.Map;
 @Getter
 public class ProdListDto {
 
-    private int no;
-    private String name;
-    private int price;
-    private int colorNum;
-    private String status;
-    private Date createdAt;
-    private String imgThum;
-    private Category category;
-    private Brand brand;
+    private int no; // 상품 번호
+    private String name; // 상품이름
+    private int price; // 상품 가격
+    private int colorNum; // 색상 대표 번호
+    private String status; // 상품상태
+    private Date createdAt; // 상품 등록 날짜
+    private String imgThum; // 대표 이미지 URL
+    private Category category; // 카테고리 객체
+    private Brand brand; // 브랜드 객체
 
 }
