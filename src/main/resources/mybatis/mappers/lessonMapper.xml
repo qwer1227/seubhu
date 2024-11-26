@@ -138,6 +138,32 @@
         </if>
     </select>
 
+    <!-- 레슨 추가하기 -->
+    <insert id="insertLesson" useGeneratedKeys="true" keyProperty="lessonNo"
+            parameterType="store.seub2hu2.lesson.vo.Lesson">
+        insert into LESSONS
+        (
+          USER_NO
+        , LESSON_TITLE
+        , LESSON_PRICE
+        , LESSON_SUBJECT
+        , PARTICIPANT
+        , LESSON_PLAN
+        , LESSON_START_DATE
+        , LESSON_END_DATE
+        )
+        values (
+                 #{lesson.lecturer.no}
+               , #{lesson.title}
+               , #{lesson.price}
+               , #{lesson.subject}
+               , #{lesson.participant}
+               , #{lesson.plan}
+               , #{lesson.start}
+               , #{lesson.end}
+               )
+    </insert>
+
     <!-- 레슨 수정 -->
     <update id="updateLessonByNo">
         UPDATE LESSONS

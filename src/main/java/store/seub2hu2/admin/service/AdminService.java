@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import store.seub2hu2.admin.dto.CourseRegisterForm;
+import store.seub2hu2.admin.dto.ProductRegisterForm;
 import store.seub2hu2.admin.mapper.AdminMapper;
 import store.seub2hu2.course.mapper.CourseMapper;
 import store.seub2hu2.course.vo.Course;
@@ -19,6 +20,7 @@ import store.seub2hu2.util.FileUtils;
 import store.seub2hu2.util.ListDto;
 import store.seub2hu2.util.Pagination;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +30,8 @@ public class AdminService {
 
     @Value("${project.upload.path}")
     private String saveDirectory;
+    @Value("${upload.directory.product}")
+    private String saveProductDirectory;
 //
 //    private final CommunityMapper communityMapper;
 //
@@ -174,7 +178,62 @@ public class AdminService {
             return adminMapper.getUserByNo(no);
     }
 
-/*    public ListDto<Product> getAllProduct(Map<String, Object> condition) {
+    public void addProduct(ProductRegisterForm form) {
 
-    }*/
+//        Product product = new Product();
+//        product.setName(form.getName());
+//        product.setPrice(form.getPrice());
+//        product.setContent(form.getContent());
+//
+//        Category category = new Category();
+//        category.setNo(form.getCategoryDetailNo());
+//        category.setTopNo(form.getCategoryNo());
+//
+//        product.setCategory(category);
+//
+//        adminMapper.insertProduct(product);
+//
+//        Brand brand = new Brand();
+//        brand.setNo(form.getBrandNo());
+//
+//        adminMapper.insertBrand();
+//
+//        Size size = new Size();
+        HashMap<String, Object> condition = new HashMap<String, Object>();
+
+        condition.put("name", form.getName());
+        condition.put("price", form.getPrice());
+        condition.put("content", form.getContent());
+        condition.put("catNo", form.getCategoryDetailNo());
+        condition.put("topNo", form.getCategoryNo());
+        condition.put("brandNo", form.getBrandNo());
+
+        condition.put("color", form.getColor());
+
+        MultipartFile multipartFile1 = form.getThumbnail();
+        if (multipartFile1 != null) {
+            String originalFilename = multipartFile1.getOriginalFilename();
+            String filename1 = System.currentTimeMillis() + originalFilename;
+
+            FileUtils.saveMultipartFile(multipartFile1, saveProductDirectory, filename1);
+
+            condition.put("thumbnail", filename1);
+        }
+
+        MultipartFile multipartFile2 = form.getImage();
+        if (multipartFile2 != null) {
+            String originalFilename = multipartFile2.getOriginalFilename();
+            String filename2 = System.currentTimeMillis() + originalFilename;
+
+            FileUtils.saveMultipartFile(multipartFile2, saveProductDirectory, filename2);
+
+            condition.put("image", filename2);
+        }
+
+
+
+        adminMapper.insertColor();
+        adminMapper.insertProduct(condition);
+    }
+
 }
