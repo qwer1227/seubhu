@@ -263,8 +263,8 @@ public class BoardController {
                                 , @RequestParam("rno") int replyNo
                                 , @AuthenticationPrincipal LoginUser loginUser){
 
-        System.out.println("===================reply 번호 : " + replyNo);
-        System.out.println("===================user 번호 : " + loginUser.getNo());
+        System.out.println("===========like========reply 번호 : " + replyNo);
+        System.out.println("===========like========user 번호 : " + loginUser.getNo());
 
         replyService.updateReplyLike(replyNo, loginUser);
         return "redirect:detail?no=" + boardNo;
@@ -274,6 +274,10 @@ public class BoardController {
     public String updateReplyUnlike(@RequestParam("no") int boardNo
                                     , @RequestParam("rno") int replyNo
                                     , @AuthenticationPrincipal LoginUser loginUser){
+
+        System.out.println("===========unlike========reply 번호 : " + replyNo);
+        System.out.println("===========unlike========user 번호 : " + loginUser.getNo());
+
         replyService.updateReplyUnlike(replyNo, loginUser);
         return "redirect:detail?no=" + boardNo;
     }

@@ -92,7 +92,7 @@
   <select id="hasUserLikedReply" resultType="int">
     select EXISTS (
       SELECT 1
-      FROM BOARD_LIKES
+      FROM BOARD_REPLY_LIKES
       WHERE reply_no = #{rno} and user_no = #{userNo}
     )
   </select>

@@ -179,14 +179,15 @@
                         </button>
                       </div>
                       <div class="col-2" style="text-align: end">
-                        <c:if test="${loginUser.no ne reply.user.no}">
-                          <button class="btn btn-outline-primary btn-sm" id="replyLikeCnt"
-                                  onclick="replyLikeButton(${board.no}, ${reply.no}, ${loginUser.getNo()})">
-                            <i id="icon-thumbs"
-                               class="bi ${replyLiked == '1' ? 'bi-hand-thumbs-up-fill' : (boardLiked == '0' ? 'bi-hand-thumbs-up' : 'bi-hand-thumbs-up')}"></i>
-                          </button>
-                        </c:if>
                         <security:authorize access="isAuthenticated()">
+                          <c:if test="${loginUser.no ne reply.user.no}">
+                            <button class="btn btn-outline-primary btn-sm" id="replyLikeCnt"
+                                    onclick="replyLikeButton(${board.no}, ${reply.no}, ${loginUser.getNo()})">
+                              <i id="icon-thumbs"
+                                 class="bi ${replyLiked == '1' ? 'bi-hand-thumbs-up-fill' : (replyLiked == '0' ? 'bi-hand-thumbs-up' : 'bi-hand-thumbs-up')}"></i>
+                            </button>
+                          </c:if>
+                          
                           <c:if test="${loginUser.no eq reply.user.no}">
                             <button type="button" class="btn btn-warning btn-sm" id="replyModifyButton-${reply.no}"
                                     onclick="appendModify(${reply.no})">수정
@@ -289,13 +290,13 @@
             window.location.href = `update-board-unlike?no=\${boardNo}&userNo=\${userNo}`;
         }
     }
-    
+
     function replyLikeButton(boardNo, replyNo, userNo) {
         let heart = document.querySelector("#icon-thumbs");
-        if (heart.classList.contains("bi-heart")) {
-            window.location.href = `update-board-like?no=\${boardNo}&rno=\${replyNo}&userNo=\${userNo}`;
+        if (heart.classList.contains("bi-hand-thumbs-up")) {
+            window.location.href = `update-reply-like?no=\${boardNo}&rno=\${replyNo}&userNo=\${userNo}`;
         } else {
-            window.location.href = `update-board-unlike?no=\${boardNo}&rno=\${replyNo}&userNo=\${userNo}`;
+            window.location.href = `update-reply-unlike?no=\${boardNo}&rno=\${replyNo}&userNo=\${userNo}`;
         }
     }
 

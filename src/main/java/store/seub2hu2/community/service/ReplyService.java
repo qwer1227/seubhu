@@ -77,11 +77,18 @@ public class ReplyService {
 
     public int getCheckLike(int replyNo
                             , @AuthenticationPrincipal LoginUser loginUser) {
+
+        System.out.println("getCheckLike replyNo:" + replyNo);
+        System.out.println("getCheckLike loginUser:" + loginUser.getNo());
+
         return replyMapper.hasUserLikedReply(replyNo, loginUser.getNo());
     }
 
     public void updateReplyLike(int replyNo
             , @AuthenticationPrincipal LoginUser loginUser) {
+
+        System.out.println("=================== replyNo:" + replyNo);
+        System.out.println("=================== loginUser:" + loginUser.getNo());
         replyMapper.insertReplyLike(replyNo, loginUser.getNo());
     }
 
