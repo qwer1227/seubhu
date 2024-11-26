@@ -17,7 +17,7 @@ public class PostComment {
 
     private int no;
     private Date createdDate;
-    private PostComment postComment;
+    private PostComment parentComment;
     private CommentRequest commentRequest;
     private String userName;
 }

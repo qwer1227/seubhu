@@ -79,7 +79,7 @@
             p.post_no = i.post_no
         and
             p.user_no = 11
-        and
+          and
             p.post_deleted = 'N'
         ORDER BY
             p.created_date DESC
@@ -140,7 +140,7 @@
     <insert id="insertComment" parameterType="store.seub2hu2.mypage.vo.PostComment">
         insert into POST_COMMENTS(COMMENT_TEXT, CREATED_DATE, POST_NO, USER_NO, COMMENT_NO2)
         VALUES
-            (#{comment.commentRequest.postComment}, now(), #{comment.commentRequest.postId}, #{comment.commentRequest.userNo}, 1)
+            (#{comment.commentRequest.postComment}, now(), #{comment.commentRequest.postId}, #{comment.commentRequest.userNo}, #{comment.commentRequest.replyToCommentNo})
     </insert>
 
     <!-- User findByUserNo(@Param("no") String userNo); -->
@@ -152,6 +152,24 @@
             USERS
         where
             USER_NO = #{no}
+    </select>
+
+    <!-- List<CommentResponse> getCommentsByPostNo(@Param("postNo") int postNo); -->
+
+    <select id="getCommentsByPostNo" resultType="store.seub2hu2.mypage.dto.CommentResponse">
+        SELECT
+            comment_no as commentNo,
+            comment_text as commentText,
+            created_date as createdDate,
+            post_no as postNo,
+            user_no as userNo,
+            comment_no2 as replyCommentNo
+        FROM
+            POST_COMMENTS
+        WHERE
+            post_no = #{postNo}
+        ORDER BY
+            created_date desc
     </select>
 
 </mapper>

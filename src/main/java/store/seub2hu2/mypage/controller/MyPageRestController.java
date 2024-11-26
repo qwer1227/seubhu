@@ -5,12 +5,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import store.seub2hu2.mypage.dto.CommentRequest;
+import store.seub2hu2.mypage.dto.CommentResponse;
 import store.seub2hu2.mypage.dto.ImageDeleteRequest;
 import store.seub2hu2.mypage.service.FileUploadService;
 import store.seub2hu2.mypage.service.PostService;
 import store.seub2hu2.mypage.vo.Post;
 import store.seub2hu2.user.service.UserService;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +40,7 @@ public class MyPageRestController {
             post.setPostContent(postContent);
             post.setThumbnail(thumb);
             int postNo = postService.insertPost(post);  // 게시글 생성 후 postNo 반환
-            post.setNo(postNo);
+//            post.setNo(postNo);
 
             // 2. 파일 업로드 및 이미지 연결
             fileUploadService.saveFile(files, postNo,thumb);  // postNo와 함께 이미지 업로드
@@ -113,39 +115,94 @@ public class MyPageRestController {
     public ResponseEntity<Map<String,Object>> deleteImage(@PathVariable("no") int postNo,
                                               @RequestBody ImageDeleteRequest request) {
 
-        int imageNo = request.getImageNo();
-
-        postService.imageDelete(imageNo);
-
         Map<String, Object> response = new HashMap<>();
-        response.put("message", "삭제성공");
-        
-        return ResponseEntity.ok(response);
+
+        try{
+            int imageNo = request.getImageNo();
+            boolean isDeleted = postService.imageDelete(imageNo);
+
+            if(isDeleted) {
+                response.put("message", "삭제성공");
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("message", "게시글을 찾을 수 없습니다");
+                return ResponseEntity.status(404).body(response);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.put("message", "서버 오류");
+            return ResponseEntity.status(500).body(response);
+        }
+
     }
+
 
     @PostMapping("/detail/comment")
-    public ResponseEntity<Map<String,Object>> addComment(@RequestBody CommentRequest request){
+    public ResponseEntity<Map<String,Object>> addComment(@RequestBody CommentRequest request) {
 
-        int postId = request.getPostId();
-        String commentText = request.getPostComment();
-        int userNo = request.getUserNo();
-
-        String userName = postService.getUserNameByUserNo(userNo); //22
-
-        postService.commentInsert(request,userName);
-
-        // todo 리스폰스DTO를 활용해서 수정/입력/삭제 될때 새로고침해서 클라이언트에게 보내주는 작업이 필요함
-        
         Map<String, Object> response = new HashMap<>();
 
-        response.put("message", "댓글성공");
-        response.put("postId", postId);
-        response.put("userNo", userNo);
-        response.put("userName", userName);
-        response.put("commentText", commentText);
+        try {
+            int postId = request.getPostId();
+            int userNo = request.getUserNo();
 
+            String userName = postService.getUserNameByUserNo(userNo);
+            if (userName == null) {
+                response.put("message", "로그인 후 이용 바랍니다.");
+                return ResponseEntity.status(404).body(response);
+            }
+            boolean isInserted = postService.commentInsert(request, userName);
+            if (isInserted) {
+                response.put("message", "댓글작성성공");
+                //todo 리스폰스DTO를 활용해서 수정/입력/삭제 될때 새로고침해서 클라이언트에게 보내주는 작업이 필요함
+                List<CommentResponse> commentResponse = postService.getCommentsByPostNo(postId);
 
-        return ResponseEntity.ok(response);
+                if (!commentResponse.isEmpty()) {
+                    response.put("message", "댓글작성성공이후 갱신된값");
+
+                    // 댓글 리스트를 계층 구조로 묶기
+                    List<CommentResponse> resultComments = new ArrayList<>();
+                    Map<Integer, CommentResponse> commentMap = new HashMap<>();
+
+                    for (CommentResponse comment : commentResponse) {
+                        // 댓글을 Map에 추가
+                        commentMap.put(comment.getCommentNo(), comment);
+                        comment.setAuthorName(userName);
+                        System.out.println(comment);
+                    }
+
+                    // 대댓글을 부모 댓글에 추가
+                    for (CommentResponse comment : commentResponse) {
+                        if (comment.getReplyCommentNo() != null && comment.getReplyCommentNo() > 0) {  // 대댓글인 경우
+                            // 대댓글이 달릴 부모 댓글 찾기
+                            CommentResponse parentComment = commentMap.get(comment.getReplyCommentNo());
+                            if (parentComment != null) {
+                                parentComment.addReply(comment);  // 대댓글을 부모 댓글에 추가
+                            }
+                        } else {
+                            // 최상위 댓글은 resultComments에 추가
+                            resultComments.add(comment);
+                        }
+                    }
+
+                    // 최상위 댓글을 포함한 전체 댓글 반환
+                    response.put("username",userName);
+                    response.put("comments", resultComments);
+                    return ResponseEntity.ok(response);
+                }
+
+                response.put("message","댓글작성성공");
+                response.put("username",userName);
+                return ResponseEntity.ok(response);
+            }
+
+            response.put("message", "댓글작성실패");
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.put("message", "서버 오류");
+            return ResponseEntity.status(500).body(response);
+        }
     }
-
 }
