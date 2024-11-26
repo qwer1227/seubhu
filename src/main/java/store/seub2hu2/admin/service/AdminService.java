@@ -16,6 +16,7 @@ import store.seub2hu2.lesson.mapper.LessonMapper;
 import store.seub2hu2.lesson.vo.Lesson;
 import store.seub2hu2.product.vo.Category;
 import store.seub2hu2.product.vo.Color;
+import store.seub2hu2.product.vo.Product;
 import store.seub2hu2.user.mapper.UserMapper;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.FileUtils;
@@ -180,6 +181,18 @@ public class AdminService {
 
             return adminMapper.getUserByNo(no);
     }
+    // 상품 수정
+
+
+    // 상품번호로 그 상품에 관련된 모든 정보 조회
+    public Product getProductNo(int no) {
+
+        Product product = adminMapper.getProductByNo(no);
+
+        return product;
+
+    }
+
     // 상품등록
     public void addProduct(ProductRegisterForm form) {
 
@@ -212,5 +225,14 @@ public class AdminService {
     public void addColor(Map<String, Object> condition) {
 
         adminMapper.insertColor((HashMap<String, Object>) condition);
+    }
+
+    public void getUpdateProduct(Product product) {
+
+        adminMapper.updateProduct(product);
+    }
+
+    public List<Color> getColorName(int no) {
+        return adminMapper.colorNames(no);
     }
 }

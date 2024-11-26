@@ -39,6 +39,9 @@ public interface AdminMapper {
     /*
      * 상품
      */
+    // 상품 번호로 상품정보 전체 조회
+    Product getProductByNo(int no);
+
     // 상품 번호와 색상에 해당하는 colorNo 값 조회
     Integer getColorNo(HashMap<String, Object> condition);
 
@@ -61,4 +64,8 @@ public interface AdminMapper {
     
 
     Category getTopCategoryNo(@Param("categoryNo") int categoryNo);
+
+    void updateProduct(Product product);
+
+    List<Color> colorNames(int no);
 }

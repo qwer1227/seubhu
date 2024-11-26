@@ -161,6 +161,9 @@
                   <a href="register-image?no=${prodDetailDto.no}">
                     <button class="btn btn-outline btn-success btn-sm">상품 이미지 추가</button>
                   </a>
+                    <a href="register-editform?no=${prodDetailDto.no}">
+                        <button class="btn btn-outline btn-success btn-sm">상품 수정&대표 색상 설정</button>
+                    </a>
                 </div>
             </div>
         </div>

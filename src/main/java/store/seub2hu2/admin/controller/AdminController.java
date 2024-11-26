@@ -19,6 +19,8 @@ import store.seub2hu2.lesson.vo.Lesson;
 import store.seub2hu2.product.dto.*;
 import store.seub2hu2.product.service.ProductService;
 import store.seub2hu2.product.vo.Category;
+import store.seub2hu2.product.vo.Color;
+import store.seub2hu2.product.vo.Product;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.ListDto;
 
@@ -226,6 +228,31 @@ public class AdminController {
         model.addAttribute("paging", dto.getPaging());
 
         return "admin/userlist";
+    }
+
+    @GetMapping("/register-editform")
+    public String registerEditForm(@RequestParam("no") int no,
+                                   Model model) {
+
+        Product product = adminService.getProductNo(no);
+
+        List<Color> colors = adminService.getColorName(no);
+
+        model.addAttribute("colors", colors);
+        model.addAttribute("product", product);
+
+        return "admin/product-edit-form";
+    }
+
+    @PostMapping("/register-editform")
+    public String registerEditTitle(Product product,
+                                    Model model) {
+
+        adminService.getUpdateProduct(product);
+
+        System.out.println("---------------------------------------product:"+ product);
+
+        return "redirect:/admin/product-detail?no=" + product.getNo() + "&colorNo=" + product.getColorNum();
     }
 
     @GetMapping("/register-size")

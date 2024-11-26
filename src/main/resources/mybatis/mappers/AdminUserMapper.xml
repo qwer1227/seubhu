@@ -4,6 +4,62 @@
 <mapper namespace="store.seub2hu2.admin.mapper.AdminMapper">
 
 
+
+    <!--
+        List<Color> colorNames(int no);
+    -->
+    <select id="colorNames" resultType="store.seub2hu2.product.vo.Color">
+        select
+            prod_no         as "product.no"
+            , color_no      as no
+            , color_name    as color
+        from
+            PROD_COLORS
+        where
+            prod_no = #{no}
+    </select>
+    <!--
+        void updateProduct(Product product);
+    -->
+    <update id="updateProduct">
+        update PRODUCTS
+        set
+            cat_no = #{category.no}
+            , brand_no = #{brand.no}
+            , prod_name = #{name}
+            , prod_price = #{price}
+            , prod_content = #{content}
+            , prod_status = #{status}
+            , prod_img_thum = #{imgThum}
+            , prod_color_num = #{colorNum}
+        where
+            prod_no = #{no}
+    </update>
+
+    <!--
+        Product getProductByNo(@Param("product") Product product);
+    -->
+    <select id="getProductByNo">
+        select
+            PROD_NO             as no
+             , CAT_NO           as "category.no"
+             , BRAND_NO         as "brand.no"
+             , PROD_NAME        as name
+             , PROD_PRICE       as price
+             , PROD_CONTENT     as content
+             , ISNEW            as isNew
+             , PROD_STATUS      as status
+             , PROD_CREATED_AT  as createdAt
+             , PROD_UPDATED_AT  as updatedAt
+             , PROD_IMG_THUM    as imgThum
+             , PROD_CNT         as cnt
+             , PROD_RATING      as rating
+             , PROD_COLOR_NUM   as colorNum
+        from
+            PRODUCTS
+        where
+            PROD_NO = #{no}
+    </select>
     <!--
         int getColorNo(@Param("color")HashMap<String, Object> condition);
     -->
@@ -61,7 +117,6 @@
             )
     </insert>
     <!--
-
         List<Region> getRegions(@Param("region") Region region);
     -->
     <select id="getRegions" resultType="store.seub2hu2.course.vo.Region">
