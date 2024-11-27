@@ -5,11 +5,11 @@
 <head>
     <%@include file="/WEB-INF/views/common/common.jsp" %>
 </head>
-<%@include file="/WEB-INF/views/common/nav.jsp" %>
 <body>
+<%@include file="/WEB-INF/views/common/nav.jsp" %>
 <div class="container-xxl border align-content-center" id="wrap">
     <div class="row text-center mb-5">
-        <h1>레슨 예약 완료</h1>
+        <h1>예약 레슨</h1>
     </div>
     <div class="row d-flex justify-content-center mb-3">
         <div class="col-5 border border-dark">
@@ -24,25 +24,41 @@
                 </colgroup>
                 <tr>
                     <th>레슨명</th>
-                    <td><a href="/lesson/detail?lessonNo=${lesson.lessonNo}">${lesson.title}</td>
+                    <td>
+                        <a href="/lesson/detail?lessonNo=${lessonReservation.lesson.lessonNo}">${lessonReservation.lesson.title}
+                    </td>
                 </tr>
                 <tr>
                     <th>과정</th>
-                    <td>${lesson.subject}</td>
+                    <td>${lessonReservation.lesson.subject}</td>
                 </tr>
                 <tr>
                     <th>강사명</th>
-                    <td>${lesson.lecturer.name}</td>
+                    <td>${lessonReservation.lesson.lecturer.name}</td>
                 </tr>
                 <tr>
                     <th>레슨날짜</th>
                     <td>
-                        ${lesson.startDate}
+                        ${startDate} ${startTime}
                     </td>
                 </tr>
                 <tr>
                     <th>결제금액</th>
-                    <td><fmt:formatNumber value="${lesson.price}" pattern="#,###"/></td>
+                    <td><fmt:formatNumber value="${lessonReservation.lesson.price}" pattern="#,###"/></td>
+                </tr>
+                <tr>
+                    <th>예약상태</th>
+                    <td>
+                        <c:if test="${lessonReservation.status eq '예약'}">
+                            <span class="badge bg-success">예약</span>
+                        </c:if>
+                        <c:if test="${lessonReservation.status eq '취소'}">
+                            <span class="badge bg-danger">취소</span>
+                        </c:if>
+                        <c:if test="${lessonReservation.status eq '환불'}">
+                            <span class="badge bg-warning">환불</span>
+                        </c:if>
+                    </td>
                 </tr>
             </table>
         </div>
@@ -50,7 +66,9 @@
     <div class="row">
         <div class="col-1"></div>
         <div class="col">
-            <a href="lesson/reservation" class="btn btn-dark w-100">예약 내역</a>
+            <c:if test="${not empty lessonReservation.user.no}">
+                <a href="/lesson/reservation?userNo=${lessonReservation.user.no}" class="btn btn-dark w-100">예약 내역</a>
+            </c:if>
         </div>
         <div class="col-1"></div>
     </div>

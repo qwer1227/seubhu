@@ -3,14 +3,11 @@
 <mapper namespace="store.seub2hu2.lesson.mapper.LessonMapper">
 
     <!--
-// 전체 레슨 조회하기
-    public List<Lesson> getAllLessons(@Param("param") Map<String, Object> param);
+    // 전체 레슨 조회하기
+    public List<Lesson> getAllLessons(@Param("param") Map<String, Object> param, @Param("subject") String subject);
 
     // 레슨 번호로 조회
     public Lesson getLessonByNo(@Param("no") int no);
-
-    // 회원 번호로 회원이 예약한 레슨 조회
-    public List<Lesson> getLessonsByUserNo (@Param("userNo") int userNo);
 
     // 레슨 추가
     public void insertLesson(@Param("lesson") Lesson lesson);
@@ -20,6 +17,9 @@
 
     // 레슨 수정
     public void updateLessonByNo(@Param("lesson") Lesson lesson);
+
+    // 결제번호로 결제한 레슨 조회
+    public Lesson getLessonByPayNo(@Param("payNo") String payNo);
 
     -->
 
@@ -70,74 +70,19 @@
             FOR UPDATE
     </select>
 
-
-    <!-- 유저 번호로 유저가 예약 레슨 조회-->
-    <select id="getLessonReservationByUserNo" resultType="store.seub2hu2.lesson.vo.LessonReservation">
-        select R.LESSON_RESERVATIONS_NO           as "no"
-             , R.USER_NO                          as "user.no"
-             , R.LESSON_RESERVATIONS_CREATED_DATE as reservationCreatedDate
-             , R.LESSON_RESERVATIONS_UPDATED_DATE as reservationUpdatedDate
-             , L.LESSON_NO                        as "lesson.lessonNo"
-             , L.LESSON_TITLE                     as "lesson.title"
-             , L.LESSON_PRICE                     as "lesson.price"
-             , L.USER_NO                          as "user.no"
-             , L.lesson_status                    as "lesson.status"
-             , L.lesson_created_date              as "lesson.createdDate"
-             , U.USER_NAME                        as "lesson.lecturer.name"
+    <select id="getLessonByPayNo" resultType="store.seub2hu2.lesson.vo.Lesson">
+        select L.LESSON_TITLE      as title
+             , L.LESSON_PRICE      as price
+             , L.LESSON_START_DATE as start
+             , L.LESSON_SUBJECT    as subject
+             , L.LESSON_END_DATE as 'end'
+             , U.USER_NAME as 'lesson.lecturer.name'
         from LESSON_RESERVATIONS R
                  INNER JOIN LESSONS L
-                            ON
-                                R.LESSON_NO = L.LESSON_NO
+                            ON R.LESSON_NO = L.LESSON_NO
                  INNER JOIN USERS U
-                            ON
-                                L.USER_NO = U.USER_NO
-        where R.USER_NO = #{userNo}
-    </select>
-
-    <select id="getReservationByCondition" resultType="store.seub2hu2.lesson.vo.LessonReservation">
-        select R.LESSON_RESERVATIONS_NO as "no"
-        , R.USER_NO as "user.no"
-        , R.LESSON_RESERVATIONS_CREATED_DATE as reservationCreatedDate
-        , R.LESSON_RESERVATIONS_UPDATED_DATE as reservationUpdatedDate
-        , L.LESSON_NO as "lesson.lessonNo"
-        , L.LESSON_TITLE as "lesson.title"
-        , L.LESSON_PRICE as "lesson.price"
-        , L.LESSON_SUBJECT as "lesson.subject"
-        , L.USER_NO as "user.no"
-        , L.lesson_status as "lesson.status"
-        , date_format(L.lesson_created_date, '%Y-%m-%d')
-        , U.USER_NAME as "lesson.lecturer.name"
-        from LESSON_RESERVATIONS R
-        INNER JOIN LESSONS L
-        ON
-        R.LESSON_NO = L.LESSON_NO
-        INNER JOIN USERS U
-        ON
-        L.USER_NO = U.USER_NO
-        where R.USER_NO = #{userNo}
-        <choose>
-            <when test="condition.searchCondition == '강사명' and condition.searchKeyword != null and condition.searchKeyword != ''">
-                AND U.USER_NAME LIKE CONCAT('%', #{condition.searchKeyword}, '%')
-            </when>
-            <when test="condition.searchCondition == '레슨명' and condition.searchKeyword != null and condition.searchKeyword != ''">
-                AND L.LESSON_TITLE LIKE CONCAT('%', #{condition.searchKeyword}, '%')
-            </when>
-            <when test="condition.searchCondition == '과목' and condition.searchKeyword != null and condition.searchKeyword != ''">
-                AND L.LESSON_SUBJECT LIKE CONCAT('%', #{condition.searchKeyword}, '%')
-            </when>
-        </choose>
-        <if test="condition.lessonStatus != null and condition.lessonStatus != '' and condition.lessonStatus != '모두'">
-            AND L.LESSON_STATUS = #{condition.lessonStatus}
-        </if>
-        <if test="condition.lessonSubject != null and condition.lessonSubject != '' and condition.lessonSubject != '모두'">
-            AND L.LESSON_SUBJECT = #{condition.lessonSubject}
-        </if>
-        <if test="condition.startDate != null">
-            AND R.LESSON_RESERVATIONS_CREATED_DATE &gt;= #{condition.startDate}
-        </if>
-        <if test="condition.endDate != null">
-            AND R.LESSON_RESERVATIONS_CREATED_DATE &lt;= #{condition.endDate}
-        </if>
+                            ON L.USER_NO = U.USER_NO
+        where R.PAY_NO = #{payNo}
     </select>
 
     <!-- 레슨 추가하기 -->

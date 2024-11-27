@@ -1,4 +1,4 @@
-package store.seub2hu2.lesson.service;
+package store.seub2hu2.payment.service;
 
 
 import lombok.extern.slf4j.Slf4j;
@@ -7,9 +7,9 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
-import store.seub2hu2.lesson.dto.ApproveResponse;
+import store.seub2hu2.payment.dto.ApproveResponse;
+import store.seub2hu2.payment.dto.CancelResponse;
 import store.seub2hu2.lesson.dto.LessonReservationPaymentDto;
 import store.seub2hu2.lesson.dto.ReadyResponse;
 
@@ -36,9 +36,9 @@ public class KakaoPayService {
         parameters.put("quantity", String.valueOf(lessonReservationPaymentDto.getQuantity()));
         parameters.put("total_amount", String.valueOf(lessonReservationPaymentDto.getPrice()));
         parameters.put("tax_free_amount", "0");
-        parameters.put("approval_url", "http://localhost/order/pay/completed");
-        parameters.put("cancel_url", "http://localhost/order/pay/cancel");
-        parameters.put("fail_url", "http://localhost/order/pay/fail");
+        parameters.put("approval_url", "http://localhost/pay/completed");
+        parameters.put("cancel_url", "http://localhost/pay/cancel");
+        parameters.put("fail_url", "http://localhost/pay/fail");
 
         log.info("lessonReservationPay lessonNo = {}", lessonReservationPaymentDto.getLessonNo());
 
@@ -61,11 +61,11 @@ public class KakaoPayService {
     // 카카오페이 결제 취소
     // 사용자가 결제 수단을 선택하고 비밀번호를 입력해 결제 인증을 완료한 뒤,
     // 최종적으로 결제 취소 처리를 하는 단계
-    public ReadyResponse payCancel(LessonReservationPaymentDto lessonReservationPaymentDto, String tid) {
+    public CancelResponse payCancel(LessonReservationPaymentDto lessonReservationPaymentDto, String tid) {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("cid", "TC0ONETIME");
         parameters.put("tid", tid);
-        parameters.put("cancel_amount", String.valueOf(lessonReservationPaymentDto.getQuantity()));
+        parameters.put("cancel_amount", String.valueOf(lessonReservationPaymentDto.getPrice()));
         parameters.put("cancel_tax_free_amount", String.valueOf(0));
         parameters.put("quantity", String.valueOf(lessonReservationPaymentDto.getQuantity()));
         log.info("결제 취소 = {}" , lessonReservationPaymentDto);
@@ -80,10 +80,10 @@ public class KakaoPayService {
         RestTemplate template = new RestTemplate();
         String url = "https://open-api.kakaopay.com/online/v1/payment/cancel";
         // RestTemplate의 postForEntity : POST 요청을 보내고 ResponseEntity로 결과를 반환받는 메소드
-        ResponseEntity<ReadyResponse> responseEntity = template.postForEntity(url, requestEntity, ReadyResponse.class);
-        log.info("결제준비 응답객체: " + responseEntity.getBody());
+        CancelResponse cancelResponse = template.postForObject(url, requestEntity, CancelResponse.class);
+        log.info("결제취소 응답객체: {} ", cancelResponse);
 
-        return responseEntity.getBody();
+        return cancelResponse;
     }
 
     // 카카오페이 결제 승인

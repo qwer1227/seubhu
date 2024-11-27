@@ -82,7 +82,7 @@
 
             $.ajax({
                 type: 'POST',
-                url: '/order/pay/ready',
+                url: '/pay/ready',
                 data: JSON.stringify(data),
                 contentType: 'application/json',
                 success:function(response) {

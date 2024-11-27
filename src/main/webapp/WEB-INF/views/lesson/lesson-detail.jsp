@@ -73,7 +73,7 @@
     <div class="row text-end mb-3">
         <div class="col-2"></div>
         <div class="col border-bottom border-dark border-2 pb-3">
-            <form name="lessonDto" method="get" action="/order/pay/form" id="hidden-form">
+            <form name="lessonDto" method="get" action="/pay/form" id="hidden-form">
                 <input type="hidden" name="lessonNo" value="${lesson.lessonNo}">
                 <%--                <input type="hidden" name="userNo" value="${loginUser.no}" />--%>
                 <input type="hidden" name="title" value="${lesson.title}">
@@ -109,13 +109,7 @@
         </div>
         <div class="col-2"></div>
     </div>
-<%--    <div class="row">--%>
-<%--        <div class="col-2"></div>--%>
-<%--        <div class="col text-end">--%>
-<%--            <a href="/lesson/editForm?lessonNo=${lessonNo}" class="btn btn-primary">수정</a>--%>
-<%--        </div>--%>
-<%--        <div class="col-2"></div>--%>
-<%--    </div>--%>
+
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script>

@@ -1,9 +1,9 @@
-package store.seub2hu2.lesson.dto;
+package store.seub2hu2.payment.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @ToString

@@ -1,4 +1,4 @@
-package store.seub2hu2.lesson.controller;
+package store.seub2hu2.payment.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -6,31 +6,37 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import store.seub2hu2.lesson.dto.*;
-import store.seub2hu2.lesson.service.KakaoPayService;
+import store.seub2hu2.payment.service.KakaoPayService;
 import store.seub2hu2.lesson.service.LessonReservationService;
+import store.seub2hu2.lesson.service.LessonService;
 import store.seub2hu2.lesson.vo.Lesson;
 import store.seub2hu2.payment.SessionUtils;
+import store.seub2hu2.payment.dto.ApproveResponse;
+import store.seub2hu2.payment.dto.CancelResponse;
+
+import java.util.Map;
 
 @Slf4j
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/order")
-public class OrderController {
+@RequestMapping("/pay")
+public class PayController {
 
     private final KakaoPayService kakaoPayService;
 
     private final LessonReservationService lessonReservationService;
+    private final LessonService lessonService;
 
-    @GetMapping("/pay/form")
+    @GetMapping("/form")
     public String payment(LessonDto lessonDto,
-                          Model model)  {
+                          Model model) {
         log.info("lessonDto = {}", lessonDto);
 
         model.addAttribute("lessonDto", lessonDto);
         return "lesson/lesson-payment-form";
     }
 
-    @PostMapping("/pay/ready")
+    @PostMapping("/ready")
     public @ResponseBody ReadyResponse payReady(@RequestBody LessonReservationPaymentDto lessonReservationPaymentDto) {
 
         // 카카오 결제 준비하기
@@ -43,9 +49,9 @@ public class OrderController {
         return readyResponse;
     }
 
-    @GetMapping("/pay/completed")
+    @GetMapping("/completed")
     public String payCompleted(@RequestParam("pg_token") String pgToken, Model model) {
-    
+
         String tid = SessionUtils.getStringAttributeValue("tid");
         log.info("결제승인 요청을 인증하는 토큰: " + pgToken);
         log.info("결제 고유번호: " + tid);
@@ -61,16 +67,56 @@ public class OrderController {
         log.info("lessonReservationPay = {}", lessonReservationPaymentDto);
         lessonReservationService.saveLessonReservation(lessonReservationPaymentDto);
 
-        return "redirect:/order/completed?id=" + tid;
+        return "redirect:/success?id=" + tid;
     }
 
-    // 완료 화면
-    @GetMapping("/completed")
-    public String completed(@RequestParam("id") String payNo, Model model) {
+    @GetMapping("/cancel")
+    public String payCancel(@RequestParam("pg_token") String pgToken, Model model) {
+        String tid = SessionUtils.getStringAttributeValue("tid");
+
+        Lesson lesson = lessonReservationService.getLessonByPayNo(tid);
+        LessonReservationPaymentDto dto = new LessonReservationPaymentDto();
+        dto.setPrice(lesson.getPrice());
+        dto.setPayNo(tid);
+        dto.setQuantity(1);
+
+        // 카카오 결제 취소하기
+        CancelResponse cancelResponse = kakaoPayService.payCancel(dto, tid);
+
+        model.addAttribute("cancelResponse", cancelResponse);
+
+        return "redirect:/refund?id=" + tid;
+    }
+
+    // 결제 환불 화면
+    @GetMapping("/refund")
+    public String refund(@RequestParam("pg_token") String pgToken, Model model) {
+        String tid = SessionUtils.getStringAttributeValue("tid");
+
+        Lesson lesson = lessonReservationService.getLessonByPayNo(tid);
+        LessonReservationPaymentDto dto = new LessonReservationPaymentDto();
+        dto.setPrice(lesson.getPrice());
+        dto.setPayNo(tid);
+        dto.setQuantity(1);
+
+        // 카카오 결제 취소하기
+        CancelResponse cancelResponse = kakaoPayService.payCancel(dto, tid);
+
+        model.addAttribute("cancelResponse", cancelResponse);
+
+        return "redirect:/cancel?id=" + tid;
+    }
+
+    // 결제 성공 화면
+    @GetMapping("/success")
+    public String success(@RequestParam("id") String payNo, Model model) {
         log.info("Order 컨트롤러 주문 완료 주문번호 조회 = {}", payNo);
-        Lesson lesson =  lessonReservationService.getLessonReservationByPayNo(payNo);
+        Lesson lesson = lessonReservationService.getLessonByPayNo(payNo);
+        Map<String, String> images = lessonService.getImagesByLessonNo(lesson.getLessonNo());
+
         log.info("Order 컨트롤러 주문 완료 주문객체 조회 = {}", lesson);
         model.addAttribute("lesson", lesson);
+        model.addAttribute("images", images);
         return "lesson/lesson-pay-completed";
     }
 }

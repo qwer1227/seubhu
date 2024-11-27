@@ -10,6 +10,7 @@ import store.seub2hu2.lesson.mapper.LessonMapper;
 import store.seub2hu2.lesson.mapper.LessonReservationMapper;
 import store.seub2hu2.lesson.mapper.PayMapper;
 import store.seub2hu2.lesson.vo.Lesson;
+import store.seub2hu2.lesson.vo.LessonReservation;
 import store.seub2hu2.lesson.vo.Payment;
 
 @Service
@@ -70,8 +71,12 @@ public class LessonReservationService {
 
 
     @Transactional
-    public Lesson getLessonReservationByPayNo(String payNo) {
-        return lessonReservationMapper.getLessonReservationByPayNo(payNo);
+    public Lesson getLessonByPayNo(String payNo) {
+        return lessonMapper.getLessonByPayNo(payNo);
+    }
+
+    public LessonReservation getLessonReservationByNo(int reservationNo) {
+        return lessonReservationMapper.getLessonReservationByNo(reservationNo);
     }
 
 }

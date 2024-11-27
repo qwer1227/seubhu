@@ -14,6 +14,7 @@ import store.seub2hu2.lesson.dto.LessonDto;
 import store.seub2hu2.lesson.dto.LessonRegisterForm;
 import store.seub2hu2.lesson.dto.ReservationSearchCondition;
 import store.seub2hu2.lesson.service.LessonFileService;
+import store.seub2hu2.lesson.service.LessonReservationService;
 import store.seub2hu2.lesson.service.LessonService;
 import store.seub2hu2.lesson.vo.*;
 import store.seub2hu2.user.vo.User;
@@ -37,16 +38,15 @@ public class LessonController {
     @Value("${file.upload-dir}")
     private String saveDirectory;
 
+    private final LessonReservationService lessonReservationService;
     private final LessonService lessonService;
     private final LessonFileService lessonFileService;
-
 
     @GetMapping(value = {"/", "lessons", ""})
     public String lessonList() {
 
         return "lesson/lesson";
     }
-
 
     @GetMapping("/detail")
     public String lessonDetail(@RequestParam("lessonNo") Integer lessonNo, Model model) {
@@ -101,7 +101,20 @@ public class LessonController {
         return "lesson/lesson-reservation";
     }
 
-
-    // 결제용 임시 컨트롤러
+    @GetMapping("/reservation/detail")
+    public String reservationDetail(@RequestParam("reservationNo") int reservationNo,
+                                    Model model) {
+        LessonReservation lessonReservation = lessonReservationService.getLessonReservationByNo(reservationNo);
+        int lessonNo = lessonReservation.getLesson().getLessonNo();
+        Lesson lesson = lessonService.getLessonByNo(lessonNo);
+        String startDate = lesson.getStartDate();
+        String startTime = lesson.getStartTime();
+        Map<String, String> images = lessonService.getImagesByLessonNo(lessonNo);
+        model.addAttribute("lessonReservation", lessonReservation);
+        model.addAttribute("images", images);
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("startTime", startTime);
+        return "lesson/lesson-reservation-detail";
+    }
 
 }

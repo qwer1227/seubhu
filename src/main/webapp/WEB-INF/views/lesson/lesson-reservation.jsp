@@ -83,6 +83,7 @@
                 <col width="15%">
                 <col width="15%">
                 <col width="15%">
+                <col width="10%">
             </colgroup>
             <tr>
                 <th>번호</th>
@@ -91,16 +92,18 @@
                 <th>가격</th>
                 <th>상태</th>
                 <th>예약날짜</th>
+                <th></th>
             </tr>
             <c:forEach var="reservation" items="${lessonReservations}" varStatus="loop">
                 <tr>
                     <td>${reservation.no}</td>
-                    <td><a href="/lesson/detail?lessonNo=${reservation.lesson.lessonNo}"
+                    <td><a href="/lesson/reservation/detail?reservationNo=${reservation.no}"
                            style="text-decoration:none">${reservation.lesson.title}</a></td>
                     <td>${reservation.lesson.lecturer.name}</td>
                     <td><fmt:formatNumber value="${reservation.lesson.price}" pattern="#,###"/></td>
                     <td>${reservation.lesson.status}</td>
                     <td><fmt:formatDate value="${reservation.reservationCreatedDate}" pattern="yyyy-MM-dd"/></td>
+                    <td><a href="/pay/cancel" class="btn btn-danger">취소</a></td>
                 </tr>
             </c:forEach>
         </table>
