@@ -291,21 +291,24 @@ public class AdminController {
     }
 
     @PostMapping("/image-editform")
-    public String imageEditForm(@RequestParam("no") int no,
-                                @RequestParam("colorNo") Integer colorNo,
+    public String imageEditForm(@RequestParam("colorNo") Integer colorNo,
+                                @RequestParam("isThum") String isThum,
+                                @RequestParam("image[]") List<String> links,
+                                @RequestParam("imgNo") Integer imgNo,
                                 Model model) {
-
-        Product product = adminService.getProductNo(no);
-        List<Color> colors = adminService.getColorName(no);
 
         List<Image> images = adminService.getImageByColorNo(colorNo);
 
         model.addAttribute("images", images);
 
-        model.addAttribute("colors", colors);
-        model.addAttribute("product", product);
+        Color color = adminService.getColorNo(colorNo);
 
-        return "admin/product-image-edit-form";
+        adminService.getNullImageThumbyImgNo(imgNo);
+
+        adminService.getThumbnailByNo(imgNo);
+
+
+        return "redirect:/admin/product-detail?no=" + color.getProduct().getNo() + "&colorNo=" + colorNo;
     }
 
     @GetMapping("/register-image")

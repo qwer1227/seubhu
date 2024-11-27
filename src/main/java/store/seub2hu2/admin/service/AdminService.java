@@ -264,4 +264,17 @@ public class AdminService {
     public Color getColorNo(int colorNo) {
         return adminMapper.getColorNoByNo(colorNo);
     }
+
+    public void getThumbnailByNo(Integer imgNo) {
+        adminMapper.getIsThumByNo(imgNo);
+    }
+
+    public void getNullImageThumbyImgNo(Integer imgNo) {
+        adminMapper.getNullImageThum(imgNo);
+    }
+
+//    public Color getProductByColorNo(Integer colorNo) {
+//
+//        return adminMapper.getCallProductByColorNo(colorNo);
+//    }
 }

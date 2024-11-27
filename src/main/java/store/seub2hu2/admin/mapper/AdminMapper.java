@@ -75,4 +75,8 @@ public interface AdminMapper {
     List<Image> getImageByColorNum(@Param("colorNo")Integer colorNo);
 
     Color getColorNoByNo(int colorNo);
+
+    void getIsThumByNo(Integer imgNo);
+
+    void getNullImageThum(Integer imgNo);
 }

@@ -86,7 +86,9 @@
                         <c:forEach var="i" items="${images}">
                             <div class="form-group col mb-3">
                                 <label class="form-label mb-3 mr-2">상품 이미지</label>
-                                <input type="checkbox" class="form-check-input m-2 single-checkbox" name="" value="" />
+                                <input type="hidden" name="colorNo" value="${i.colorNo}"/>
+                                <input type="hidden" name="imgNo" value="${i.no}"/>
+                                <input type="checkbox" class="form-check-input m-2 single-checkbox" name="isThum" />
                                 <input type="text" class="form-control mt-2" name="image[]" value="${i.url}" />
                                 <button type="button" class="btn btn-danger mt-2 btn-delete">삭제</button>
                             </div>
@@ -126,35 +128,36 @@
         const imageContainer = document.getElementById('imageContainer');
         const addButton = document.getElementById('addButton');
 
-
         // 새로운 입력 필드 추가
-        const addImageInput = () => {
+        const addImageInput = (colorNo = '', imgNo = '', imageUrl = '') => {
             const div = document.createElement('div');
             div.className = 'form-group col mb-3';
             div.innerHTML = `
-                              <label class="form-label mb-3 mr-2">상품 이미지</label>
-                              <input type="checkbox" class="form-check-input m-2 single-checkbox"/>
-                              <input type="text" class="form-control mt-2" name="image[]" placeholder="이미지 URL을 입력하세요" />
-                              <button type="button" class="btn btn-danger mt-2 btn-delete">삭제</button>
-                            `;
+            <label class="form-label mb-3 mr-2">상품 이미지</label>
+            <input type="hidden" name="colorNo" value="${colorNo}" />
+            <input type="hidden" name="imgNo" value="${imgNo}" />
+            <input type="checkbox" class="form-check-input m-2 single-checkbox" name="isThum" />
+            <input type="text" class="form-control mt-2" name="image[]" value="${imageUrl}" placeholder="이미지 URL을 입력하세요" />
+            <button type="button" class="btn btn-danger mt-2 btn-delete">삭제</button>
+        `;
             imageContainer.appendChild(div);
-
         };
-            // 이벤트 위임 방식으로 체크박스 클릭 이벤트 처리
-            imageContainer.addEventListener("click", function (event) {
-                if (event.target.classList.contains("single-checkbox")) {
-                    const checkboxes = document.querySelectorAll(".single-checkbox");
 
-                    // 현재 클릭된 체크박스가 체크 상태인 경우
-                    if (event.target.checked) {
-                        checkboxes.forEach((checkbox) => {
-                            if (checkbox !== event.target) {
-                                checkbox.checked = false; // 다른 체크박스는 모두 해제
-                            }
-                        });
-                    }
+        // 이벤트 위임 방식으로 체크박스 클릭 이벤트 처리
+        imageContainer.addEventListener("click", function (event) {
+            if (event.target.classList.contains("single-checkbox")) {
+                const checkboxes = document.querySelectorAll(".single-checkbox");
+
+                // 현재 클릭된 체크박스가 체크 상태인 경우
+                if (event.target.checked) {
+                    checkboxes.forEach((checkbox) => {
+                        if (checkbox !== event.target) {
+                            checkbox.checked = false; // 다른 체크박스는 모두 해제
+                        }
+                    });
                 }
-            });
+            }
+        });
 
         // 입력 필드 삭제
         const deleteImageInput = (button) => {
@@ -162,7 +165,7 @@
         };
 
         // + 버튼 클릭 이벤트
-        addButton.addEventListener('click', addImageInput);
+        addButton.addEventListener('click', () => addImageInput());
 
         // 삭제 버튼 클릭 이벤트 위임
         imageContainer.addEventListener('click', (e) => {
