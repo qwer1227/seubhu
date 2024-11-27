@@ -307,18 +307,20 @@ public class BoardController {
         return "redirect:detail?no=" + boardNo;
     }
 
-    @GetMapping("/report-board")
+    @PostMapping("/report-board")
     public String reportBoard(ReportForm form
                               , @AuthenticationPrincipal LoginUser loginUser){
 
         reportService.registerReport(form, loginUser);
-        return "redirect:detail?no=" + form.getBoardNo();
+        return "redirect:detail?no=" + form.getNo();
     }
 
-    @GetMapping("report-reply")
+    @PostMapping("report-reply")
     public String reportReply(ReportForm form
+                                , @RequestParam("bno") int boardNo
                                 , @AuthenticationPrincipal LoginUser loginUser){
+
         reportService.registerReport(form, loginUser);
-        return "redirect:detail?no=" + form.getBoardNo();
+        return "redirect:detail?no=" + boardNo;
     }
 }

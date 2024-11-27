@@ -28,11 +28,11 @@ public class ReportService {
         report.setUser(user);
 
         if (form.getType().equals("board")){
-            report.setBoardNo(form.getBoardNo());
+            report.setBoardNo(form.getNo());
         }
 
         if (form.getType().equals("reply")){
-            report.setReplyNo(form.getReplyNo());
+            report.setReplyNo(form.getNo());
         }
 
         reportMapper.insertReport(report);

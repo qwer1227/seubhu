@@ -20,10 +20,10 @@
         (
         #{report.type}
         <if test="report.type == 'board'">
-          , #{report.board.no}
+          , #{report.boardNo}
         </if>
         <if test="report.type == 'reply'">
-          , #{report.reply.no}
+          , #{report.replyNo}
         </if>
         , #{report.user.no}
         , #{report.reason}
