@@ -9,6 +9,7 @@ import store.seub2hu2.lesson.dto.LessonRegisterForm;
 import store.seub2hu2.lesson.dto.ReservationSearchCondition;
 import store.seub2hu2.lesson.mapper.LessonFileMapper;
 import store.seub2hu2.lesson.mapper.LessonMapper;
+import store.seub2hu2.lesson.mapper.LessonReservationMapper;
 import store.seub2hu2.lesson.vo.*;
 
 import java.text.SimpleDateFormat;
@@ -22,6 +23,7 @@ public class LessonService {
     private final LessonMapper lessonMapper;
     private final LessonFileMapper lessonFileMapper;
     private final LessonFileService lessonFileService;
+    private final LessonReservationMapper lessonReservationMapper;
 
     public List<Lesson> getAllLessons(Map<String, Object> param, String subject) {
         return lessonMapper.getAllLessons(param, subject);
@@ -32,7 +34,7 @@ public class LessonService {
     }
 
     public List<LessonReservation> getLessonsByUserNo(int userNo) {
-        return lessonMapper.getLessonReservationByUserNo(userNo);
+        return lessonReservationMapper.getLessonReservationByUserNo(userNo);
     }
 
     public void addNewLesson(Lesson lesson) {
@@ -92,10 +94,7 @@ public class LessonService {
         }
 
         // MyBatis 매퍼 호출
-        return lessonMapper.getReservationByCondition(condition, userNo);
+        return lessonReservationMapper.getReservationByCondition(condition, userNo);
     }
 
-    public void LessonsReservation(LessonReservation lessonReservation) {
-
-    }
 }

@@ -8,6 +8,7 @@ import store.seub2hu2.user.vo.User;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,6 +30,7 @@ public class Lesson {
     private LocalDateTime updatedDate;
     private User lecturer;
     private String filename;
+    private String place;
 
 
     public String getOriginalFilename() {

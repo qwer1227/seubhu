@@ -56,7 +56,6 @@
                 <a class="nav-link " href="#">커뮤</a>
                 <div class="divider" style="border-left: 1px solid #0e0d0d; margin: 0 7px;"></div>
                 <security:authorize access="hasAuthority('ROLE_ADMIN')">
-                ${user}
                 <a class="nav-link" href="/admin/home">관리자 홈</a>
                 </security:authorize>
 
