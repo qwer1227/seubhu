@@ -18,7 +18,7 @@ public class LessonReservation {
     private int no;
     private User user;
     private Lesson lesson;
-    private String lessonReservationStatus;
+    private String status;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date reservationCreatedDate;
     @DateTimeFormat(pattern = "yyyy-MM-dd")

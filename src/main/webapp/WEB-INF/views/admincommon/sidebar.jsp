@@ -72,8 +72,10 @@
         <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">상품</h6>
-                <a class="collapse-item" href="product">상품 전체</a>
-                <a class="collapse-item" href="product">상품 등록하기</a>
+                <a class="collapse-item" href="product?topNo=10">남성 상품 전체</a>
+                <a class="collapse-item" href="product?topNo=20">여성 상품 전체</a>
+                <a class="collapse-item" href="product?topNo=30">러닝용품 전체</a>
+                <a class="collapse-item" href="product-register-form">상품 등록하기</a>
             </div>
         </div>
     </li>

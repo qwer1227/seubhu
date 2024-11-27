@@ -6,6 +6,8 @@ import org.apache.ibatis.type.Alias;
 import org.springframework.format.annotation.DateTimeFormat;
 import store.seub2hu2.user.vo.User;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 @NoArgsConstructor
@@ -23,10 +25,12 @@ public class Lesson {
     private String plan;
     private String status;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date createdDate;
-    private Date updatedDate;
+    private LocalDateTime createdDate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDateTime updatedDate;
     private User lecturer;
     private String filename;
+    private String place;
 
 
     public String getOriginalFilename() {
@@ -36,14 +40,30 @@ public class Lesson {
         return filename.substring(13);
     }
 
+    public String getStartDate() {
+        return LocalDateTime.from(start).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    }
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date start;
+    public String getStartTime() {
+        return LocalDateTime.from(start).format(DateTimeFormatter.ofPattern("HH:mm"));
+    }
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date end;
+    public String getEndDate() {
+        return LocalDateTime.from(end).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    }
+
+    public String getEndTime() {
+        return LocalDateTime.from(end).format(DateTimeFormatter.ofPattern("HH:mm"));
+    }
+
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime start;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime end;
 
 
 }

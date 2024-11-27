@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="store.seub2hu2.course.mapper.UserCourseMapper">
+    <!-- User checkSuccess(@Param("userNo") int userNo); -->
+    <select id="checkSuccess" resultType="store.seub2hu2.course.vo.CourseWhether">
+        select w.is_register as isRegister
+             , w.is_success as isSuccess
+             , w.course_no as "course.no"
+             , u.user_no as "user.no"
+             , u.user_nickname as "user.nickname"
+        from CHALLENGE_WHETHER w inner join USERS u
+        on w.user_no = u.user_no
+        where u.user_no = #{userNo}
+        and w.is_success = 'Y'
+    </select>
+</mapper>

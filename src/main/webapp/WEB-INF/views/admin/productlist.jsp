@@ -29,7 +29,6 @@
 
 <!-- Page Wrapper -->
 <div id="wrapper">
-
   <!-- Sidebar -->
   <%@include file="/WEB-INF/views/admincommon/sidebar.jsp" %>
   <!-- End of Sidebar -->
@@ -51,106 +50,175 @@
           <h1 class="h3 mb-0 text-gray-800">상품</h1>
         </div>
         <!-- 5-10-20개씩 보기 최신순 이름순 -->
-        <form id="form-search" method="get" action="/admin/product">
-          <input type="hidden" name="page" />
-          <div class="rows g-3 d-flex">
-            <div class="col-2 mb-4 pt-2">
-              <select class="form-control" name="rows" onchange="changeRows()">
-                <option value="5" ${param.rows eq 5 ? "selected" : ""}>5개씩 보기</option>
-                <option value="10"${empty param.rows or param.rows eq 10 ? "selected" : ""}>10개씩 보기</option>
-                <option value="20"${param.rows eq 20 ? "selected" : ""}>20개씩 보기</option>
-              </select>
-            </div>
-            <div class="col-3 mt-2 pt-2">
-              <div class="form-check form-check-inline">
-                <div class="mr-2">
-                  <input class="form-check-input"
-                         type="radio"
-                         name="sort"
-                         value="latest"
-                         onchange="changeSort()"/>
-                  <label class="form-check-label">최신순</label>
+        <c:choose>
+        <c:when test="${topNo == 10}">
+            <div class="row row-cols-2 row-cols-lg-6 g-2 g-lg-3">
+                <div class="col " >
+                    <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="product?topNo=10" >전체보기</a>
                 </div>
-                <div class="mr-2">
-                  <input class="form-check-input"
-                         type="radio"
-                         name="sort"
-                         value="oldest"
-                         onchange="changeSort()"/>
-                  <label class="form-check-label">오래된순</label>
+                <div class="col " >
+                    <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="product?topNo=10&catNo=11" >남성 러닝화</a>
                 </div>
-              </div>
+                <div class="col " >
+                    <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="product?topNo=10&catNo=12">남성 상의</a>
+                </div>
+                <div class="col " >
+                    <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="product?topNo=10&catNo=13">남성 하의</a>
+                </div>
+                <div class="col " >
+                    <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="product?topNo=10&catNo=14">남성 아우터</a>
+                </div>
             </div>
-            <div class="col-4 pt-2">
-              <!-- Search -->
-              <%@include file="/WEB-INF/views/admincommon/searchbar.jsp" %>
+        </c:when>
+        <c:when test="${topNo == 20}">
+            <div class="row row-cols-2 row-cols-lg-6 g-2 g-lg-3">
+                <div class="col " >
+                    <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="product?topNo=20" >전체보기</a>
+                </div>
+                <div class="col " >
+                    <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="productl?topNo=20&catNo=21" >여성 러닝화</a>
+                </div>
+                <div class="col " >
+                    <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="product?topNo=20&catNo=22">여성 상의</a>
+                </div>
+                <div class="col " >
+                    <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="product?topNo=20&catNo=23">여성 하의</a>
+                </div>
+                <div class="col " >
+                    <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="product?topNo=20&catNo=24">여성 아우터</a>
+                </div>
             </div>
-          </div>
-        </form>
-        <!-- 5-10-20개씩 보기 최신순 이름순 끝 -->
-      </div>
-      <!-- 회원 리스트 -->
-      <div class="row mb-3">
-        <div class="col">
-          <div class="border-bottom p-4 bg-light">
-            <table class="table">
-              <colgroup>
-                <col width="10%">
-                <col width="15%">
-                <col width="*">
-                <col width="15%">
-                <col width="10%">
-                <col width="15%">
-              </colgroup>
-              <thead>
-              <tr>
-                <th>번호</th>
-                <th>카테고리</th>
-                <th>상품명</th>
-                <th>가격</th>
-                <th>재고 수량</th>
-                <th>상품 색상</th>
-              </tr>
-              </thead>
-              <tbody>
+        </c:when>
+        <c:when test="${topNo == 30}">
+            <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
+                <div class="col " >
+                <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="product?topNo=30">전체보기</a>
+                </div>
+                <div class="col " >
+                    <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="product?topNo=30&catNo=31">양말</a>
+                </div>
+                <div class="col " >
+                    <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="product?topNo=30&catNo=32">모자</a>
+                </div>
+            </div>
+        </c:when>
+    </c:choose>
+            <div class="row mt-3">
+                <div class="col-12">
+                    <form id="form-search" method="get" action="/admin/product">
+                        <input type="hidden" name="page" />
+                        <input type="hidden" name="topNo" value="${topNo}">
+                        <input type="hidden" name="catNo" value="${catNo}">
+                        <div class="row g-3">
+                            <div class="col-2">
+                                <select class="form-control" name="rows" onchange="changeRows()">
+                                    <option value="6" ${empty param.rows or param.rows eq 6? "selected" : ""}>6개씩 보기</option>
+                                    <option value="12" ${param.rows eq 12? "selected" : ""}>12개씩 보기</option>
+                                    <option value="18" ${param.rows eq 18? "selected" : ""}>18개씩 보기</option>
+                                </select>
+                            </div>
+                            <div class="col-2 pt-2">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input"
+                                           type="radio"
+                                           name="sort"
+                                           value="date"
+                                           onchange="changeSort()"
+                                           ${empty param.sort or param.sort eq 'date' ? 'checked' : ''}
+                                    >
+                                    <label class="form-check-label" >최신순</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input"
+                                           type="radio"
+                                           name="sort"
+                                           value="name"
+                                           onchange="changeSort()"
+                                           ${param.sort eq 'name' ? 'checked' : ''}
+                                    >
+                                    <label class="form-check-label" >이름순</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input"
+                                           type="radio"
+                                           name="sort"
+                                           value="price"
+                                           onchange="changeSort()"
+                                           ${param.sort eq 'price' ? 'checked' : ''}
+                                    >
+                                    <label class="form-check-label" >가격순</label>
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <select class="form-control" name="opt">
+                                    <option value="name" ${param.opt eq 'name' ? 'selected' : ''} >상품명</option>
+                                    <option value="minPrice" ${param.opt eq 'minPrice' ? 'selected' : '' }>최소가격</option>
+                                    <option value="maxPrice" ${param.opt eq 'maxPrice' ? 'selected' : '' }>최대가격</option>
+                                </select>
+                            </div>
+                            <div class="col-4 mb-2">
+                              <!-- Search -->
+                              <%@include file="/WEB-INF/views/admincommon/searchbar.jsp" %>
 
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-      <!-- 페이징처리 -->
-        <c:if test="${not empty products}">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="container-xxl text-center" id="wrap">
+                    <div class="row row-cols-1 row-cols-md-3 g-4 mt-3 mb-5">
+                        <c:forEach var="prod"  items="${products }">
+                            <div class="col">
+                                <div class="card h-100">
+                                    <a class="text-decoration-none" href="product-detail?no=${prod.no}&colorNo=${prod.colorNum}">
+                                        <img src="${prod.imgThum}" class="card-img-top" alt="...">
+                                    </a>
+                                    <div class="card-body">
+                                        <h5 class="card-title">${prod.name}</h5>
+                                        <div class="text-decoration-none" href="detail">
+                                            <div>${prod.brand.name}</div>
+                                            <div>${prod.category.name}</div>
+                                            <div class="card-text"><fmt:formatNumber value="${prod.price }"/> 원</div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer bg-transparent border-primary" >${prod.status}</div>
+                                </div>
+                            </div>
+                        </c:forEach>
+                    </div>
+                </div>
+    </div>
+        <!-- 페이징 처리 -->
+
             <div class="row mb-3">
 				<div class="col-12">
-					<nav>
-						<ul class="pagination justify-content-center">
-						    <li class="page-item ${paging.first ? 'disabled' : '' }">
-						    	<a class="page-link"
-						    		onclick="changePage(${paging.prevPage}, event)"
-						    		href="course?page=${paging.prevPage}">이전</a>
-						    </li>
-						<c:forEach var="num" begin="${paging.beginPage }" end="${paging.endPage }">
-						    <li class="page-item ${paging.page eq num ? 'active' : '' }">
-						    	<a class="page-link"
-						    		onclick="changePage(${num }, event)"
-						    		href="course?page=${num }">${num }</a>
-						    </li>
-						</c:forEach>
-						    <li class="page-item ${paging.last ? 'disabled' : '' }">
-						    	<a class="page-link"
-						    		onclick="changePage(${paging.nextPage}, event)"
-						    		href="course?page=${paging.nextPage}">다음</a>
-						    </li>
-					  	</ul>
-					</nav>
-				</div>
-			</div>
-        </c:if>
-    <!-- 페이징처리 끝 -->
+                    <nav>
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item ${paging.first? 'disabled' : ''}">
+                                <a class="page-link"
+                                onclick="changePage(${paging.prevPage}, event)"
+                                href="product?page=${paging.prevPage}">이전</a>
+                            </li>
+                            <c:forEach var="num" begin="${paging.beginPage}" end="${paging.endPage}">
+                                <li class="page-item ${paging.page eq num ? 'active' : ''}">
+                                    <a class="page-link"
+                                    onclick="changePage(${num}, event)"
+                                    href="product?page=${num}">${num}</a>
+                                </li>
+                            </c:forEach>
+                            <li class="page-item ${paging.last ? 'disabled' : ''}" >
+                                <a class="page-link"
+                                onclick="changePage(${paging.nextPage}, event)"
+                                href="product?page=${paging.nextPage}">다음</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+
       <!-- end Page Content -->
     </div>
   </div>
+</div>
 </div>
 <!-- Footer -->
 <%@include file="/WEB-INF/views/admincommon/footer.jsp" %>

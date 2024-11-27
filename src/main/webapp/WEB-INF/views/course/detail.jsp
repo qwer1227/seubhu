@@ -59,8 +59,12 @@
     <div class="card mt-5" id="review">
         <div class="card-header">
             코스 리뷰
-            <%--                <sec:authorize access="isAuthenticated()"> </sec:authorize>--%>
-            <div class="text-end"><button class="btn btn-primary" onclick="openReviewFormModal()">리뷰 작성</button></div>
+            <div class="text-end">
+                <%-- <sec:authorize access="isAuthenticated()"> --%>
+                    <%-- <sec:authentication property="principal" var="loginUser" /> --%>
+                    <button class="btn btn-primary" onclick="openReviewFormModal(25)">리뷰 작성</button> <%-- ${loginUser.no} --%>
+                <%-- </sec:authorize> --%>
+            </div>
         </div>
         <div class="card-body">
             <div class="row mb-3">
@@ -84,17 +88,20 @@
                 <form method="post" action="/addReview" enctype="multipart/form-data">
                     <input type="hidden" name="courseNo" value="${course.no }" />
                     <div class="form-group">
-                        <label class="form-label">제목(반드시 입력)</label>
+                        <label class="form-label">제목</label>
                         <input type="text" class="form-control" name="title"/>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">내용(반드시 입력)</label>
+                        <label class="form-label">내용</label>
                         <textarea rows="4" class="form-control" name="content"></textarea>
                     </div>
                     <div class="form-group">
                         <label class="form-label">코스 사진 업로드</label>
                         <input type="file" class="form-control" name="upfile" multiple="multiple"/>
-                        컨트롤(Ctrl)을 누른 채로 사진 여러 개 클릭
+                        <strong style="color:red;">＊ 컨트롤(Ctrl)을 누른 채로 사진 여러 개 클릭</strong>
+                    </div>
+                    <div class="form-group">
+                        <strong style="color:red;">＊ 리뷰 수정이 불가하니 신중히 작성바랍니다!</strong>
                     </div>
                 </form>
             </div>
@@ -111,7 +118,17 @@
     const reviewFormModal = new bootstrap.Modal('#modal-review-form')
 
     // 코스 리뷰 등록 Modal창을 연다.
-    function openReviewFormModal() {
+    async function openReviewFormModal(userNo) {
+        // 1. 코스 완주를 성공한 사용자가 아니라면, 경고 메시지를 출력한다.
+        let response = await fetch("/course/check-success/" + userNo);
+        let result = await response.json();
+
+        if (result.data === "fail") {
+            alert("코스를 성공한 사용자만 리뷰 작성이 가능합니다.");
+            return;
+        }
+
+        // 2. 코스 리뷰 등록 Modal창을 화면에 표시한다.
         reviewFormModal.show();
     }
 
@@ -128,18 +145,26 @@
         }
     }
 
+    getReviews();
+
     // 입력한 코스 리뷰 정보(코스번호, 제목, 내용, 첨부파일)를 컨트롤러에 제출한다.
     async function submitReview() {
-        // 1. 입력한 코스 리뷰 정보를 가져오고, formData 객체에 저장한다.
+        // 1. 입력한 코스 리뷰 정보를 가져온다.
         let courseNo = document.querySelector("input[name=courseNo]").value;
         let title = document.querySelector("input[name=title]").value;
         let content = document.querySelector("textarea[name=content]").value;
-        let inputFile = document.querySelector("input[name=upfile]");
         let upfiles = document.querySelector("input[name=upfile]").files;
 
+        // 2. 리뷰 제목과 리뷰 내용이 없다면, 경고 메시지를 출력한다.
+        if (title === "" || content === "") {
+            alert("제목과 내용 작성은 필수입니다.");
+            return;
+        }
+
+        // 3. 입력한 코스 리뷰 정보를 formData 객체에 저장한다.
         let formData = new FormData();
 
-        formData.append("no", courseNo);
+        formData.append("courseNo", courseNo);
         formData.append("title", title);
         formData.append("content", content);
         for (let i = 0; i < upfiles.length; i++) {
@@ -147,16 +172,15 @@
             formData.append("upfiles", upfile);
         }
 
-        // 2. formData(입력한 코스 리뷰 정보)를 서버에 보낸다.
+        // 4. formData(입력한 코스 리뷰 정보)를 서버에 보낸다.
         let response = await fetch("/course/addReview", {
             method: "POST",
             body: formData
         });
 
-        // 3. 요청 처리 성공 확인 후, 입력한 리뷰를 화면에 표시한다.
+        // 5. 요청 처리 성공 확인 후, 입력한 리뷰를 화면에 표시한다.
         if (response.ok) {
             let review = await response.json();
-            console.log('응답으로 받은 데이터', review); // 응답 데이터 확인 용도
             appendReview(review);
 
             reviewFormModal.hide();
@@ -165,29 +189,56 @@
 
     // 입력한 리뷰를 화면에 표시한다.
     function appendReview(review) {
+        // 1. 리뷰를 화면에 표시한다.
         let content = `
+            <input type="hidden" name="reviewNo" value="\${review.no}">
 	        <div class="card mb-3" id="review-\${review.no}">
 	            <div class="card-header">
 	                <span>\${review.title}</span>
 	                <span class="float-end">
 	                    <small>\${review.user.nickname}</small>
 	                    <small>\${review.createdDate}</small>
-                        <button class="btn btn-primary">좋아요</button> 좋아요 수<small>\${review.likeCnt}</small>
+                        <button class="btn btn-primary">좋아요</button> <small>좋아요 수: \${review.likeCnt}</small>
 	                </span>
 	            </div>
 	            <div class="card-body">
-	                \${review.content}
-<!--                    <img src="C:\files\course\\${review.reviewImage.name}" />-->
+	                <div>\${review.content}</div>
+	                <div id="box-images-\${review.no}"></div>
 	            </div>
 	            <div class="card-footer text-end">
-	                <button class="btn btn-danger btn-sm"
-	                       onclick="removeReview(\${review.no})">삭제</button>
+	                <button class="btn btn-danger btn-sm" onclick="removeReview(\${review.no})">삭제</button>
 	            </div>
 	        </div>
 	    `;
 
         let box = document.querySelector("#box-reviews");
-        box.insertAdjacentHTML("beforeend", content)
+        box.insertAdjacentHTML("beforeend", content);
+
+        // 2. 첨부파일(코스 사진)을 화면에 표시한다.
+        let images = review.reviewImage;
+        let imgContent = '';
+        if (images != null) {
+            for (let image of images) {
+                imgContent += `<img src="/resources/images/courseReviewImages/\${image.name}" class="img-thumbnail" style="width: 100px; height: 100px;"/>`;
+            }
+
+            let imagesbox = document.querySelector(`#box-images-\${review.no}`);
+            imagesbox.insertAdjacentHTML("beforeend", imgContent);
+        }
+    }
+
+    // 리뷰를 삭제한다.
+    async function removeReview(reviewNo) {
+        // 1. 리뷰 번호를 서버에 보낸다.
+        let response = await fetch("/course/deleteReview/" + reviewNo);
+
+        // 2. 요청 처리 성공 확인 후, 리뷰를 삭제한다.
+        if (response.ok) {
+            let div = document.querySelector("#review-" + reviewNo);
+            div.remove();
+        } else {
+            alert("로그인한 해당 리뷰 작성자만 삭제 가능합니다.");
+        }
     }
 </script>
 </body>

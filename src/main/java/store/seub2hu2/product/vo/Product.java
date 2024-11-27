@@ -1,9 +1,6 @@
 package store.seub2hu2.product.vo;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Date;
 
@@ -11,6 +8,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Setter
 @Getter
+@ToString
 public class Product {
 
     private int no;
@@ -27,4 +25,6 @@ public class Product {
     private int cnt;
     private double rating;
     private Category category;
+    private Size size;
+    private Brand brand;
 }

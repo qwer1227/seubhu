@@ -7,6 +7,7 @@ import store.seub2hu2.user.vo.Role;
 import store.seub2hu2.user.vo.UserRole;
 
 import java.util.List;
+import java.util.Optional;
 
 @Mapper
 public interface UserMapper {
@@ -17,24 +18,31 @@ public interface UserMapper {
     // 사용자 역할 부여
     void insertUserRole(@Param("userRole") UserRole userRole);
 
-    // 사용자 번호로 역할 정보 조회
-    List<Role> getRolesByUserNo(int userNo);
+    // 사용자 정보 수정
+    void updateUser(@Param("user") User user);
 
     // 사용자 ID로 사용자 조회
-    User findById(@Param("id") String id);
+    User getUserById(@Param("id") String id);
 
     // 사용자 이메일로 사용자 조회
-    User findByEmail(@Param("email") String email);
+    User getUserByEmail(@Param("email") String email);
 
-    // 사용자 이메일로 아이디 조회(아이디 찾기용)
-    User findIdByEmail(@Param("email") String email);
+    // 사용자 닉네임으로 사용자 조회
+    User getUserByNickname(@Param("nickname") String nickname);
 
-    // 사용자 이메일, 아이디로 사용자 조회(비밀번호 찾기용) -->
-    User findByIdAndEmail(@Param("id") String id, @Param("email") String email);
+    // 이메일로 아이디 찾기 (아이디 찾기용)
+    Optional<String> findIdByEmail(@Param("email") String email);
+
+    // 사용자 번호로 역할 정보 조회
+    List<Role> getRolesByUserNo(@Param("userNo") int userNo);
 
     // 역할 이름으로 Role 객체 조회
     Role getRoleByName(@Param("roleName") String roleName);
 
+    // 아이디와 이메일로 사용자 조회
+    User findUserByIdAndEmail(@Param("id") String id, @Param("email") String email);
 
+    // 비밀번호 업데이트 (임시 비밀번호 발급)
+    void updatePassword(@Param("id") String id, @Param("email") String email);
 
 }

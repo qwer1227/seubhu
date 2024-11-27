@@ -5,7 +5,12 @@ import org.apache.ibatis.annotations.Param;
 import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.course.vo.Region;
 import store.seub2hu2.lesson.vo.Lesson;
+import store.seub2hu2.product.vo.Category;
+import store.seub2hu2.product.vo.Color;
+import store.seub2hu2.product.vo.Product;
 import store.seub2hu2.user.vo.User;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +26,7 @@ public interface AdminMapper {
     User getUserByNo(@Param("no") int no);
 
     /*
-     * 코스
+     * 코스 등록
      */
     void insertCourse(@Param("course") Course course);
 
@@ -34,6 +39,19 @@ public interface AdminMapper {
     /*
      * 상품
      */
+    // 상품 번호로 상품정보 전체 조회
+    Product getProductByNo(int no);
+
+    // 상품 번호와 색상에 해당하는 colorNo 값 조회
+    Integer getColorNo(HashMap<String, Object> condition);
+
+    // 색상이 없는 상품만 등록
+    void insertProduct(@Param("condition") HashMap<String, Object> condition);
+
+    // 색상 등록
+    void insertColor(@Param("condition") HashMap<String, Object> condition);
+
+    //
 
     /*
      * 재고
@@ -43,5 +61,11 @@ public interface AdminMapper {
      * 레슨
      */
     List<Lesson> getAllLessons(@Param("condition") Map<String, Object> condition);
+    
 
+    Category getTopCategoryNo(@Param("categoryNo") int categoryNo);
+
+    void updateProduct(Product product);
+
+    List<Color> colorNames(int no);
 }

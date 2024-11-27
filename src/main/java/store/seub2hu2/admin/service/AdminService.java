@@ -7,20 +7,26 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import store.seub2hu2.admin.dto.CourseRegisterForm;
+import store.seub2hu2.admin.dto.ProductRegisterForm;
 import store.seub2hu2.admin.mapper.AdminMapper;
 import store.seub2hu2.course.mapper.CourseMapper;
 import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.course.vo.Region;
 import store.seub2hu2.lesson.mapper.LessonMapper;
 import store.seub2hu2.lesson.vo.Lesson;
+import store.seub2hu2.product.vo.Category;
+import store.seub2hu2.product.vo.Color;
+import store.seub2hu2.product.vo.Product;
 import store.seub2hu2.user.mapper.UserMapper;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.FileUtils;
 import store.seub2hu2.util.ListDto;
 import store.seub2hu2.util.Pagination;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -28,6 +34,8 @@ public class AdminService {
 
     @Value("${project.upload.path}")
     private String saveDirectory;
+    @Value("${upload.directory.product}")
+    private String saveProductDirectory;
 //
 //    private final CommunityMapper communityMapper;
 //
@@ -45,6 +53,7 @@ public class AdminService {
 
     @Autowired
     private CourseMapper courseMapper;
+
 
     public List<Lesson> getLessons(Map<String, Object> condition) {
 
@@ -172,8 +181,58 @@ public class AdminService {
 
             return adminMapper.getUserByNo(no);
     }
+    // 상품 수정
 
-/*    public ListDto<Product> getAllProduct(Map<String, Object> condition) {
 
-    }*/
+    // 상품번호로 그 상품에 관련된 모든 정보 조회
+    public Product getProductNo(int no) {
+
+        Product product = adminMapper.getProductByNo(no);
+
+        return product;
+
+    }
+
+    // 상품등록
+    public void addProduct(ProductRegisterForm form) {
+
+        HashMap<String, Object> condition = new HashMap<String, Object>();
+
+        condition.put("name", form.getName());
+        condition.put("price", form.getPrice());
+        condition.put("brandNo", form.getBrandNo());
+        condition.put("categoryNo", form.getCategoryNo());
+        condition.put("content", form.getContent());
+        condition.put("thumbnail", form.getThumbnail());
+
+        System.out.println("condition: " + condition);
+        adminMapper.insertProduct(condition);
+    }
+
+    // 카테고리 조회
+    public Category getCategory(int categoryNo) {
+        return adminMapper.getTopCategoryNo(categoryNo);
+    }
+
+    // 컬러 번호 조회
+    public int getColor(Map<String, Object> condition) {
+
+        Integer colorNo = adminMapper.getColorNo((HashMap<String, Object>) condition);
+        return Optional.ofNullable(colorNo).orElse(0); // 결과가 없으면 0 반환
+    }
+
+    // 상품 컬러 추가
+    public void addColor(Map<String, Object> condition) {
+
+        adminMapper.insertColor((HashMap<String, Object>) condition);
+    }
+
+    public void getUpdateProduct(Product product) {
+
+        adminMapper.updateProduct(product);
+    }
+
+    public List<Color> getColorName(int no) {
+        return adminMapper.colorNames(no);
+    }
 }

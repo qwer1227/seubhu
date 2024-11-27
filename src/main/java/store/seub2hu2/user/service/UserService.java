@@ -5,17 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import store.seub2hu2.user.dto.LoginResponse;
-import store.seub2hu2.user.dto.SocialLoginRequest;
 import store.seub2hu2.user.dto.UserJoinForm;
 import store.seub2hu2.user.exception.AlreadyUsedIdException;
-import store.seub2hu2.user.exception.DataNotFoundException;
 import store.seub2hu2.user.vo.Role;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.user.mapper.UserMapper;
 import store.seub2hu2.user.vo.UserRole;
-
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -27,17 +22,34 @@ public class UserService {
     @Autowired
     private UserMapper userMapper;
 
+    // 아이디 중복 체크
+    public boolean isIdExists(String id) {
+        return userMapper.getUserById(id) != null;
+    }
+
+    // 닉네임 중복 체크
+    public boolean isNicknameExists(String nickname) {
+        return userMapper.getUserByNickname(nickname) != null;
+    }
+
+    // 이메일 중복 체크
+    public boolean isEmailExists(String email) {
+        return userMapper.getUserByEmail(email) != null;
+    }
+
+
+
     /**
-     * 신규 사용자 정보를 전달받아서 회원가입 시키는 서비스다.
+     * 신규 사용자 정보를 전달받아서 회원가입 시키는 서비스
      *
+     * @param form 사용자 가입 정보를 담고 있는 UserJoinForm 객체
      */
     public void insertUser(UserJoinForm form) {
-        // 사용자 ID 중복 체크
-
-        User savedUser = userMapper.findById(form.getId());
-        if (savedUser != null) {
-            throw new AlreadyUsedIdException(form.getId());
-        }
+        // 사용자 중복 체크 및 예외 처리
+            User savedUser = userMapper.getUserById(form.getId());
+            if (savedUser != null) {
+                throw new AlreadyUsedIdException(form.getId());
+            }
 
         // User 객체로 변환
         User user = new User();
@@ -51,17 +63,16 @@ public class UserService {
         userMapper.insertUser(user);
 
         // 기본 사용자 역할 부여
-        addUserRole(user.getNo(),"ROLE_USER");
+        addUserRole(user.getNo(), "ROLE_USER");
     }
 
 
     /**
-     * 사용자번호, 권한이름을 전달받아서 권한을 추가하는 서비스다.
+     * 사용자번호, 권한이름을 전달받아서 권한을 추가하는 서비스
      *
      * @param userNo   사용자번호
      * @param roleName 권한이름
      */
-
     public void addUserRole(int userNo, String roleName) {
         // roleName을 통해 Role 객체를 조회
         Role role = userMapper.getRoleByName(roleName); // 역할 이름을 통해 Role 객체를 조회하는 메서드
@@ -72,28 +83,4 @@ public class UserService {
         // 사용자 역할 추가 메서드 호출
         userMapper.insertUserRole(userRole);
     }
-
-    /**
-     * 소셜 로그인 처리 (현재는 구현되지 않음).
-     *
-     * @param request 소셜 로그인 요청
-     * @return 로그인 응답
-     */
-    public LoginResponse doSocialLogin(SocialLoginRequest request) {
-        // 소셜 로그인 처리 로직을 여기에 추가해야 합니다.
-        return null;  // 임시로 null 반환
-    }
-
-    /**
-     * 임시 비밀번호 발급 처리
-     * */
-
-
-    public String findIdByEmail(String email) {
-                User user = userMapper.findIdByEmail(email);
-                if (user != null) {
-                    return user.getId(); // VO에서 ID만 반환
-                }
-                return null; // 조회된 결과가 없으면 null 반환
-            }
-        }
+}
