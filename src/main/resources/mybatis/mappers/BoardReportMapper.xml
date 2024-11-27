@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="store.seub2hu2.community.mapper.BoardReportMapper">
+
+  <!-- void insertReport(@Param("report") Report report); -->
+  <insert id="insertReport">
+    insert into BOARD_REPORTS
+      (
+      report_type
+      <if test="report.type == 'board'">
+        , board_no
+      </if>
+      <if test="report.type == 'reply'">
+        , reply_no
+      </if>
+        , user_no
+        , report_reason
+        )
+    values
+        (
+        #{report.type}
+        <if test="report.type == 'board'">
+          , #{report.board.no}
+        </if>
+        <if test="report.type == 'reply'">
+          , #{report.reply.no}
+        </if>
+        , #{report.user.no}
+        , #{report.reason}
+        )
+  </insert>
+
+  <!-- void updateDisableBoard(@Param("no") int boardNo, @Param("userNo") int userNo); -->
+
+
+</mapper>
