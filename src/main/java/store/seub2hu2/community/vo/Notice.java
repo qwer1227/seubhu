@@ -13,7 +13,6 @@ import java.util.Date;
 @Setter
 public class Notice {
     private int no;
-    private String category;
     private String title;
     private String content;
     private Date createdDate;

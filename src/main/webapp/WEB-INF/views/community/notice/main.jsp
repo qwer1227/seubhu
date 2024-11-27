@@ -19,23 +19,11 @@
       <h2> 공지사항 </h2>
     </div>
   </div>
-
-  
-  <div class="row d-flex justify-content-between">
-    <div class="col " >
-      <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="#">공지사항</a>
-    </div>
-    <div class="col " >
-      <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="#">자주묻는 질문</a>
-    </div>
-  </div>
-  
   
   <div class="row p-3">
     <table class="table">
       <colgroup>
         <col width="5%">
-        <col width="10%">
         <col width="*%">
         <col width="10%">
         <col width="10%">
@@ -43,7 +31,6 @@
       <thead>
       <tr style="text-align: center">
         <th>번호</th>
-        <th>분류</th>
         <th>제목</th>
         <th>조회</th>
         <th>날짜</th>
@@ -52,7 +39,6 @@
       <tbody style="text-align: center">
       <tr>
         <td>1</td>
-        <td>자유게시판</td>
         <td id="content-title" style="text-align: start">
           <a href="detail" style="text-decoration-line: none; color: black">재밌는이야기</a>
         </td>

@@ -116,7 +116,6 @@ public class BoardService {
             throw new CommunityException("존재하지 않는 게시글입니다.");
         }
 
-        board.setViewCnt(board.getViewCnt() + 1);
         board.setUploadFile(uploadFile);
         board.setReply(reply);
 
@@ -125,7 +124,14 @@ public class BoardService {
         user.setNickname(board.getUser().getNickname());
         board.setUser(user);
 
+        return board;
+    }
+
+    public Board updateBoardViewCnt(int boardNo) {
+        Board board = boardMapper.getBoardDetailByNo(boardNo);
+        board.setViewCnt(board.getViewCnt() + 1);
         boardMapper.updateBoardCnt(board);
+
         return board;
     }
 
