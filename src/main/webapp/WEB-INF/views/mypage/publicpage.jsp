@@ -106,7 +106,7 @@
             </button>
             <button class="btn btn-outline-primary btn-follow">팔로우</button>
             <button class="btn btn-outline-secondary btn-message">메시지</button>
-            <button class="btn btn-outline-dark btn-settings">⚙️</button>
+            <a href="mypage/private" class="btn btn-outline-dark btn-settings">⚙️</a>
         </div>
     </div>
 

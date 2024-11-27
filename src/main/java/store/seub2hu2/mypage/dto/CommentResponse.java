@@ -20,12 +20,4 @@ public class CommentResponse {
     private Integer replyCommentNo;
     private List<CommentResponse> replies;
 
-    // replies가 null인 경우 새로 생성하여 추가
-    public void addReply(CommentResponse reply) {
-        if (this.replies == null) {
-            this.replies = new ArrayList<>();
-        }
-        this.replies.add(reply);  // 대댓글을 replies 리스트에 추가
-    }
-
 }
