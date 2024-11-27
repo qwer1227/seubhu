@@ -194,7 +194,6 @@
                                  class="bi ${replyLiked == '1' ? 'bi-hand-thumbs-up-fill' : (replyLiked == '0' ? 'bi-hand-thumbs-up' : 'bi-hand-thumbs-up')}"></i>
                             </button>
                           </c:if>
-                          
                           <c:if test="${loginUser.no eq reply.user.no}">
                             <button type="button" class="btn btn-warning btn-sm" id="replyModifyButton-${reply.no}"
                                     onclick="appendModify(${reply.no})">수정

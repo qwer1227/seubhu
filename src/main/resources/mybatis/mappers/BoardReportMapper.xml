@@ -5,32 +5,47 @@
   <!-- void insertReport(@Param("report") Report report); -->
   <insert id="insertReport">
     insert into BOARD_REPORTS
-      (
-      report_type
-      <if test="report.type == 'board'">
-        , board_no
-      </if>
-      <if test="report.type == 'reply'">
-        , reply_no
-      </if>
-        , user_no
-        , report_reason
-        )
+    (
+    report_type
+    <if test="report.type == 'board'">
+      , board_no
+    </if>
+    <if test="report.type == 'reply'">
+      , reply_no
+    </if>
+    , user_no
+    , report_reason
+    )
     values
-        (
-        #{report.type}
-        <if test="report.type == 'board'">
-          , #{report.boardNo}
-        </if>
-        <if test="report.type == 'reply'">
-          , #{report.replyNo}
-        </if>
-        , #{report.user.no}
-        , #{report.reason}
-        )
+    (
+    #{report.type}
+    <if test="report.type == 'board'">
+      , #{report.boardNo}
+    </if>
+    <if test="report.type == 'reply'">
+      , #{report.replyNo}
+    </if>
+    , #{report.user.no}
+    , #{report.reason}
+    )
   </insert>
 
-  <!-- void updateDisableBoard(@Param("no") int boardNo, @Param("userNo") int userNo); -->
-
+  <!-- void updateDisableBoard(@Param("report") Report report); -->
+  <!-- 자세한 구현코드는 수정 필요 -->
+  <update id="updateDisableBoard">
+    update BOARD_REPORTS
+    set
+    (
+        admin_no = #{report.adminNo}
+        , report_resolved_date = sysdate()
+    )
+    where report_type = #{report.type}
+    <if test="report.type == 'board">
+      and board_no = #{report.boardNo}
+    </if>
+    <if test="report.type == 'reply">
+      and reply_no = #{report.replyNo}
+    </if>
+  </update>
 
 </mapper>

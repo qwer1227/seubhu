@@ -205,14 +205,4 @@ public class BoardService {
         board.setScrapCnt(board.getScrapCnt());
         boardMapper.updateCnt(board);
     }
-
-    public void updateBoardLikeCnt(int boardNo
-            , @AuthenticationPrincipal LoginUser loginUser
-            , int cnt){
-        Board board = boardMapper.getBoardDetailByNo(boardNo);
-        board.setNo(boardNo);
-        board.setLike(cnt);
-
-        boardMapper.updateBoardCnt(board);
-    }
 }

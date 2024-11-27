@@ -8,5 +8,5 @@ import store.seub2hu2.community.vo.Report;
 public interface BoardReportMapper {
 
     void insertReport(@Param("report") Report report);
-    void updateDisableBoard(@Param("no") int boardNo, @Param("userNo") int userNo);
+    void updateDisableBoard(@Param("report") Report report);
 }
