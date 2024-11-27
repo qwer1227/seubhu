@@ -1,10 +1,23 @@
 package store.seub2hu2.lesson.enums;
 
 public enum LessonStatus {
-    RECRUITMENT("모집중"),
-    CLOSE("마감"),
-    END("종료");
+    RECRUITMENT("모집중", 1),
+    CLOSE("마감", 2),
+    END("종료", 3);
 
-    LessonStatus(String category) {
+    private final String label;
+    private final int value;
+
+    LessonStatus(String label, int value) {
+        this.label = label;
+        this.value = value;
+    }
+
+    public String label() {
+        return label;
+    }
+
+    public int value() {
+        return value;
     }
 }

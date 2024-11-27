@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import store.seub2hu2.admin.dto.CourseRegisterForm;
+import store.seub2hu2.admin.dto.ProductRegisterForm;
 import store.seub2hu2.admin.service.AdminService;
 import store.seub2hu2.course.service.CourseService;
 import store.seub2hu2.course.vo.Course;
@@ -15,12 +16,16 @@ import store.seub2hu2.lesson.dto.LessonRegisterForm;
 import store.seub2hu2.lesson.service.LessonFileService;
 import store.seub2hu2.lesson.service.LessonService;
 import store.seub2hu2.lesson.vo.Lesson;
+import store.seub2hu2.product.dto.*;
+import store.seub2hu2.product.service.ProductService;
+import store.seub2hu2.product.vo.Category;
+import store.seub2hu2.product.vo.Color;
+import store.seub2hu2.product.vo.Product;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.ListDto;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +45,7 @@ public class AdminController {
     private final AdminService adminService;
     private final LessonService lessonService;
     private final LessonFileService lessonFileService;
+    private final ProductService productService;
 
     @GetMapping("/home")
     public String home() {
@@ -106,8 +112,8 @@ public class AdminController {
         lesson.setLecturer(user);
         lesson.setSubject(form.getSubject());
         lesson.setPlan(form.getPlan());
-        lesson.setStart(form.getStartDate());
-        lesson.setEnd(form.getEndDate());
+        lesson.setStart(form.getStart());
+        lesson.setEnd(form.getEnd());
 
         System.out.println("-------------------------------------레슨 시작 종료시간 알아보기: " + lesson);
         
@@ -120,12 +126,12 @@ public class AdminController {
     @GetMapping("/lesson")
     public String lesson(@RequestParam(name = "opt", required = false) String opt,
                          @RequestParam(name = "day", required = false)
-                         @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDateTime day,
+                         @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate day,
                                @RequestParam(name = "value", required = false) String value,
                                Model model) {
 
         if (day == null) {
-            day = LocalDateTime.now();
+            day = LocalDate.now();
         }
 
         String formattedDay = day.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
@@ -224,26 +230,164 @@ public class AdminController {
         return "admin/userlist";
     }
 
-    @GetMapping("/product")
-    public String product() {
-        /*@RequestParam(name="page", required = false, defaultValue = "1") int page,
-        @RequestParam(name="rows", required = false, defaultValue = "10") int rows,
-        @RequestParam(name = "opt", required = false) String opt,
-        @RequestParam(name= "value", required = false) String value,
-        Model model) {
+    @GetMapping("/register-editform")
+    public String registerEditForm(@RequestParam("no") int no,
+                                   Model model) {
+
+        Product product = adminService.getProductNo(no);
+
+        List<Color> colors = adminService.getColorName(no);
+
+        model.addAttribute("colors", colors);
+        model.addAttribute("product", product);
+
+        return "admin/product-edit-form";
+    }
+
+    @PostMapping("/register-editform")
+    public String registerEditTitle(Product product,
+                                    Model model) {
+
+        adminService.getUpdateProduct(product);
+
+        System.out.println("---------------------------------------product:"+ product);
+
+        return "redirect:/admin/product-detail?no=" + product.getNo() + "&colorNo=" + product.getColorNum();
+    }
+
+    @GetMapping("/register-size")
+    public String registerSize(@RequestParam("no") int no,
+                               Model model) {
+
+        ProdDetailDto prodDetailDto = productService.getProductByNo(no);
+        model.addAttribute("prodDetailDto", prodDetailDto);
+
+        return "admin/product-size-register-form";
+    }
+
+    @GetMapping("/register-image")
+    public String getRegisterImage(@RequestParam("no") int no,
+                                Model model) {
+
+
+        Product product = adminService.getProductNo(no);
+        List<Color> colors = adminService.getColorName(no);
+
+        model.addAttribute("colors", colors);
+        model.addAttribute("product", product);
+
+        return "admin/product-image-register-form";
+    }
+
+    @PostMapping("/register-image")
+    public String registerImage(@RequestParam("no") int no,
+                                Model model) {
+
+        return "admin/product-image-register-form";
+    }
+
+    @GetMapping("/register-color")
+    public String getRegisterColor(@RequestParam("no") int no,
+                                Model model) {
+
+        ProdDetailDto prodDetailDto = productService.getProductByNo(no);
+        model.addAttribute("prodDetailDto", prodDetailDto);
+
+        return "admin/product-color-register-form";
+    }
+
+    @PostMapping("/register-color")
+    public String registerColor(@RequestParam(name="no", required = false) Integer no,
+                                @RequestParam(name="color", required = false) String color,
+                                Model model) {
+
+        if (no == null || color == null || color.isEmpty()) {
+            throw new IllegalArgumentException("상품 번호와 색상은 필수 입력 값입니다.");
+        }
+
         Map<String, Object> condition = new HashMap<>();
+        condition.put("no", no);
+        condition.put("color", color);
+
+        System.out.println("condition:" + condition);
+
+        model.addAttribute("condition", condition);
+        adminService.addColor(condition);
+
+        int colorNo = adminService.getColor(condition);
+
+        System.out.println("colorNo: " + colorNo);
+        return "redirect:/admin/product-detail?no=" + condition.get("no") + "&colorNo=" + colorNo;
+    }
+
+    @GetMapping("/product-detail")
+    public String productAdminDetail(@RequestParam("no") int no,
+                                     @RequestParam("colorNo") int colorNo,
+                                     Model model) {
+
+
+        ProdDetailDto prodDetailDto = productService.getProductByNo(no);
+        model.addAttribute("prodDetailDto", prodDetailDto);
+
+        List<ColorProdImgDto> colorProdImgDto = productService.getProdImgByColorNo(no);
+        model.addAttribute("colorProdImgDto", colorProdImgDto);
+
+        SizeAmountDto sizeAmountDto = productService.getSizeAmountByColorNo(colorNo);
+        model.addAttribute("sizeAmountDto", sizeAmountDto);
+
+        ProdImagesDto prodImagesDto = productService.getProdImagesByColorNo(colorNo);
+        model.addAttribute("prodImagesDto", prodImagesDto);
+
+        return "admin/product-admin-detail";
+    }
+
+
+    @GetMapping("/product-register-form")
+    public String productRegisterForm() {
+
+        return "admin/product-register-form";
+    }
+
+    @PostMapping("/product-register-form")
+    public String productRegisterForm(ProductRegisterForm form, Model model) {
+
+        adminService.addProduct(form);
+
+        Category category = adminService.getCategory(form.getCategoryNo());
+
+         return "redirect:/admin/product?topNo="+ category.getTopNo();
+    }
+
+    @GetMapping("/product")
+    public String list(@RequestParam(name= "topNo") int topNo,
+                       @RequestParam(name = "catNo", required = false, defaultValue = "0") int catNo,
+                       @RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                       @RequestParam(name = "rows", required = false, defaultValue = "6") int rows,
+                       @RequestParam(name = "sort" , required = false, defaultValue = "date") String sort,
+                       @RequestParam(name = "opt", required = false) String opt,
+                       @RequestParam(name = "value", required = false) String value,
+                       Model model) {
+
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("topNo", topNo);
+        if(catNo != 0) {
+            condition.put("catNo", catNo);
+        }
+
         condition.put("page", page);
         condition.put("rows", rows);
-        if (StringUtils.hasText(value)) {
+        condition.put("sort", sort);
+        if(StringUtils.hasText(opt)) {
             condition.put("opt", opt);
             condition.put("value", value);
         }
-        // 검색조건을 전달해서 게시글 목록 조회
-        ListDto<Product> dto = adminService.getAllProduct(condition);
-        // List<Product>를 "products"로 모델에 저장
+
+        ListDto<ProdListDto> dto = productService.getProducts(condition);
+        model.addAttribute("topNo", topNo);
+        model.addAttribute("catNo", catNo);
         model.addAttribute("products", dto.getData());
-        // Pagination을 "paging"로 모델에 저장
-        model.addAttribute("paging", dto.getPaging());*/
+        model.addAttribute("paging", dto.getPaging());
+
         return "admin/productlist";
     }
 

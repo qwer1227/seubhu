@@ -7,12 +7,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import store.seub2hu2.admin.mapper.AdminMapper;
 import store.seub2hu2.course.dto.AddReviewForm;
+import store.seub2hu2.course.exception.CourseReviewException;
 import store.seub2hu2.course.mapper.ReviewMapper;
 import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.course.vo.Review;
 import store.seub2hu2.course.vo.ReviewImage;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.FileUtils;
+import store.seub2hu2.util.WebContentFileUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,6 +25,9 @@ import java.util.List;
 public class ReviewService {
     @Value("${upload.directory.course}")
     private String saveDirectory;
+
+    @Autowired
+    WebContentFileUtils webContentFileUtils;
 
     @Autowired
     private ReviewMapper reviewMapper;
@@ -47,7 +52,6 @@ public class ReviewService {
                 review.setReviewImage(reviewImages);
             }
         }
-        System.out.println("리뷰 목록: " + reviews);
 
         // 3. 리뷰 객체를 반환한다.
         return reviews;
@@ -83,8 +87,8 @@ public class ReviewService {
             for (MultipartFile multipartFile : multipartFiles) {
                 // 첨부 파일을 지정된 경로에 저장 후, 파일 이름을 가져온다.
                 String filename = System.currentTimeMillis() + multipartFile.getOriginalFilename();
-                System.out.println("파일명:" + filename);
-                FileUtils.saveMultipartFile(multipartFile, saveDirectory, filename);
+                webContentFileUtils.saveWebContentFile(multipartFile, saveDirectory, filename);
+                System.out.println(filename);
 
                 // 코스 리뷰 이미지 테이블에 데이터를 추가한다.
                 ReviewImage reviewImage = new ReviewImage();
@@ -93,13 +97,31 @@ public class ReviewService {
 
                 reviewMapper.insertReviewImage(reviewImage);
 
+                // 리뷰 이미지 객체에 리뷰 이미지 정보를 저장한다.
                 reviewImages.add(reviewImage);
             }
             review.setReviewImage(reviewImages);
         }
-        System.out.println("코스에 등록한 리뷰  : " + review);
 
         // 4. 등록한 리뷰 정보를 반환한다.
         return review;
+    }
+
+    /**
+     * 리뷰를 삭제한다.
+     * @param reviewNo 리뷰 번호
+     * @param userNo 사용자 번호
+     */
+    public void deleteReview(int reviewNo, int userNo) {
+        // 1. 리뷰 번호에 해당하는 리뷰의 정보를 가져온다.
+        Review review = reviewMapper.getReviewByNo(reviewNo);
+
+        // 2. 리뷰 작성자와 로그인한 사용자가 동일한지 확인한다.
+        if (review.getUser().getNo() != userNo) {
+            throw new CourseReviewException("로그인한 해당 리뷰 작성자만 삭제 가능합니다.");
+        }
+
+        // 3. 리뷰를 삭제한다.
+        reviewMapper.deleteReview(reviewNo);
     }
 }

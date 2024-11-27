@@ -81,40 +81,27 @@
             </div>
 
             <!-- 이름 -->
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <form:input class="form-control" placeholder="이름" path="name"/>
             </div>
 
 
             <!-- 휴대전화 -->
             <div class="form-group mb-3">
-                <label for="mobile1" class="form-label"></label>
-                <div class="input-group has-validation">
-                    <select id="mobile1" name="mobile[]" class="form-select">
-                        <option value="010">010</option>
-                        <option value="011">011</option>
-                        <option value="016">016</option>
-                        <option value="017">017</option>
-                        <option value="018">018</option>
-                        <option value="019">019</option>
-                    </select>
-                    <input id="mobile2" name="mobile[]" maxlength="4" placeholder="" type="text" class="form-control"
-                           required>
-                    <input id="mobile3" name="mobile[]" maxlength="4" placeholder="" type="text" class="form-control"
-                           required>
-                    <button type="button" id="btn_action_verify_mobile" class="btn btn-outline-dark btn-sm"
-                            onclick="memberVerifyMobile.joinSendVerificationNumber(); return false;">인증번호 받기
+                <div class="input-group">
+                    <!-- 전화번호 입력 필드 -->
+                    <input type="text" class="form-control" id="tel" name="tel" maxlength="11" placeholder="전화번호"
+                           required="required"/>
+                    <!-- 본인인증 버튼 -->
+                    <button id="smsCheck" type="button" class="btn btn-outline-dark btn-sm" onclick="smsCheck()">
+                        본인인증
                     </button>
-                    <div class="invalid-feedback">휴대전화 번호를 올바르게 입력해주세요.</div>
-                    <div class="valid-feedback">유효한 휴대전화 번호입니다!</div>
                 </div>
-                <ul class="txtInfo gBlank5 displaynone mt-1" id="result_send_verify_mobile_success"
-                    style="display: none;">
+                <ul class="txtInfo gBlank5 mt-1" id="sendVerifyCode" style="display: none;">
                     <li>인증번호가 발송되었습니다.</li>
                     <li>인증번호를 받지 못하셨다면 휴대폰 번호를 확인해 주세요.</li>
                 </ul>
             </div>
-
 
             <!-- 이메일 -->
             <div class="form-group mb-3">
@@ -126,12 +113,6 @@
                     <div class="valid-feedback">사용 가능한 이메일입니다!</div>
                 </div>
                 <form:errors path="email" cssClass="text-danger fst-italic"/>
-            </div>
-
-
-            <!-- 추천인 아이디 -->
-            <div class="form-group mb-3">
-                <form:input class="form-control" placeholder="추천인 아이디" path="referrer"/>
             </div>
 
             <!-- 이용약관 동의 -->
@@ -165,6 +146,7 @@
     let isIdValid = false;
     let isPasswordValid = false;
     let isPasswordConfirmed = false;
+    let isTelVerified = false;
     let isEmailValid = false;
     let isEmailChecked = false;
     let isNicknameValid = false;
@@ -315,17 +297,16 @@
             });
     }
 
-
     // 폼 제출 시 유효성 검사
     async function formSubmit() {
-        // 모든 유효성 검사 호출
+// 모든 유효성 검사 호출
         checkId();
         checkPassword();
         checkPasswordConfirm();
         checkEmail();
         checkNickname();
 
-        // 이메일 중복체크 미실행 또는 잘못된 이메일 상태 처리
+// 이메일 중복체크 미실행 또는 잘못된 이메일 상태 처리
         let email = document.querySelector("#user-email").value;
         if (!isEmailValid(email) || !isEmailChecked) {
             document.querySelector("#user-email").classList.add("is-invalid");
@@ -333,7 +314,7 @@
             return;
         }
 
-        // 닉네임 중복체크 미실행 또는 사용 불가 체크
+// 닉네임 중복체크 미실행 또는 사용 불가 체크
         let nickname = document.querySelector("#user-nickname").value;
         if (!isNicknameChecked || !isNicknameValid) {
             document.querySelector("#user-nickname").classList.add("is-invalid");
@@ -341,7 +322,7 @@
             return;
         }
 
-        // 비밀번호 확인 검사
+// 비밀번호 확인 검사
         let password = document.querySelector("#user-password").value;
         let passwordConfirm = document.querySelector("#password-confirm").value;
         if (password !== passwordConfirm) {

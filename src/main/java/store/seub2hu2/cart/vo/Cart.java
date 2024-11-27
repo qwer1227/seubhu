@@ -1,24 +1,26 @@
 package store.seub2hu2.cart.vo;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.stereotype.Service;
 import store.seub2hu2.product.vo.Product;
 import store.seub2hu2.product.vo.Size;
 import store.seub2hu2.user.vo.User;
 
+import java.util.Date;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@Service
+@Setter
 @Getter
 public class Cart {
 
-    private int no;
-    private int amount;
+    private int no; // 카트 번호
+    private int amount; // 수량
+    private Date createdAt; // 생성일자
+    private boolean cartDeleted; // 삭제 여부
     private Size size;
-    private Product product;
     private User user;
+    private Product product;
+
 }

@@ -36,29 +36,40 @@
         .feed-card {
             cursor: pointer;
         }
+
+        .text-left {
+            text-align: left;
+        }
+
+        .comment-actions {
+            margin-top: 10px;
+        }
+
+        .comment-actions button {
+            margin-right: 10px;
+            padding: 5px 10px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .btn-reply {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 3px;
+        }
+
+        .btn-report {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 3px;
+        }
+
         .modal-body img {
             width: 100%;
             border-radius: 8px;
         }
-
-        .comment-item {
-            position: relative;
-            margin-bottom: 10px;
-        }
-
-        .comment-actions {
-            display: none; /* 기본적으로 숨김 처리 */
-            position: absolute;
-            right: 0;
-            top: 0;
-        }
-
-        .comment-item:hover .comment-actions {
-            display: block; /* 마우스를 올리면 버튼 보이기 */
-        }
-
-        .comment-actions button {
-            font-size: 12px;
 
         /* 이미지 미리보기 */
         .image-preview-container {
@@ -95,7 +106,7 @@
             </button>
             <button class="btn btn-outline-primary btn-follow">팔로우</button>
             <button class="btn btn-outline-secondary btn-message">메시지</button>
-            <button class="btn btn-outline-dark btn-settings">⚙️</button>
+            <a href="mypage/private" class="btn btn-outline-dark btn-settings">⚙️</a>
         </div>
     </div>
 
@@ -184,8 +195,8 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="mb-0" id="detailPostWriter"></h5>
                             <div>
-                                <button class="btn btn-outline-secondary btn-sm" id="postUpdate" data-post-id="${post.no}">수정</button>
-                                <button class="btn btn-outline-danger btn-sm ms-2" id="postDelete" data-post-id="${post.no}">삭제</button>
+                                <button class="btn btn-outline-secondary btn-sm" id="postUpdate">수정</button>
+                                <button class="btn btn-outline-danger btn-sm ms-2" id="postDelete">삭제</button>
                             </div>
                         </div>
                         <hr>
@@ -197,12 +208,17 @@
                         <div class="mt-3">
                             <hr>
                             <div id="commentList">
-
+                                <div></div>
                             </div>
 
                             <!-- 댓글 입력 -->
                             <div class="mt-3">
                                 <input type="text" id="postComment" class="form-control" placeholder="댓글을 입력하세요...">
+
+                                <!-- 대댓글 관련 히든 필드들 -->
+                                <input type="hidden" id="replyToCommentId" value="">
+                                <input type="hidden" id="replyToUserNo" value="">
+
                                 <button class="btn btn-primary mt-2" id="postCommentInsert" data-post-id="${post.no}">댓글</button>
                             </div>
                         </div>
@@ -225,6 +241,7 @@
         $('#postUpdate').data('post-id', postId);
         $('#postCommentInsert').data('post-id', postId);
 
+
         $.ajax({
             url: "/mypage/detail/" + postId,  // 서버로 AJAX 요청
             method: "GET",
@@ -237,77 +254,25 @@
                 // 서버에서 받은 댓글 데이터를 반복하면서 화면에 추가
                 const comments = response.postComment; // 서버에서 받은 댓글
 
-                console.log(comments)
+
 
                 $('#commentList').empty()
 
                 comments.forEach(function(comment) {
                     const commentHTML = `
-                    <div class="comment-item">
-                       <div class="d-flex justify-content-between align-items-center">
-                            <p><strong>${comment.commentUserName}:</strong> ${comment.commentText}</p>
-                            <div class="comment-actions">
-                                <span>${comment.createdDate}</span>  <!-- 작성 시간 -->
-                                <button class="btn btn-outline-primary btn-sm ms-2">좋아요 (${comment.likes})</button>  <!-- 좋아요 버튼 -->
-                                <button class="btn btn-outline-secondary btn-sm ms-2" onclick="replyToComment(${comment.commentNo}, '${comment.commentUserName}')">답글 달기</button>  <!-- 답글 달기 버튼 -->
-
-                                <!-- 댓글 작성자 본인일 때 삭제, 남일 때 신고 버튼 표시 -->
-                                ${comment.isOwner ?
-                                    `<button class="btn btn-outline-danger btn-sm ms-2" onclick="deleteComment(${comment.commentNo})">삭제</button>` :
-                                    `<button class="btn btn-outline-warning btn-sm ms-2" onclick="reportComment(${comment.commentNo})">신고</button>`
-                                }
+                        <div class="comment-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <p><strong class="user-name">\${comment.userName}:</strong> \${comment.commentRequest.postComment}</p>
+                                <div class="comment-actions">
+                                     <button class="btn-reply"  data-comment-id="${comment.no}">답글 달기</button>
+                                    <button class="btn-report">신고</button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                `;
+                    `;
+
                     $('#commentList').append(commentHTML);
                 });
-
-                // 답글 달기
-                function replyToComment(commentNo, userName) {
-                    const commentInput = $('#postComment');
-                    commentInput.val(`@${userName} `); // 입력란에 @username 추가
-                    commentInput.focus(); // 입력란에 포커스
-                }
-
-                // 댓글 삭제
-                function deleteComment(commentNo) {
-                    if (confirm("정말로 이 댓글을 삭제하시겠습니까?")) {
-                        // AJAX로 댓글 삭제 요청 보내기
-                        $.ajax({
-                            url: `/delete-comment/${commentNo}`,
-                            method: 'DELETE',
-                            success: function(response) {
-                                alert("댓글이 삭제되었습니다.");
-                                // 댓글 목록을 새로 고침
-                                loadComments();
-                            },
-                            error: function() {
-                                alert("댓글 삭제에 실패했습니다.");
-                            }
-                        });
-                    }
-                }
-
-                // 댓글 신고
-                function reportComment(commentNo) {
-                    if (confirm("이 댓글을 신고하시겠습니까?")) {
-                        // 신고 처리 로직
-                        $.ajax({
-                            url: `/report-comment/${commentNo}`,
-                            method: 'POST',
-                            success: function(response) {
-                                alert("댓글이 신고되었습니다.");
-                            },
-                            error: function() {
-                                alert("댓글 신고에 실패했습니다.");
-                            }
-                        });
-                    }
-                }
-
-
-
 
                 // 이미지 슬라이드 구성
 
@@ -439,6 +404,10 @@
         let postId = $(this).data('post-id'); // 클릭된 버튼의 data-post-id값
         let userNo = 23;
 
+        // 대댓글 관련 값들 가져오기
+        let replyToCommentNo = $('#replyToCommentId').val(); // 대댓글이 달릴 댓글 번호
+        let replyToUserNo = $('#replyToUserNo').val(); // 대댓글 대상 사용자 번호
+
         // 댓글 내용이 비어있는지 확인
         if (!postComment.trim()){
             alert("댓글 내용을 입력해주세요");
@@ -448,7 +417,9 @@
         let jsonData = {
           postComment : postComment,
           postId : postId,
-          userNo : userNo
+          userNo : userNo,
+          replyToUserNo : replyToUserNo, // 대댓글의 대상 사용자 번호
+          replyToCommentNo : replyToCommentNo
         };
 
         $.ajax({
@@ -462,26 +433,60 @@
                 console.log("서버 응답:", response);
 
                 // 서버에서 받은 userName과 commentText
-                const userName = response.userName;  // 서버에서 받은 유저 이름
-                const commentText = response.commentText;  // 서버에서 받은 댓글 텍스트
+                const userName = response.username;  // 서버에서 받은 유저 이름
 
-                // 동적으로 댓글 추가
-                const newCommentHtml = `
-                <p><strong>\${userName}:</strong> \${commentText}</p>
-            `;
+                // 댓글 목록을 동적으로 추가하기
+                $('#commentList').empty();  // 기존 댓글 목록을 지우고 새로 고침
 
-                // 기존 댓글 목록에 추가
-                $('#postCommentInsert').closest('.mt-3').prev().append(newCommentHtml);
 
-                // 입력 필드 초기화
+                const commentsContainer = $('.')
+                // 댓글 목록을 순회하며 HTML 생성
+                comments.forEach(function(comment) {
+                    const newCommentHtml = `
+                    <div class="comment-item" data-comment-id="${comment.commentNo}">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <p class="text-left"><strong>${comment.authorName}:</strong> ${comment.commentText}</p>
+                            <div class="comment-actions">
+                                <button class="btn-reply" data-comment-id="${comment.commentNo}">답글 달기</button>
+                                <button class="btn-report" data-comment-id="${comment.commentNo}">신고</button>
+                            </div>
+                        </div>
+                        <div class="replies-container"></div> <!-- 대댓글이 들어갈 공간 -->
+                    </div>
+                `;
+
+                    // 생성된 댓글 HTML을 댓글 리스트에 추가
+                    $('#commentList').append(newCommentHtml);
+                });
+
+                // 댓글 입력 필드 초기화
                 $('#postComment').val('');
 
+                // 대댓글 관련 히든 필드 초기화
+                $('#replyToCommentId').val('');
+                $('#replyToUserNo').val('');
             },
             error: function (xhr, status, error){
                 console.log("댓글 작성 실패", error);
             }
         })
     })
+
+    // 대댓글 작성
+    $(document).on('click', '.btn-reply', function() {
+        const commentId = $(this).data('comment-id'); // 클릭된 댓글의 ID
+        const userName = $(this).closest('.comment-item').find('.user-name').text(); // 댓글 작성자의 유저명
+        const userNo = $(this).data('user-no');     // 댓글 작성자의 userNo
+        const postId = $(this).data('post-id');     // 게시글 ID
+
+        // 댓글 작성 폼에 @유저이름 형태로 자동 입력
+        $('#postComment').val('@' + userName + ' '); // 입력 폼에 @유저이름 표시
+
+        // 해당 댓글의 commentId를 숨은 필드로 설정 (대댓글 전송 시 사용)
+        $('#replyToCommentId').val(commentId); // 대댓글이 달릴 댓글의 ID
+        $('#replyToUserNo').val(userNo); // 대댓글 대상 사용자 번호
+        $('#postCommentInsert').data('post-id', postId); // 게시글 ID
+    });
 
     // 게시글 수정 함수
     function updatePost(postId) {

@@ -48,26 +48,7 @@ public class LessonFileService {
 
     }
 
-//    public Map<String, LessonFile> findLessonImagesByLessonNo(Integer lessonNo) {
-//        List<LessonFile> lessonFiles = lessonFileMapper.getImagesByLessonNo(lessonNo);
-//        Map<String, LessonFile> lessonFileMap = new HashMap<>();
-//        for (LessonFile lessonFile : lessonFiles) {
-//            if (lessonFile.getFileType().equals("THUMBNAIL")) {
-//                LessonFile thumbnailFile = new LessonFile(
-//                        lessonNo, lessonFile.getFileName(), "THUMBNAIL", lessonFile.getFilePath()
-//                );
-//                lessonFileMap.put("THUMBNAIL", thumbnailFile);
-//            }
-//
-//            if (lessonFile.getFileType().equals("MAIN_IMAGE")) {
-//                LessonFile mainImageFile = new LessonFile(
-//                        lessonNo, lessonFile.getFileName(), "MAIN_IMAGE", saveDirectory
-//                );
-//                lessonFileMap.put("MAIN_IMAGE", mainImageFile.getFilePath() + "/" + mainImageFile.getFileName());
-//            }
-//        }
-//
-//
-//        return lessonFileMap;
-//    }
+
+
+
 }

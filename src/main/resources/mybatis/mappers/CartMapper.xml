@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="store.seub2hu2.mypage.mapper.CartMapper">
+
+    <!--
+        void addCart(@Param("carts") List<CartRegisterForm> cartRegisterForm);
+    -->
+    <insert id="addCart" >
+        INSERT INTO CARTS (
+            SIZE_NO
+            , PRODUCT_NO
+            , USER_NO
+            , CART_AMOUNT
+            , COLOR_NO
+        )
+        values
+        <foreach item="cart" index="index" collection="carts" separator=",">
+         (
+            #{cart.sizeNo}
+            , #{cart.prodNo}
+            , #{cart.userNo}
+            , #{cart.stock}
+            , #{cart.colorNo}
+            )
+        </foreach>
+    </insert>
+</mapper>

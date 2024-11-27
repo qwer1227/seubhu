@@ -115,7 +115,7 @@
                                         <td>${u.nickname}</td>
                                         <td>${u.email}</td>
                                         <td>
-                                            <button class="btn btn-outline btn-success btn-sm "
+                                            <button class="btn btn-outline btn-success btn-sm"
                                                     onclick="previewUser(${u.no})">미리보기</button>
                                         </td>
                                         <td>

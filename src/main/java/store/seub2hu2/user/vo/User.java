@@ -25,7 +25,6 @@ public class User {
     private String provider;          // 소셜 로그인 제공자 (예: Google, Facebook 등)
     private boolean terms;            // 이용약관 동의 여부
     private boolean privacy;          // 개인정보 수집 및 이용 동의 여부
-    private String referrer;          // 추천인 아이디
     private String black;             // 블랙리스트
 
 

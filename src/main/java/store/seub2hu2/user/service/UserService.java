@@ -2,7 +2,6 @@ package store.seub2hu2.user.service;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,8 +11,6 @@ import store.seub2hu2.user.vo.Role;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.user.mapper.UserMapper;
 import store.seub2hu2.user.vo.UserRole;
-
-import java.util.UUID;
 
 @Service
 @Transactional
@@ -25,14 +22,6 @@ public class UserService {
     @Autowired
     private UserMapper userMapper;
 
-
-
-    // 임시 비밀번호 생성
-    public String generateTemporaryPassword() {
-        return UUID.randomUUID().toString().substring(0, 8); // 8자리 비밀번호
-    }
-
-
     // 아이디 중복 체크
     public boolean isIdExists(String id) {
         return userMapper.getUserById(id) != null;
@@ -40,8 +29,7 @@ public class UserService {
 
     // 닉네임 중복 체크
     public boolean isNicknameExists(String nickname) {
-        return false;
-        //return userMapper.getUserByNickname(nickname) != null;
+        return userMapper.getUserByNickname(nickname) != null;
     }
 
     // 이메일 중복 체크
@@ -49,16 +37,19 @@ public class UserService {
         return userMapper.getUserByEmail(email) != null;
     }
 
+
+
     /**
-     * 신규 사용자 정보를 전달받아서 회원가입 시키는 서비스다.
+     * 신규 사용자 정보를 전달받아서 회원가입 시키는 서비스
+     *
+     * @param form 사용자 가입 정보를 담고 있는 UserJoinForm 객체
      */
     public void insertUser(UserJoinForm form) {
-        // 사용자 ID 중복 체크
-
-        User savedUser = userMapper.getUserById(form.getId());
-        if (savedUser != null) {
-            throw new AlreadyUsedIdException(form.getId());
-        }
+        // 사용자 중복 체크 및 예외 처리
+            User savedUser = userMapper.getUserById(form.getId());
+            if (savedUser != null) {
+                throw new AlreadyUsedIdException(form.getId());
+            }
 
         // User 객체로 변환
         User user = new User();
@@ -77,7 +68,7 @@ public class UserService {
 
 
     /**
-     * 사용자번호, 권한이름을 전달받아서 권한을 추가하는 서비스다.
+     * 사용자번호, 권한이름을 전달받아서 권한을 추가하는 서비스
      *
      * @param userNo   사용자번호
      * @param roleName 권한이름
@@ -92,5 +83,4 @@ public class UserService {
         // 사용자 역할 추가 메서드 호출
         userMapper.insertUserRole(userRole);
     }
-
 }

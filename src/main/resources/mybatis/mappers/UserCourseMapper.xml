@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="store.seub2hu2.course.mapper.UserCourseMapper">
+    <!--
+        User checkSuccess(@Param("userNo") int userNo);
+    -->
+    <select id="checkSuccess" resultType="store.seub2hu2.course.vo.CourseWhether">
+        select w.is_register as isRegister
+             , w.is_success as isSuccess
+             , w.course_no as "course.no"
+             , u.user_no as "user.no"
+             , u.user_nickname as "user.nickname"
+        from CHALLENGE_WHETHER w inner join USERS u
+        on w.user_no = u.user_no
+        where u.user_no = #{userNo}
+        and w.course_no = #{courseNo}
+        and w.is_success = 'Y'
+    </select>
+
+    <!--
+        CourseLike getCourseLike(@Param("courseNo") int courseNo, @Param("userNo") int userNo);
+    -->
+    <select id="getCourseLike" resultType="store.seub2hu2.course.vo.CourseLike">
+        select course_no as "course.no"
+             , user_no as "user.no"
+        from COURSE_LIKES
+        where course_no = #{courseNo}
+        and user_no = #{userNo}
+    </select>
+
+    <!--
+        void updateLikeCount(@Param("courseNo") int courseNo);
+    -->
+    <update id="updateLikeCount">
+        update COURSES
+        set course_like_cnt = #{likeCount}
+        where course_no = #{courseNo}
+    </update>
+
+    <!--
+        void insertLikeUser(@Param("userNo") int userNo, @Param("courseNo") int courseNo);
+    -->
+    <insert id="insertLikeUser">
+        insert into COURSE_LIKES
+            (course_no
+            , user_no)
+        values
+            (#{courseNo}
+            , #{userNo})
+    </insert>
+
+    <!--
+        void deleteLikeUser(@Param("userNo") int userNo, @Param("courseNo") int courseNo);
+    -->
+    <delete id="deleteLikeUser">
+        delete from COURSE_LIKES
+        where user_no = #{userNo}
+        and course_no = #{courseNo}
+    </delete>
+</mapper>

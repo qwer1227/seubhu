@@ -8,7 +8,9 @@ import lombok.*;
 @Setter
 @ToString
 public class CommentRequest {
-    private int postId;
-    private String postComment;
-    private int userNo;
+    private int postId;           // 게시글 ID
+    private String postComment;   // 댓글 내용
+    private int userNo;           // 댓글 작성자 (사용자 번호)
+    private int replyToUserNo;    // 대댓글 대상 사용자 번호
+    private Integer replyToCommentNo; // 대댓글이 달릴 댓글 번호
 }

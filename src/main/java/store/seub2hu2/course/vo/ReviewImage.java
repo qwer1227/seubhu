@@ -7,9 +7,7 @@ import org.apache.ibatis.type.Alias;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @ToString
-@Alias("ReviewImage")
 public class ReviewImage {
     // 코스 리뷰 첨부 파일 데이터
     private int no; // 이미지 번호
