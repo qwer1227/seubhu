@@ -16,7 +16,7 @@ public interface PostMapper {
 
     Post getPostByNo(@Param("no") int no);
     List<Post> getPostsByNo(@Param("no") int userNo);
-    void insertPost(@Param("post") Post post);
+    void insertPost(@Param("userNo") int no,@Param("post") Post post);
     void insertPostImages(List<Map<String, Object>> images);
     void updatePost(@Param("post") Post post);
     void deletePost(@Param("no") int postNo);

@@ -3,6 +3,7 @@
 <!doctype html>
 <html lang="ko">
 <head>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <%@ include file="/WEB-INF/views/common/common.jsp" %>
     <style>
         /* 전체 컨테이너 중앙 정렬 */
@@ -50,10 +51,10 @@
 <div class="container-xxl text-center" id="wrap">
     <div class="rectangle">
         <div class="item">
-            <h3>내정보변경</h3>
+            <h3><a href="/mypage/verify-password" id="edit">내정보변경</a></h3>
         </div>
         <div class="item">
-            <h3>활동기록</h3>
+            <h3><a href="/mypage/history" id="history">활동기록</a></h3>
         </div>
         <div class="item">
             <h3>장바구니</h3>
@@ -78,4 +79,5 @@
 
 <%@ include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
+
 </html>
