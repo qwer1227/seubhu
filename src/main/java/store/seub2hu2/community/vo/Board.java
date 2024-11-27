@@ -21,13 +21,14 @@ public class Board {
     private Date createdDate;
     private Date updatedDate;
     private int viewCnt;
-//    private Scrap scrap; // 구현할때 타입 변경
+    private int scrapCnt;
     private int like;
     private String deleted;
     private String keep;
-    private String report;
+    private Report report;
 //    private Hashtag hashtag;
     private List<Reply> reply;
+    private int replyCnt;
 
     public String getOriginalFileName() {
         if(uploadFile.getSaveName() == null){

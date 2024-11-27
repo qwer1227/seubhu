@@ -7,9 +7,7 @@ import org.apache.ibatis.type.Alias;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @ToString
-@Alias("Course")
 public class Course {
     // 코스 데이터
     private int no; // 코스 번호

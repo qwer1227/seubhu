@@ -11,9 +11,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @ToString
-@Alias("Review")
 public class Review {
     // 코스 리뷰 데이터
     private int no; // 리뷰 번호

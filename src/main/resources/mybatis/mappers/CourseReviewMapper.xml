@@ -104,9 +104,9 @@
     <!--
         void deleteReview(@Param("no") int no);
     -->
-    <delete id="deleteReview">
+    <update id="deleteReview">
         update COURSE_REVIEWS
         set is_deleted = 'Y'
         where review_no = #{no}
-    </delete>
+    </update>
 </mapper>
