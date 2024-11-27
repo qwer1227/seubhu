@@ -130,6 +130,9 @@
                 <td>${board.catName}</td>
                 <td id="content-title" style="text-align: start">
                   <a href="detail?no=${board.no}" style="text-decoration-line: none; color: black">${board.title}</a>
+                  <c:if test="${board.replyCnt gt 0}">
+                    <span class="badge rounded-pill text-bg-danger">${board.replyCnt}</span>
+                  </c:if>
                 </td>
                 <td>${board.user.nickname}</td>
                 <td>${board.like}</td>
@@ -163,9 +166,14 @@
       <div class="col d-flex justify-content-center">
       
       </div>
-      <div class="col d-flex justify-content-end">
-        <a href="form" type="button" class="btn btn-primary">글쓰기</a>
-      </div>
+      <security:authorize access="isAuthenticated()">
+        <security:authentication property="principal" var="loginUser"/>
+        <div class="col d-flex justify-content-end">
+          <c:if test="${not empty loginUser}">
+            <a href="form" type="button" class="btn btn-primary">글쓰기</a>
+          </c:if>
+        </div>
+      </security:authorize>
     </div>
     
     <!-- 페이징처리 -->

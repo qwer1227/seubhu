@@ -3,6 +3,7 @@ package store.seub2hu2.mypage.mapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import store.seub2hu2.mypage.dto.CommentRequest;
+import store.seub2hu2.mypage.dto.CommentResponse;
 import store.seub2hu2.mypage.vo.Post;
 import store.seub2hu2.mypage.vo.PostComment;
 import store.seub2hu2.user.vo.User;
@@ -15,12 +16,13 @@ public interface PostMapper {
 
     Post getPostByNo(@Param("no") int no);
     List<Post> getPostsByNo(@Param("no") int userNo);
-    int insertPost(@Param("post") Post post);
-    int insertPostImages(List<Map<String, Object>> images);
-    int updatePost(@Param("post") Post post);
-    int deletePost(@Param("no") int postNo);
-    int deletePostImagesByPostNo(@Param("no") int imageNo);
-    int insertComment(@Param("comment") CommentRequest commentRequest);
+    void insertPost(@Param("post") Post post);
+    void insertPostImages(List<Map<String, Object>> images);
+    void updatePost(@Param("post") Post post);
+    void deletePost(@Param("no") int postNo);
+    void deletePostImagesByPostNo(@Param("no") int imageNo);
+    void insertComment(@Param("comment") PostComment postComment);
     // 사용자 ID로 사용자 조회
     String findByUserNo(@Param("no") int userNo);
+    List<CommentResponse> getCommentsByPostNo(@Param("postNo") int postNo);
 }

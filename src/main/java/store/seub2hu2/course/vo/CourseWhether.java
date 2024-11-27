@@ -8,9 +8,7 @@ import store.seub2hu2.user.vo.User;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @ToString
-@Alias("CourseWhether")
 public class CourseWhether {
     // 코스 도전 및 성공 여부
     private String isRegister; // 코스 도전 등록 여부

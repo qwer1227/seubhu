@@ -10,7 +10,6 @@
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
 <div class="container-xxl text-center" id="wrap">
     <%-- 코스 상세 정보 --%>
-    <%-- 요청 파라미터 정보 : no --%>
     <div class="row">
         <div class="col-5">
             <table class="table table-bordered">
@@ -36,10 +35,21 @@
                 </tr>
                 </tbody>
             </table>
-            <button type="button" class="btn btn-primary">
-                <i class="bi bi-hand-thumbs-up"></i> 좋아요!
-            </button>
+            <%-- 좋아요! 버튼을 클릭하면, 좋아요 수가 증가하거나 감소한다. --%>
+            <sec:authorize access="isAuthenticated()">
+                <c:if test="${isLike eq true}">
+                    <a href="controlLikeCount?courseNo=${course.no }" class="btn btn-primary ${isSuccess ? "" : "disabled"}">
+                        <i class="bi bi-hand-thumbs-up">좋아요!</i>
+                    </a>
+                </c:if>
+                <c:if test="${isLike eq false}">
+                    <a href="controlLikeCount?courseNo=${course.no }" class="btn btn-outline-primary ${isSuccess ? "" : "disabled"}">
+                        <i class="bi bi-hand-thumbs-up">좋아요!</i>
+                    </a>
+                </c:if>
+            </sec:authorize>
             <span>좋아요 수 : ${course.likeCnt}개</span>
+            <div>(코스 완주자만 좋아요를 클릭할 수 있습니다!)</div>
         </div>
         <div class="col-1"></div> <%-- 빈칸 --%>
         <div class="col-6">
@@ -60,10 +70,10 @@
         <div class="card-header">
             코스 리뷰
             <div class="text-end">
-                <%-- <sec:authorize access="isAuthenticated()"> --%>
-                    <%-- <sec:authentication property="principal" var="loginUser" /> --%>
-                    <button class="btn btn-primary" onclick="openReviewFormModal(25)">리뷰 작성</button> <%-- ${loginUser.no} --%>
-                <%-- </sec:authorize> --%>
+                 <sec:authorize access="isAuthenticated()">
+                     <sec:authentication property="principal" var="loginUser" />
+                     <button class="btn btn-primary" onclick="openReviewFormModal(${loginUser.no})">리뷰 작성</button>
+                 </sec:authorize>
             </div>
         </div>
         <div class="card-body">
@@ -120,7 +130,8 @@
     // 코스 리뷰 등록 Modal창을 연다.
     async function openReviewFormModal(userNo) {
         // 1. 코스 완주를 성공한 사용자가 아니라면, 경고 메시지를 출력한다.
-        let response = await fetch("/course/check-success/" + userNo);
+        let courseNo = document.querySelector("input[name=courseNo]").value;
+        let response = await fetch("/course/check-success/" + userNo + "/" + courseNo);
         let result = await response.json();
 
         if (result.data === "fail") {
@@ -191,14 +202,12 @@
     function appendReview(review) {
         // 1. 리뷰를 화면에 표시한다.
         let content = `
-            <input type="hidden" name="reviewNo" value="\${review.no}">
 	        <div class="card mb-3" id="review-\${review.no}">
 	            <div class="card-header">
 	                <span>\${review.title}</span>
 	                <span class="float-end">
 	                    <small>\${review.user.nickname}</small>
 	                    <small>\${review.createdDate}</small>
-                        <button class="btn btn-primary">좋아요</button> <small>좋아요 수: \${review.likeCnt}</small>
 	                </span>
 	            </div>
 	            <div class="card-body">
@@ -232,10 +241,18 @@
         // 1. 리뷰 번호를 서버에 보낸다.
         let response = await fetch("/course/deleteReview/" + reviewNo);
 
-        // 2. 요청 처리 성공 확인 후, 리뷰를 삭제한다.
+        // 2. 로그인한 사용자와 리뷰 작성자가 동일한 지 확인 후, 리뷰를 삭제한다.
+        let result = await response.json();
+        let status = result.status;
+
         if (response.ok) {
-            let div = document.querySelector("#review-" + reviewNo);
-            div.remove();
+            if (status === 500) {
+                let message = result.message;
+                alert(message);
+            } else {
+                let div = document.querySelector("#review-" + reviewNo);
+                div.remove();
+            }
         } else {
             alert("로그인한 해당 리뷰 작성자만 삭제 가능합니다.");
         }

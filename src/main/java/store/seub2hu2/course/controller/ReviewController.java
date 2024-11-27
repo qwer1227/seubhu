@@ -6,6 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import store.seub2hu2.course.dto.AddReviewForm;
+import store.seub2hu2.course.exception.CourseReviewException;
 import store.seub2hu2.course.service.ReviewService;
 import store.seub2hu2.course.vo.Review;
 import store.seub2hu2.security.user.LoginUser;
@@ -44,8 +45,12 @@ public class ReviewController {
     @GetMapping("/deleteReview/{no}")
     public ResponseEntity<RestResponseDto<String>> deleteReview(@PathVariable("no") int reviewNo,
                                                                 @AuthenticationPrincipal LoginUser loginUser) {
-        // 1. 리뷰를 삭제한다.
-        reviewService.deleteReview(reviewNo, loginUser.getNo());
+        // 1. 로그인한 사용자와 리뷰 작성자가 동일하면 리뷰를 삭제한다.
+        try {
+            reviewService.deleteReview(reviewNo, loginUser.getNo());
+        } catch (CourseReviewException ex) {
+            return ResponseEntity.ok(RestResponseDto.fail(ex.getMessage()));
+        }
 
         // 2. 응답 데이터를 반환한다.
         return ResponseEntity.ok(RestResponseDto.success("review deleted"));

@@ -1,18 +1,16 @@
 package store.seub2hu2.product.vo;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-@AllArgsConstructor
+@ToString
 @NoArgsConstructor
+@AllArgsConstructor
 @Setter
 @Getter
 public class Color {
 
-    private int no;
-    private String name;
+    private int no; // 색상 번호
+    private String name; // 색상명
     private String img;
-    private Product product;
+    private Product product; // 상품 객체
 }
