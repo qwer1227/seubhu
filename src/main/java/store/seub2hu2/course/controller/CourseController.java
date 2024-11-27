@@ -92,4 +92,9 @@ public class CourseController {
         // 2. 좋아요 클릭 여부에 관한 정보를 가져온다.
         return "redirect:detail?no=" + courseNo;
     }
+
+    @GetMapping("")
+    public String courseRank() {
+        return "course/course-ranking";
+    }
 }
