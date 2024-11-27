@@ -1,7 +1,6 @@
 package store.seub2hu2.community.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.tags.shaded.org.apache.bcel.generic.IF_ACMPEQ;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -11,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import store.seub2hu2.community.dto.BoardForm;
 import store.seub2hu2.community.exception.CommunityException;
 import store.seub2hu2.community.mapper.BoardMapper;
-import store.seub2hu2.community.mapper.BoardUploadMapper;
+import store.seub2hu2.community.mapper.UploadMapper;
 import store.seub2hu2.community.mapper.ReplyMapper;
 import store.seub2hu2.community.vo.Board;
 import store.seub2hu2.community.vo.Reply;
@@ -22,7 +21,6 @@ import store.seub2hu2.util.FileUtils;
 import store.seub2hu2.util.ListDto;
 import store.seub2hu2.util.Pagination;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -31,14 +29,15 @@ import java.util.Map;
 @Transactional
 public class BoardService {
 
+    @Value("${upload.directory.community}")
+    private String saveDirectory;
+
     @Autowired
     private BoardMapper boardMapper;
 
     @Autowired
-    private BoardUploadMapper boardUploadMapper;
+    private UploadMapper uploadMapper;
 
-    @Value("${upload.directory.community}")
-    private String saveDirectory;
     @Autowired
     private ReplyMapper replyMapper;
 
@@ -78,11 +77,11 @@ public class BoardService {
         // boardMapper.insertBoard()를 통해 board_no를 얻은 후에 실행해야 함
         if (board.getUploadFile() != null) {
             UploadFile uploadFile = board.getUploadFile();
-            uploadFile.setBoardNo(board.getNo());
+            uploadFile.setNo(board.getNo());
             uploadFile.setSaveName(board.getUploadFile().getSaveName());
             uploadFile.setOriginalName(board.getOriginalFileName());
             // UploadFile 테이블에 저장
-            boardUploadMapper.insertBoardFile(uploadFile);
+            uploadMapper.insertBoardFile(uploadFile);
         }
 
         return board;
@@ -110,7 +109,7 @@ public class BoardService {
 
     public Board getBoardDetail(int boardNo) {
         Board board = boardMapper.getBoardDetailByNo(boardNo);
-        UploadFile uploadFile = boardUploadMapper.getFileByBoardNo(boardNo);
+        UploadFile uploadFile = uploadMapper.getFileByBoardNo(boardNo);
         List<Reply> reply = replyMapper.getRepliesByBoardNo(boardNo);
 
         if (board == null) {
@@ -141,11 +140,11 @@ public class BoardService {
         // 수정할 첨부파일이 있으면,
         if (!multipartFile.isEmpty()) {
             // 기존 파일 정보를 조회
-            UploadFile prevFile = boardUploadMapper.getFileByBoardNo(savedBoard.getNo());
+            UploadFile prevFile = uploadMapper.getFileByBoardNo(savedBoard.getNo());
             // 기존 파일 정보가 존재하면 기존 파일 삭제
             if (prevFile != null) {
                 prevFile.setDeleted("Y");
-                boardUploadMapper.updateBoardFile(prevFile);
+                uploadMapper.updateBoardFile(prevFile);
             }
 
             // 신규파일 정보를 조회하여 BOARD_UPLOADFILES 테이블에 저장
@@ -156,10 +155,10 @@ public class BoardService {
             UploadFile uploadFile = new UploadFile();
             uploadFile.setOriginalName(originalFilename);
             uploadFile.setSaveName(filename);
-            uploadFile.setBoardNo(savedBoard.getNo());
+            uploadFile.setNo(savedBoard.getNo());
             savedBoard.setUploadFile(uploadFile);
 
-            boardUploadMapper.insertBoardFile(uploadFile);
+            uploadMapper.insertBoardFile(uploadFile);
         }
 
         // 수정한 게시글 내용을 BOARDS 테이블에 저장
@@ -174,11 +173,11 @@ public class BoardService {
     }
 
     public void deleteBoardFile(int boardNo, int fileNo) {
-        UploadFile uploadFile = boardUploadMapper.getFileByBoardNo(boardNo);
+        UploadFile uploadFile = uploadMapper.getFileByBoardNo(boardNo);
         uploadFile.setNo(fileNo);
         uploadFile.setDeleted("Y");
 
-        boardUploadMapper.updateBoardFile(uploadFile);
+        uploadMapper.updateBoardFile(uploadFile);
     }
 
     public int getCheckLike(int boardNo
