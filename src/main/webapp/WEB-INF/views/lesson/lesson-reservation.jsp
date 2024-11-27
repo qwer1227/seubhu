@@ -5,9 +5,6 @@
 <html lang="ko">
 <head>
     <%@include file="/WEB-INF/views/common/common.jsp" %>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/locales/bootstrap-datepicker.ko.min.js"
-            integrity="sha512-L4qpL1ZotXZLLe8Oo0ZyHrj/SweV7CieswUODAAPN/tnqN3PA1P+4qPu5vIryNor6HQ5o22NujIcAZIfyVXwbQ=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
         .datepicker td, .datepicker th {
             width: 2.5rem;
@@ -29,7 +26,7 @@
         </div>
     </div>
     <form form="condition" method="get" action="/lesson/reservation">
-        <input type="hidden" name="userNo" value="11">
+        <input type="hidden" name="userNo" value="29">
         <div class="row mb-3">
             <div class="col-1">
                 <label for="subject">과목</label>
@@ -51,11 +48,11 @@
             </div>
             <div class="col-2">
                 <label for="startDate">시작</label>
-                <input type="date" id='startDate' name="startDate" class="form-select">
+                <input type="date" id='startDate' name="start" class="form-select">
             </div>
             <div class="col-2">
                 <label for="endDate">종료</label>
-                <input type="date" id="endDate" name="startDate" class="form-select">
+                <input type="date" id="endDate" name="end" class="form-select">
             </div>
             <div class="col text-end">
                 <label for="searchCondition">검색조건</label>
@@ -102,8 +99,8 @@
                     <td>${reservation.lesson.lecturer.name}</td>
                     <td><fmt:formatNumber value="${reservation.lesson.price}" pattern="#,###"/></td>
                     <td>${reservation.lesson.status}</td>
-                    <td><fmt:formatDate value="${reservation.reservationCreatedDate}" pattern="yyyy-MM-dd"/></td>
-                    <td><a href="/pay/cancel" class="btn btn-danger">취소</a></td>
+                    <td>${reservation.reservationCreatedDate}</td>
+                    <td><a href="/pay/cancel?reservationNo=" + ${reservation.payment.no} class="btn btn-danger">취소</a></td>
                 </tr>
             </c:forEach>
         </table>
@@ -111,17 +108,6 @@
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script>
-    $(function () {
-        $('.datepicker').datepicker({
-            clearBtn: true,
-            format: "dd/mm/yyyy"
-        });
-
-        $('#reservationDate').on('change', function () {
-            var pickedDate = $('input').val();
-            $('#pickedDate').html(pickedDate);
-        });
-    });
 </script>
 </body>
 </html>

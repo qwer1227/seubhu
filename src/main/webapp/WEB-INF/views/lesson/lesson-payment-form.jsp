@@ -75,9 +75,10 @@
             let data = {
                 lessonNo: ${lessonDto.lessonNo},
                 title: '${lessonDto.title}',    // 카카오페이에 보낼 대표 상품명
-                price: ${lessonDto.price},
+                totalAmount: ${lessonDto.price},
                 quantity: 1, // 총 개수
-                userNo: ${lessonDto.userNo}
+                userNo: 29,
+                type: "레슨"
             };
 
             $.ajax({

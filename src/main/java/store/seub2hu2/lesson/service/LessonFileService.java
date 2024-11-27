@@ -23,7 +23,6 @@ public class LessonFileService {
     @Value("${file.upload-lesson-dir}")
     private String saveDirectory;
 
-    private final LessonMapper lessonMapper;
     private final LessonFileMapper lessonFileMapper;
 
     public void saveLessonImages(Integer lessonNo, MultipartFile thumbnail, MultipartFile mainImage)  {

@@ -93,13 +93,26 @@ public class LessonController {
                               @ModelAttribute("condition") ReservationSearchCondition condition,
                               Model model) {
 
-        log.info("Start Date: {}", condition.getStartDate());
-        log.info("End Date: {}", condition.getEndDate());
-        log.info("searchCondition: {}", condition.getSearchCondition());
-        List<LessonReservation> lessonReservations = lessonService.searchLessonReservationList(condition, userNo);
+        if (condition.getStart() == null || condition.getEnd() == null) {
+            LocalDateTime now = LocalDateTime.now();
+
+            if (condition.getEnd() == null) {
+                condition.setEnd(now);
+            }
+            if (condition.getStart() == null) {
+                condition.setStart(now.minusMonths(1));
+            }
+        }
+
+        log.info("Start Date: {}", condition.getStart());
+        log.info("End Date: {}", condition.getEnd());
+        log.info("Search Condition: {}", condition.getSearchCondition());
+
+        List<LessonReservation> lessonReservations = lessonReservationService.searchLessonReservationList(condition, userNo);
         model.addAttribute("lessonReservations", lessonReservations);
         return "lesson/lesson-reservation";
     }
+
 
     @GetMapping("/reservation/detail")
     public String reservationDetail(@RequestParam("reservationNo") int reservationNo,

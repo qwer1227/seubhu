@@ -4,6 +4,8 @@ import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 @NoArgsConstructor
@@ -17,9 +19,18 @@ public class ReservationSearchCondition {
     private String lessonStatus;
     private String lessonSubject;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date startDate;
+    private LocalDateTime start;
+
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date endDate;
+    private LocalDateTime end;
+
+    public String getStartDate() {
+        return LocalDateTime.from(start).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    }
+
+    public String getEndDate() {
+        return LocalDateTime.from(end).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    }
 
 
 }

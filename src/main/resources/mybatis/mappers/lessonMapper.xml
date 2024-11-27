@@ -67,22 +67,7 @@
                             ON
                                 L.USER_NO = U.USER_NO
         WHERE LESSON_NO = #{no}
-            FOR UPDATE
-    </select>
-
-    <select id="getLessonByPayNo" resultType="store.seub2hu2.lesson.vo.Lesson">
-        select L.LESSON_TITLE      as title
-             , L.LESSON_PRICE      as price
-             , L.LESSON_START_DATE as start
-             , L.LESSON_SUBJECT    as subject
-             , L.LESSON_END_DATE as 'end'
-             , U.USER_NAME as 'lesson.lecturer.name'
-        from LESSON_RESERVATIONS R
-                 INNER JOIN LESSONS L
-                            ON R.LESSON_NO = L.LESSON_NO
-                 INNER JOIN USERS U
-                            ON L.USER_NO = U.USER_NO
-        where R.PAY_NO = #{payNo}
+        FOR UPDATE
     </select>
 
     <!-- 레슨 추가하기 -->

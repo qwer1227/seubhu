@@ -76,25 +76,4 @@ public class LessonService {
     }
 
 
-    public List<LessonReservation> searchLessonReservationList(ReservationSearchCondition condition, int userNo) {
-        // startDate, endDate 기본값 설정 (현재 날짜 기준 한 달)
-        if (condition.getStartDate() == null || condition.getEndDate() == null) {
-            Calendar calendar = Calendar.getInstance();
-
-            // endDate 기본값: 현재 날짜
-            if (condition.getEndDate() == null) {
-                condition.setEndDate(calendar.getTime());
-            }
-
-            // startDate 기본값: 한 달 전
-            if (condition.getStartDate() == null) {
-                calendar.add(Calendar.MONTH, -1);
-                condition.setStartDate(calendar.getTime());
-            }
-        }
-
-        // MyBatis 매퍼 호출
-        return lessonReservationMapper.getReservationByCondition(condition, userNo);
-    }
-
 }
