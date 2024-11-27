@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import store.seub2hu2.lesson.dto.*;
 import store.seub2hu2.lesson.service.KakaoPayService;
 import store.seub2hu2.lesson.service.LessonReservationService;
-import store.seub2hu2.payment.SessionUtils;
+import store.seub2hu2.util.SessionUtils;
 
 @Slf4j
 @Controller

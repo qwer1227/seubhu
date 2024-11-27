@@ -1,0 +1,16 @@
+package store.seub2hu2.chatbot.model;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class TrainingModel {
+    private String questionId;
+    private String[] questionList;
+    private String answer;
+}
