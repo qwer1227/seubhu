@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import store.seub2hu2.admin.dto.ColorThumbnailForm;
 import store.seub2hu2.admin.dto.CourseRegisterForm;
 import store.seub2hu2.admin.dto.ProductRegisterForm;
 import store.seub2hu2.admin.service.AdminService;
@@ -20,6 +21,7 @@ import store.seub2hu2.product.dto.*;
 import store.seub2hu2.product.service.ProductService;
 import store.seub2hu2.product.vo.Category;
 import store.seub2hu2.product.vo.Color;
+import store.seub2hu2.product.vo.Image;
 import store.seub2hu2.product.vo.Product;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.ListDto;
@@ -232,6 +234,7 @@ public class AdminController {
 
     @GetMapping("/register-editform")
     public String registerEditForm(@RequestParam("no") int no,
+                                   @RequestParam(value = "colorNo", required = false) Integer colorNo,
                                    Model model) {
 
         Product product = adminService.getProductNo(no);
@@ -240,6 +243,7 @@ public class AdminController {
 
         model.addAttribute("colors", colors);
         model.addAttribute("product", product);
+
 
         return "admin/product-edit-form";
     }
@@ -265,6 +269,45 @@ public class AdminController {
         return "admin/product-size-register-form";
     }
 
+    @GetMapping("/image-editform")
+    public String getImageEditForm(@RequestParam("no") int no,
+                                   @RequestParam("colorNo") Integer colorNo,
+                                Model model) {
+
+        Product product = adminService.getProductNo(no);
+
+        List<Color> colors = adminService.getColorName(no);
+
+        Color color = adminService.getColorNo(colorNo);
+
+        List<Image> images = adminService.getImageByColorNo(colorNo);
+        model.addAttribute("images", images);
+
+        model.addAttribute("color", color);
+        model.addAttribute("colors", colors);
+        model.addAttribute("product", product);
+
+        return "admin/product-image-edit-form";
+    }
+
+    @PostMapping("/image-editform")
+    public String imageEditForm(@RequestParam("no") int no,
+                                @RequestParam("colorNo") Integer colorNo,
+                                Model model) {
+
+        Product product = adminService.getProductNo(no);
+        List<Color> colors = adminService.getColorName(no);
+
+        List<Image> images = adminService.getImageByColorNo(colorNo);
+
+        model.addAttribute("images", images);
+
+        model.addAttribute("colors", colors);
+        model.addAttribute("product", product);
+
+        return "admin/product-image-edit-form";
+    }
+
     @GetMapping("/register-image")
     public String getRegisterImage(@RequestParam("no") int no,
                                 Model model) {
@@ -280,10 +323,13 @@ public class AdminController {
     }
 
     @PostMapping("/register-image")
-    public String registerImage(@RequestParam("no") int no,
+    public String registerImage(@ModelAttribute ColorThumbnailForm form,
+                                @RequestParam("image[]") List<String> links,  // 이미지 URL 배열로 받기
                                 Model model) {
 
-        return "admin/product-image-register-form";
+        adminService.addThumb(form, links);
+
+        return "redirect:/admin/product-detail?no=" + form.getProdNo() + "&colorNo=" + form.getColorNo();
     }
 
     @GetMapping("/register-color")
@@ -337,6 +383,10 @@ public class AdminController {
 
         ProdImagesDto prodImagesDto = productService.getProdImagesByColorNo(colorNo);
         model.addAttribute("prodImagesDto", prodImagesDto);
+
+        Color color = adminService.getColorNo(colorNo);
+
+        model.addAttribute("color", color);
 
         return "admin/product-admin-detail";
     }

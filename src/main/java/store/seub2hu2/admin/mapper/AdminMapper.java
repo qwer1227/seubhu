@@ -7,6 +7,7 @@ import store.seub2hu2.course.vo.Region;
 import store.seub2hu2.lesson.vo.Lesson;
 import store.seub2hu2.product.vo.Category;
 import store.seub2hu2.product.vo.Color;
+import store.seub2hu2.product.vo.Image;
 import store.seub2hu2.product.vo.Product;
 import store.seub2hu2.user.vo.User;
 
@@ -68,4 +69,10 @@ public interface AdminMapper {
     void updateProduct(Product product);
 
     List<Color> colorNames(int no);
+
+    void insertImage(Image img);
+
+    List<Image> getImageByColorNum(@Param("colorNo")Integer colorNo);
+
+    Color getColorNoByNo(int colorNo);
 }

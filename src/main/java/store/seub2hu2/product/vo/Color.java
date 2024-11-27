@@ -12,7 +12,7 @@ import lombok.Setter;
 public class Color {
 
     private int no;
-    private String color;
+    private String name;
     private String img;
     private Product product;
 }

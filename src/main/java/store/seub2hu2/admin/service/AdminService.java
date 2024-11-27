@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import store.seub2hu2.admin.dto.ColorThumbnailForm;
 import store.seub2hu2.admin.dto.CourseRegisterForm;
 import store.seub2hu2.admin.dto.ProductRegisterForm;
 import store.seub2hu2.admin.mapper.AdminMapper;
@@ -16,6 +17,7 @@ import store.seub2hu2.lesson.mapper.LessonMapper;
 import store.seub2hu2.lesson.vo.Lesson;
 import store.seub2hu2.product.vo.Category;
 import store.seub2hu2.product.vo.Color;
+import store.seub2hu2.product.vo.Image;
 import store.seub2hu2.product.vo.Product;
 import store.seub2hu2.user.mapper.UserMapper;
 import store.seub2hu2.user.vo.User;
@@ -234,5 +236,32 @@ public class AdminService {
 
     public List<Color> getColorName(int no) {
         return adminMapper.colorNames(no);
+    }
+
+    public void addThumb(ColorThumbnailForm form, List<String> links) {
+
+
+        int index = 0;
+        for (String link: links) {
+
+            Image img = new Image();
+            img.setProdNo(form.getProdNo());
+            img.setColorNo(form.getColorNo());
+            img.setUrl(link);
+
+            System.out.println(img);
+
+            adminMapper.insertImage(img);
+        }
+
+    }
+
+    public List<Image> getImageByColorNo(Integer colorNo) {
+
+        return adminMapper.getImageByColorNum(colorNo);
+    }
+
+    public Color getColorNo(int colorNo) {
+        return adminMapper.getColorNoByNo(colorNo);
     }
 }
