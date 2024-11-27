@@ -310,12 +310,14 @@
 
     // 장바구니에 전달
     $("#cart-add").click(function () {
+        alert("장바구니에 담겼습니다.");
         $("#form-cart").attr("action", "/mypage/cart");
         $("#form-cart").trigger("submit");
     });
 
     // 위시리스트에 전달
     $("#wish-add").click(function () {
+        alert("위시리스트에 담겼습니다.");
         $("#form-cart").attr("action", "/mypage/wish");
         $("#form-cart").trigger("submit");
     });

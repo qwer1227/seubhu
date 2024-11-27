@@ -69,14 +69,14 @@ public class MyPageController {
             , @RequestParam("colorNo") List<Integer> colorNo
             , @AuthenticationPrincipal LoginUser loginUser) {
 
+        // CartRegisterForm
         List<CartRegisterForm> cartRegisterForms = new ArrayList<>();
+
         for (int i = 0; i < sizeNo.size(); i++) {
             int size = sizeNo.get(i);
             int prod = prodNo.get(i);
             int color = colorNo.get(i);
             int amount = stock.get(i);
-
-
 
             CartRegisterForm cartRegisterForm = new CartRegisterForm();
             cartRegisterForm.setSizeNo(size);
@@ -89,10 +89,6 @@ public class MyPageController {
 
             cartRegisterForms.add(cartRegisterForm);
         }
-
-
-
-
 
         cartService.addCart(cartRegisterForms);
 
