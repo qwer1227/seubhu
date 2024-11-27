@@ -7,9 +7,7 @@ import org.apache.ibatis.type.Alias;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @ToString
-@Alias("Region")
 public class Region {
     // 코스 지역 데이터
     private int no; // 지역 번호

@@ -7,7 +7,6 @@ import org.springframework.web.multipart.MultipartFile;
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString
 public class BoardForm {
     private int no;
     private String catName;

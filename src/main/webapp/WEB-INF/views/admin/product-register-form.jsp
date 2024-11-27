@@ -84,35 +84,42 @@
                   </div>
                 </div>
                 <div class="row row-cols-1 p-3">
-                  <div class="col-2">
-                    <label for="category">카테고리</label>
-                    <select name="categoryNo" class="form-control" id="category" onchange="updateCategoryDetails()">
+                  <%--<div class="col-2">
+                    <label for="topCategory">상위 카테고리</label>
+                    <select name="topNo" class="form-control" id="topCategory" onchange="updateCategoryDetails()">
                       <option value="10">남성</option>
                       <option value="20">여성</option>
                       <option value="30">러닝용품</option>
                     </select>
-                  </div>
+                  </div>--%>
                   <div class="col-3">
-                    <label for="categoryDetail">카테고리 상세</label>
-                    <select name="categoryDetailNo" class="form-control" id="categoryDetail" onchange="updateSize()">
-                      <!-- 카테고리 상세 옵션이 JavaScript로 동적으로 설정됩니다. -->
+                    <label for="category">카테고리</label>
+                    <select name="categoryNo" class="form-control" id="category" <%--onchange="updateSize()"--%>>
+                      <option value="11">남성 로드러닝화</option>
+                      <option value="12">남성 상의</option>
+                      <option value="13">남성 하의</option>
+                      <option value="14">남성 아우터</option>
+                      <option value="21">여성 로드러닝화</option>
+                      <option value="22">여성 상의</option>
+                      <option value="23">여성 하의</option>
+                      <option value="24">여성 아우터</option>
                     </select>
                   </div>
                 </div>
-                <div class="row row-cols-1 p-3">
-                  <div class="col-2">
-                    <label for="size">사이즈</label>
-                    <select name="sizeNo" class="form-control" id="size">
-                      <!-- 사이즈 옵션이 JavaScript로 동적으로 설정됩니다. -->
-                    </select>
-                  </div>
-                </div>
-                <div class="row row-cols-1 p-3">
-                  <div class="col-2">
-                    <label for="color">색상</label>
-                    <input type="text" class="form-control" name="color" id="color">
-                  </div>
-                </div>
+<%--                <div class="row row-cols-1 p-3">--%>
+<%--                  <div class="col-2">--%>
+<%--                    <label for="size">사이즈</label>--%>
+<%--                    <select name="sizeNo" class="form-control" id="size">--%>
+<%--                      <!-- 사이즈 옵션이 JavaScript로 동적으로 설정됩니다. -->--%>
+<%--                    </select>--%>
+<%--                  </div>--%>
+<%--                </div>--%>
+<%--                <div class="row row-cols-1 p-3">--%>
+<%--                  <div class="col-2">--%>
+<%--                    <label for="color">색상</label>--%>
+<%--                    <input type="text" class="form-control" name="color" id="color">--%>
+<%--                  </div>--%>
+<%--                </div>--%>
                 <div class="row row-cols-1 p-3">
                   <div class="col-2 pb-3">
                     상품설명
@@ -122,15 +129,9 @@
                   </div>
                 </div>
                 <div class="row p-3 ">
-                  <div class="col-5">
-                    <label for="thumbnail">썸네일 이미지</label>
-                    <input type="file" class="form-control" name="thumbnail" id="thumbnail"/>
-                  </div>
-                </div>
-                <div class="row p-3 ">
-                  <div class="col-5">
-                    <label for="Image">상세 이미지</label>
-                    <input type="file" class="form-control" name="Image" id="Image"/>
+                  <div class="col-8">
+                    <label for="thumbnail">썸네일 이미지(url경로)</label>
+                    <input type="text" class="form-control" name="thumbnail" id="thumbnail"/>
                   </div>
                 </div>
                 <div class="row p-3">
@@ -270,19 +271,19 @@
   }
 
   function updateCategoryDetails() {
-    const category = document.getElementById("category").value; // 선택된 카테고리 값
-    const categoryDetail = document.getElementById("categoryDetail");
+    const topCategory = document.getElementById("topCategory").value; // 선택된 카테고리 값
+    const category = document.getElementById("category");
 
     // 기존 옵션 초기화
-    categoryDetail.innerHTML = "";
+    category.innerHTML = "";
 
     // 선택된 카테고리의 상세 옵션 추가
-    if (categoryDetails[category]) {
-      categoryDetails[category].forEach(detail => {
+    if (categoryDetails[topCategory]) {
+      categoryDetails[topCategory].forEach(detail => {
         const option = document.createElement("option");
         option.value = detail.value;
         option.textContent = detail.text;
-        categoryDetail.appendChild(option);
+        category.appendChild(option);
 
         updateSize();
       });
@@ -290,13 +291,13 @@
   }
 
   function updateSize() {
-    const categoryDetail = document.getElementById("categoryDetail").value;
+    const category = document.getElementById("category").value;
     const size = document.getElementById("size");
 
     size.innerHTML = "";
 
-    if (sizes[categoryDetail]) {
-      sizes[categoryDetail].forEach(detail => {
+    if (sizes[category]) {
+      sizes[category].forEach(detail => {
         const option = document.createElement("option");
         option.value = detail.value;
         option.textContent = detail.text;

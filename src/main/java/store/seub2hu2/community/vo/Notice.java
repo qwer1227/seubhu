@@ -18,7 +18,8 @@ public class Notice {
     private String content;
     private Date createdDate;
     private Date updatedDate;
-    private String first;
+    private boolean first;
     private String isDeleted;
     private int viewCnt;
+    private UploadFile upfile;
 }

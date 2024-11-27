@@ -14,10 +14,6 @@ public class ProductRegisterForm {
     private int price;
     private int brandNo;
     private int categoryNo;
-    private int categoryDetailNo;
-    private int sizeNo;
-    private String color;
     private String content;
-    private MultipartFile thumbnail;
-    private MultipartFile image;
+    private String thumbnail;
 }

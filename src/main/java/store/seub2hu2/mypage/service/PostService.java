@@ -4,11 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import store.seub2hu2.mypage.dto.CommentRequest;
+import store.seub2hu2.mypage.dto.CommentResponse;
 import store.seub2hu2.mypage.mapper.PostMapper;
 import store.seub2hu2.mypage.vo.Post;
 import store.seub2hu2.mypage.vo.PostComment;
 import store.seub2hu2.user.service.UserService;
-import store.seub2hu2.user.vo.User;
+
 
 import java.io.IOException;
 import java.util.*;
@@ -104,17 +105,18 @@ public class PostService {
         return true;
     }
 
-    public boolean commentInsert(int postNo, int userNo, String comment){
+    public boolean commentInsert(CommentRequest commentRequest, String username){
 
-        CommentRequest postComment = new CommentRequest();
-
-
-
+        PostComment postComment = new PostComment();
         // Post 번호 설정
-        postComment.setPostId(postNo);
-        postComment.setUserNo(userNo);
-        // 댓글 내용 설정
-        postComment.setPostComment(comment);
+        postComment.setCommentRequest(commentRequest);
+        postComment.setUserName(username);
+
+
+        if(commentRequest.getReplyToCommentNo() == null){
+            commentRequest.setReplyToCommentNo(0);
+        }
+
 
         postMapper.insertComment(postComment);
 
@@ -125,6 +127,11 @@ public class PostService {
         String userName = postMapper.findByUserNo(userNo);
 
         return userName;
+    }
+
+    public List<CommentResponse> getCommentsByPostNo(int postNo){
+        List<CommentResponse> comments = postMapper.getCommentsByPostNo(postNo);
+        return comments;
     }
 
     // 파일을 base64로 변환하는 메소드 (MIME 타입 포함)
@@ -140,6 +147,7 @@ public class PostService {
             throw new RuntimeException("파일을 base64로 변환하는 중 오류가 발생했습니다.", e);
         }
     }
+
 
 
 }

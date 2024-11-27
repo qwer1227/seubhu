@@ -1,23 +1,26 @@
 package store.seub2hu2.community.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.tags.shaded.org.apache.bcel.generic.IF_ACMPEQ;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import store.seub2hu2.community.dto.BoardForm;
 import store.seub2hu2.community.exception.CommunityException;
 import store.seub2hu2.community.mapper.BoardMapper;
-import store.seub2hu2.community.mapper.BoardUploadMapper;
+import store.seub2hu2.community.mapper.UploadMapper;
+import store.seub2hu2.community.mapper.ReplyMapper;
 import store.seub2hu2.community.vo.Board;
+import store.seub2hu2.community.vo.Reply;
 import store.seub2hu2.community.vo.UploadFile;
+import store.seub2hu2.security.user.LoginUser;
+import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.FileUtils;
 import store.seub2hu2.util.ListDto;
 import store.seub2hu2.util.Pagination;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -26,16 +29,20 @@ import java.util.Map;
 @Transactional
 public class BoardService {
 
+    @Value("${upload.directory.community}")
+    private String saveDirectory;
+
     @Autowired
     private BoardMapper boardMapper;
 
     @Autowired
-    private BoardUploadMapper boardUploadMapper;
+    private UploadMapper uploadMapper;
 
-    @Value("${upload.directory.community}")
-    private String saveDirectory;
+    @Autowired
+    private ReplyMapper replyMapper;
 
-    public void addNewBoard(BoardForm form) {
+    public Board addNewBoard(BoardForm form
+                , @AuthenticationPrincipal LoginUser loginUser) {
         // Board 객체를 생성하여 사용자가 입력한 제목과 내용을 저장한다.
         Board board = new Board();
         board.setNo(form.getNo());
@@ -43,8 +50,11 @@ public class BoardService {
         board.setTitle(form.getTitle());
         board.setContent(form.getContent());
 
-//        User user = User.builder().no(loginUser.getNo()).build();
-//        board.setUser(user);
+        User user = new User();
+        user.setNo(loginUser.getNo());
+        user.setNickname(loginUser.getNickname());
+        board.setUser(user);
+
         MultipartFile multipartFile = form.getUpfile();
 
         // 첨부파일이 있으면 실행
@@ -67,12 +77,14 @@ public class BoardService {
         // boardMapper.insertBoard()를 통해 board_no를 얻은 후에 실행해야 함
         if (board.getUploadFile() != null) {
             UploadFile uploadFile = board.getUploadFile();
-            uploadFile.setBoardNo(board.getNo());
+            uploadFile.setNo(board.getNo());
             uploadFile.setSaveName(board.getUploadFile().getSaveName());
             uploadFile.setOriginalName(board.getOriginalFileName());
             // UploadFile 테이블에 저장
-            boardUploadMapper.insertBoardFile(uploadFile);
+            uploadMapper.insertBoardFile(uploadFile);
         }
+
+        return board;
     }
 
     public ListDto<Board> getBoards(Map<String, Object> condition) {
@@ -97,8 +109,8 @@ public class BoardService {
 
     public Board getBoardDetail(int boardNo) {
         Board board = boardMapper.getBoardDetailByNo(boardNo);
-        UploadFile uploadFile = boardUploadMapper.getFileByBoardNo(boardNo);
-
+        UploadFile uploadFile = uploadMapper.getFileByBoardNo(boardNo);
+        List<Reply> reply = replyMapper.getRepliesByBoardNo(boardNo);
 
         if (board == null) {
             throw new CommunityException("존재하지 않는 게시글입니다.");
@@ -106,6 +118,13 @@ public class BoardService {
 
         board.setViewCnt(board.getViewCnt() + 1);
         board.setUploadFile(uploadFile);
+        board.setReply(reply);
+
+        User user = new User();
+        user.setNo(board.getUser().getNo());
+        user.setNickname(board.getUser().getNickname());
+        board.setUser(user);
+
         boardMapper.updateBoardCnt(board);
         return board;
     }
@@ -121,11 +140,11 @@ public class BoardService {
         // 수정할 첨부파일이 있으면,
         if (!multipartFile.isEmpty()) {
             // 기존 파일 정보를 조회
-            UploadFile prevFile = boardUploadMapper.getFileByBoardNo(savedBoard.getNo());
+            UploadFile prevFile = uploadMapper.getFileByBoardNo(savedBoard.getNo());
             // 기존 파일 정보가 존재하면 기존 파일 삭제
             if (prevFile != null) {
                 prevFile.setDeleted("Y");
-                boardUploadMapper.updateBoardFile(prevFile);
+                uploadMapper.updateBoardFile(prevFile);
             }
 
             // 신규파일 정보를 조회하여 BOARD_UPLOADFILES 테이블에 저장
@@ -136,10 +155,10 @@ public class BoardService {
             UploadFile uploadFile = new UploadFile();
             uploadFile.setOriginalName(originalFilename);
             uploadFile.setSaveName(filename);
-            uploadFile.setBoardNo(savedBoard.getNo());
+            uploadFile.setNo(savedBoard.getNo());
             savedBoard.setUploadFile(uploadFile);
 
-            boardUploadMapper.insertBoardFile(uploadFile);
+            uploadMapper.insertBoardFile(uploadFile);
         }
 
         // 수정한 게시글 내용을 BOARDS 테이블에 저장
@@ -154,18 +173,35 @@ public class BoardService {
     }
 
     public void deleteBoardFile(int boardNo, int fileNo) {
-        UploadFile uploadFile = boardUploadMapper.getFileByBoardNo(boardNo);
+        UploadFile uploadFile = uploadMapper.getFileByBoardNo(boardNo);
         uploadFile.setNo(fileNo);
         uploadFile.setDeleted("Y");
 
-        boardUploadMapper.updateBoardFile(uploadFile);
+        uploadMapper.updateBoardFile(uploadFile);
     }
 
-    public void updateBoardLikeCnt(int boardNo, int cnt){
-        Board board = boardMapper.getBoardDetailByNo(boardNo);
-        board.setNo(boardNo);
-        board.setLike(cnt);
+    public int getCheckLike(int boardNo
+                            , @AuthenticationPrincipal LoginUser loginUser) {
+         return boardMapper.hasUserLikedBoard(boardNo, loginUser.getNo());
+    }
 
-        boardMapper.updateBoardCnt(board);
+    public void updateBoardLike(int boardNo
+                            , @AuthenticationPrincipal LoginUser loginUser) {
+        boardMapper.insertLike(boardNo, loginUser.getNo());
+
+        Board board = boardMapper.getBoardDetailByNo(boardNo);
+        board.setLike((board.getLike() + 1));
+        board.setScrapCnt(board.getScrapCnt());
+        boardMapper.updateCnt(board);
+    }
+
+    public void deleteBoardLike(int boardNo
+                            , @AuthenticationPrincipal LoginUser loginUser) {
+        boardMapper.deleteLike(boardNo, loginUser.getNo());
+
+        Board board = boardMapper.getBoardDetailByNo(boardNo);
+        board.setLike((board.getLike() - 1));
+        board.setScrapCnt(board.getScrapCnt());
+        boardMapper.updateCnt(board);
     }
 }
