@@ -5,36 +5,41 @@
   <!-- void insertNotice(@Param("notice") Notice notice); -->
   <insert id="insertNotice">
     insert into NOTICES
-        (
-         notice_title
-          , notice_category
-          , notice_content
-          , notice_notice_first
-        )
+    (
+    notice_title
+    , notice_content
+    , notice_first
+    , notice_updated_date
+    <if test="notice.uploadFile != null">
+      , file_name
+    </if>
+    )
     values
-        (
-        #{title}
-          , #{category}
-          , #{content}
-          , #{first}
-        )
+    (
+    #{notice.title}
+    , #{notice.content}
+    , #{notice.first}
+    , null
+    <if test="notice.uploadFile != null">
+      , #{notice.uploadFile.originalName}
+    </if>
+    )
+    <selectKey resultType="int" keyProperty="notice.no" keyColumn="notice_no" order="AFTER">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
   </insert>
 
   <!-- List<Notice> getNotices(@Param("condition") Map<String, String> condition); -->
   <select id="getNotices" resultType="store.seub2hu2.community.vo.Notice">
-    select
-        *
-    from (
-           select
-             row_number() over(order by notice_created_date desc) rn
-                , notice_category           as category
-                , notice_title              as title
-                , notice_content            as content
-                , notice_created_date       as createdDate
-                , notice_first              as `first`
-                , notice_cnt                as viewCnt
-           from NOTICES
-         ) notice
+    select *
+    from (select row_number()           over(order by notice_created_date desc) rn
+                , notice_title as title
+               , notice_content      as content
+               , notice_created_date as createdDate
+               , notice_first        as `first`
+               , notice_cnt          as viewCnt
+          from NOTICES
+          where is_deleted = 'N') notice
     where notice.rn between #{condition.begin} and #{condition.end}
   </select>
 

@@ -50,16 +50,16 @@ public class NoticeService {
             uploadFile.setOriginalName(originalFilename);
             uploadFile.setSaveName(filename);
 
-            notice.setUpfile(uploadFile);
+            notice.setUploadFile(uploadFile);
         }
 
         noticeMapper.insertNotice(notice);
 
-        if (notice.getUpfile() != null) {
-            UploadFile uploadFile = notice.getUpfile();
+        if (notice.getUploadFile() != null) {
+            UploadFile uploadFile = notice.getUploadFile();
             uploadFile.setNo(notice.getNo());
-            uploadFile.setSaveName(notice.getUpfile().getSaveName());
-            uploadFile.setOriginalName(notice.getUpfile().getOriginalName());
+            uploadFile.setSaveName(notice.getUploadFile().getSaveName());
+            uploadFile.setOriginalName(notice.getUploadFile().getOriginalName());
 
             uploadMapper.insertNoticeFile(uploadFile);
         }

@@ -20,5 +20,5 @@ public class Notice {
     private boolean first;
     private String isDeleted;
     private int viewCnt;
-    private UploadFile upfile;
+    private UploadFile uploadFile;
 }

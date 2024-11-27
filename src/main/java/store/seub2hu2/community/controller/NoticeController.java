@@ -1,14 +1,18 @@
 package store.seub2hu2.community.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import store.seub2hu2.community.dto.NoticeForm;
 import store.seub2hu2.community.service.NoticeService;
 import store.seub2hu2.community.vo.Notice;
+import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.util.ListDto;
 
 import java.util.HashMap;
@@ -49,6 +53,14 @@ public class NoticeController {
     @GetMapping("/form")
     public String form() {
         return "community/notice/form";
+    }
+
+    @PostMapping("/register")
+    public String register(NoticeForm form
+                        , @AuthenticationPrincipal LoginUser loginUser) {
+
+        noticeService.addNewNotice(form, loginUser);
+        return "community/notice/main";
     }
 
     @GetMapping("/detail")
