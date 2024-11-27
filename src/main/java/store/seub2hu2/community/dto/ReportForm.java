@@ -11,9 +11,7 @@ import store.seub2hu2.user.vo.User;
 @Getter
 @Setter
 public class ReportForm {
-    private int userNo;     // 신고자
     private String type;
-    private int boardNo;
-    private int replyNo;
+    private int no;
     private String reason;
 }
