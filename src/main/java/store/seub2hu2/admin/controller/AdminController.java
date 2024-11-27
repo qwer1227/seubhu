@@ -269,8 +269,12 @@ public class AdminController {
     public String getRegisterImage(@RequestParam("no") int no,
                                 Model model) {
 
-        ProdDetailDto prodDetailDto = productService.getProductByNo(no);
-        model.addAttribute("prodDetailDto", prodDetailDto);
+
+        Product product = adminService.getProductNo(no);
+        List<Color> colors = adminService.getColorName(no);
+
+        model.addAttribute("colors", colors);
+        model.addAttribute("product", product);
 
         return "admin/product-image-register-form";
     }
@@ -278,9 +282,6 @@ public class AdminController {
     @PostMapping("/register-image")
     public String registerImage(@RequestParam("no") int no,
                                 Model model) {
-
-        ProdDetailDto prodDetailDto = productService.getProductByNo(no);
-        model.addAttribute("prodDetailDto", prodDetailDto);
 
         return "admin/product-image-register-form";
     }

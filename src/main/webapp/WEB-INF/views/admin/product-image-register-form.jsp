@@ -58,13 +58,27 @@
           <div class="row mb-3">
             <div class="col-6">
               <form class="border bg-light p-3"
-                    method="post" action="/admin/register-color"
+                    method="post" action="/admin/register-image"
                     enctype="multipart/form-data">
                 <div class="form-group mb-3 col-4">
-                  <label class="form-label">상품번호: ${prodDetailDto.no}</label>
+                  <label class="form-label">상품번호:</label>
+                  <input type="text" class="form-control" name="no" value="${product.no}"/>
                 </div>
                 <div class="form-group mb-3 col">
-                  <label class="form-label">상품명: ${prodDetailDto.name}</label>
+                  <label class="form-label">상품명:</label>
+                  <input type="text" class="form-control" name="name" value="${product.name}"/>
+                </div>
+                <div class="form-group mb-3 col-4">
+                  <label class="form-label">색상 선택</label>
+                  <select name="colorNum" class="form-control" id="colorNum">
+                      <c:forEach var="c" items="${colors}">
+                          <option value="${c.no}">${c.color}</option>
+                      </c:forEach>
+                  </select>
+                </div>
+                <div class="form-group col">
+                  <label class="form-label mb-3">대표 이미지</label>
+                  <input type="text" class="form-control" name="image"/>
                 </div>
                 <div class="form-group col">
                   <label class="form-label mb-3">상품 이미지1</label>
@@ -88,6 +102,14 @@
                 </div>
                 <div class="form-group col">
                   <label class="form-label mb-3">상품 이미지6</label>
+                  <input type="text" class="form-control" name="image"/>
+                </div>
+                <div class="form-group col">
+                  <label class="form-label mb-3">상품 이미지7</label>
+                  <input type="text" class="form-control" name="image"/>
+                </div>
+                <div class="form-group col">
+                  <label class="form-label mb-3">상품 이미지8</label>
                   <input type="text" class="form-control" name="image"/>
                 </div>
                 <div class="text-end" style="text-align: right">
