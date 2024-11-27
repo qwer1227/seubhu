@@ -251,11 +251,11 @@
                                 <button class="btn btn-outline-primary btn-sm ms-2">좋아요 (${comment.likes})</button>  <!-- 좋아요 버튼 -->
                                 <button class="btn btn-outline-secondary btn-sm ms-2" onclick="replyToComment(${comment.commentNo}, '${comment.commentUserName}')">답글 달기</button>  <!-- 답글 달기 버튼 -->
 
-                                <!-- 댓글 작성자 본인일 때 삭제, 남일 때 신고 버튼 표시 -->
-                                ${comment.isOwner ?
-                                    `<button class="btn btn-outline-danger btn-sm ms-2" onclick="deleteComment(${comment.commentNo})">삭제</button>` :
-                                    `<button class="btn btn-outline-warning btn-sm ms-2" onclick="reportComment(${comment.commentNo})">신고</button>`
-                                }
+                                <%--<!-- 댓글 작성자 본인일 때 삭제, 남일 때 신고 버튼 표시 -->--%>
+                                <%--${comment.isOwner ?--%>
+                                <%--    `<button class="btn btn-outline-danger btn-sm ms-2" onclick="deleteComment(${comment.commentNo})">삭제</button>` :--%>
+                                <%--    `<button class="btn btn-outline-warning btn-sm ms-2" onclick="reportComment(${comment.commentNo})">신고</button>`--%>
+                                <%--}--%>
                             </div>
                         </div>
                     </div>

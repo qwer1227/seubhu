@@ -5,6 +5,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import store.seub2hu2.cart.dto.CartItemDto;
 import store.seub2hu2.cart.dto.CartRegisterForm;
 import store.seub2hu2.mypage.service.CartService;
 import store.seub2hu2.mypage.service.PostService;
@@ -56,7 +57,15 @@ public class MyPageController {
 
     // 장바구니 화면으로 간다.
     @GetMapping("/cart")
-    public String cart() {
+    public String cart(@AuthenticationPrincipal LoginUser loginUser
+                        , Model model) {
+        User user = User.builder().no(loginUser.getNo()).build();
+
+        List<CartItemDto> cartItemDtoList = cartService.getCartItemsByUserNo(user.getNo());
+        System.out.println("cartItemDtoList = " + cartItemDtoList);
+
+        model.addAttribute("cartItemDtoList",cartItemDtoList);
+        model.addAttribute("qty", cartItemDtoList.size());
 
         return "mypage/cart";
     }
