@@ -16,8 +16,8 @@ import java.util.List;
 @Getter
 public class ProdImagesDto {
 
-    private int no;
-    private String name;
-    private Color color;
-    private List<Image> images;
+    private int no; // 상품 번호
+    private String name; // 상품 이름
+    private Color color; // 색상 객체
+    private List<Image> images; // 이미지 URL들
 }
