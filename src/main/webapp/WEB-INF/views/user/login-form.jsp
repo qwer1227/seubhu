@@ -5,11 +5,9 @@
 <head>
     <style>
         a:link {
-            color : black;
             text-decoration: none;
         }
         a:active {
-            color : black;
             text-decoration: none;
         }
         .btn-social {
@@ -44,7 +42,7 @@
         <!-- 로그인 폼 -->
         <form method="post" action="login">
             <div class="mb-3">
-                <input type="text" class="form-control" value="${cookieId}" placeholder="아이디" name="id">
+                <input type="text" class="form-control" placeholder="아이디" name="id">
             </div>
             <div class="mb-3">
                 <input type="password" class="form-control" placeholder="비밀번호" name="password">
@@ -54,7 +52,7 @@
             <!-- 아이디 저장 / 아이디 찾기 / 비밀번호 재설정 -->
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="rememberMe">
+                    <input class="form-check-input" type="checkbox" id="rememberMe">
                     <label class="form-check-label" for="rememberMe">아이디 저장</label>
                 </div>
                 <div>
@@ -89,38 +87,6 @@
 <footer>
     <%@include file="/WEB-INF/views/common/footer.jsp" %>
 </footer>
-
-<script type="text/javascript">
-
-    // 로그인 시 아이디 저장
-    const rememberMe = document.querySelector("#rememberMe");
-
-    if (rememberMe.checked) {
-        // 아이디 저장
-        localStorage.setItem("savedId", id);
-    } else {
-        // 아이디 저장하지 않음
-        localStorage.removeItem("savedId");
-    }
-
-
-    // 아이디 유효성 검사 함수 (간단한 예시)
-    function validateId() {
-        let id = document.querySelector("#id").value;
-
-        if (id === "") {
-            alert("아이디를 입력해주세요.");
-            return;
-        }
-        // 서버에서 아이디 중복 검사 또는 다른 검증 로직 추가 가능
-        console.log("검증된 아이디: " + fullId);
-    }
-
-    function rollbackIdCheck() {
-        let idField = document.querySelector("#id");
-        idField.value = ""; // 아이디 입력값 초기화
-    }
-</script>
 
     </body>
 </html>
