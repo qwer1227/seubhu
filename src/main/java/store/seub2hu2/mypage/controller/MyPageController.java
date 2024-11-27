@@ -115,7 +115,7 @@ public class MyPageController {
             , @RequestParam(name = "opt", required = false) String opt
             , @RequestParam(name = "keyword", required = false) String keyword
             , @RequestParam(name = "category", required = false) String category
-            , Model model) {
+            , Model model, LoginUser loginUser) {
 
 
         Map<String, Object> condition = new HashMap<>();
