@@ -21,7 +21,7 @@
             <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="list">코스 목록</a>
         </div>
         <div class="col " >
-            <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="#">베스트 런너</a>
+            <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="best-runner">베스트 런너</a>
         </div>
     </div>
 
@@ -51,7 +51,7 @@
                         </select>
                     </div>
                     <div class="col-3">
-                        지역 검색<input type="text" class="form-control" name="keyword" value="${param.keyword }">
+                        지역(구) 검색<input type="text" class="form-control" name="keyword" value="${param.keyword }">
                     </div>
                     <div class="col-1 pt-4">
                         <button type="button" class="btn btn-outline-primary" onclick="searchKeyword()">검색 버튼</button>
@@ -117,14 +117,11 @@
     </div>
 </div>
 
-
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script type="text/javascript">
     // form 태그를 가져온다.
     let form = document.querySelector("#form-search");
-    let form2 = document.querySelector("#form-recommend");
     let pageInput = document.querySelector("input[name=page]");
-    let page2Input = document.querySelector("input[name=page2]");
 
     // 페이지 번호를 클릭했을 때, 요청 파라미터 정보를 제출한다.
     function changePage(page, event) {
@@ -138,12 +135,6 @@
     function searchKeyword() {
         pageInput.value = 1;
         form.submit();
-    }
-
-    // 추천순 버튼을 클릭했을 때, 요청 파라미터 정보를 제출한다.
-    function recommendOrder() {
-        page2Input.value = 1;
-        form2.submit();
     }
 </script>
 </body>
