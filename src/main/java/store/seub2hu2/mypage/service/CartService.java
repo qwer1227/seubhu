@@ -17,6 +17,20 @@ public class CartService {
     @Autowired
     CartMapper cartMapper;
 
+    /**
+     * 장바구니 상품을 삭제한다.
+     * @param cartNoList 장바구비 번호들
+     */
+    public void deleteCartItems(List<Integer> cartNoList) {
+
+        cartMapper.deleteCartItems(cartNoList);
+    }
+
+    /**
+     * 사용자의 번호에 따른 장바구니 상품 정보와 수량 정보를 조회하는 기능
+     * @param userNo 유저 번호
+     * @return 상품 정보와 수량 정보
+     */
     public List<CartItemDto> getCartItemsByUserNo(int userNo){
 
         List<CartItemDto> cartItems = cartMapper.getCartItemsByUserNo(userNo);
