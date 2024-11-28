@@ -1,5 +1,6 @@
 package store.seub2hu2.course.controller;
 
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -94,7 +95,9 @@ public class CourseController {
 
     @GetMapping("/best-runner")
     public String bestRunner(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
-                             @RequestParam(name = "courseNo", required = false) Integer courseNo, Model model) {
+                             @RequestParam(name = "courseNo", required = false) Integer courseNo,
+                             @AuthenticationPrincipal LoginUser loginUser,
+                             Model model) {
         // 1. 모든 코스 목록을 가져온다.
         List<Course> courses = courseService.getCourses();
 
@@ -108,12 +111,22 @@ public class CourseController {
         // 3. 코스 완주 기록을 가져온다.
         ListDto<Records> dto = userCourseService.getAllRecords(condition);
 
-        // 4. Model 객체에 저장한다.
+        // 4. 로그인 상태라면 코스 완주 기록에서 나의 완주 기록만 가져오고, Model 객체에 저장한다.
+        if (loginUser != null) {
+            List<Records> records = dto.getData();
+            for (Records record : records) {
+                if (record.getUser().getNo() == loginUser.getNo()) {
+                    model.addAttribute("myRecord", record);
+                }
+            }
+        }
+
+        // 5. Model 객체에 코스 목록, 코스 기록 목록, 페이징 처리 정보를 저장한다.
         model.addAttribute("courses", courses);
         model.addAttribute("records", dto.getData());
         model.addAttribute("pagination", dto.getPaging());
 
-        // 5. 뷰이름을 반환한다.
+        // 6. 뷰이름을 반환한다.
         return "course/best-runner";
     }
 }

@@ -26,8 +26,7 @@
         </div>
     </div>
 
-    <%-- 코스 선택 --%>
-    <%-- 코스 선택하면, 선택한 코스로 이동하되 메뉴는 선택한 코스를 유지하자. --%>
+    <%-- 코스를 선택하면, 해당 코스에 대한 완주자 기록 목록이 화면에 나타난다. --%>
     <form id="form-select" method="get" action="best-runner">
         <div class="row justify-content-center mt-5">
             <input type="hidden" name="page"/>
@@ -43,9 +42,8 @@
         </div>
     </form>
 
-    <%-- 나의 현재 순위 --%>
+    <%-- 나의 현재 코스 완주 기록 및 순위 --%>
     <%-- 해당 코스에 대한 기록이 없다면, 기록이 없다고 표시한다. --%>
-    <%-- 로그인하지 않았다면, 로그인하여 나의 기록을 확인해보세요라고 표시한다. --%>
     <table class="table mt-4">
         <thead>
             <tr class="table-warning">
@@ -56,13 +54,42 @@
             </tr>
         </thead>
         <tbody>
-            <sec:authentication property="principal" var="loginUser" />
-            <tr>
-                <th scope="row"></th>
-                <td>헤이요</td>
-                <td>2024-11-25</td>
-                <td>30분</td>
-            </tr>
+            <sec:authorize access="isAuthenticated()">
+                <sec:authentication property="principal" var="loginUser" />
+            </sec:authorize>
+
+            <c:choose>
+                <%-- 로그인했다면, 나의 코스 완주 기록을 화면에 표시한다. --%>
+                <c:when test="${not empty loginUser}">
+                    <c:choose>
+                        <%-- 나의 코스 완주 기록이 존재하면, 나의 코스 완주 기록을 화면에 표시한다. --%>
+                        <c:when test="${not empty records}">
+                            <c:forEach var="record" items="${records}">
+                                <c:if test="${record.user.no eq loginUser.no}">
+                                    <tr>
+                                        <th scope="row">${myRecord.no}</th>
+                                        <td>${myRecord.user.nickname}</td>
+                                        <td>${myRecord.finishedDate}</td>
+                                        <td>${myRecord.finishedTime}분</td>
+                                    </tr>
+                                </c:if>
+                            </c:forEach>
+                        </c:when>
+                        <%-- 나의 코스 완주 기록이 존재하지 않다면, 문구를 표시한다. --%>
+                        <c:otherwise>
+                            <tr>
+                                <th colspan="4">기록이 존재하지 않습니다!</th>
+                            </tr>
+                        </c:otherwise>
+                    </c:choose>
+                </c:when>
+                <%-- 로그인하지 않았다면, 문구를 표시한다. --%>
+                <c:otherwise>
+                    <tr>
+                        <th colspan="4">로그인하여 기록을 확인해보아요!</th>
+                    </tr>
+                </c:otherwise>
+            </c:choose>
         </tbody>
     </table>
 
@@ -78,14 +105,23 @@
             </tr>
         </thead>
         <tbody>
-            <c:forEach var="record" items="${records}">
-                <tr>
-                    <th scope="row">${record.no}</th>
-                    <td>${record.user.nickname}</td>
-                    <td>${record.finishedDate}</td>
-                    <td>${record.finishedTime}분</td>
-                </tr>
-            </c:forEach>
+            <c:choose>
+                <c:when test="${not empty records}">
+                    <c:forEach var="record" items="${records}">
+                        <tr>
+                            <th scope="row">${record.no}</th>
+                            <td>${record.user.nickname}</td>
+                            <td>${record.finishedDate}</td>
+                            <td>${record.finishedTime}분</td>
+                        </tr>
+                    </c:forEach>
+                </c:when>
+                <c:otherwise>
+                    <tr>
+                        <th colspan="4">기록이 존재하지 않습니다!</th>
+                    </tr>
+                </c:otherwise>
+            </c:choose>
         </tbody>
     </table>
 </div>
