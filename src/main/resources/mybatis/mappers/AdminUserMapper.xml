@@ -5,26 +5,33 @@
 
 
     <!--
-        이미지 수정 & 대표이미지 설정
-        이미지 url삭제 후 새로 추가하는 방식
-
-        void getIsThumByNo(Integer imgNo);
+        이미지 수정
+        void EditUrl(Image img);
     -->
 
-<!--    <update id="">-->
+    <update id="editUrl" parameterType="store.seub2hu2.product.vo.Image">
+        update
+            PROD_IMGS
+        set
+            img_url = #{url}
+        where
+            img_no = #{no}
+    </update>
 
-<!--    </update>-->
+
 
     <!--
+        이미지 테이블의 IMG_THUM을 전부 null로 바꾼 후 해당 imgNo에만 Y설정
         void getNullImageThum(Integer imgNo);
+        void getIsThumByNo(Integer imgNo);
     -->
     <update id="getNullImageThum">
-        UPDATE
-            PROD_IMGS
-        SET
-            img_thum = null
-        WHERE
-            img_no = #{imgNo};
+        UPDATE PROD_IMGS
+        SET img_thum = NULL
+        WHERE color_no = (
+            SELECT color_no_sub
+            FROM (SELECT color_no AS color_no_sub FROM PROD_IMGS WHERE img_no = #{imgNo}) AS temp_table
+        );
     </update>
 
     <update id="getIsThumByNo">
@@ -35,22 +42,6 @@
         WHERE
             img_no = #{imgNo};
     </update>
-
-    <!--
-        컬러번호로 상품번호 조회
-        Color getCallProductByColorNo(Integer colorNo);
-    -->
-    <select id="getImageNo" resultType="store.seub2hu2.product.vo.Image">
-        select
-            img_no
-        from
-            PROD_IMGS
-        where
-            color_no = #{colorNo}
-          and
-            img_url = #{isThum};
-    </select>
-
 
     <!--
         컬러번호로 컬러정보 조회
@@ -64,12 +55,13 @@
         from
             PROD_COLORS
         where
-            color_no = #{no};
+            color_no = #{colorNo};
     </select>
+
     <!--
         해당 컬러번호에 해당하는 이미지URL 조회하기
 
-        List<Image> getImageByColorNum(int no);
+        List<Image> getImageByColorNum(Integer colorNo);
     -->
     <select id="getImageByColorNum" resultType="store.seub2hu2.product.vo.Image">
         select

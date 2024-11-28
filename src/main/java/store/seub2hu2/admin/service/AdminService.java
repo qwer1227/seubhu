@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import store.seub2hu2.admin.dto.ColorThumbnailForm;
 import store.seub2hu2.admin.dto.CourseRegisterForm;
+import store.seub2hu2.admin.dto.ImageUrlDto;
 import store.seub2hu2.admin.dto.ProductRegisterForm;
 import store.seub2hu2.admin.mapper.AdminMapper;
 import store.seub2hu2.course.mapper.CourseMapper;
@@ -269,8 +270,19 @@ public class AdminService {
         adminMapper.getIsThumByNo(imgNo);
     }
 
-    public void getNullImageThumbyImgNo(Integer imgNo) {
+    public void getNullImageThumbyimgNo(Integer imgNo) {
         adminMapper.getNullImageThum(imgNo);
+    }
+
+    public void getEditUrl(List<Integer> imgNos, List<String> urls) {
+
+        for (int i = 0; i < imgNos.size(); i++) {
+            Image img = new Image();
+            img.setNo(imgNos.get(i));
+            img.setUrl(urls.get(i));
+
+            adminMapper.editUrl(img);
+        }
     }
 
 //    public Color getProductByColorNo(Integer colorNo) {

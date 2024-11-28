@@ -9,6 +9,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import store.seub2hu2.admin.dto.ColorThumbnailForm;
 import store.seub2hu2.admin.dto.CourseRegisterForm;
+import store.seub2hu2.admin.dto.ImageUrlDto;
 import store.seub2hu2.admin.dto.ProductRegisterForm;
 import store.seub2hu2.admin.service.AdminService;
 import store.seub2hu2.course.service.CourseService;
@@ -29,6 +30,7 @@ import store.seub2hu2.util.ListDto;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -272,6 +274,39 @@ public class AdminController {
     @GetMapping("/image-editform")
     public String getImageEditForm(@RequestParam("no") int no,
                                    @RequestParam("colorNo") Integer colorNo,
+                                   Model model) {
+
+        Product product = adminService.getProductNo(no);
+
+        Color color = adminService.getColorNo(colorNo);
+
+        List<Color> colors = adminService.getColorName(no);
+        List<Image> images = adminService.getImageByColorNo(colorNo);
+
+        model.addAttribute("product", product);
+        model.addAttribute("color", color);
+        model.addAttribute("colors", colors);
+        model.addAttribute("images", images);
+
+        return "admin/product-image-edit-form";
+    }
+
+    @PostMapping("/image-editform")
+    public String imageEditForm(@RequestParam("no") int no,
+                                @RequestParam("colorNo") Integer colorNo,
+                                @RequestParam("imgNo") List<Integer> imgNoList,
+                                @RequestParam("url") List<String> urlList) {
+
+        List<Image> images = adminService.getImageByColorNo(colorNo);
+
+        adminService.getEditUrl(imgNoList, urlList);
+
+        return "redirect:/admin/product-detail?no=" + no + "&colorNo=" + colorNo;
+    }
+
+    @GetMapping("/image-changeThumb")
+    public String getImageChangeForm(@RequestParam("no") int no,
+                                   @RequestParam("colorNo") Integer colorNo,
                                 Model model) {
 
         Product product = adminService.getProductNo(no);
@@ -287,28 +322,25 @@ public class AdminController {
         model.addAttribute("colors", colors);
         model.addAttribute("product", product);
 
-        return "admin/product-image-edit-form";
+        return "admin/product-image-title-form";
     }
 
-    @PostMapping("/image-editform")
-    public String imageEditForm(@RequestParam("colorNo") Integer colorNo,
-                                @RequestParam("isThum") String isThum,
-                                @RequestParam("image[]") List<String> links,
+    @PostMapping("/image-changeThumb")
+    public String imageChangeForm(@RequestParam("no") int no,
+                                @RequestParam("colorNo") Integer colorNo,
                                 @RequestParam("imgNo") Integer imgNo,
+                                @RequestParam("url") String url,
                                 Model model) {
 
         List<Image> images = adminService.getImageByColorNo(colorNo);
 
         model.addAttribute("images", images);
 
-        Color color = adminService.getColorNo(colorNo);
-
-        adminService.getNullImageThumbyImgNo(imgNo);
+        adminService.getNullImageThumbyimgNo(imgNo);
 
         adminService.getThumbnailByNo(imgNo);
 
-
-        return "redirect:/admin/product-detail?no=" + color.getProduct().getNo() + "&colorNo=" + colorNo;
+        return "redirect:/admin/product-detail?no=" + no + "&colorNo=" + colorNo;
     }
 
     @GetMapping("/register-image")
