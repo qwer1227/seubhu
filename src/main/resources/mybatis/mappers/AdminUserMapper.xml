@@ -4,21 +4,104 @@
 <mapper namespace="store.seub2hu2.admin.mapper.AdminMapper">
 
 
+    <!--
+        이미지 수정
+        void EditUrl(Image img);
+    -->
+
+    <update id="editUrl" parameterType="store.seub2hu2.product.vo.Image">
+        update
+            PROD_IMGS
+        set
+            img_url = #{url}
+        where
+            img_no = #{no}
+    </update>
+
+
 
     <!--
+        이미지 테이블의 IMG_THUM을 전부 null로 바꾼 후 해당 imgNo에만 Y설정
+        void getNullImageThum(Integer imgNo);
+        void getIsThumByNo(Integer imgNo);
+    -->
+    <update id="getNullImageThum">
+        UPDATE PROD_IMGS
+        SET img_thum = NULL
+        WHERE color_no = (
+            SELECT color_no_sub
+            FROM (SELECT color_no AS color_no_sub FROM PROD_IMGS WHERE img_no = #{imgNo}) AS temp_table
+        );
+    </update>
+
+    <update id="getIsThumByNo">
+        UPDATE
+            PROD_IMGS
+        SET
+            img_thum = 'Y'
+        WHERE
+            img_no = #{imgNo};
+    </update>
+
+    <!--
+        컬러번호로 컬러정보 조회
+        Color getColorNoByNo(int colorNo);
+    -->
+    <select id="getColorNoByNo" resultType="store.seub2hu2.product.vo.Color">
+        select
+            prod_no         as "product.no"
+             , color_no     as no
+             , color_name   as name
+        from
+            PROD_COLORS
+        where
+            color_no = #{colorNo};
+    </select>
+
+    <!--
+        해당 컬러번호에 해당하는 이미지URL 조회하기
+
+        List<Image> getImageByColorNum(Integer colorNo);
+    -->
+    <select id="getImageByColorNum" resultType="store.seub2hu2.product.vo.Image">
+        select
+            img_no          as no
+             , color_no     as colorNo
+             , img_url      as url
+             , img_thum     as isthum
+        from
+            PROD_IMGS
+        where
+            color_no = #{colorNo};
+    </select>
+
+    <!--
+        이미지 추가
+        void insertImage(Image img);
+    -->
+    <insert id="insertImage" parameterType="store.seub2hu2.product.vo.Image">
+        insert into PROD_IMGS
+        (color_no, img_url)
+        values
+        (#{colorNo}, #{url})
+    </insert>
+
+    <!--
+        상품 번호로 상품색상 테이블 내용 조회
         List<Color> colorNames(int no);
     -->
     <select id="colorNames" resultType="store.seub2hu2.product.vo.Color">
         select
             prod_no         as "product.no"
             , color_no      as no
-            , color_name    as color
+            , color_name    as name
         from
             PROD_COLORS
         where
             prod_no = #{no}
     </select>
     <!--
+        상품 수정 & 대표이미지 설정
         void updateProduct(Product product);
     -->
     <update id="updateProduct">
@@ -37,6 +120,7 @@
     </update>
 
     <!--
+        상품 번호로 그 상품에 해당 정보 조회
         Product getProductByNo(@Param("product") Product product);
     -->
     <select id="getProductByNo">
@@ -77,7 +161,7 @@
         insert into PROD_COLORS
             (PROD_NO, COLOR_NAME)
         VALUES
-            (#{condition.no}, #{condition.color});
+            (#{condition.no}, #{condition.name});
     </insert>
     <!--
         카테고리에 해당하는 상위 카테고리 조회

@@ -49,7 +49,6 @@
                 </c:if>
             </sec:authorize>
             <span>좋아요 수 : ${course.likeCnt}개</span>
-            <div>(코스 완주자만 좋아요를 클릭할 수 있습니다!)</div>
         </div>
         <div class="col-1"></div> <%-- 빈칸 --%>
         <div class="col-6">

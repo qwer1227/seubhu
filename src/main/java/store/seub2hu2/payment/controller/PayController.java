@@ -6,6 +6,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import store.seub2hu2.lesson.dto.*;
+import store.seub2hu2.lesson.enums.ReservationStatus;
+import store.seub2hu2.lesson.service.LessonFileService;
+import store.seub2hu2.lesson.vo.LessonReservation;
+import store.seub2hu2.payment.dto.PaymentDto;
 import store.seub2hu2.payment.service.KakaoPayService;
 import store.seub2hu2.lesson.service.LessonReservationService;
 import store.seub2hu2.lesson.service.LessonService;
@@ -13,6 +17,7 @@ import store.seub2hu2.lesson.vo.Lesson;
 import store.seub2hu2.payment.SessionUtils;
 import store.seub2hu2.payment.dto.ApproveResponse;
 import store.seub2hu2.payment.dto.CancelResponse;
+import store.seub2hu2.payment.service.PaymentService;
 
 import java.util.Map;
 
@@ -25,22 +30,26 @@ public class PayController {
     private final KakaoPayService kakaoPayService;
 
     private final LessonReservationService lessonReservationService;
-    private final LessonService lessonService;
+    private final LessonFileService lessonFileService;
+    private final PaymentService paymentService;
 
     @GetMapping("/form")
     public String payment(LessonDto lessonDto,
                           Model model) {
-        log.info("lessonDto = {}", lessonDto);
+        log.info("/form lessonDto = {}", lessonDto);
+
+        Map<String, String> images = lessonFileService.getImagesByLessonNo(lessonDto.getLessonNo());
 
         model.addAttribute("lessonDto", lessonDto);
+        model.addAttribute("images", images);
         return "lesson/lesson-payment-form";
     }
 
     @PostMapping("/ready")
-    public @ResponseBody ReadyResponse payReady(@RequestBody LessonReservationPaymentDto lessonReservationPaymentDto) {
+    public @ResponseBody ReadyResponse payReady(@RequestBody PaymentDto paymentDto) {
 
         // 카카오 결제 준비하기
-        ReadyResponse readyResponse = kakaoPayService.payReady(lessonReservationPaymentDto);
+        ReadyResponse readyResponse = kakaoPayService.payReady(paymentDto);
         // 세션에 결제 고유번호(tid) 저장
         SessionUtils.addAttribute("tid", readyResponse.getTid());
 
@@ -50,73 +59,82 @@ public class PayController {
     }
 
     @GetMapping("/completed")
-    public String payCompleted(@RequestParam("pg_token") String pgToken, Model model) {
+    public String payCompleted(@RequestParam("pg_token") String pgToken
+            , @RequestParam("type") String type
+            , @RequestParam("lessonNo") int lessonNo
+            , @RequestParam("userNo") int userNo
+            , Model model) {
 
         String tid = SessionUtils.getStringAttributeValue("tid");
         log.info("결제승인 요청을 인증하는 토큰: " + pgToken);
         log.info("결제 고유번호: " + tid);
 
         // 카카오 결제 요청하기
-        ApproveResponse approveResponse = kakaoPayService.payApprove(tid, pgToken);
+        ApproveResponse approveResponse = kakaoPayService.payApprove(tid, pgToken, lessonNo);
 
-        LessonReservationPaymentDto lessonReservationPaymentDto = new LessonReservationPaymentDto();
-        lessonReservationPaymentDto.setPayNo(tid);
-        lessonReservationPaymentDto.setPrice(approveResponse.getAmount().getTotal());
-        lessonReservationPaymentDto.setLessonNo(Integer.parseInt(approveResponse.getItem_code()));
+        PaymentDto paymentDto = new PaymentDto();
+        paymentDto.setUserNo(userNo);
+        paymentDto.setPayId(tid);
+        paymentDto.setTotalAmount(approveResponse.getAmount().getTotal());
+        paymentDto.setLessonNo(lessonNo);
 
-        log.info("lessonReservationPay = {}", lessonReservationPaymentDto);
-        lessonReservationService.saveLessonReservation(lessonReservationPaymentDto);
+        log.info("lessonReservationPay = {}", paymentDto);
 
-        return "redirect:/success?id=" + tid;
+        if (type.equals("레슨")) {
+            lessonReservationService.saveLessonReservation(paymentDto);
+        }
+
+        if (type.equals("상품")) {
+            // 상품 주문 정보 저장 로직
+        }
+
+        return "redirect:/pay/success?id=" + tid;
     }
 
-    @GetMapping("/cancel")
-    public String payCancel(@RequestParam("pg_token") String pgToken, Model model) {
-        String tid = SessionUtils.getStringAttributeValue("tid");
+    // 결제 취소 요청
+    @PostMapping("/cancel")
+    public String payCancel(@RequestParam("paymentId") String paymentId
+                            , @RequestParam("userNo") int userNo
+                            , @RequestParam("lessonNo") int lessonNo
+            , Model model) {
 
-        Lesson lesson = lessonReservationService.getLessonByPayNo(tid);
-        LessonReservationPaymentDto dto = new LessonReservationPaymentDto();
-        dto.setPrice(lesson.getPrice());
-        dto.setPayNo(tid);
-        dto.setQuantity(1);
 
-        // 카카오 결제 취소하기
-        CancelResponse cancelResponse = kakaoPayService.payCancel(dto, tid);
+        LessonReservation lessonReservation = lessonReservationService.getLessonReservationByPayId(paymentId);
+        PaymentDto paymentDto = new PaymentDto();
+        paymentDto.setTotalAmount(lessonReservation.getPayment().getPrice());
+        paymentDto.setPayId(paymentId);
+        paymentDto.setQuantity(1);
 
-        model.addAttribute("cancelResponse", cancelResponse);
-
-        return "redirect:/refund?id=" + tid;
-    }
-
-    // 결제 환불 화면
-    @GetMapping("/refund")
-    public String refund(@RequestParam("pg_token") String pgToken, Model model) {
-        String tid = SessionUtils.getStringAttributeValue("tid");
-
-        Lesson lesson = lessonReservationService.getLessonByPayNo(tid);
-        LessonReservationPaymentDto dto = new LessonReservationPaymentDto();
-        dto.setPrice(lesson.getPrice());
-        dto.setPayNo(tid);
-        dto.setQuantity(1);
 
         // 카카오 결제 취소하기
-        CancelResponse cancelResponse = kakaoPayService.payCancel(dto, tid);
+        CancelResponse cancelResponse = kakaoPayService.payCancel(paymentDto, paymentId);
+
+        // 예약 상태 변경
+        if (lessonReservation != null) {
+            lessonReservationService.cancelReservation(paymentId, ReservationStatus.CANCELLED, lessonNo);
+        }
 
         model.addAttribute("cancelResponse", cancelResponse);
-
-        return "redirect:/cancel?id=" + tid;
+        return "redirect:/lesson/reservation?userNo=" + userNo;
     }
 
     // 결제 성공 화면
     @GetMapping("/success")
-    public String success(@RequestParam("id") String payNo, Model model) {
-        log.info("Order 컨트롤러 주문 완료 주문번호 조회 = {}", payNo);
-        Lesson lesson = lessonReservationService.getLessonByPayNo(payNo);
-        Map<String, String> images = lessonService.getImagesByLessonNo(lesson.getLessonNo());
+    public String success(@RequestParam("id") String payId, Model model) {
+        String type = paymentService.getPaymentTypeById(payId);
 
-        log.info("Order 컨트롤러 주문 완료 주문객체 조회 = {}", lesson);
-        model.addAttribute("lesson", lesson);
-        model.addAttribute("images", images);
+        if (type.equals("레슨")) {
+            LessonReservation lessonReservation = lessonReservationService.getLessonReservationByPayId(payId);
+            log.info("/success lessonReservation 객체 = {} ", lessonReservation);
+            Map<String, String> images = lessonFileService.getImagesByLessonNo(lessonReservation.getLesson().getLessonNo());
+            model.addAttribute("lessonReservation", lessonReservation);
+            model.addAttribute("images", images);
+        }
+
+        if (type.equals("상품")) {
+            // 결제 성공 화면에 출력할 상품 정보
+        }
+
         return "lesson/lesson-pay-completed";
     }
 }

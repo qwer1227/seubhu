@@ -13,4 +13,6 @@ public class Image {
     private String url;
     private String isThum;
     private Product product;
+    private int colorNo;
+    private int prodNo;
 }

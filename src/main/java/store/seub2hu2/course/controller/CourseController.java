@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import store.seub2hu2.course.service.CourseService;
 import store.seub2hu2.course.service.UserCourseService;
 import store.seub2hu2.course.vo.Course;
-import store.seub2hu2.course.vo.CourseLike;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.util.ListDto;
 
@@ -28,13 +27,17 @@ public class CourseController {
 
     @GetMapping("/list")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                       @RequestParam(name = "sort", required = false) String sort,
                        @RequestParam(name = "distance", required = false, defaultValue = "10") Double distance,
                        @RequestParam(name = "level", required = false) Integer level,
                        @RequestParam(name = "keyword", required = false) String keyword,
                        Model model){
-        // 1. 요청 파라미터 정보를 Map 객체에 담는다.
+        // 1. 요청 파라미터 정보를 Map 객체에 저장한다.
         Map<String, Object> condition = new HashMap<>();
         condition.put("page", page);
+        if (StringUtils.hasText(sort)) {
+            condition.put("sort", sort);
+        }
         if (distance != null) {
             condition.put("distance", distance);
         }
@@ -45,20 +48,14 @@ public class CourseController {
             condition.put("keyword", keyword);
         }
 
-        System.out.println("페이지:" + condition.get("page"));
-        System.out.println("거리:" + condition.get("distance"));
-        System.out.println("난이도:" + condition.get("level"));
-        System.out.println("검색어:" + condition.get("keyword"));
-
-        // 3. 검색에 해당하는 코스 목록을 가져온다.
+        // 2. 검색에 해당하는 코스 목록을 가져온다.
         ListDto<Course> dto = courseService.getAllCourses(condition);
 
-        // 4. Model 객체에 화면에 표시할 데이터를 저장해서 보낸다.
+        // 3. Model 객체에 화면에 표시할 데이터(코스 목록, 페이징 처리 정보)를 저장한다.
         model.addAttribute("courses", dto.getData());
         model.addAttribute("pagination", dto.getPaging());
-        model.addAttribute("searchNo", condition.get("searchNo"));
 
-        // 5. 뷰 이름을 반환한다.
+        // 4. 뷰 이름을 반환한다.
         return "course/list";
     }
 
@@ -89,12 +86,7 @@ public class CourseController {
         // 1. 코스의 좋아요 수를 증가시키거나 감소시킨다.
         userCourseService.addOrReduceLikeCount(courseNo, loginUser.getNo());
 
-        // 2. 좋아요 클릭 여부에 관한 정보를 가져온다.
+        // 2. detail.jsp를 재요청한다.
         return "redirect:detail?no=" + courseNo;
-    }
-
-    @GetMapping("")
-    public String courseRank() {
-        return "course/course-ranking";
     }
 }
