@@ -3,8 +3,7 @@ package store.seub2hu2.lesson.mapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import store.seub2hu2.lesson.vo.Lesson;
-import store.seub2hu2.lesson.vo.LessonReservation;
-import store.seub2hu2.lesson.dto.ReservationSearchCondition;
+
 
 import java.util.List;
 import java.util.Map;
@@ -25,9 +24,6 @@ public interface LessonMapper {
     public void deleteLessonByNo(@Param("lesson") Lesson lesson);
 
     // 레슨 수정
-    public void updateLessonByNo(@Param("lesson") Lesson lesson);
-
-    // 결제번호로 결제한 레슨 조회
-    public Lesson getLessonByPayNo(@Param("payNo") String payNo);
+    public void updateLesson(@Param("lesson") Lesson lesson);
 
 }

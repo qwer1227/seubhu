@@ -204,7 +204,7 @@
             PI.IMG_URL
         FROM PRODUCTS P
         JOIN PROD_COLORS PC
-        ON P.PROD_No = PC.PROD_NO
+        ON P.PROD_NO = PC.PROD_NO
         JOIN PROD_IMGS PI
         ON PC.COLOR_NO = PI.COLOR_NO
         WHERE PC.COLOR_NO = ${colorNo}

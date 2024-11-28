@@ -1,22 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="store.seub2hu2.lesson.mapper.PayMapper">
+<mapper namespace="store.seub2hu2.payment.mapper.PayMapper">
 
     <!-- public void insertPay(@Param("pay") Payment payment); -->
     <!-- 결제 정보 등록 -->
     <insert id="insertPay">
-        INSERT INTO PAYMENT
-        ( PAY_NO
+        INSERT INTO PAYMENTS
+        ( PAY_ID
         , USER_NO
         , PAY_METHOD
         , PAY_AMOUNT
         , PAY_PRICE
         , PAY_TYPE)
-        VALUES ( #{pay.no}
+        VALUES ( #{pay.id}
                , #{pay.userNo}
-               , #{pay.payMethod}
+               , #{pay.method}
                , #{pay.amount}
                , #{pay.price}
-               , #{pay.payType})
+               , #{pay.type})
     </insert>
+
+    <!-- public Payment getPaymentById(String id); -->
+    <select id="getPaymentById">
+        SELECT PAY_NO as no
+         , PAY_ID as payID
+         , USER_NO as userNo
+         , PAY_METHOD as method
+         , PAY_AMOUNT as amount
+         , PAY_DATE as payCreatedDate
+         , PAY_CANCEL_DATE   as payUpdatedDate
+         , PAY_TYPE  as type
+         , PAY_PRICE as price
+         , REFUND as refund
+        FROM PAYMENTS;
+        WHERE PAY_ID = #{payId}
+    </select>
+
+    <!-- public String getPaymentTypeById(@Param("id") String id); -->
+    <select id="getPaymentTypeById">
+        SELECT PAY_TYPE as type
+        FROM PAYMENTS
+        WHERE PAY_ID = #{payId}
+    </select>
 </mapper>

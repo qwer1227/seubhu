@@ -13,7 +13,7 @@
         <h2>코스</h2>
     </div>
     <%-- 카테고리 --%>
-    <div class="row row-cols-2 row-cols-lg-4 g-2 g-lg-3">
+    <div class="row row-cols-2 row-cols-lg-4 g-2 g-lg-3 justify-content-center">
         <div class="col " >
             <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="#">나의 코스 기록</a>
         </div>
@@ -21,10 +21,7 @@
             <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="list">코스 목록</a>
         </div>
         <div class="col " >
-            <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="course-ranking">추천 코스</a>
-        </div>
-        <div class="col " >
-            <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="#">베스트 런너</a>
+            <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="best-runner">베스트 런너</a>
         </div>
     </div>
 
@@ -33,9 +30,13 @@
     <div class="row row-cols-1 row-cols-md-1 g-4 mt-3 mb-3">
         <div class="col">
             <form id="form-search" method="get" action="list">
-                <input type="hidden" name="page" />
+                <input type="hidden" name="page"/>
                 <div class="row g-3 d-flex justify-content-center">
-                    <div class="col-5">
+                    <div class="col-2 text-start">
+                        <label for="customRange2" class="form-label text-start">추천순</label>
+                        <input type="checkbox"  class="form-check" name="sort" value="like" ${param.sort eq 'like' ? 'checked' : ''}>
+                    </div>
+                    <div class="col-3">
                         <label for="customRange2" class="form-label">거리(0~10KM)</label>
                         <input type="range" class="form-range" min="0" max="10" id="customRange2" name="distance"
                                value="${empty param.distance ? '10' : param.distance}">
@@ -50,13 +51,14 @@
                         </select>
                     </div>
                     <div class="col-3">
-                        지역 검색<input type="text" class="form-control" name="keyword" value="${param.keyword }">
+                        지역(구) 검색<input type="text" class="form-control" name="keyword" value="${param.keyword }">
                     </div>
                     <div class="col-1 pt-4">
                         <button type="button" class="btn btn-outline-primary" onclick="searchKeyword()">검색 버튼</button>
                     </div>
                 </div>
             </form>
+
         </div>
     </div>
 
@@ -75,7 +77,10 @@
                         </a>
                     </div>
                     <div class="card-footer bg-transparent border-primary" >
-                        <span>난이도 : ${course.level }단계</span><span> / 거리 : ${course.distance }KM</span>
+                        <span class="badge rounded-pill text-bg-dark">난이도 ${course.level }단계</span>
+                        <span class="badge rounded-pill text-bg-dark">거리 ${course.distance }KM</span>
+                        <span class="badge rounded-pill text-bg-danger">♡ ${course.likeCnt }개</span>
+                        <span></span>
                     </div>
                 </div>
             </div>
@@ -112,11 +117,11 @@
     </div>
 </div>
 
-
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script type="text/javascript">
-    let form = document.querySelector("#form-search"); // form 태그를 가져온다. (name = page, distance, level, keyword)
-    let pageInput = document.querySelector("input[name=page]"); // form 태그의 일부 태그를 가져온다. (name = page)
+    // form 태그를 가져온다.
+    let form = document.querySelector("#form-search");
+    let pageInput = document.querySelector("input[name=page]");
 
     // 페이지 번호를 클릭했을 때, 요청 파라미터 정보를 제출한다.
     function changePage(page, event) {

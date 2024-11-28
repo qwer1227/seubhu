@@ -2,11 +2,13 @@ package store.seub2hu2.admin.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import store.seub2hu2.admin.dto.ImageUrlDto;
 import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.course.vo.Region;
 import store.seub2hu2.lesson.vo.Lesson;
 import store.seub2hu2.product.vo.Category;
 import store.seub2hu2.product.vo.Color;
+import store.seub2hu2.product.vo.Image;
 import store.seub2hu2.product.vo.Product;
 import store.seub2hu2.user.vo.User;
 
@@ -68,4 +70,16 @@ public interface AdminMapper {
     void updateProduct(Product product);
 
     List<Color> colorNames(int no);
+
+    void insertImage(Image img);
+
+    List<Image> getImageByColorNum(Integer colorNo);
+
+    Color getColorNoByNo(Integer colorNo);
+
+    void getIsThumByNo(Integer imgNo);
+
+    void getNullImageThum(Integer imgNo);
+
+    void editUrl(Image img);
 }

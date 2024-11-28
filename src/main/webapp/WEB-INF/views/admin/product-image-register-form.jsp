@@ -62,7 +62,7 @@
                     enctype="multipart/form-data">
                 <div class="form-group mb-3 col-4">
                   <label class="form-label">상품번호:</label>
-                  <input type="text" class="form-control" name="no" value="${product.no}"/>
+                  <input type="text" class="form-control" name="prodNo" value="${product.no}"/>
                 </div>
                 <div class="form-group mb-3 col">
                   <label class="form-label">상품명:</label>
@@ -70,47 +70,19 @@
                 </div>
                 <div class="form-group mb-3 col-4">
                   <label class="form-label">색상 선택</label>
-                  <select name="colorNum" class="form-control" id="colorNum">
+                  <select name="colorNo" class="form-control" id="colorNo">
                       <c:forEach var="c" items="${colors}">
-                          <option value="${c.no}">${c.color}</option>
+                          <option value="${c.no}">${c.name}</option>
                       </c:forEach>
                   </select>
                 </div>
-                <div class="form-group col">
-                  <label class="form-label mb-3">대표 이미지</label>
-                  <input type="text" class="form-control" name="image"/>
-                </div>
-                <div class="form-group col">
-                  <label class="form-label mb-3">상품 이미지1</label>
-                  <input type="text" class="form-control" name="image"/>
-                </div>
-                <div class="form-group col">
-                  <label class="form-label mb-3">상품 이미지2</label>
-                  <input type="text" class="form-control" name="image"/>
-                </div>
-                <div class="form-group col">
-                  <label class="form-label mb-3">상품 이미지3</label>
-                  <input type="text" class="form-control" name="image"/>
-                </div>
-                <div class="form-group col">
-                  <label class="form-label mb-3">상품 이미지4</label>
-                  <input type="text" class="form-control" name="image"/>
-                </div>
-                <div class="form-group col">
-                  <label class="form-label mb-3">상품 이미지5</label>
-                  <input type="text" class="form-control" name="image"/>
-                </div>
-                <div class="form-group col">
-                  <label class="form-label mb-3">상품 이미지6</label>
-                  <input type="text" class="form-control" name="image"/>
-                </div>
-                <div class="form-group col">
-                  <label class="form-label mb-3">상품 이미지7</label>
-                  <input type="text" class="form-control" name="image"/>
-                </div>
-                <div class="form-group col">
-                  <label class="form-label mb-3">상품 이미지8</label>
-                  <input type="text" class="form-control" name="image"/>
+                <div id="imageContainer">
+                  <div class="form-group col mb-3">
+                    <label class="form-label mb-3">상품 이미지</label>
+                    <button id="addButton" type="button" class="btn btn-primary">+</button>
+                    <input type="text" class="form-control mt-2" name="image[]" placeholder="이미지 URL을 입력하세요" />
+                    <button type="button" class="btn btn-danger mt-2 btn-delete">삭제</button>
+                  </div>
                 </div>
                 <div class="text-end" style="text-align: right">
                   <button type="submit" class="btn btn-primary">등록</button>
@@ -131,7 +103,42 @@
 <%@include file="/WEB-INF/views/admincommon/common.jsp" %>
 
 </body>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const imageContainer = document.getElementById('imageContainer');
+    const addButton = document.getElementById('addButton');
 
+    // 새로운 입력 필드 추가
+    const addImageInput = () => {
+      const div = document.createElement('div');
+      div.className = 'form-group col mb-3';
+      div.innerHTML = `
+      <input type="text" class="form-control mt-2" name="image[]" placeholder="이미지 URL을 입력하세요" />
+      <button type="button" class="btn btn-danger mt-2 btn-delete">삭제</button>
+    `;
+      imageContainer.appendChild(div);
+    };
+
+    // 입력 필드 삭제
+    const deleteImageInput = (button) => {
+      button.parentElement.remove();
+    };
+
+    // + 버튼 클릭 이벤트
+    addButton.addEventListener('click', addImageInput);
+
+    // 삭제 버튼 클릭 이벤트 위임
+    imageContainer.addEventListener('click', (e) => {
+      if (e.target.classList.contains('btn-delete')) {
+        deleteImageInput(e.target);
+      }
+    });
+  });
+
+
+
+
+</script>
 </html>
 
 

@@ -22,6 +22,7 @@ import store.seub2hu2.user.vo.User;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -57,7 +58,7 @@ public class LessonController {
             String startTime = lesson.getStartTime();
 
             // 이미지 파일 정보 가져오기
-            Map<String, String> images = lessonService.getImagesByLessonNo(lessonNo);
+            Map<String, String> images = lessonFileService.getImagesByLessonNo(lessonNo);
 
             // 모델에 lesson과 images 정보 추가
             model.addAttribute("lesson", lesson);
@@ -93,13 +94,28 @@ public class LessonController {
                               @ModelAttribute("condition") ReservationSearchCondition condition,
                               Model model) {
 
-        log.info("Start Date: {}", condition.getStartDate());
-        log.info("End Date: {}", condition.getEndDate());
-        log.info("searchCondition: {}", condition.getSearchCondition());
-        List<LessonReservation> lessonReservations = lessonService.searchLessonReservationList(condition, userNo);
+
+        LocalDate now = LocalDate.now();
+
+        if (condition.getStart() == null && condition.getEnd() == null) {
+            condition.setEnd(now); // 기본 종료 날짜: 오늘
+            condition.setStart(now.minusMonths(1)); // 기본 시작 날짜: 한 달 전
+        } else {
+            // 종료 날짜가 null인 경우 기본값 설정
+            if (condition.getEnd() == null) {
+                condition.setEnd(now);
+            }
+            // 시작 날짜가 null인 경우 기본값 설정
+            if (condition.getStart() == null) {
+                condition.setStart(now.minusMonths(1));
+            }
+        }
+
+        List<LessonReservation> lessonReservations = lessonReservationService.searchLessonReservationList(condition, userNo);
         model.addAttribute("lessonReservations", lessonReservations);
         return "lesson/lesson-reservation";
     }
+
 
     @GetMapping("/reservation/detail")
     public String reservationDetail(@RequestParam("reservationNo") int reservationNo,
@@ -109,7 +125,7 @@ public class LessonController {
         Lesson lesson = lessonService.getLessonByNo(lessonNo);
         String startDate = lesson.getStartDate();
         String startTime = lesson.getStartTime();
-        Map<String, String> images = lessonService.getImagesByLessonNo(lessonNo);
+        Map<String, String> images = lessonFileService.getImagesByLessonNo(lessonNo);
         model.addAttribute("lessonReservation", lessonReservation);
         model.addAttribute("images", images);
         model.addAttribute("startDate", startDate);

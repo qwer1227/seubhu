@@ -24,25 +24,25 @@
                 </colgroup>
                 <tr>
                     <th>레슨명</th>
-                    <td><a href="/lesson/detail?lessonNo=${lesson.lessonNo}">${lesson.title}</td>
+                    <td><a href="/lesson/detail?lessonNo=${lessonReservation.lesson.lessonNo}">${lessonReservation.lesson.title}</td>
                 </tr>
                 <tr>
                     <th>과정</th>
-                    <td>${lesson.subject}</td>
+                    <td>${lessonReservation.lesson.subject}</td>
                 </tr>
                 <tr>
                     <th>강사명</th>
-                    <td>${lesson.lecturer.name}</td>
+                    <td>${lessonReservation.lesson.lecturer.name}</td>
                 </tr>
                 <tr>
                     <th>레슨날짜</th>
                     <td>
-                        ${lesson.startDate}
+                        ${lessonReservation.lesson.startDate}
                     </td>
                 </tr>
                 <tr>
                     <th>결제금액</th>
-                    <td><fmt:formatNumber value="${lesson.price}" pattern="#,###"/></td>
+                    <td><fmt:formatNumber value="${lessonReservation.lesson.price}" pattern="#,###"/></td>
                 </tr>
             </table>
         </div>
@@ -50,7 +50,7 @@
     <div class="row">
         <div class="col-1"></div>
         <div class="col">
-            <a href="lesson/reservation" class="btn btn-dark w-100">예약 내역</a>
+            <a href="/lesson/reservation?userNo=${lessonReservation.user.no}" class="btn btn-dark w-100">예약 내역</a>
         </div>
         <div class="col-1"></div>
     </div>

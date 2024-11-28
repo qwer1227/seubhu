@@ -7,7 +7,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import store.seub2hu2.admin.dto.ColorThumbnailForm;
 import store.seub2hu2.admin.dto.CourseRegisterForm;
+import store.seub2hu2.admin.dto.ImageUrlDto;
 import store.seub2hu2.admin.dto.ProductRegisterForm;
 import store.seub2hu2.admin.service.AdminService;
 import store.seub2hu2.course.service.CourseService;
@@ -20,6 +22,7 @@ import store.seub2hu2.product.dto.*;
 import store.seub2hu2.product.service.ProductService;
 import store.seub2hu2.product.vo.Category;
 import store.seub2hu2.product.vo.Color;
+import store.seub2hu2.product.vo.Image;
 import store.seub2hu2.product.vo.Product;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.ListDto;
@@ -27,6 +30,7 @@ import store.seub2hu2.util.ListDto;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +67,7 @@ public class AdminController {
             Lesson lesson = lessonService.getLessonByNo(lessonNo);
 
             // 이미지 파일 정보 가져오기
-            Map<String, String> images = lessonService.getImagesByLessonNo(lessonNo);
+            Map<String, String> images = lessonFileService.getImagesByLessonNo(lessonNo);
 
             // 모델에 lesson과 images 정보 추가
             model.addAttribute("lesson", lesson);
@@ -103,21 +107,7 @@ public class AdminController {
     @PostMapping("/lesson-register-form")
     public String form(@ModelAttribute("form") LessonRegisterForm form, Model model) throws IOException {
 
-        Lesson lesson = new Lesson();
-        lesson.setTitle(form.getTitle());
-        lesson.setPrice(form.getPrice());
-        User user = new User();
-        user.setNo(29); // Or dynamically assign user ID
-        user.setId(form.getLecturerName());
-        lesson.setLecturer(user);
-        lesson.setSubject(form.getSubject());
-        lesson.setPlan(form.getPlan());
-        lesson.setStart(form.getStart());
-        lesson.setEnd(form.getEnd());
-
-        System.out.println("-------------------------------------레슨 시작 종료시간 알아보기: " + lesson);
-        
-        lessonService.registerLesson(lesson, form);
+        lessonService.registerLesson(form);
 
         // Redirect after successful form submission
         return "redirect:/admin/lesson";
@@ -232,6 +222,7 @@ public class AdminController {
 
     @GetMapping("/register-editform")
     public String registerEditForm(@RequestParam("no") int no,
+                                   @RequestParam(value = "colorNo", required = false) Integer colorNo,
                                    Model model) {
 
         Product product = adminService.getProductNo(no);
@@ -240,6 +231,7 @@ public class AdminController {
 
         model.addAttribute("colors", colors);
         model.addAttribute("product", product);
+
 
         return "admin/product-edit-form";
     }
@@ -265,6 +257,78 @@ public class AdminController {
         return "admin/product-size-register-form";
     }
 
+    @GetMapping("/image-editform")
+    public String getImageEditForm(@RequestParam("no") int no,
+                                   @RequestParam("colorNo") Integer colorNo,
+                                   Model model) {
+
+        Product product = adminService.getProductNo(no);
+
+        Color color = adminService.getColorNo(colorNo);
+
+        List<Color> colors = adminService.getColorName(no);
+        List<Image> images = adminService.getImageByColorNo(colorNo);
+
+        model.addAttribute("product", product);
+        model.addAttribute("color", color);
+        model.addAttribute("colors", colors);
+        model.addAttribute("images", images);
+
+        return "admin/product-image-edit-form";
+    }
+
+    @PostMapping("/image-editform")
+    public String imageEditForm(@RequestParam("no") int no,
+                                @RequestParam("colorNo") Integer colorNo,
+                                @RequestParam("imgNo") List<Integer> imgNoList,
+                                @RequestParam("url") List<String> urlList) {
+
+        List<Image> images = adminService.getImageByColorNo(colorNo);
+
+        adminService.getEditUrl(imgNoList, urlList);
+
+        return "redirect:/admin/product-detail?no=" + no + "&colorNo=" + colorNo;
+    }
+
+    @GetMapping("/image-changeThumb")
+    public String getImageChangeForm(@RequestParam("no") int no,
+                                   @RequestParam("colorNo") Integer colorNo,
+                                Model model) {
+
+        Product product = adminService.getProductNo(no);
+
+        List<Color> colors = adminService.getColorName(no);
+
+        Color color = adminService.getColorNo(colorNo);
+
+        List<Image> images = adminService.getImageByColorNo(colorNo);
+        model.addAttribute("images", images);
+
+        model.addAttribute("color", color);
+        model.addAttribute("colors", colors);
+        model.addAttribute("product", product);
+
+        return "admin/product-image-title-form";
+    }
+
+    @PostMapping("/image-changeThumb")
+    public String imageChangeForm(@RequestParam("no") int no,
+                                @RequestParam("colorNo") Integer colorNo,
+                                @RequestParam("imgNo") Integer imgNo,
+                                @RequestParam("url") String url,
+                                Model model) {
+
+        List<Image> images = adminService.getImageByColorNo(colorNo);
+
+        model.addAttribute("images", images);
+
+        adminService.getNullImageThumbyimgNo(imgNo);
+
+        adminService.getThumbnailByNo(imgNo);
+
+        return "redirect:/admin/product-detail?no=" + no + "&colorNo=" + colorNo;
+    }
+
     @GetMapping("/register-image")
     public String getRegisterImage(@RequestParam("no") int no,
                                 Model model) {
@@ -280,10 +344,13 @@ public class AdminController {
     }
 
     @PostMapping("/register-image")
-    public String registerImage(@RequestParam("no") int no,
+    public String registerImage(@ModelAttribute ColorThumbnailForm form,
+                                @RequestParam("image[]") List<String> links,  // 이미지 URL 배열로 받기
                                 Model model) {
 
-        return "admin/product-image-register-form";
+        adminService.addThumb(form, links);
+
+        return "redirect:/admin/product-detail?no=" + form.getProdNo() + "&colorNo=" + form.getColorNo();
     }
 
     @GetMapping("/register-color")
@@ -337,6 +404,10 @@ public class AdminController {
 
         ProdImagesDto prodImagesDto = productService.getProdImagesByColorNo(colorNo);
         model.addAttribute("prodImagesDto", prodImagesDto);
+
+        Color color = adminService.getColorNo(colorNo);
+
+        model.addAttribute("color", color);
 
         return "admin/product-admin-detail";
     }
