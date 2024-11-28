@@ -14,7 +14,7 @@ import java.util.List;
 public interface LessonReservationMapper {
 
     // 레슨 예약 등록
-    public void insertLessonReservation(@Param("paymentDto") PaymentDto paymentDto);
+    public void insertLessonReservation(@Param("lessonReservation") LessonReservation lessonReservation);
 
     // 회원 번호로 회원이 예약한 레슨 조회
     public List<LessonReservation> getLessonReservationByUserNo (@Param("userNo") int userNo);

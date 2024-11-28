@@ -7,13 +7,16 @@
 </head>
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
 <body>
+<security:authorize access="isAuthenticated()">
+    <security:authentication property="principal" var="loginUser"/>
+</security:authorize>
 <div class="container-xxl border align-content-center" id="wrap">
     <div class="row text-center mb-5">
         <h1>레슨 예약</h1>
     </div>
     <div class="row d-flex justify-content-center mb-3">
         <div class="col-5">
-            <img src="${pageContext.request.contextPath}/resources/images/lesson/Thumbnail.png"
+            <img src="${pageContext.request.contextPath}/resources/images/lesson/${images['THUMBNAIL']}"
                  alt="Main Image" style="width: 100%; height: 300px;"/>
         </div>
         <div class="col-5">
@@ -77,7 +80,7 @@
                 title: '${lessonDto.title}',    // 카카오페이에 보낼 대표 상품명
                 totalAmount: ${lessonDto.price},
                 quantity: 1, // 총 개수
-                userNo: 29,
+                userNo: ${loginUser.no},
                 type: "레슨"
             };
 
@@ -86,9 +89,9 @@
                 url: '/pay/ready',
                 data: JSON.stringify(data),
                 contentType: 'application/json',
-                success:function(response) {
+                success: function (response) {
                     // response => {tid:"xxx", next_redirect_pc_url:"카카오결재화면URL"}
-                    location.href= response.next_redirect_pc_url;
+                    location.href = response.next_redirect_pc_url;
                 },
                 error: function (xhr, status, error) {
                     alert('결제 준비 중 문제가 발생했습니다: ' + error);

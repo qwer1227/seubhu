@@ -33,7 +33,6 @@ public class KakaoPayService {
         parameters.put("partner_order_id", "1234567890");
         parameters.put("partner_user_id", "seub2hu2");
         parameters.put("quantity", String.valueOf(paymentDto.getQuantity()));
-
         // 레슨 결제
         if (paymentDto.getType().equals("레슨")) {
             parameters.put("item_name", paymentDto.getTitle());
@@ -50,7 +49,8 @@ public class KakaoPayService {
 
         parameters.put("tax_free_amount", "0");
         parameters.put("approval_url", "http://localhost/pay/completed?type=" + paymentDto.getType()
-                + "&lessonNo=" + paymentDto.getLessonNo());
+                + "&lessonNo=" + paymentDto.getLessonNo()
+                + "&userNo=" + paymentDto.getUserNo());
         parameters.put("cancel_url", "http://localhost/pay/cancel");
         parameters.put("fail_url", "http://localhost/pay/fail");
 

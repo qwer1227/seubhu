@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import store.seub2hu2.lesson.dto.*;
 import store.seub2hu2.lesson.enums.ReservationStatus;
+import store.seub2hu2.lesson.service.LessonFileService;
 import store.seub2hu2.lesson.vo.LessonReservation;
 import store.seub2hu2.payment.dto.PaymentDto;
 import store.seub2hu2.payment.service.KakaoPayService;
@@ -29,7 +30,7 @@ public class PayController {
     private final KakaoPayService kakaoPayService;
 
     private final LessonReservationService lessonReservationService;
-    private final LessonService lessonService;
+    private final LessonFileService lessonFileService;
     private final PaymentService paymentService;
 
     @GetMapping("/form")
@@ -37,7 +38,10 @@ public class PayController {
                           Model model) {
         log.info("/form lessonDto = {}", lessonDto);
 
+        Map<String, String> images = lessonFileService.getImagesByLessonNo(lessonDto.getLessonNo());
+
         model.addAttribute("lessonDto", lessonDto);
+        model.addAttribute("images", images);
         return "lesson/lesson-payment-form";
     }
 
@@ -58,6 +62,7 @@ public class PayController {
     public String payCompleted(@RequestParam("pg_token") String pgToken
             , @RequestParam("type") String type
             , @RequestParam("lessonNo") int lessonNo
+            , @RequestParam("userNo") int userNo
             , Model model) {
 
         String tid = SessionUtils.getStringAttributeValue("tid");
@@ -68,7 +73,7 @@ public class PayController {
         ApproveResponse approveResponse = kakaoPayService.payApprove(tid, pgToken, lessonNo);
 
         PaymentDto paymentDto = new PaymentDto();
-        paymentDto.setUserNo(29);
+        paymentDto.setUserNo(userNo);
         paymentDto.setPayId(tid);
         paymentDto.setTotalAmount(approveResponse.getAmount().getTotal());
         paymentDto.setLessonNo(lessonNo);
@@ -106,7 +111,7 @@ public class PayController {
 
         // 예약 상태 변경
         if (lessonReservation != null) {
-            lessonReservationService.updateReservationStatus(paymentId, ReservationStatus.CANCELLED, lessonNo);
+            lessonReservationService.cancelReservation(paymentId, ReservationStatus.CANCELLED, lessonNo);
         }
 
         model.addAttribute("cancelResponse", cancelResponse);
@@ -121,7 +126,7 @@ public class PayController {
         if (type.equals("레슨")) {
             LessonReservation lessonReservation = lessonReservationService.getLessonReservationByPayId(payId);
             log.info("/success lessonReservation 객체 = {} ", lessonReservation);
-            Map<String, String> images = lessonService.getImagesByLessonNo(lessonReservation.getLesson().getLessonNo());
+            Map<String, String> images = lessonFileService.getImagesByLessonNo(lessonReservation.getLesson().getLessonNo());
             model.addAttribute("lessonReservation", lessonReservation);
             model.addAttribute("images", images);
         }

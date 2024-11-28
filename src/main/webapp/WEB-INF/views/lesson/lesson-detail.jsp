@@ -90,9 +90,11 @@
                         <input type="hidden" name="userNo" value="${loginUser.no}">
                         <button type="submit" class="btn btn-primary">수강신청</button>
                     </c:if>
+                    <c:if test="${loginUser == null}">
+                        <button type="button" id="non-login" class="btn btn-primary">수강신청</button>
+                    </c:if>
                 </security:authorize>
             </form>
-                <button id="non-login" class="btn btn-primary">수강신청</button>
         </div>
         <div class="col-2"></div>
     </div>

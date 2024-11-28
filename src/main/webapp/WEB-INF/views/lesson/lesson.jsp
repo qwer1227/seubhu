@@ -167,6 +167,7 @@
                             title: event.title,
                             start: event.start,
                             end: event.end,
+                            allDay: false,
                             textColor: 'black', // 텍스트 색상
                             borderColor: borderColor,
                             backgroundColor: backgroundColor, // 배경색

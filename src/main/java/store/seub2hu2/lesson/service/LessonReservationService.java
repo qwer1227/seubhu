@@ -3,6 +3,7 @@ package store.seub2hu2.lesson.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Param;
+import org.apache.xmlbeans.impl.xb.xsdschema.Attribute;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,7 @@ import store.seub2hu2.payment.mapper.PayMapper;
 import store.seub2hu2.lesson.vo.Lesson;
 import store.seub2hu2.lesson.vo.LessonReservation;
 import store.seub2hu2.payment.vo.Payment;
+import store.seub2hu2.user.vo.User;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -65,12 +67,19 @@ public class LessonReservationService {
             log.info("결제 정보 저장 Payment = {}", payment);
             payMapper.insertPay(payment);
 
+            LessonReservation lessonReservation = new LessonReservation();
+            User user = new User();
+            user.setNo(paymentDto.getUserNo());
+            lessonReservation.setUser(user);
+            lessonReservation.setPayment(payment);
+            lessonReservation.setLesson(lesson);
+
             // 4. 예약 정보 저장
-            lessonReservationMapper.insertLessonReservation(paymentDto);
+            lessonReservationMapper.insertLessonReservation(lessonReservation);
 
             // 5. 참가자 수 업데이트
-            log.info("참가자 수 업데이트 할 lesson = {}", lesson);
             lesson.setParticipant(lesson.getParticipant() + 1);
+            log.info("참가자 수 업데이트 할 lesson = {}", lesson);
             lessonMapper.updateLesson(lesson); // 업데이트 후 커밋
 
             log.info("레슨 예약 저장 완료: {}", paymentDto);
@@ -111,7 +120,7 @@ public class LessonReservationService {
     }
 
     // 예약 상태 변경
-    public void updateReservationStatus(String paymentId, ReservationStatus status, int lessonNo) {
+    public void cancelReservation(String paymentId, ReservationStatus status, int lessonNo) {
 
         lessonReservationMapper.updateReservationStatus(paymentId, status.label());
 

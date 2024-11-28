@@ -58,7 +58,7 @@ public class LessonController {
             String startTime = lesson.getStartTime();
 
             // 이미지 파일 정보 가져오기
-            Map<String, String> images = lessonService.getImagesByLessonNo(lessonNo);
+            Map<String, String> images = lessonFileService.getImagesByLessonNo(lessonNo);
 
             // 모델에 lesson과 images 정보 추가
             model.addAttribute("lesson", lesson);
@@ -125,7 +125,7 @@ public class LessonController {
         Lesson lesson = lessonService.getLessonByNo(lessonNo);
         String startDate = lesson.getStartDate();
         String startTime = lesson.getStartTime();
-        Map<String, String> images = lessonService.getImagesByLessonNo(lessonNo);
+        Map<String, String> images = lessonFileService.getImagesByLessonNo(lessonNo);
         model.addAttribute("lessonReservation", lessonReservation);
         model.addAttribute("images", images);
         model.addAttribute("startDate", startDate);

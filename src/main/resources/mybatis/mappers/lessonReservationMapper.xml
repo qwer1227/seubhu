@@ -145,9 +145,9 @@
         ( USER_NO
         , LESSON_NO
         , LESSON_RESERVATION_PAY_ID)
-        VALUES ( #{paymentDto.userNo}
-               , #{paymentDto.lessonNo}
-               , #{paymentDto.payId})
+        VALUES ( #{lessonReservation.user.no}
+               , #{lessonReservation.lesson.lessonNo}
+               , #{lessonReservation.payment.id})
     </insert>
 
     <update id="updateReservationStatus">
