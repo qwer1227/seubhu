@@ -2,6 +2,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="store.seub2hu2.course.mapper.UserCourseMapper">
     <!--
+        int getTotalRows(@Param("condition") Map<String, Object> condition);
+     -->
+    <select id="getTotalRows" resultType="int">
+        select count(*)
+        from COURSE_RECORDS
+        where course_no = #{condition.courseNo}
+    </select>
+
+    <!--
         User checkSuccess(@Param("userNo") int userNo);
     -->
     <select id="checkSuccess" resultType="store.seub2hu2.course.vo.CourseWhether">
@@ -57,4 +66,24 @@
         where user_no = #{userNo}
         and course_no = #{courseNo}
     </delete>
+
+    <!--
+        List<Records> getRecords(@Param("condition") Map<String, Object> condition);
+    -->
+    <select id="getRecords" resultType="store.seub2hu2.course.vo.Records">
+        select *
+        from (
+              select dense_rank() over (order by r.finished_time) as no
+                   , r.finished_no
+                   , r.finished_date as finishedDate
+                   , r.finished_time as finishedTime
+                   , r.course_no as "course.no"
+                   , u.user_no as "user.no"
+                   , u.user_nickname as "user.nickname"
+              from COURSE_RECORDS r inner join USERS u
+              on r.user_no = u.user_no
+              where r.course_no = #{condition.courseNo}
+             ) ar
+        where no between #{condition.begin} and #{condition.end}
+    </select>
 </mapper>

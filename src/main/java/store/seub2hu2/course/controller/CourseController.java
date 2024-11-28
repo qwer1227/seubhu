@@ -10,10 +10,12 @@ import org.springframework.web.bind.annotation.*;
 import store.seub2hu2.course.service.CourseService;
 import store.seub2hu2.course.service.UserCourseService;
 import store.seub2hu2.course.vo.Course;
+import store.seub2hu2.course.vo.Records;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.util.ListDto;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -88,5 +90,30 @@ public class CourseController {
 
         // 2. detail.jsp를 재요청한다.
         return "redirect:detail?no=" + courseNo;
+    }
+
+    @GetMapping("/best-runner")
+    public String bestRunner(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                             @RequestParam(name = "courseNo", required = false) Integer courseNo, Model model) {
+        // 1. 모든 코스 목록을 가져온다.
+        List<Course> courses = courseService.getCourses();
+
+        // 2. 요청 파라미터 정보를 Map 객체에 저장한다.
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("page", page);
+        if (courseNo != null) {
+            condition.put("courseNo", courseNo);
+        }
+
+        // 3. 코스 완주 기록을 가져온다.
+        ListDto<Records> dto = userCourseService.getAllRecords(condition);
+
+        // 4. Model 객체에 저장한다.
+        model.addAttribute("courses", courses);
+        model.addAttribute("records", dto.getData());
+        model.addAttribute("pagination", dto.getPaging());
+
+        // 5. 뷰이름을 반환한다.
+        return "course/best-runner";
     }
 }
