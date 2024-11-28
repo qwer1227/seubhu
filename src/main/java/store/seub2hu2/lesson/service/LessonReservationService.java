@@ -2,10 +2,12 @@ package store.seub2hu2.lesson.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import store.seub2hu2.lesson.dto.ReservationSearchCondition;
+import store.seub2hu2.lesson.enums.ReservationStatus;
 import store.seub2hu2.payment.dto.PaymentDto;
 import store.seub2hu2.lesson.mapper.LessonMapper;
 import store.seub2hu2.lesson.mapper.LessonReservationMapper;
@@ -14,6 +16,7 @@ import store.seub2hu2.lesson.vo.Lesson;
 import store.seub2hu2.lesson.vo.LessonReservation;
 import store.seub2hu2.payment.vo.Payment;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
@@ -24,9 +27,11 @@ import java.util.List;
 @Slf4j
 public class LessonReservationService {
 
+    private final LessonService lessonService;
     private final LessonMapper lessonMapper;
     private final LessonReservationMapper lessonReservationMapper;
     private final PayMapper payMapper;
+
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void saveLessonReservation(PaymentDto paymentDto) {
@@ -66,7 +71,7 @@ public class LessonReservationService {
             // 5. 참가자 수 업데이트
             log.info("참가자 수 업데이트 할 lesson = {}", lesson);
             lesson.setParticipant(lesson.getParticipant() + 1);
-            lessonMapper.updateLessonByNo(lesson); // 업데이트 후 커밋
+            lessonMapper.updateLesson(lesson); // 업데이트 후 커밋
 
             log.info("레슨 예약 저장 완료: {}", paymentDto);
         } catch (Exception e) {
@@ -89,24 +94,33 @@ public class LessonReservationService {
 
         // startDate와 endDate 초기화 및 기본값 설정
         if (condition.getStart() == null) {
-            if (condition.getStartDate() != null && !condition.getStartDate().isEmpty()) {
-                condition.setStart(LocalDateTime.parse(condition.getStartDate(), formatter));
-            } else {
-                condition.setStart(LocalDateTime.now().minusMonths(1)); // 기본값: 한 달 전
-            }
+                condition.setStart(LocalDate.now().minusMonths(1)); // 기본값: 한 달 전
         }
 
         if (condition.getEnd() == null) {
-            if (condition.getEndDate() != null && !condition.getEndDate().isEmpty()) {
-                condition.setEnd(LocalDateTime.parse(condition.getEndDate(), formatter));
-            } else {
-                condition.setEnd(LocalDateTime.now()); // 기본값: 현재 날짜
-            }
+                condition.setEnd(LocalDate.parse(condition.getEndDate(), formatter));
         }
+
+        log.info("condition.getStart() = {}", condition.getStart());
+        log.info("condition.getEnd() = {}", condition.getEnd());
+        log.info("시간 테스트 = {}", LocalDateTime.now());
+
 
         // MyBatis 매퍼 호출
         return lessonReservationMapper.getReservationByCondition(condition, userNo);
     }
 
+    // 예약 상태 변경
+    public void updateReservationStatus(String paymentId, ReservationStatus status, int lessonNo) {
+
+        lessonReservationMapper.updateReservationStatus(paymentId, status.label());
+
+        // 레슨 예약 인원 감소
+        Lesson lesson  = lessonService.getLessonByNo(lessonNo);
+        lesson.setParticipant(lesson.getParticipant() - 1);
+        lessonMapper.updateLesson(lesson);
+
+        log.info("status.label() = {}", status.label());
+    }
 
 }

@@ -19,17 +19,17 @@ public class ReservationSearchCondition {
     private String lessonStatus;
     private String lessonSubject;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDateTime start;
+    private LocalDate start;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDateTime end;
+    private LocalDate end;
 
     public String getStartDate() {
-        return LocalDateTime.from(start).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        return LocalDate.from(start).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }
 
     public String getEndDate() {
-        return LocalDateTime.from(end).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        return LocalDate.from(end).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }
 
 

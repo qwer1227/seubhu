@@ -75,5 +75,9 @@ public class LessonService {
         return lessonFileMapper.lastInsertedLessonNo();
     }
 
+    public void updateLesson(Lesson lesson) {
+        lessonMapper.updateLesson(lesson);
+    }
+
 
 }

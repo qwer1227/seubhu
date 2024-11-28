@@ -24,6 +24,6 @@ public interface LessonMapper {
     public void deleteLessonByNo(@Param("lesson") Lesson lesson);
 
     // 레슨 수정
-    public void updateLessonByNo(@Param("lesson") Lesson lesson);
+    public void updateLesson(@Param("lesson") Lesson lesson);
 
 }

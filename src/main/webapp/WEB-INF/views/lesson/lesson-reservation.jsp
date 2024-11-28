@@ -5,17 +5,6 @@
 <html lang="ko">
 <head>
     <%@include file="/WEB-INF/views/common/common.jsp" %>
-    <style>
-        .datepicker td, .datepicker th {
-            width: 2.5rem;
-            height: 2.5rem;
-            font-size: 0.85rem;
-        }
-
-        body {
-            background-color: #fafafa;
-        }
-    </style>
 </head>
 <body>
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
@@ -89,6 +78,7 @@
                 <th>가격</th>
                 <th>상태</th>
                 <th>예약날짜</th>
+                <th>예약상태</th>
                 <th></th>
             </tr>
             <c:forEach var="reservation" items="${lessonReservations}" varStatus="loop">
@@ -99,8 +89,32 @@
                     <td>${reservation.lesson.lecturer.name}</td>
                     <td><fmt:formatNumber value="${reservation.lesson.price}" pattern="#,###"/></td>
                     <td>${reservation.lesson.status}</td>
-                    <td>${reservation.reservationCreatedDate}</td>
-                    <td><a href="/pay/cancel?reservationNo=" + ${reservation.payment.no} class="btn btn-danger">취소</a></td>
+                    <fmt:parseDate value="${reservation.reservationCreatedDate }" pattern="yyyy-MM-dd'T'HH:mm"
+                                   var="parsedDateTime" type="both"/>
+                    <td><fmt:formatDate pattern="yyyy-MM-dd" value="${ parsedDateTime }"/></td>
+                    <td>
+                        <c:if test="${reservation.status eq '예약'}">
+                            <span class="badge bg-success">예약</span>
+                        </c:if>
+                        <c:if test="${reservation.status eq '취소'}">
+                            <span class="badge bg-danger">취소</span>
+                        </c:if>
+                        <c:if test="${reservation.status eq '환불'}">
+                            <span class="badge bg-warning">환불</span>
+                        </c:if>
+                    </td>
+                    <td>
+                        <c:if test="${not empty reservation.status and
+                             reservation.status ne '취소' and
+                             reservation.status ne '환불'}">
+                            <form action="/pay/cancel" method="POST" style="display: inline;">
+                                <input type="hidden" name="paymentId" value="${reservation.payment.id}">
+                                <input type="hidden" name="userNo" value="${reservation.user.no}">
+                                <input type="hidden" name="lessonNo" value="${reservation.lesson.no}">
+                                <button type="submit" id=cancel-btn class="btn btn-sm btn-danger" onclick="confirmCancel()">취소</button>
+                            </form>
+                        </c:if>
+                    </td>
                 </tr>
             </c:forEach>
         </table>
@@ -108,6 +122,17 @@
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script>
+    function confirmCancel() {
+        // 사용자에게 취소 확인 메시지 표시
+        var confirmResult = confirm("예약을 취소하시겠습니까?");
+
+        // 사용자가 '확인'을 클릭하면 폼을 제출
+        if (confirmResult) {
+            return true;  // 폼 제출
+        } else {
+            return false;  // 폼 제출 안 함
+        }
+    }
 </script>
 </body>
 </html>

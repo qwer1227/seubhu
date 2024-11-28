@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import store.seub2hu2.lesson.dto.*;
+import store.seub2hu2.lesson.enums.ReservationStatus;
 import store.seub2hu2.lesson.vo.LessonReservation;
 import store.seub2hu2.payment.dto.PaymentDto;
 import store.seub2hu2.payment.service.KakaoPayService;
@@ -55,9 +56,9 @@ public class PayController {
 
     @GetMapping("/completed")
     public String payCompleted(@RequestParam("pg_token") String pgToken
-                            , @RequestParam("type") String type
-                               , @RequestParam("lessonNo") int lessonNo
-                             , Model model) {
+            , @RequestParam("type") String type
+            , @RequestParam("lessonNo") int lessonNo
+            , Model model) {
 
         String tid = SessionUtils.getStringAttributeValue("tid");
         log.info("결제승인 요청을 인증하는 토큰: " + pgToken);
@@ -87,31 +88,29 @@ public class PayController {
 
     // 결제 취소 요청
     @PostMapping("/cancel")
-    public CancelResponse payCancel(@RequestParam("pg_token") String pgToken, Model model) {
-        String tid = SessionUtils.getStringAttributeValue("tid");
+    public String payCancel(@RequestParam("paymentId") String paymentId
+                            , @RequestParam("userNo") int userNo
+                            , @RequestParam("lessonNo") int lessonNo
+            , Model model) {
 
 
-        LessonReservation lessonReservation = lessonReservationService.getLessonReservationByPayId(tid);
+        LessonReservation lessonReservation = lessonReservationService.getLessonReservationByPayId(paymentId);
         PaymentDto paymentDto = new PaymentDto();
         paymentDto.setTotalAmount(lessonReservation.getPayment().getPrice());
-        paymentDto.setPayId(tid);
+        paymentDto.setPayId(paymentId);
         paymentDto.setQuantity(1);
 
+
         // 카카오 결제 취소하기
-        CancelResponse cancelResponse = kakaoPayService.payCancel(paymentDto, tid);
+        CancelResponse cancelResponse = kakaoPayService.payCancel(paymentDto, paymentId);
+
+        // 예약 상태 변경
+        if (lessonReservation != null) {
+            lessonReservationService.updateReservationStatus(paymentId, ReservationStatus.CANCELLED, lessonNo);
+        }
 
         model.addAttribute("cancelResponse", cancelResponse);
-
-        return cancelResponse;
-    }
-
-    // 결제 환불 화면
-    @GetMapping("/refund")
-    public String refund(@RequestParam("pg_token") String pgToken, Model model) {
-        String tid = SessionUtils.getStringAttributeValue("tid");
-
-
-        return "lesson/lesson-pay-cancel?id=" + tid;
+        return "redirect:/lesson/reservation?userNo=" + userNo;
     }
 
     // 결제 성공 화면

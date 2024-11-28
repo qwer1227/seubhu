@@ -112,10 +112,10 @@ public class KakaoPayService {
         RestTemplate template = new RestTemplate();
         String url = "https://open-api.kakaopay.com/online/v1/payment/cancel";
         // RestTemplate의 postForEntity : POST 요청을 보내고 ResponseEntity로 결과를 반환받는 메소드
-        ResponseEntity<CancelResponse> responseEntity = template.postForEntity(url, requestEntity, CancelResponse.class);
-        log.info("결제준비 응답객체: " + responseEntity.getBody());
+        CancelResponse cancelResponse = template.postForObject(url, requestEntity, CancelResponse.class);
+        log.info("결제취소 응답객체: " + cancelResponse);
 
-        return responseEntity.getBody();
+        return cancelResponse;
     }
 
     // 카카오페이 측에 요청 시 헤더부에 필요한 값

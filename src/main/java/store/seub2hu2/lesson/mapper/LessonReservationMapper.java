@@ -2,6 +2,7 @@ package store.seub2hu2.lesson.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import store.seub2hu2.lesson.enums.ReservationStatus;
 import store.seub2hu2.lesson.vo.Lesson;
 import store.seub2hu2.payment.dto.PaymentDto;
 import store.seub2hu2.lesson.dto.ReservationSearchCondition;
@@ -26,4 +27,7 @@ public interface LessonReservationMapper {
     
     // 예약 번호로 예약 조회
     public LessonReservation getLessonReservationByNo (@Param("reservationNo") int reservationNo);
+
+    // 예약 상태 변경
+    public void updateReservationStatus (@Param("paymentId") String paymentId,  @Param("status") String status);
 }

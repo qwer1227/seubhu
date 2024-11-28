@@ -6,6 +6,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import store.seub2hu2.payment.vo.Payment;
 import store.seub2hu2.user.vo.User;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @NoArgsConstructor
@@ -20,9 +21,9 @@ public class LessonReservation {
     private Lesson lesson;
     private String status;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date reservationCreatedDate;
+    private LocalDateTime reservationCreatedDate;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date reservationUpdatedDate;
+    private LocalDateTime reservationUpdatedDate;
 
 
 

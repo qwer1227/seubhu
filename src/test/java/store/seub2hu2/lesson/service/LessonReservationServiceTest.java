@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDate;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -59,6 +60,11 @@ public class LessonReservationServiceTest {
 //        assertThat(lessonService.getLessonByNo(2).getParticipant()).isEqualTo(5);
 //
 //    }
+
+    @Test
+    public void timeTest() throws InterruptedException {
+        System.out.println("localDate now = " + LocalDate.now());
+    }
 }
 
 
