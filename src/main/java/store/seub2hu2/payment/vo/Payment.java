@@ -1,4 +1,4 @@
-package store.seub2hu2.lesson.vo;
+package store.seub2hu2.payment.vo;
 
 import lombok.*;
 
@@ -10,13 +10,16 @@ import java.util.Date;
 @Setter
 @ToString
 public class Payment {
-    private String no;
+    private int no;
+    private String id;
     private int userNo;
-    private String payMethod;
+    private String method;
     private int price;
     private int amount;
-    private String payType;
-    private String payStatus;
+    private String type;
+    private String status;
+    private String refund;
     private Date payCreatedDate;
     private Date payUpdatedDate;
+
 }

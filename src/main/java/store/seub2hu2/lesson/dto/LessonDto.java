@@ -3,6 +3,7 @@ package store.seub2hu2.lesson.dto;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
+import store.seub2hu2.lesson.vo.Lesson;
 
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -26,7 +27,9 @@ public class LessonDto {
     private String startDate;
     private String startTime;
     private String participant;
-
-
     private int price;
+
+    public LessonDto(Lesson lesson) {
+
+    }
 }
