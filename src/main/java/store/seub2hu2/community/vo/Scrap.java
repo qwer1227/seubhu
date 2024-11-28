@@ -18,5 +18,5 @@ public class Scrap {
     private Board board;
     private User user;
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date srapeDate;
+    private Date scrappedDate;
 }

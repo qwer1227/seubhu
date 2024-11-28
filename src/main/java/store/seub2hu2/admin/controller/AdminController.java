@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import store.seub2hu2.admin.dto.ColorThumbnailForm;
 import store.seub2hu2.admin.dto.CourseRegisterForm;
 import store.seub2hu2.admin.dto.ProductRegisterForm;
 import store.seub2hu2.admin.service.AdminService;
@@ -16,14 +17,17 @@ import store.seub2hu2.lesson.dto.LessonRegisterForm;
 import store.seub2hu2.lesson.service.LessonFileService;
 import store.seub2hu2.lesson.service.LessonService;
 import store.seub2hu2.lesson.vo.Lesson;
-import store.seub2hu2.product.dto.ProdListDto;
+import store.seub2hu2.product.dto.*;
 import store.seub2hu2.product.service.ProductService;
+import store.seub2hu2.product.vo.Category;
+import store.seub2hu2.product.vo.Color;
+import store.seub2hu2.product.vo.Image;
+import store.seub2hu2.product.vo.Product;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.ListDto;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
@@ -228,6 +232,166 @@ public class AdminController {
         return "admin/userlist";
     }
 
+    @GetMapping("/register-editform")
+    public String registerEditForm(@RequestParam("no") int no,
+                                   @RequestParam(value = "colorNo", required = false) Integer colorNo,
+                                   Model model) {
+
+        Product product = adminService.getProductNo(no);
+
+        List<Color> colors = adminService.getColorName(no);
+
+        model.addAttribute("colors", colors);
+        model.addAttribute("product", product);
+
+
+        return "admin/product-edit-form";
+    }
+
+    @PostMapping("/register-editform")
+    public String registerEditTitle(Product product,
+                                    Model model) {
+
+        adminService.getUpdateProduct(product);
+
+        System.out.println("---------------------------------------product:"+ product);
+
+        return "redirect:/admin/product-detail?no=" + product.getNo() + "&colorNo=" + product.getColorNum();
+    }
+
+    @GetMapping("/register-size")
+    public String registerSize(@RequestParam("no") int no,
+                               Model model) {
+
+        ProdDetailDto prodDetailDto = productService.getProductByNo(no);
+        model.addAttribute("prodDetailDto", prodDetailDto);
+
+        return "admin/product-size-register-form";
+    }
+
+    @GetMapping("/image-editform")
+    public String getImageEditForm(@RequestParam("no") int no,
+                                   @RequestParam("colorNo") Integer colorNo,
+                                Model model) {
+
+        Product product = adminService.getProductNo(no);
+
+        List<Color> colors = adminService.getColorName(no);
+
+        Color color = adminService.getColorNo(colorNo);
+
+        List<Image> images = adminService.getImageByColorNo(colorNo);
+        model.addAttribute("images", images);
+
+        model.addAttribute("color", color);
+        model.addAttribute("colors", colors);
+        model.addAttribute("product", product);
+
+        return "admin/product-image-edit-form";
+    }
+
+    @PostMapping("/image-editform")
+    public String imageEditForm(@RequestParam("no") int no,
+                                @RequestParam("colorNo") Integer colorNo,
+                                Model model) {
+
+        Product product = adminService.getProductNo(no);
+        List<Color> colors = adminService.getColorName(no);
+
+        List<Image> images = adminService.getImageByColorNo(colorNo);
+
+        model.addAttribute("images", images);
+
+        model.addAttribute("colors", colors);
+        model.addAttribute("product", product);
+
+        return "admin/product-image-edit-form";
+    }
+
+    @GetMapping("/register-image")
+    public String getRegisterImage(@RequestParam("no") int no,
+                                Model model) {
+
+
+        Product product = adminService.getProductNo(no);
+        List<Color> colors = adminService.getColorName(no);
+
+        model.addAttribute("colors", colors);
+        model.addAttribute("product", product);
+
+        return "admin/product-image-register-form";
+    }
+
+    @PostMapping("/register-image")
+    public String registerImage(@ModelAttribute ColorThumbnailForm form,
+                                @RequestParam("image[]") List<String> links,  // 이미지 URL 배열로 받기
+                                Model model) {
+
+        adminService.addThumb(form, links);
+
+        return "redirect:/admin/product-detail?no=" + form.getProdNo() + "&colorNo=" + form.getColorNo();
+    }
+
+    @GetMapping("/register-color")
+    public String getRegisterColor(@RequestParam("no") int no,
+                                Model model) {
+
+        ProdDetailDto prodDetailDto = productService.getProductByNo(no);
+        model.addAttribute("prodDetailDto", prodDetailDto);
+
+        return "admin/product-color-register-form";
+    }
+
+    @PostMapping("/register-color")
+    public String registerColor(@RequestParam(name="no", required = false) Integer no,
+                                @RequestParam(name="color", required = false) String color,
+                                Model model) {
+
+        if (no == null || color == null || color.isEmpty()) {
+            throw new IllegalArgumentException("상품 번호와 색상은 필수 입력 값입니다.");
+        }
+
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("no", no);
+        condition.put("color", color);
+
+        System.out.println("condition:" + condition);
+
+        model.addAttribute("condition", condition);
+        adminService.addColor(condition);
+
+        int colorNo = adminService.getColor(condition);
+
+        System.out.println("colorNo: " + colorNo);
+        return "redirect:/admin/product-detail?no=" + condition.get("no") + "&colorNo=" + colorNo;
+    }
+
+    @GetMapping("/product-detail")
+    public String productAdminDetail(@RequestParam("no") int no,
+                                     @RequestParam("colorNo") int colorNo,
+                                     Model model) {
+
+
+        ProdDetailDto prodDetailDto = productService.getProductByNo(no);
+        model.addAttribute("prodDetailDto", prodDetailDto);
+
+        List<ColorProdImgDto> colorProdImgDto = productService.getProdImgByColorNo(no);
+        model.addAttribute("colorProdImgDto", colorProdImgDto);
+
+        SizeAmountDto sizeAmountDto = productService.getSizeAmountByColorNo(colorNo);
+        model.addAttribute("sizeAmountDto", sizeAmountDto);
+
+        ProdImagesDto prodImagesDto = productService.getProdImagesByColorNo(colorNo);
+        model.addAttribute("prodImagesDto", prodImagesDto);
+
+        Color color = adminService.getColorNo(colorNo);
+
+        model.addAttribute("color", color);
+
+        return "admin/product-admin-detail";
+    }
+
+
     @GetMapping("/product-register-form")
     public String productRegisterForm() {
 
@@ -239,7 +403,9 @@ public class AdminController {
 
         adminService.addProduct(form);
 
-         return "redirect: /product-register-form";
+        Category category = adminService.getCategory(form.getCategoryNo());
+
+         return "redirect:/admin/product?topNo="+ category.getTopNo();
     }
 
     @GetMapping("/product")

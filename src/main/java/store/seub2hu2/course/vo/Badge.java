@@ -7,9 +7,7 @@ import org.apache.ibatis.type.Alias;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @ToString
-@Alias("Badge")
 public class Badge {
     // 배지 데이터
     private int no; // 배지 번호

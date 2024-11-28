@@ -40,6 +40,7 @@
   <h2> 커뮤니티 글 상세 </h2>
   
   <div>
+    <security:authentication property="principal" var="loginUser"/>
     <div class="col d-flex justify-content-left">
       <div>
         <a href="main?category=${board.catName}" style="text-decoration-line: none">${board.catName}</a>
@@ -50,9 +51,13 @@
         ${board.title}
       </div>
       <div class="ml-auto">
-        <button class="btn btn-outline-success btn-lg" id="scrapButton" onclick="scrapButton()">
-          <i id="scrapIcon" class="bi bi-bookmark"></i>
-        </button>
+        <security:authorize access="isAuthenticated()">
+          <button class="btn btn-outline-success btn-lg" id="scrapButton"
+                  onclick="scrapButton(${board.no}, ${loginUser.getNo()})">
+            <i id="icon-scrap"
+               class="bi ${Scrapped == '1' ? 'bi-bookmark-fill' : (Scrapped == '0' ? 'bi-bookmark' : 'bi-bookmark')}"></i>
+          </button>
+        </security:authorize>
       </div>
     </div>
     <div class="meta d-flex justify-content-between mb-3">
@@ -63,7 +68,7 @@
       <span>
         <i class="bi bi-eye"></i> ${board.viewCnt}
         <i class="bi bi-hand-thumbs-up"></i> ${board.like}
-        <i class="bi bi-chat-square-text"></i> 5
+        <i class="bi bi-chat-square-text"></i> ${replyCnt}
       </span>
     </div>
     
@@ -80,22 +85,26 @@
     
     <div class="actions d-flex justify-content-between mb-4">
       <div>
-        <%--      <c:if test="${empty LOGIN_USER ? '' : 'disabled'}">--%>
-        <%--        <c:choose>--%>
-        <%--          <c:when test="${LOGINED_USER eq board.user.no ? '' : 'disabled'}">--%>
-        <button class="btn btn-warning" onclick="updateBoard(${board.no})">수정</button>
-        <button class="btn btn-danger" onclick="deleteBoard(${board.no})">삭제</button>
-        <%--          </c:when>--%>
-        <%--          <c:otherwise>--%>
-        <button class="btn btn-danger">신고</button>
-        <%--          </c:otherwise>--%>
-        <%--        </c:choose>--%>
-        <%--      </c:if>--%>
+        <!-- 로그인 여부를 체크하기 위해 먼저 선언 -->
+        <security:authorize access="isAuthenticated()">
+        <!-- principal 프로퍼티 안의 loginUser 정보를 가져옴 -->
+        <!-- loginUser.no를 가져와서 조건문 실행 -->
+        <c:if test="${loginUser.no == board.user.no}">
+          <button class="btn btn-warning" onclick="updateBoard(${board.no})">수정</button>
+          <button class="btn btn-danger" onclick="deleteBoard(${board.no})">삭제</button>
+        </c:if>
+        <c:if test="${loginUser.no != board.user.no}">
+          <button type="button" class="btn btn-danger" onclick="report('board', ${board.no})">신고</button>
+        </c:if>
+      
       </div>
       <div>
-        <button class="btn btn-outline-primary" id="likeButton" onclick="likeButton()">
-          <i id="likeIcon" class="bi bi-hand-thumbs-up"></i>
+        <button class="btn btn-outline-primary" id="likeCnt"
+                onclick="boardLikeButton(${board.no}, ${loginUser.getNo()})">
+          <i id="icon-heart"
+             class="bi ${boardLiked == '1' ? 'bi-heart-fill' : (boardLiked == '0' ? 'bi-heart' : 'bi-heart')}"></i>
         </button>
+        </security:authorize>
         <a type="button" href="main" class="btn btn-secondary">목록</a>
       </div>
     </div>
@@ -105,22 +114,26 @@
       <h5 style="text-align: start">댓글 작성</h5>
       <form method="get" action="add-reply">
         <input type="hidden" name="boardNo" value="${board.no}">
-        <%--          <input type="hidden" name="userNo" value="${user.no}">--%>
-        <input type="hidden" name="userNo" value="11">
+        <input type="hidden" name="userNo" value="${loginUser.no}">
         <div class="row">
-          <div class="form-group col-11">
-            <%--        <c:choose>--%>
-            <%--          <c:when test="${empty LOGIN_USER}">--%>
-            <%--            <input class="form-control" disabled rows="3" placeholder="로그인 후 댓글 작성이 가능합니다." />--%>
-            <%--          </c:when>--%>
-            <%--          <c:otherwise>--%>
-            <textarea name="content" class="form-control" rows="3" placeholder="댓글을 작성하세요."></textarea>
-            <%--          </c:otherwise>--%>
-            <%--        </c:choose>--%>
-          </div>
-          <div class="col">
-            <button class="btn btn-success" onclick="submitReply()">등록</button>
-          </div>
+          <c:choose>
+            <c:when test="${empty loginUser}">
+              <div class="form-group col-11">
+                <input class="form-control" disabled placeholder="로그인 후 댓글 작성이 가능합니다."/>
+              </div>
+              <div class="col">
+                <button type="button" class="btn btn-outline-success" onclick="goLogin()">등록</button>
+              </div>
+            </c:when>
+            <c:otherwise>
+              <div class="form-group col-11">
+                <textarea name="content" class="form-control" rows="3" placeholder="댓글을 작성하세요."></textarea>
+              </div>
+              <div class="col">
+                <button type="submit" class="btn btn-success" onclick="submitReply()">등록</button>
+              </div>
+            </c:otherwise>
+          </c:choose>
         </div>
       </form>
     </div>
@@ -164,24 +177,32 @@
                       <div class="col" style="text-align: start">
                         <strong>${reply.user.nickname}</strong><br/>
                         <span><fmt:formatDate value="${reply.createdDate}" pattern="yyyy.MM.dd hh:mm:ss"/></span>
-                        <button type="button" class="btn"
-                                style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
-                          신고
-                        </button>
+                        <c:if test="${loginUser.no ne reply.user.no}">
+                          <button type="button" class="btn btn-danger"
+                                  style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
+                                  onclick="report('reply', ${reply.no})">
+                            신고
+                          </button>
+                        </c:if>
                       </div>
                       <div class="col-2" style="text-align: end">
-                          <%--              <c:if test="${LOGIN_USER eq board.review.user.no}">--%>
-                        <button class="btn btn-outline-dark btn-sm">
-                          <i class="bi bi-hand-thumbs-up"></i>
-                          <i class="bi bi-hand-thumbs-up-fill"></i>
-                        </button>
-                        <button type="button" class="btn btn-warning btn-sm" id="replyModifyButton-${reply.no}"
-                                onclick="appendModify(${reply.no})">수정
-                        </button>
-                          <button type="button" class="btn btn-danger btn-sm"
-                                  onclick="deleteReply(${reply.no}, ${reply.boardNo})">삭제
-                          </button>
-                          <%--              </c:if>--%>
+                        <security:authorize access="isAuthenticated()">
+                          <c:if test="${loginUser.no ne reply.user.no}">
+                            <button class="btn btn-outline-primary btn-sm" id="replyLikeCnt"
+                                    onclick="replyLikeButton(${board.no}, ${reply.no}, ${loginUser.getNo()})">
+                              <i id="icon-thumbs"
+                                 class="bi ${replyLiked == '1' ? 'bi-hand-thumbs-up-fill' : (replyLiked == '0' ? 'bi-hand-thumbs-up' : 'bi-hand-thumbs-up')}"></i>
+                            </button>
+                          </c:if>
+                          <c:if test="${loginUser.no eq reply.user.no}">
+                            <button type="button" class="btn btn-warning btn-sm" id="replyModifyButton-${reply.no}"
+                                    onclick="appendModify(${reply.no})">수정
+                            </button>
+                            <button type="button" class="btn btn-danger btn-sm"
+                                    onclick="deleteReply(${reply.no}, ${reply.boardNo})">삭제
+                            </button>
+                          </c:if>
+                        </security:authorize>
                       </div>
                     </div>
                   </div>
@@ -204,12 +225,12 @@
                           </div>
                         </div>
                       </form>
-                        <%--        <c:if test="${not empty LOGIN_USER}">--%>
-                      <button type="button" class="btn btn-outline-dark btn-sm d-flex justify-content-start mb-3"
-                              name="replyContent" onclick="appendComment(${reply.no})">
-                        답글
-                      </button>
-                        <%--        </c:if>--%>
+                      <c:if test="${not empty loginUser}">
+                        <button type="button" class="btn btn-outline-dark btn-sm d-flex justify-content-start mb-3"
+                                name="replyContent" onclick="appendComment(${reply.no})">
+                          답글
+                        </button>
+                      </c:if>
                       
                       <form method="post" action="add-comment" id="box-comments-${reply.no}" class="my-3 d-none">
                         <input type="hidden" name="no" value="${reply.no}">
@@ -237,10 +258,73 @@
       </div>
     </c:if>
   </div>
+  
+  <!-- 신고 모달 창 -->
+  <div class="modal" tabindex="-1" id="modal-reporter">
+    <div class="modal-dialog">
+      <div class="modal-content" style="text-align: start">
+        <div class="modal-header">
+          <h5 class="modal-title">신고 사유</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body ">
+          <form method="post">
+            <input type="hidden" name="type" value="">
+            <input type="hidden" name="no" value="">
+            <input type="hidden" name="bno" value="${board.no}">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" value="스팸홍보/도배글입니다." name="reason" checked>
+              <label class="form-check-label">
+                스팸홍보/도배글입니다.
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" value="불법정보를 포함하고 있습니다." name="reason">
+              <label class="form-check-label">
+                불법정보를 포함하고 있습니다.
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" value=" 욕설/생명경시/혐오/차별적 표현입니다." name="reason">
+              <label class="form-check-label">
+                욕설/생명경시/혐오/차별적 표현입니다.
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" value="개인정보 노출 게시물입니다." name="reason">
+              <label class="form-check-label">
+                개인정보 노출 게시물입니다.
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" value="불쾌한 표현이 있습니다." name="reason">
+              <label class="form-check-label">
+                불쾌한 표현이 있습니다.
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" value="" name="reason" id="reason-etc">
+              <label class="form-check-label">
+                <input type="text" placeholder="신고사유를 직접 작성해주세요." id="etc">
+              </label>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+          <button type="button" class="btn btn-primary" onclick="reportButton()">신고</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
 <script type="text/javascript">
+
+    const myModalRepoter = new bootstrap.Modal('#modal-reporter')
+
     function updateBoard(boardNo) {
         let result = confirm("해당 게시글을 수정하시겠습니까?");
         if (result) {
@@ -254,34 +338,60 @@
             window.location.href = "delete?no=" + boardNo;
         }
     }
-    
-    function scrapButton() {
-        let scrapIcon = document.getElementById("scrapIcon");
 
-        if (scrapIcon.classList.contains('bi bi-bookmark')) {
-            scrapIcon.classList.remove('bi bi-bookmark');
-            scrapIcon.classList.add('bi bi-bookmark-fill');
+    function report(type, no) {
+        document.querySelector(".modal input[name=type]").value = type;
+        document.querySelector(".modal input[name=no]").value = no;
+
+        if (type === 'board') {
+            $(".modal form").attr('action', 'report-board');
+        }
+        if (type === 'reply') {
+            $(".modal form").attr('action', 'report-reply');
+        }
+
+        myModalRepoter.show();
+    }
+
+    function reportButton() {
+        if (document.querySelector("#reason-etc").checked) {
+            document.querySelector("#reason-etc").value = document.querySelector("#etc").value;
+        }
+        $(".modal form").trigger("submit");
+    }
+
+    function scrapButton(boardNo, userNo) {
+        let scrap = document.querySelector("#icon-scrap");
+        if (scrap.classList.contains("bi-bookmark")) {
+            window.location.href = `update-board-scrap?no=\${boardNo}&userNo=\${userNo}`;
         } else {
-            scrapIcon.classList.remove('bi bi-bookmark-fill');
-            scrapIcon.classList.add('bi bi-bookmark');
+            window.location.href = `delete-board-scrap?no=\${boardNo}&userNo=\${userNo}`;
         }
     }
 
-    function likeButton(likeCnt) {
-        let likeIcon = document.getElementById("likeIcon");
-        let updateLikeCnt;
-        
-        if (likeIcon.classList.contains('bi-hand-thumbs-up')) {
-            likeIcon.classList.remove('bi-hand-thumbs-up');
-            likeIcon.classList.add('bi-hand-thumbs-up-fill');
-            updateLikeCnt = likeCnt + 1;
+    function boardLikeButton(boardNo, userNo) {
+        let heart = document.querySelector("#icon-heart");
+        if (heart.classList.contains("bi-heart")) {
+            window.location.href = `update-board-like?no=\${boardNo}&userNo=\${userNo}`;
         } else {
-            likeIcon.classList.remove('bi-hand-thumbs-up-fill');
-            likeIcon.classList.add('bi-hand-thumbs-up');
-            updateLikeCnt = likeCnt - 1;
+            window.location.href = `delete-board-like?no=\${boardNo}&userNo=\${userNo}`;
         }
-        
-        window.location.href = `update-like?no=\${boardNo}&likeCnt=\${updateLikeCnt}`;
+    }
+
+    function replyLikeButton(boardNo, replyNo, userNo) {
+        let heart = document.querySelector("#icon-thumbs");
+        if (heart.classList.contains("bi-hand-thumbs-up")) {
+            window.location.href = `update-reply-like?no=\${boardNo}&rno=\${replyNo}&userNo=\${userNo}`;
+        } else {
+            window.location.href = `delete-reply-like?no=\${boardNo}&rno=\${replyNo}&userNo=\${userNo}`;
+        }
+    }
+
+    function goLogin() {
+        let result = confirm("로그인하시겠습니까?");
+        if (result) {
+            window.location.href = "/login";
+        }
     }
 
     /* 댓글&답글 입력 폼이 클릭한 버튼 바로 아래 위치하도록 처리 */
@@ -295,17 +405,17 @@
             }
         }
     });
-    
+
     /* 댓글 제출(/community/add-reply로 데이터 전달) */
     async function submitReply() {
-        let value1 = document.querySelector("input[name=boardNo]").value;
-        let value2 = document.querySelector("textarea[name=content]").value;
-        let value3 = document.querySelector("input[name=userNo]").value;
+        let boardNo = document.querySelector("input[name=boardNo]").value;
+        let content = document.querySelector("textarea[name=content]").value;
+        let userNo = document.querySelector("input[name=userNo]").value;
 
         let data = {
-            boardNo: value1,
-            content: value2,
-            userNo: value3
+            boardNo,
+            content,
+            userNo
         }
 
         // 자바스크립트 객체를 json형식의 텍스트로 변환한다.
@@ -328,7 +438,7 @@
             let reply = await response.json();
         }
     }
-    
+
     /* 댓글&답글 삭제 */
     function deleteReply(replyNo, boardNo) {
         let result = confirm("해당 댓글을 삭제하시겠습니까?");
@@ -336,7 +446,7 @@
             window.location.href = "delete-reply?rno=" + replyNo + "&bno=" + boardNo;
         }
     }
-    
+
     /* 버튼 클릭 시 댓글 수정 입력 폼 활성화 */
     function appendModify(replyNo) {
         let box = document.querySelector("#box-reply-" + replyNo);

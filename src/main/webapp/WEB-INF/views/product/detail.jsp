@@ -256,11 +256,10 @@
         let currentValue = parseInt(amountInput.value);
         amountInput.value = currentValue + 1;
         updatePrice(no);
+
         updateTotals();
 
     })
-
-
 
     // 금액 업데이트 함수
     const updatePrice = (no) => {

@@ -12,8 +12,8 @@ import java.util.Date;
 @Getter
 @Setter
 public class UploadFile {
-    private int no;
-    private int boardNo;
+    private int fileNo;
+    private int no;     // boardNo / noticeNo
     private String originalName;
     private String saveName;
     private String deleted;
