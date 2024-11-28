@@ -10,9 +10,11 @@ import org.springframework.web.multipart.MultipartFile;
 import store.seub2hu2.community.dto.BoardForm;
 import store.seub2hu2.community.exception.CommunityException;
 import store.seub2hu2.community.mapper.BoardMapper;
+import store.seub2hu2.community.mapper.NoticeMapper;
 import store.seub2hu2.community.mapper.UploadMapper;
 import store.seub2hu2.community.mapper.ReplyMapper;
 import store.seub2hu2.community.vo.Board;
+import store.seub2hu2.community.vo.Notice;
 import store.seub2hu2.community.vo.Reply;
 import store.seub2hu2.community.vo.UploadFile;
 import store.seub2hu2.security.user.LoginUser;
@@ -40,6 +42,9 @@ public class BoardService {
 
     @Autowired
     private ReplyMapper replyMapper;
+
+    @Autowired
+    private NoticeMapper noticeMapper;
 
     public Board addNewBoard(BoardForm form
                 , @AuthenticationPrincipal LoginUser loginUser) {
@@ -107,6 +112,13 @@ public class BoardService {
         return dto;
     }
 
+    public ListDto<Notice> getNoticesTop(Map<String, Object> condition) {
+        List<Notice> notices = noticeMapper.getNoticesTopFive(condition);
+        ListDto<Notice> dto = new ListDto<>(notices);
+
+        return dto;
+    }
+
     public Board getBoardDetail(int boardNo) {
         Board board = boardMapper.getBoardDetailByNo(boardNo);
         UploadFile uploadFile = uploadMapper.getFileByBoardNo(boardNo);
@@ -116,7 +128,6 @@ public class BoardService {
             throw new CommunityException("존재하지 않는 게시글입니다.");
         }
 
-        board.setViewCnt(board.getViewCnt() + 1);
         board.setUploadFile(uploadFile);
         board.setReply(reply);
 
@@ -125,8 +136,13 @@ public class BoardService {
         user.setNickname(board.getUser().getNickname());
         board.setUser(user);
 
-        boardMapper.updateBoardCnt(board);
         return board;
+    }
+
+    public void updateBoardViewCnt(int boardNo) {
+        Board board = boardMapper.getBoardDetailByNo(boardNo);
+        board.setViewCnt(board.getViewCnt() + 1);
+        boardMapper.updateBoardCnt(board);
     }
 
     public void updateBoard(BoardForm form) {

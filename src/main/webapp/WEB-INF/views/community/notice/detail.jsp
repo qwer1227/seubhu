@@ -1,10 +1,39 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@include file="/WEB-INF/common/tags.jsp" %>
+<%@include file="/WEB-INF/views/common/tags.jsp" %>
 <!doctype html>
 <html lang="ko">
 <head>
-  <%@include file="/WEB-INF/common/common.jsp" %>
+  <%@include file="/WEB-INF/views/common/common.jsp" %>
+  
 </head>
+<style>
+    /* 툴팁 스타일 (처음에는 숨겨져 있음) */
+    #hover-box {
+        display: none; /* 기본적으로 툴팁 숨김 */
+        position: absolute;
+        top: 100%; /* 버튼 바로 아래에 위치 */
+        right: 0%;
+        transform: translateX(-50%); /* 툴팁을 버튼의 중앙에 맞춤 */
+        background-color: rgba(0, 0, 0, 0.7); /* 배경 색상 */
+        color: white; /* 글씨 색상 */
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 12px;
+        white-space: nowrap; /* 내용이 길어도 줄바꿈 하지 않음 */
+        z-index: 10; /* 툴팁을 다른 요소 위에 표시 */
+    }
+
+    /* 버튼에 마우스를 올렸을 때 툴팁 표시 */
+    .btn-outline-primary:hover + #hover-box {
+        display: block;
+    }
+
+    /* 툴팁이 나타날 때 다른 콘텐츠가 영향을 받지 않도록 */
+    #fileDown:hover {
+        z-index: 20; /* 버튼과 툴팁 위로 다른 요소들이 오지 않도록 설정 */
+        position: relative; /* 툴팁을 버튼을 기준으로 설정 */
+    }
+</style>
 <body>
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
 <div class="container-xxl text-center" id="wrap">
@@ -14,41 +43,64 @@
   <div>
     <div class="col d-flex justify-content-left">
       <div>
-        <a href="" style="text-decoration-line: none">공지사항</a>
+        <a href="main" style="text-decoration-line: none">공지사항</a>
       </div>
     </div>
     <div class="title h4 d-flex justify-content-between align-items-center">
       <div>
-        게시글 제목
+        ${notice.title}
       </div>
-      <div class="ml-auto">
-        2024-11-11
-      </div>
+      <span><i class="bi bi-eye"></i> ${notice.viewCnt}</span>
     </div>
-    <div class="meta d-flex justify-content-between mb-3">
-      <span>작성자 이름</span>
-      <span><i class="bi bi-eye"></i> 100  <i class="bi bi-hand-thumbs-up"></i> 10</span>
+    <div class="meta d-flex justify-content-between">
+      <fmt:formatDate value="${notice.createdDate}" pattern="yyyy.MM.dd hh:mm:ss"/>
+      
+      <c:if test="${not empty notice.uploadFile.originalName}">
+        <div class="content mb-4" id="fileDown" style="text-align: end">
+          <a href="filedown?no=${notice.no}" class="btn btn-outline-primary btn-sm">첨부파일 다운로드</a>
+          <span id="hover-box">${notice.uploadFile.originalName}</span>
+        </div>
+      </c:if>
     </div>
     
-    <div class="content mb-4">
-      <p>여기에 본문 내용이 들어갑니다. 본문은 여러 줄로 작성할 수 있으며, 원하는 만큼 길게 작성할 수 있습니다.</p>
+    <div class="content mt-3" style="text-align: start">
+      <textarea id="content" class="form-control bg-white border-0" readonly="readonly"
+                style="resize: none; overflow: hidden; user-select: none;">${notice.content}
+      </textarea>
     </div>
     
     <div class="actions d-flex justify-content-between mb-4">
       <div>
         <!-- 관리자만 볼 수 있는 버튼 -->
-        <button class="btn btn-warning">수정</button>
-        <button class="btn btn-danger">삭제</button>
+        <button class="btn btn-warning" onclick="updateNotice(${notice.no})">수정</button>
+        <button class="btn btn-danger" onclick="deleteNotice(${notice.no})">삭제</button>
       </div>
       <div>
-        <button class="btn btn-outline-dark">
-          <i class="bi bi-hand-thumbs-up"></i>
-          <i class="bi bi-hand-thumbs-up-fill"></i>
-        </button>
         <a type="button" href="main" class="btn btn-secondary">목록</a>
       </div>
     </div>
-</div>
-<%@include file="/WEB-INF/common/footer.jsp" %>
+  </div>
+  <%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
+<script type="text/javascript">
+    let content = document.getElementById("content");
+    if (content) {
+        content.style.height = 'auto'
+        content.style.height = content.scrollHeight + 'px';
+    }
+    
+    function updateNotice(noticeNo){
+        let result = confirm("해당 공지사항을 수정하시겠습니까?");
+        if (result) {
+            window.location.href = "modify?no=" + noticeNo;
+        }
+    }
+    
+    function deleteNotice(noticeNo){
+        let result = confirm("해당 공지사항을 삭제하시겠습니까?");
+        if (result) {
+            window.location.href = "delete?no=" + noticeNo;
+        }
+    }
+</script>
 </html>

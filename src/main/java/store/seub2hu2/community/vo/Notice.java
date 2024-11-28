@@ -13,13 +13,19 @@ import java.util.Date;
 @Setter
 public class Notice {
     private int no;
-    private String category;
     private String title;
     private String content;
     private Date createdDate;
     private Date updatedDate;
     private boolean first;
-    private String isDeleted;
+    private String deleted;
     private int viewCnt;
-    private UploadFile upfile;
+    private UploadFile uploadFile;
+
+    public String getOriginalFileName() {
+        if(uploadFile.getSaveName() == null){
+            return null;
+        }
+        return uploadFile.getSaveName().substring(13);
+    }
 }
