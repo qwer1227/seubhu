@@ -18,7 +18,14 @@ public class Notice {
     private Date createdDate;
     private Date updatedDate;
     private boolean first;
-    private String isDeleted;
+    private String deleted;
     private int viewCnt;
     private UploadFile uploadFile;
+
+    public String getOriginalFileName() {
+        if(uploadFile.getSaveName() == null){
+            return null;
+        }
+        return uploadFile.getSaveName().substring(13);
+    }
 }

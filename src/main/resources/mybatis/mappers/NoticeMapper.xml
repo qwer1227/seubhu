@@ -32,15 +32,28 @@
   <!-- List<Notice> getNotices(@Param("condition") Map<String, String> condition); -->
   <select id="getNotices" resultType="store.seub2hu2.community.vo.Notice">
     select *
-    from (select row_number()           over(order by notice_created_date desc) rn
-                , notice_title as title
+    from (select row_number() over(order by notice_first desc, notice_created_date desc) rn
+               , notice_no as no
+               , notice_title as title
                , notice_content      as content
                , notice_created_date as createdDate
                , notice_first        as `first`
-               , notice_cnt          as viewCnt
+               , notice_view_cnt          as viewCnt
           from NOTICES
           where is_deleted = 'N') notice
     where notice.rn between #{condition.begin} and #{condition.end}
+    order by rn
+  </select>
+
+  <!-- List<Notice> getNoticesTopFive(@Param("condition") Map<String, Object> condition); -->
+  <select id="getNoticesTopFive" resultType="store.seub2hu2.community.vo.Notice">
+    select *
+    from (select row_number() over(order by notice_created_date desc) rn
+                    , notice_no as no
+                    , notice_title as title
+          from NOTICES
+          where notice_first = '1'
+            and is_deleted = 'N') notice limit 5
   </select>
 
   <!-- int getTotalRowsForNotice(@Param("condition") Map<String, String> condition); -->
@@ -50,7 +63,37 @@
     where is_deleted = "N"
   </select>
 
-  <!-- Notice getNoticeByNo(@Param("no") int no); -->
+  <!-- Notice getNoticeByNo(@Param("no") int noticeNo); -->
+  <select id="getNoticeByNo" parameterType="int">
+    select notice_no as no
+         , notice_title        as title
+         , notice_content      as content
+         , file_name           as uploadFile
+         , notice_created_date as createdDate
+         , notice_view_cnt     as viewCnt
+    from NOTICES
+    where is_deleted = 'N'
+      and notice_no = #{no}
+  </select>
 
+  <!-- void updateNotice(@Param("notice") Notice notice); -->
+  <update id="updateNotice">
+    update NOTICES
+    set notice_first = #{notice.first}
+    , notice_title = #{notice.title}
+    , notice_content = #{notice.content}
+    , notice_updated_date = sysdate()
+    , is_deleted = #{notice.deleted}
+    <if test="notice.uploadFile != null">
+      , file_name = #{notice.uploadFile}
+    </if>
+    where notice_no = #{notice.no}
+  </update>
 
+  <!-- void updateNoticeCnt(@Param("notice") Notice notice); -->
+  <update id="updateNoticeCnt">
+    update NOTICES
+    set notice_view_cnt = #{notice.viewCnt}
+    where notice_no = #{notice.no}
+  </update>
 </mapper>

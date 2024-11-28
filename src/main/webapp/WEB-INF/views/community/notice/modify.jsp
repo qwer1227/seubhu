@@ -18,10 +18,12 @@
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
 <div class="container-xxl text-center" id="wrap">
   
-  <h2>공지사항 글 작성</h2>
+  <h2>공지사항 글 수정</h2>
   
-  <form method="post" action="register" enctype="multipart/form-data">
   <div class="row p-3">
+    <form method="post" action="modify" enctype="multipart/form-data">
+      <input type="hidden" name="no" value="${notice.no}">
+      <input type="hidden" name="fileNo" id="fileNo" value="${notice.uploadFile.no}">
     <table id="notice-table" style="width: 98%">
       <colgroup>
         <col width="20%">
@@ -41,13 +43,13 @@
       </tr>
       <tr>
         <th>글제목</th>
-        <td colspan="3"><input type="text" id="title" name="title" style="width: 100%"></td>
+        <td colspan="3"><input type="text" id="title" name="title" style="width: 100%" value="${notice.title}"></td>
       </tr>
       <tr>
         <th>글내용</th>
         <td colspan="3">
           <textarea style="width: 100%" class="form-control" rows="10" id="content" name="content"
-                    placeholder="내용을 입력해주세요."></textarea>
+                    placeholder="내용을 입력해주세요.">${notice.content}</textarea>
           <!--%@include file="../write.jsp"%-->
         </td>
       </tr>

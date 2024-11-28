@@ -21,12 +21,21 @@
   </div>
   
   <div class="row">
-    <div class="col-7" style="margin: 15px; border: 1px solid black">
-      <table class="m-3">
+    <div class="col-6" style="margin: 15px; border: 1px solid black">
+      <table>
         <tbody>
         <tr>
           <td>
-            <a href="" style="text-decoration-line: none; color: black; font-weight: bold">공지사항 => 5개만 보여줄 예정</a>
+            <div style="text-align: start" class="mt-2 mb-2">
+              <a href="/community/notice/main" style="text-decoration-line: none; color: black; font-weight: bold">
+                [ 공지사항 ]
+              </a>
+            </div>
+            <ul style="text-align: start">
+              <c:forEach var="notice" items="${notices}">
+                <li><a href="/community/notice/hit?no=${notice.no}" style="text-decoration-line: none">${notice.title}</a></li>
+              </c:forEach>
+            </ul>
           </td>
         </tr>
         </tbody>

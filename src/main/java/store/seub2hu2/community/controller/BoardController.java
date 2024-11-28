@@ -27,6 +27,7 @@ import store.seub2hu2.community.service.ReportService;
 import store.seub2hu2.community.service.ScrapService;
 import store.seub2hu2.community.view.FileDownloadView;
 import store.seub2hu2.community.vo.Board;
+import store.seub2hu2.community.vo.Notice;
 import store.seub2hu2.community.vo.Reply;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.service.UserService;
@@ -90,10 +91,12 @@ public class BoardController {
             condition.put("keyword", keyword);
         }
 
-        ListDto<Board> dto = boardService.getBoards(condition);
+        ListDto<Board> bDto = boardService.getBoards(condition);
+        ListDto<Notice> nDto = boardService.getNoticesTop(condition);
 
-        model.addAttribute("boards", dto.getData());
-        model.addAttribute("paging", dto.getPaging());
+        model.addAttribute("boards", bDto.getData());
+        model.addAttribute("paging", bDto.getPaging());
+        model.addAttribute("notices", nDto.getData());
 
         return "community/main";
     }
@@ -149,8 +152,7 @@ public class BoardController {
     }
 
     @GetMapping("/modify")
-    public String modifyForm(@RequestParam("no") Integer boardNo
-            , @AuthenticationPrincipal LoginUser loginUser
+    public String modifyForm(@RequestParam("no") int boardNo
             , Model model) {
 
         Board board = boardService.getBoardDetail(boardNo);
@@ -186,8 +188,7 @@ public class BoardController {
 
     // 요청 URL : comm/filedown?no=xxx
     @GetMapping("/filedown")
-    public ModelAndView download(@RequestParam("no") int boardNo
-                                , @AuthenticationPrincipal LoginUser loginUser) {
+    public ModelAndView download(@RequestParam("no") int boardNo) {
 
         Board board = boardService.getBoardDetail(boardNo);
 
@@ -202,8 +203,7 @@ public class BoardController {
     }
 
     @GetMapping("/download")
-    public ResponseEntity<Resource> downloadFile(int boardNo
-                                        , @AuthenticationPrincipal LoginUser loginUser) throws Exception{
+    public ResponseEntity<Resource> downloadFile(int boardNo) throws Exception{
 
         Board board = boardService.getBoardDetail(boardNo);
 
