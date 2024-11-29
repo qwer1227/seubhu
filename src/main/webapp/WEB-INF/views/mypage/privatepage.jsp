@@ -5,6 +5,11 @@
 <head>
     <%@ include file="/WEB-INF/views/common/common.jsp" %>
     <style>
+        /* a 태그에 밑줄 없애기*/
+        a {
+            color: black;
+            text-decoration-line: none;
+        }
         /* 전체 컨테이너 중앙 정렬 */
         #wrap {
             display: flex;
@@ -56,10 +61,10 @@
             <h3>활동기록</h3>
         </div>
         <div class="item">
-            <h3>장바구니</h3>
+            <a href="/mypage/cart"><h3>장바구니</h3></a>
         </div>
         <div class="item">
-            <h3>주문</h3>
+            <a href="/mypage/order"><h3>주문</h3></a>
         </div>
         <div class="item">
             <h3>문의내역</h3>
