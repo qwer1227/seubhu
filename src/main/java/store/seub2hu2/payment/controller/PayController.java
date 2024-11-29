@@ -60,27 +60,29 @@ public class PayController {
 
     @GetMapping("/completed")
     public String payCompleted(@RequestParam("pg_token") String pgToken
-            , @RequestParam("type") String type
-            , @RequestParam("lessonNo") int lessonNo
-            , @RequestParam("userNo") int userNo
+            , @RequestParam  Map<String, Object> param
             , Model model) {
 
         String tid = SessionUtils.getStringAttributeValue("tid");
         log.info("결제승인 요청을 인증하는 토큰: " + pgToken);
         log.info("결제 고유번호: " + tid);
 
-        // 카카오 결제 요청하기
-        ApproveResponse approveResponse = kakaoPayService.payApprove(tid, pgToken, lessonNo);
+        String type = (String) param.get("type");
 
-        PaymentDto paymentDto = new PaymentDto();
-        paymentDto.setUserNo(userNo);
-        paymentDto.setPayId(tid);
-        paymentDto.setTotalAmount(approveResponse.getAmount().getTotal());
-        paymentDto.setLessonNo(lessonNo);
-
-        log.info("lessonReservationPay = {}", paymentDto);
 
         if (type.equals("레슨")) {
+            int lessonNo = (int) param.get("lessNo");
+            int userNo = (int) param.get("userNo");
+            // 카카오 결제 요청하기
+            ApproveResponse approveResponse = kakaoPayService.payApprove(tid, pgToken, lessonNo);
+
+            PaymentDto paymentDto = new PaymentDto();
+            paymentDto.setUserNo(userNo);
+            paymentDto.setPayId(tid);
+            paymentDto.setTotalAmount(approveResponse.getAmount().getTotal());
+            paymentDto.setLessonNo(lessonNo);
+
+            log.info("lessonReservationPay = {}", paymentDto);
             lessonReservationService.saveLessonReservation(paymentDto);
         }
 
