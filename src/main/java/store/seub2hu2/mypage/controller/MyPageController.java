@@ -10,6 +10,7 @@ import store.seub2hu2.cart.dto.CartRegisterForm;
 import store.seub2hu2.mypage.service.CartService;
 import store.seub2hu2.mypage.service.PostService;
 import store.seub2hu2.mypage.vo.Post;
+import store.seub2hu2.order.service.OrderService;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.vo.User;
 
@@ -25,6 +26,9 @@ public class MyPageController {
 
     @Autowired
     CartService cartService;
+
+    @Autowired
+    OrderService orderService;
 
     // URL localhost/mypage 입력 시 유저의 No를 활용해 그 유저의 페이지를 보여줌
     @GetMapping("")
@@ -70,6 +74,7 @@ public class MyPageController {
         return "mypage/cart";
     }
 
+    // 삭제
     @PostMapping("/delete")
     public String deleteItem(@RequestParam("cartNo") List<Integer> cartNoList) {
 
@@ -125,6 +130,7 @@ public class MyPageController {
         return "mypage/wish";
     }
 
+
     // 주문결제 화면으로 간다.
     @GetMapping("/order")
     public String order() {
@@ -134,7 +140,14 @@ public class MyPageController {
 
     // Post 방식으로 주문결제 화면으로 간다.
     @PostMapping("/order")
-    public String addOrder() {
+    public String addOrder(@RequestParam("sizeNo") List<Integer> sizeNoList
+            ,@RequestParam("stock") List<Integer> stock
+            ,Model model) {
+
+
+
+        List<CartItemDto> orderItems = orderService.getOrderItemBySizeNo(sizeNoList, stock);
+        model.addAttribute("orderItems", orderItems);
 
         return "mypage/order";
     }

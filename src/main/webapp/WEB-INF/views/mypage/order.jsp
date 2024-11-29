@@ -27,20 +27,22 @@
                     </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td>
-                        <img src="https://static.nike.com/a/images/t_PDP_936_v1/f_auto,q_auto:eco/12a2f74f-b392-4ff1-8d15-480de194bd0c/AIR+ZOOM+PEGASUS+41.png" class="rounded mx-auto d-block" width="90">
-                    </td>
-                    <td>
-                        <span>남성 칼데라 7 레몬 (MEDIUM)</span>
-                        <p class="text-secondary">[레몬/285] / 1 개</p>
+                    <c:forEach items="${orderItems}" var="item">
+                        <tr>
+                            <td>
+                                <img src="https://static.nike.com/a/images/t_PDP_936_v1/f_auto,q_auto:eco/12a2f74f-b392-4ff1-8d15-480de194bd0c/AIR+ZOOM+PEGASUS+41.png" class="rounded mx-auto d-block" width="90">
+                            </td>
+                            <td>
+                                <span>${item.product.name}</span>
+                                <p class="text-secondary">[레몬/285] / 1 개</p>
 
-                    </td>
-                    <td class="text-end">
-                        <span>169,000 원</span>
-                        <button type="button" class="btn btn-lg delete-button" data-target-id="#item-\${sizeNo}"><i class="bi bi-x"></i></button>
-                    </td>
-                </tr>
+                            </td>
+                            <td class="text-end">
+                                <span>169,000 원</span>
+                                <button type="button" class="btn btn-lg delete-button" data-target-id="#item-\${sizeNo}"><i class="bi bi-x"></i></button>
+                            </td>
+                        </tr>
+                    </c:forEach>
                 </tbody>
             </table>
         </div>
@@ -217,7 +219,8 @@
                 </tbody>
             </table>
             <div class="d-grid gap-2">
-                <button class="btn btn-dark" type="button">결제하기</button>
+                <button class="col btn btn-dark" type="button" disabled>주문취소하기</button>
+                <button class="col btn btn-dark" type="button" disabled>결제하기</button>
             </div>
         </div>
 </div>
