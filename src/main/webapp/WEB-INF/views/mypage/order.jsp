@@ -109,6 +109,13 @@
                             <div class="d-flex">
                                 <input type="email" class="form-control"> @
                                 <input type="email" class="form-control">
+                                <select class="form-control" name="email">
+                                    <option>선택하세요</option>
+                                    <option>직접입력</option>
+                                    <option>gmail.com</option>
+                                    <option>naver.com</option>
+                                    <option>hanmail.net</option>
+                                </select>
                             </div>
                         </td>
                     </tr>
@@ -164,19 +171,18 @@
     <div class="row mb-3">
         <div class="col">
             <table class="table align-middle mt-2 md-2">
-                <colgroup>
-                    <col width="10%"/>
-                    <col width="50%"/>
-                    <col width="35%">
-                </colgroup>
                 <thead class="table-secondary">
                 <tr class="text-start">
-                    <th colspan="3">결제 정보</th>
+                    <th colspan="12">결제 정보</th>
                 </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <th><label>결제 수단</label></th>
+                        <td><input type="radio"><img src="https://ecimg.cafe24img.com/pg90b05313110010/brooksrunning/web/upload/icon_202210121023113100.png" /></td>
+                        <td><input type="radio" checked><img src="https://ecimg.cafe24img.com/pg90b05313110010/brooksrunning/web/upload/icon_202210121022402200.png"/></td>
+                        <td><input type="radio"><img src="https://img.echosting.cafe24.com/design/skin/admin/ko_KR/ico_payco_disabled.gif" /></td>
+                        <td><input type="radio"><img src="https://img.echosting.cafe24.com/skin/admin_ko_KR/order/admin_naverpay_disabled.gif" /></td>
                     </tr>
                 </tbody>
             </table>
