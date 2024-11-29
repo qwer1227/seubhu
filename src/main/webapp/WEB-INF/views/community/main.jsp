@@ -21,7 +21,7 @@
   </div>
   
   <div class="row">
-    <div class="col-6" style="margin: 15px; border: 1px solid black">
+    <div class="col-6 border" style="margin: 15px; background-color: #f2f2f2">
       <table>
         <tbody>
         <tr>

@@ -45,8 +45,7 @@ public class NoticeController {
 
     @GetMapping("/main")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page
-            , @RequestParam(name = "rows", required = false, defaultValue = "15") int rows
-            , @RequestParam(name = "opt", required = false) String opt
+            , @RequestParam(name = "rows", required = false, defaultValue = "10") int rows
             , @RequestParam(name = "keyword", required = false) String keyword
             , Model model) {
 
@@ -55,7 +54,6 @@ public class NoticeController {
         condition.put("rows", rows);
 
         if (StringUtils.hasText(keyword)) {
-            condition.put("opt", opt);
             condition.put("keyword", keyword);
         }
 
@@ -143,6 +141,14 @@ public class NoticeController {
     public String delete(@RequestParam("no") int noticeNo) {
         noticeService.deleteNotice(noticeNo);
         return "redirect:main";
+    }
+
+    @GetMapping("/delete-file")
+    public String deleteUploadFile(@RequestParam("no") int noticeNo
+                            , @RequestParam("fileNo") int fileNo){
+        noticeService.deleteNoticeFile(noticeNo, fileNo);
+
+        return "redirect:modify?no=" + noticeNo;
     }
 }
 

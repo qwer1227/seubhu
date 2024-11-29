@@ -3,6 +3,8 @@ package store.seub2hu2.payment.dto;
 import lombok.*;
 import store.seub2hu2.payment.vo.Payment;
 
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -15,8 +17,8 @@ public class PaymentDto {
     private int quantity;       // 수량
     private String method;      // 결제 방식
     // 상품
-    private String productName; // 상품명
-    private int productNo;      // 상품번호
+    private List<Integer> sizeNo; // 상품 번호(사이즈 번호)
+    private List<Integer> stock;  // 수량
     // 레슨
     private String title;       // 레슨명
     private int lessonNo;       // 레슨번호

@@ -86,11 +86,9 @@ public class NoticeService {
     public Notice getNoticeDetail(int noticeNo) {
         Notice notice = noticeMapper.getNoticeByNo(noticeNo);
 
-        if (notice != null) {
+        if (notice.getUploadFile() != null) {
             UploadFile uploadFile = uploadMapper.getFileByNoticeNo(noticeNo);
-            if (notice.getUploadFile() != null) {
-                notice.setUploadFile(uploadFile);
-            }
+            notice.setUploadFile(uploadFile);
         }
 
         return notice;
@@ -146,5 +144,13 @@ public class NoticeService {
         notice.setUploadFile(notice.getUploadFile());
 
         noticeMapper.updateNotice(notice);
+    }
+
+    public void deleteNoticeFile(int noticeNo, int fileNo){
+        UploadFile uploadFile = uploadMapper.getFileByNoticeNo(noticeNo);
+        uploadFile.setNo(fileNo);
+        uploadFile.setDeleted("Y");
+
+        uploadMapper.updateNoticeFile(uploadFile);
     }
 }
