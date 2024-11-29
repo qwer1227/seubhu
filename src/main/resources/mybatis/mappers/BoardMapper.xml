@@ -108,9 +108,9 @@
         <when test="condition.opt == 'content'">
           and board.board_content like concat('%', #{condition.keyword}, '%')
         </when>
-<!--        <when test="condition.opt == 'writer'">-->
-<!--          and board.user_no like concat('%', #{condition.keyword}, '%')-->
-<!--        </when>-->
+        <!--        <when test="condition.opt == 'writer'">-->
+        <!--          and board.user_no like concat('%', #{condition.keyword}, '%')-->
+        <!--        </when>-->
       </choose>
     </if>
   </select>
@@ -119,8 +119,7 @@
   <update id="updateBoard">
     update
     BOARDS
-    set
-    board_cat_name = #{board.catName}
+    set board_cat_name = #{board.catName}
     , board_title = #{board.title}
     , board_content = #{board.content}
     , board_updated_date = sysdate()

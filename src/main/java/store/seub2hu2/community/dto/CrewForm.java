@@ -5,18 +5,20 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
-import store.seub2hu2.community.vo.UploadFile;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class NoticeForm {
+public class CrewForm {
 
     private int no;
+    private String name;
     private String category;
-    private boolean first;
+    private String location;
+    private String schedule;
     private String title;
-    private String content;
+    private String description;
+    private MultipartFile image;
     private MultipartFile upfile;
 }

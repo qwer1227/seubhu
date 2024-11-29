@@ -38,19 +38,21 @@ public class KakaoPayService {
             parameters.put("item_name", paymentDto.getTitle());
             parameters.put("item_code", String.valueOf(paymentDto.getLessonNo()));
             parameters.put("total_amount", String.valueOf(paymentDto.getTotalAmount()));
+
+            parameters.put("approval_url", "http://localhost/pay/completed?type=" + paymentDto.getType()
+                    + "&lessonNo=" + paymentDto.getLessonNo()
+                    + "&userNo=" + paymentDto.getUserNo());
         }
 
         // 상품 결제
         if (paymentDto.getType().equals("상품")) {
-            parameters.put("item_name", paymentDto.getProductName());
-            parameters.put("item_code", String.valueOf(paymentDto.getProductNo()));
-            parameters.put("total_amount", String.valueOf(paymentDto.getTotalAmount()));
+            //parameters.put("item_name", paymentDto.getProductName());
+            //parameters.put("item_code", String.valueOf(paymentDto.getProductNo()));
+            //parameters.put("total_amount", String.valueOf(paymentDto.getTotalAmount()));
         }
 
         parameters.put("tax_free_amount", "0");
-        parameters.put("approval_url", "http://localhost/pay/completed?type=" + paymentDto.getType()
-                + "&lessonNo=" + paymentDto.getLessonNo()
-                + "&userNo=" + paymentDto.getUserNo());
+
         parameters.put("cancel_url", "http://localhost/pay/cancel");
         parameters.put("fail_url", "http://localhost/pay/fail");
 

@@ -63,12 +63,19 @@ public class MyPageController {
         User user = User.builder().no(loginUser.getNo()).build();
 
         List<CartItemDto> cartItemDtoList = cartService.getCartItemsByUserNo(user.getNo());
-        System.out.println("cartItemDtoList = " + cartItemDtoList);
 
         model.addAttribute("cartItemDtoList",cartItemDtoList);
         model.addAttribute("qty", cartItemDtoList.size());
 
         return "mypage/cart";
+    }
+
+    @PostMapping("/delete")
+    public String deleteItem(@RequestParam("cartNo") List<Integer> cartNoList) {
+
+        cartService.deleteCartItems(cartNoList);
+
+        return "redirect:/mypage/cart";
     }
 
     // Post 방식으로
@@ -121,6 +128,13 @@ public class MyPageController {
     // 주문결제 화면으로 간다.
     @GetMapping("/order")
     public String order() {
+
+        return "mypage/order";
+    }
+
+    // Post 방식으로 주문결제 화면으로 간다.
+    @PostMapping("/order")
+    public String addOrder() {
 
         return "mypage/order";
     }

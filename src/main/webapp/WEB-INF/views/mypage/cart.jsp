@@ -8,66 +8,81 @@
 <body>
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
 <div class="container-xxl text-center" id="wrap">
+    <!--
+        장바구니에 아무것도 없다면
+    -->
+    <c:if test="${empty cartItemDtoList}">
+        <div class="row m-5">
+            <h2>장바구니</h2>
+            <hr class="bg-primary border border-1">
+            <p>장바구니가 비어있습니다.</p>
+        </div>
+    </c:if>
 
-    <div class="row m-5">
-        <h2 id="total-kind">장바구니 (${qty} 개 상품)</h2>
-        <p>장바구니에 담긴 상품은 30일동안 보관됩니다.</p>
-    </div>
-    <hr class="bg-primary border border-1">
-    <div class="row mb-3 d-flex align-items-center justify-content-between">
-        <div class="col">
-            <div class="text-start">
-                <input id="total-checked" type="checkbox" style="zoom:1.8">
+    <c:if test="${!empty cartItemDtoList}">
+        <div class="row m-5">
+            <h2 id="total-kind">장바구니 (${qty} 개 상품)</h2>
+            <p>장바구니에 담긴 상품은 30일동안 보관됩니다.</p>
+        </div>
+        <hr class="bg-primary border border-1">
+        <div class="row mb-3 d-flex align-items-center justify-content-between">
+            <div class="col">
+                <div class="text-start">
+                    <input id="total-checked" type="checkbox" style="zoom:1.8">
+                </div>
             </div>
-        </div>
-        <div class="col-auto mn-3">
-            <button type="button" class="btn btn-lg">
-                <i class="bi bi-trash"></i> 선택 삭제
-            </button>
-        </div>
-        <div class="row">
-            <div class="col-12">
-                <form id="form-order" method="post">
-                <table class="table align-middle mt-2 md-2">
-                    <colgroup>
-                        <col width="5%"/>
-                        <col width="15%"/>
-                        <col width="30%"/>
-                        <col width="30%"/>
-                        <col width="20%">
-                    </colgroup>
-                    <tbody>
-                        <c:forEach var="item" items="${cartItemDtoList}">
-
-                            <tr>
-                                <td>
-                                    <input id="each-checked" type="checkbox" style="zoom: 1.5" ${item.no == 11 ? 'checked' : ''}/>
-                                </td>
-                                <td>
-                                    <img src="${item.imgThum}" class="rounded mx-auto d-block" width="170">
-                                </td>
-                                <td>
-                                    <span>${item.product.name}</span>
-                                    <p>[${item.color.name}/${item.size.size}]</p>
-                                </td>
-                                <td>
-                                    <input type="button" value=" - " name="minus" data-no="${item.no}">
-                                    <input type="text" name="stock" value="${item.stock}" id="stock-${item.no}" size="3" max="" style=" width: 3rem; text-align: center">
-                                    <input type="button" value=" + " name="plus" data-no="${item.no}">
-                                </td>
-                                <td>
-                                    <span><strong id="price-${item.no}" data-price="${item.product.price}"><fmt:formatNumber value="${item.product.price * item.stock}"/></strong> 원</span>
-                                    <button type="button" class="btn btn-lg delete-button" data-target-id="#item-${item.no}"><i class="bi bi-x"></i></button>
-                                </td>
-                            </tr>
-
-                        </c:forEach>
-                    </tbody>
-                </table>
-                </form>
+            <div class="col-auto mn-3">
+                <button type="button" class="btn btn-lg" id="delete-item">
+                    <i class="bi bi-trash"></i> 선택 삭제
+                </button>
             </div>
-        </div>
+            <div class="row">
+                <div class="col-12">
+                    <form id="form-order" method="post">
+                    <table class="table align-middle mt-2 md-2">
+                        <colgroup>
+                            <col width="5%"/>
+                            <col width="15%"/>
+                            <col width="30%"/>
+                            <col width="30%"/>
+                            <col width="20%">
+                        </colgroup>
+                        <tbody>
+                            <c:forEach var="item" items="${cartItemDtoList}">
 
+                                <tr>
+                                    <td>
+                                        <input id="each-checked-${item.no}" type="checkbox" style="zoom: 1.5"/>
+                                    </td>
+                                    <td>
+                                        <img src="${item.imgThum}" class="rounded mx-auto d-block" width="170">
+                                    </td>
+                                    <td>
+                                        <input type="hidden" name="cartNo" value="${item.no}">
+                                        <input type="hidden" name="prodNo" value="${item.product.no}"/>
+                                        <input type="hidden" name="colorNo" value="${item.color.no}"/>
+                                        <input type="hidden" name="sizeNo" value="${item.size.no}"/>
+                                        <span>${item.product.name}</span>
+                                        <p>[${item.color.name}/${item.size.size}]</p>
+                                    </td>
+                                    <td>
+                                        <input type="button" value=" - " name="minus" data-no="${item.no}">
+                                        <input type="text" name="stock" value="${item.stock}" id="stock-${item.no}" size="3" max="" style=" width: 3rem; text-align: center">
+                                        <input type="button" value=" + " name="plus" data-no="${item.no}">
+                                    </td>
+                                    <td>
+                                        <span><strong id="price-${item.no}" data-price="${item.product.price}"><fmt:formatNumber value="${item.product.price * item.stock}"/></strong> 원</span>
+                                    </td>
+                                </tr>
+
+                            </c:forEach>
+                        </tbody>
+                    </table>
+                    </form>
+                </div>
+            </div>
+
+    </c:if>
         <!--
             총 금액과 주문하기 버튼
         -->
@@ -105,7 +120,7 @@
                     <p><strong class="text-danger fs-2" id="final-total-price">0</strong> 원</p>
                 </div>
                 <div class="d-grid gap-2">
-                    <button class="btn btn-dark" type="button">주문하기 (<strong id="total-stock">0</strong>개)</button>
+                    <button class="btn btn-dark" id="order-add" type="button">주문하기 (<strong id="total-stock">0</strong>개)</button>
                 </div>
             </div>
         </div>
@@ -122,6 +137,7 @@
         if(currentValue > 1) {
             amountInput.value = currentValue - 1;
             updatePrice(no);
+            updateTotals();
         }
     })
 
@@ -131,6 +147,7 @@
         let amountInput = document.querySelector('#stock-' + no);
         let currentValue = parseInt(amountInput.value);
         amountInput.value = currentValue + 1;
+
         updatePrice(no);
         updateTotals();
     })
@@ -139,7 +156,7 @@
         // 수량
         let amountInput = document.querySelector('#stock-' + no);
         // 단가
-        let eachPrice = document.querySelector('#price-'+no);
+        let eachPrice = document.querySelector('#price-'+ no);
         let value = eachPrice.dataset.price;
         let total = parseInt(value, 10);
 
@@ -153,7 +170,6 @@
     const updateTotals = () => {
         let totalPrice = 0; // 총 가격
         let totalStock = 0; // 총 갯수
-        let totalKind = 0; // 상품 종류 갯수
         let deliveryPrice = 3000; // 배송비
         let finalTotalPrice = 0; // 최종가격(총 가격 + 배송비)
 
@@ -173,10 +189,12 @@
         });
 
         // 50000원 이상 구매시 배송비 무료
-        if (totalPrice >= 50000) {
+        if(totalPrice === 0) {
+            deliveryPrice = 0;
+        } else if (totalPrice >= 50000) {
             deliveryPrice = 0;
         }
-        finalTotalPrice = totalPrice - deliveryPrice;
+        finalTotalPrice = totalPrice + deliveryPrice;
 
         // 화면 출력
         $("#total-stock").text(totalStock.toLocaleString())
@@ -185,8 +203,37 @@
         $("#final-total-price").text(finalTotalPrice.toLocaleString())
     }
 
-    updateTotals();
+    // 전체 클릭과 전체 해제 기능
+    $("#total-checked").on('click', function () {
 
+        let isChecked = $(this).prop('checked');
+        $('input[id^="each-checked-"]').prop('checked', isChecked);
+        updateTotals()
+    });
+
+    // 개별 선택 동작
+    $('input[id^="each-checked-"]').on('change', function () {
+        updateTotals();
+        const totalCheckboxes = $('input[id^="each-checked-"]');
+        const checkedCheckboxes = $('input[id^="each-checked-"]:checked');
+        let allChecked = totalCheckboxes.length === checkedCheckboxes.length;
+
+        $('#total-checked').prop('checked', allChecked);
+    });
+
+    // 주문결제에 전달
+    $('#order-add').click(function () {
+        $("#form-order table :checkbox:not(:checkbox:checked)").closest("tr").remove();
+        $('#form-order').attr('action', '/mypage/order')
+        $('#form-order').trigger('submit');
+    });
+
+    // 선택 삭제
+    $('#delete-item').on('click', function (){
+        $("#form-order table :checkbox:not(:checkbox:checked)").closest("tr").remove();
+        $('#form-order').attr('action', '/mypage/delete')
+        $('#form-order').trigger('submit');
+    });
 
 </script>
 

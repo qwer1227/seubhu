@@ -26,6 +26,18 @@
     </insert>
 
     <!--
+        void deleteCartItems(@Param("cartNoList") List<Integer> cartNoList)
+    -->
+    <delete id="deleteCartItems">
+        DELETE FROM CARTS
+        WHERE CART_NO IN
+        <foreach collection="cartNoList" item="cartNo" open="(" separator="," close=")">
+              #{cartNo}
+        </foreach>
+
+    </delete>
+
+    <!--
         List<CartItemDto> getCartItemsByUserNo(@Param("userNo") int userNo);
     -->
     <select id="getCartItemsByUserNo" resultType="store.seub2hu2.cart.dto.CartItemDto">

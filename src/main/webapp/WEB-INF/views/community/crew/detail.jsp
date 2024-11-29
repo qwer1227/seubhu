@@ -34,27 +34,19 @@
         </div>
       </tr>
       <tr>
-        <th colspan="4" style="text-align: start" class="fs-4">마라톤 이름</th>
+        <th colspan="4" style="text-align: start" class="fs-4">모집글 제목</th>
       </tr>
       <tr>
-        <th>일시</th>
+        <th>크루 이름</th>
         <td>2024.11.09</td>
-        <th>접수기간</th>
-        <td>2024.07.10 ~ 2024.10.18</td>
       </tr>
       <tr>
         <th>장소</th>
         <td colspan="3">전남 순천시 팔마로 333 (연향동, 순천팔마종합경기장) 순천팔마종합운동장 외 주로코스</td>
       </tr>
       <tr>
-        <th>홈페이지</th>
-        <td>http://sc-marathon.kr/</td>
-        <th>참가비</th>
-        <td>15,000원</td>
-      </tr>
-      <tr>
         <th colspan="4">
-          <textarea disabled style="width: 100%">마라톤 디테일</textarea>
+          <textarea disabled style="width: 100%">모임 디테일</textarea>
         </th>
       </tr>
       <tr>

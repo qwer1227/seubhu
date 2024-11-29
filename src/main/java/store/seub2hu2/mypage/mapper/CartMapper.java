@@ -16,4 +16,8 @@ public interface CartMapper {
 
     // 장바구니 추가 기능
     void addCart(@Param("carts") List<CartRegisterForm> cartRegisterForm);
+
+    // 장바구니 삭제
+    void deleteCartItems(@Param("cartNoList") List<Integer> cartNoList);
+
 }
