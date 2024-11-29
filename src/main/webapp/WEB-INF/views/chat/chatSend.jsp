@@ -1,12 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@include file="/WEB-INF/common/tags.jsp" %>
+<%@include file="/WEB-INF/views/common/tags.jsp" %>
 <!doctype html>
 <html lang="ko">
 <head>
-    <%@include file="/WEB-INF/common/common.jsp" %>
+    <%@include file="/WEB-INF/views/common/common.jsp" %>
 </head>
 <body>
-<%@include file="/WEB-INF/common/nav.jsp" %>
+<%@include file="/WEB-INF/views/common/nav.jsp" %>
 
 <div class="container mt-4">
     <div class="row">
@@ -59,7 +59,7 @@
 
 
 
-<%@include file="/WEB-INF/common/footer.jsp" %>
+<%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script type="text/javascript">
 document.getElementById('chatRoomForm').addEventListener('submit', function(e) {
 e.preventDefault(); // 폼 제출을 방지하여 페이지 리로드를 막음
