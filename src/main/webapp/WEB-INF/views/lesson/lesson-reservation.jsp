@@ -107,10 +107,11 @@
                         <c:if test="${not empty reservation.status and
                              reservation.status ne '취소' and
                              reservation.status ne '환불'}">
-                            <form action="/pay/cancel" method="POST" style="display: inline;">
+                            <form action="/pay/cancel" name="paymentDto" method="POST" style="display: inline;">
                                 <input type="hidden" name="paymentId" value="${reservation.payment.id}">
-                                <input type="hidden" name="userNo" value="${reservation.user.no}">
+                                <input type="hidden" name="userId" value="${reservation.user.id}">
                                 <input type="hidden" name="lessonNo" value="${reservation.lesson.lessonNo}">
+                                <input type="hidden" name="totalAmount" value="${reservation.lesson.price}">
                                 <button type="submit" id=cancel-btn class="btn btn-sm btn-danger" onclick="confirmCancel()">취소</button>
                             </form>
                         </c:if>

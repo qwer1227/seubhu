@@ -97,7 +97,7 @@
         UPDATE LESSONS
         SET PARTICIPANT    = #{lesson.participant}
           , LESSON_STATUS  = #{lesson.status}
-          , USER_NO        = #{lesson.lecturer.no}
+          , USER_ID        = #{lesson.lecturer.id}
           , LESSON_TITLE   = #{lesson.title}
           , LESSON_PLAN    = #{lesson.plan}
           , LESSON_SUBJECT = #{lesson.subject}

@@ -91,7 +91,7 @@ public class LessonController {
     }
 
     @GetMapping("/reservation")
-    public String reservation(@RequestParam("userNo") int userNo,
+    public String reservation(@RequestParam("userId") String userId,
                               @ModelAttribute("condition") ReservationSearchCondition condition,
                               Model model) {
 
@@ -112,7 +112,7 @@ public class LessonController {
             }
         }
 
-        List<LessonReservation> lessonReservations = lessonReservationService.searchLessonReservationList(condition, userNo);
+        List<LessonReservation> lessonReservations = lessonReservationService.searchLessonReservationList(condition, userId);
         model.addAttribute("lessonReservations", lessonReservations);
         return "lesson/lesson-reservation";
     }

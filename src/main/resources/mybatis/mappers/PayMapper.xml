@@ -7,13 +7,13 @@
     <insert id="insertPay">
         INSERT INTO PAYMENTS
         ( PAY_ID
-        , USER_NO
+        , USER_ID
         , PAY_METHOD
         , PAY_AMOUNT
         , PAY_PRICE
         , PAY_TYPE)
         VALUES ( #{pay.id}
-               , #{pay.userNo}
+               , #{pay.userId}
                , #{pay.method}
                , #{pay.amount}
                , #{pay.price}
@@ -24,7 +24,7 @@
     <select id="getPaymentById">
         SELECT PAY_NO as no
          , PAY_ID as payID
-         , USER_NO as userNo
+         , USER_ID as userId
          , PAY_METHOD as method
          , PAY_AMOUNT as amount
          , PAY_DATE as payCreatedDate

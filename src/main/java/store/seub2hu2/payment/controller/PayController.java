@@ -71,14 +71,17 @@ public class PayController {
 
 
         if (type.equals("레슨")) {
-            int lessonNo = (int) param.get("lessNo");
-            int userNo = (int) param.get("userNo");
+            String lessonNoStr = (String) param.get("lessonNo");
+            int lessonNo = Integer.parseInt(lessonNoStr);
+            String userId = (String) param.get("userId");
+
+
             // 카카오 결제 요청하기
             ApproveResponse approveResponse = kakaoPayService.payApprove(tid, pgToken, lessonNo);
 
             PaymentDto paymentDto = new PaymentDto();
-            paymentDto.setUserNo(userNo);
-            paymentDto.setPayId(tid);
+            paymentDto.setUserId(userId);
+            paymentDto.setPaymentId(tid);
             paymentDto.setTotalAmount(approveResponse.getAmount().getTotal());
             paymentDto.setLessonNo(lessonNo);
 
@@ -95,17 +98,15 @@ public class PayController {
 
     // 결제 취소 요청
     @PostMapping("/cancel")
-    public String payCancel(@RequestParam("paymentId") String paymentId
-                            , @RequestParam("userNo") int userNo
-                            , @RequestParam("lessonNo") int lessonNo
+    public String payCancel(@ModelAttribute PaymentDto paymentDto
             , Model model) {
 
+        String paymentId= paymentDto.getPaymentId();
 
+        // 예약 정보 조회
         LessonReservation lessonReservation = lessonReservationService.getLessonReservationByPayId(paymentId);
-        PaymentDto paymentDto = new PaymentDto();
-        paymentDto.setTotalAmount(lessonReservation.getPayment().getPrice());
-        paymentDto.setPayId(paymentId);
-        paymentDto.setQuantity(1);
+
+        // 주문 정보 조회
 
 
         // 카카오 결제 취소하기
@@ -113,11 +114,11 @@ public class PayController {
 
         // 예약 상태 변경
         if (lessonReservation != null) {
-            lessonReservationService.cancelReservation(paymentId, ReservationStatus.CANCELLED, lessonNo);
+            lessonReservationService.cancelReservation(paymentId, ReservationStatus.CANCELLED, paymentDto.getLessonNo());
         }
 
         model.addAttribute("cancelResponse", cancelResponse);
-        return "redirect:/lesson/reservation?userNo=" + userNo;
+        return "redirect:/lesson/reservation?userId=" + paymentDto.getUserId();
     }
 
     // 결제 성공 화면

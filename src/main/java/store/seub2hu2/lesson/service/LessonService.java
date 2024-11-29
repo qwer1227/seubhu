@@ -38,8 +38,8 @@ public class LessonService {
         return lessonMapper.getLessonByNo(lessonNo);
     }
 
-    public List<LessonReservation> getLessonsByUserNo(int userNo) {
-        return lessonReservationMapper.getLessonReservationByUserNo(userNo);
+    public List<LessonReservation> getLessonsByUserId(String userId) {
+        return lessonReservationMapper.getLessonReservationByUserId(userId);
     }
 
     public void addNewLesson(Lesson lesson) {

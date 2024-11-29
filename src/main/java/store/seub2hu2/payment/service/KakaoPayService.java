@@ -41,7 +41,7 @@ public class KakaoPayService {
 
             parameters.put("approval_url", "http://localhost/pay/completed?type=" + paymentDto.getType()
                     + "&lessonNo=" + paymentDto.getLessonNo()
-                    + "&userNo=" + paymentDto.getUserNo());
+                    + "&userId=" + paymentDto.getUserId());
         }
 
         // 상품 결제

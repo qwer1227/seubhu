@@ -12,7 +12,7 @@ import java.util.Date;
 public class Payment {
     private int no;
     private String id;
-    private int userNo;
+    private String userId;
     private String method;
     private int price;
     private int amount;

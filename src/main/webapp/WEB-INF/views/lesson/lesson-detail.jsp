@@ -87,7 +87,7 @@
                 <security:authorize access="isAuthenticated()">
                     <security:authentication property="principal" var="loginUser"/>
                     <c:if test="${loginUser ne null}">
-                        <input type="hidden" name="userNo" value="${loginUser.no}">
+                        <input type="hidden" name="userId" value="${loginUser.id}">
                         <button type="submit" class="btn btn-primary">수강신청</button>
                     </c:if>
                     <c:if test="${loginUser eq null}">

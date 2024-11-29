@@ -40,7 +40,6 @@ public class LessonReservationService {
         try {
             // 1. 레슨 정보 조회
             Lesson lesson = lessonMapper.getLessonByNo(paymentDto.getLessonNo());
-            log.info("saveLessonReservation에서 사용되는 paymentDto = {}", paymentDto);
 
             if (lesson == null) {
                 throw new RuntimeException("존재하지 않는 레슨입니다. LessonNo: " + paymentDto.getLessonNo());
@@ -57,8 +56,8 @@ public class LessonReservationService {
 
             // 3. 결제 정보 저장
             Payment payment = new Payment();
-            payment.setId(paymentDto.getPayId());
-            payment.setUserNo(paymentDto.getUserNo());
+            payment.setId(paymentDto.getPaymentId());
+            payment.setUserId(paymentDto.getUserId());
             payment.setStatus("결제완료");
             payment.setType("레슨");
             payment.setMethod("카드");
@@ -69,7 +68,7 @@ public class LessonReservationService {
 
             LessonReservation lessonReservation = new LessonReservation();
             User user = new User();
-            user.setNo(paymentDto.getUserNo());
+            user.setId(paymentDto.getUserId());
             lessonReservation.setUser(user);
             lessonReservation.setPayment(payment);
             lessonReservation.setLesson(lesson);
@@ -97,7 +96,7 @@ public class LessonReservationService {
         return lessonReservationMapper.getLessonReservationByNo(reservationNo);
     }
 
-    public List<LessonReservation> searchLessonReservationList(ReservationSearchCondition condition, int userNo) {
+    public List<LessonReservation> searchLessonReservationList(ReservationSearchCondition condition, String userId) {
         // 기본 날짜 포맷 정의
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -116,7 +115,7 @@ public class LessonReservationService {
 
 
         // MyBatis 매퍼 호출
-        return lessonReservationMapper.getReservationByCondition(condition, userNo);
+        return lessonReservationMapper.getReservationByCondition(condition, userId);
     }
 
     // 예약 상태 변경
