@@ -2,5 +2,56 @@
 <!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="store.seub2hu2.community.mapper.CrewMapper">
 
+  <!-- void insertCrew(@Param("crew") Crew crew); -->
+  <insert id="insertCrew">
+    insert into CREWS
+    (
+    crew_category
+    , crew_schedule
+    , crew_location
+    , crew_title
+    , crew_name
+    , crew_description
+    , crew_thumbnail
+    <if test="crew.uploadFile != null">
+      , file_name
+    </if>
+    )
+    values
+    (
+    #{crew.category}
+    , #{crew.schedule}
+    , #{crew_location}
+    , #{crew.title}
+    , #{crew_name}
+    , #{crew_description}
+    , #{crew_thumbnail}
+    <if test="crew.uploadFile != null">
+      , #{file_name}
+    </if>
+    )
+    <selectKey resultType="int" keyProperty="board.no" keyColumn="board_no" order="AFTER">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+  </insert>
 
+  <!-- void insertCrewMember(@Param("member") CrewMember member); -->
+  <insert id="insertCrewMember">
+    insert into CREW_MEMBERS
+        (
+         crew_no
+          , is_reader
+          , crew_join_date
+          , is_join
+          , user_no
+        )
+    values
+        (
+         #{member.crewNo}
+          , #{member.reader}
+          , #{member.joinDate}
+          , #{member.join}
+          , #{member.user.no}
+        )
+  </insert>
 </mapper>

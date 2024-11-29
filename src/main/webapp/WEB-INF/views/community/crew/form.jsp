@@ -21,7 +21,7 @@
   <h2>크루 모집글 작성</h2>
   
   <div class="row p-3">
-    <form method="post" action="main">
+    <form method="post" action="register" enctype="multipart/form-data">
       <table id="inviting-table" style="width: 98%">
         <colgroup>
           <col width="10%">
@@ -37,10 +37,10 @@
         <tr>
           <th>크루 종류</th>
           <td>
-            <select>
+            <select id="category" name="category" class="form-control">
               <option hidden="hidden">크루 조건을 선택해주세요.</option>
-              <option>정기 모임</option>
-              <option>번개 모임</option>
+              <option value="정기모임">정기 모임</option>
+              <option value="번개모임">번개 모임</option>
             </select>
           </td>
         </tr>
@@ -50,26 +50,25 @@
         </tr>
         <tr>
           <th>일시</th>
-<%--          <td><input type="date" name="marathon-date" style="width: 50%"></td>--%>
           <td>
             <select>
-              <option>매월</option>
-              <option>매주</option>
-              <option>매일</option>
+              <option name="schedule" value="매월">매월</option>
+              <option name="schedule" value="매주">매주</option>
+              <option name="schedule" value="매일">매일</option>
             </select>
-            <input type="text" value="" placeholder="상세 모임 일시를 작성해주세요.">
+            <input type="text" name="schedule" value="" placeholder="상세 모임 일시를 작성해주세요.">
           </td>
           <!-- 지도api 사용 -->
           <th>장소</th>
           <td>
-            <input type="text" name="place" value="">
+            <input type="text" name="location" value="">
             <button class="btn btn-outline-dark btn-sm" type="button">장소 찾기</button>
           </td>
         </tr>
         <tr>
           <th>대표 이미지</th>
           <td colspan="3">
-            <input type="file" class="form-control" name="upfile"/>
+            <input type="file" class="form-control" name="image"/>
           </td>
         </tr>
         <tr>
@@ -83,12 +82,11 @@
         <tr>
           <th>첨부파일</th>
           <td colspan="3">
-            <input type="file" class="form-control" name="image"/>
+            <input type="file" class="form-control" name="uploadFile"/>
         </tr>
         </td>
         </tbody>
       </table>
-    </form>
     
     <div class="row p-3">
       <div class="col d-flex justify-content-between">
@@ -101,6 +99,7 @@
         </div>
       </div>
     </div>
+    </form>
   </div>
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
