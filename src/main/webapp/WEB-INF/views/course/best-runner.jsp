@@ -16,13 +16,10 @@
     <%-- 카테고리 --%>
     <div class="row row-cols-2 row-cols-lg-4 g-2 g-lg-3 justify-content-center">
         <div class="col " >
-            <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="#">나의 코스 기록</a>
-        </div>
-        <div class="col " >
             <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="list">코스 목록</a>
         </div>
         <div class="col " >
-            <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="best-runner">베스트 런너</a>
+            <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="best-runner">런너 랭킹</a>
         </div>
     </div>
 
@@ -63,16 +60,14 @@
                 <c:when test="${not empty loginUser}">
                     <c:choose>
                         <%-- 나의 코스 완주 기록이 존재하면, 나의 코스 완주 기록을 화면에 표시한다. --%>
-                        <c:when test="${not empty records}">
-                            <c:forEach var="record" items="${records}">
-                                <c:if test="${record.user.no eq loginUser.no}">
-                                    <tr>
-                                        <th scope="row">${myRecord.no}</th>
-                                        <td>${myRecord.user.nickname}</td>
-                                        <td>${myRecord.finishedDate}</td>
-                                        <td>${myRecord.finishedTime}분</td>
-                                    </tr>
-                                </c:if>
+                        <c:when test="${not empty myRecord}">
+                            <c:forEach var="record" items="${myRecord}">
+                                <tr>
+                                    <th scope="row">${record.no}</th>
+                                    <td>${record.user.nickname}</td>
+                                    <td><fmt:formatDate value="${record.finishedDate}" pattern="yyyy년 M월 d일" /> </td>
+                                    <td>${record.finishedTime}분</td>
+                                </tr>
                             </c:forEach>
                         </c:when>
                         <%-- 나의 코스 완주 기록이 존재하지 않다면, 문구를 표시한다. --%>
@@ -111,7 +106,7 @@
                         <tr>
                             <th scope="row">${record.no}</th>
                             <td>${record.user.nickname}</td>
-                            <td>${record.finishedDate}</td>
+                            <td><fmt:formatDate value="${record.finishedDate}" pattern="yyyy년 M월 d일" /> </td>
                             <td>${record.finishedTime}분</td>
                         </tr>
                     </c:forEach>

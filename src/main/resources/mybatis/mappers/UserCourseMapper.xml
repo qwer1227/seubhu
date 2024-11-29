@@ -69,11 +69,13 @@
 
     <!--
         List<Records> getRecords(@Param("condition") Map<String, Object> condition);
+        List<Records> getRecords(@Param("condition") Map<String, Object> condition);
     -->
     <select id="getRecords" resultType="store.seub2hu2.course.vo.Records">
         select *
         from (
               select dense_rank() over (order by r.finished_time) as no
+                    , row_number() over (order by r.finished_time) as rn
                    , r.finished_no
                    , r.finished_date as finishedDate
                    , r.finished_time as finishedTime
@@ -82,8 +84,13 @@
                    , u.user_nickname as "user.nickname"
               from COURSE_RECORDS r inner join USERS u
               on r.user_no = u.user_no
-              where r.course_no = #{condition.courseNo}
+              where course_no = #{condition.courseNo}
+              <if test="condition.userNo != null">
+                  and r.user_no = #{condition.userNo}
+              </if>
              ) ar
-        where no between #{condition.begin} and #{condition.end}
+        <if test="condition.userNo == null">
+            where rn between #{condition.begin} and #{condition.end}
+        </if>
     </select>
 </mapper>
