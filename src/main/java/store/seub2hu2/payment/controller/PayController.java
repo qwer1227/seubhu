@@ -2,6 +2,7 @@ package store.seub2hu2.payment.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +34,7 @@ public class PayController {
     private final LessonFileService lessonFileService;
     private final PaymentService paymentService;
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/form")
     public String payment(LessonDto lessonDto,
                           Model model) {

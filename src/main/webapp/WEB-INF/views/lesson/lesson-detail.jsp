@@ -8,7 +8,6 @@
 </head>
 <body>
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
-
 <div class="container-xxl" id="wrap">
     <div class="row mb-5">
         <div class="col-2"></div>
@@ -86,14 +85,14 @@
                 <input type="hidden" name="participant" value="${lesson.participant}">
                 <security:authorize access="isAuthenticated()">
                     <security:authentication property="principal" var="loginUser"/>
-                    <c:if test="${loginUser ne null}">
+                    <c:if test="${not empty loginUser}">
                         <input type="hidden" name="userId" value="${loginUser.id}">
                         <button type="submit" class="btn btn-primary">수강신청</button>
                     </c:if>
-                    <c:if test="${loginUser eq null}">
+                </security:authorize>
+                    <c:if test="${empty loginUser}">
                         <button type="button" id="non-login" class="btn btn-primary">수강신청</button>
                     </c:if>
-                </security:authorize>
             </form>
         </div>
         <div class="col-2"></div>

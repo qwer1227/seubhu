@@ -121,6 +121,7 @@ public class LessonReservationService {
     // 예약 상태 변경
     public void cancelReservation(String paymentId, ReservationStatus status, int lessonNo) {
 
+        // 예약 상태 "취소"로 변경
         lessonReservationMapper.updateReservationStatus(paymentId, status.label());
 
         // 레슨 예약 인원 감소
