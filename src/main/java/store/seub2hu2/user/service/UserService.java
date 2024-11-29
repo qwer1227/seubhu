@@ -14,6 +14,8 @@ import store.seub2hu2.user.vo.User;
 import store.seub2hu2.user.mapper.UserMapper;
 import store.seub2hu2.user.vo.UserRole;
 
+import java.util.List;
+
 @Service
 @Transactional
 public class UserService {
@@ -100,7 +102,7 @@ public class UserService {
     }
 
     /**
-     * 
+     *
      * @param userInfoReq 사용자가 입력한 내용
      * @return 참 여부
      */
@@ -111,7 +113,7 @@ public class UserService {
 
         // 입력한 비밀번호 인코딩
         String EncodedPwd = passwordEncoder.encode(userInfoReq.getPassword());
-        
+
         // 사용자가 입력한 정보를 USER객체에 저장
         user.setNo(loginUser.getNo());
         user.setName(userInfoReq.getName());
@@ -119,7 +121,7 @@ public class UserService {
         user.setPassword(EncodedPwd);
         user.setTel(userInfoReq.getPhone());
         user.setEmail(userInfoReq.getEmail());
-        
+
         // 이전비밀번호 중복입력검증
         if(userInfoReq.getPassword().equals(user.getPassword())){
             return 1;
@@ -129,7 +131,7 @@ public class UserService {
         if(!userInfoReq.getPassword().equals(userInfoReq.getConfirmPassword())){
             return 2;
         }
-        
+
         // 저장한 객체를 Mapper에 전달
         userMapper.updateUser(user);
 
@@ -138,5 +140,15 @@ public class UserService {
 
     public User findbyUserNo(String userId){
         return userMapper.getUserById(userId);
+    }
+
+    /**
+     * 권한 번호로 해당 권한을 가진 사용자 목록을 조회하는 서비스
+     * @param roleNo 권한번호
+     * @return 조회된 사용자 목록 반환
+     */
+    public List<User> findUsersByUserRoleNo(int roleNo) {
+        List<User> findUsers = userMapper.getUsersByRoleNo(roleNo);
+        return findUsers;
     }
 }
