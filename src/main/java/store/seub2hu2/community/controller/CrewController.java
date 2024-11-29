@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/community/inviting")
-public class InvitingController {
+public class CrewController {
 
     @GetMapping("/main")
     public String Community() {
