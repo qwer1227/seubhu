@@ -99,6 +99,9 @@
                 <td>${board.catName}</td>
                 <td id="content-title" style="text-align: start">
                   <a href="detail?no=${board.no}" style="text-decoration-line: none; color: black">${board.title}</a>
+                  <c:if test="${board.replyCnt gt 0}">
+                    <span class="badge rounded-pill text-bg-danger">${board.replyCnt}</span>
+                  </c:if>
                 </td>
                 <td>${board.user.nickname}</td>
                 <td>${board.like}</td>

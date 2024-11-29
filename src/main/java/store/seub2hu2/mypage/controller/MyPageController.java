@@ -476,6 +476,23 @@ public class MyPageController {
         return "mypage/wish";
     }
 
+    // 주문내역 화면으로 간다.
+    @GetMapping("/orderhistory")
+    public String orderHistory(Model model, @AuthenticationPrincipal LoginUser loginUser) {
+
+
+        return "mypage/orderhistory";
+    }
+    
+    // 주문내역-상세 화면으로 간다
+    @GetMapping("/orderhistorydetail")
+    public String orderHistoryDetail(Model model, @AuthenticationPrincipal LoginUser loginUser) {
+
+
+
+        return "mypage/orderhistorydetail";
+    }
+
     // 주문결제 화면으로 간다.
     @GetMapping("/order")
     public String order() {
