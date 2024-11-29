@@ -50,7 +50,7 @@
       BOARD_UPLOADFILES
     set is_deleted        = #{deleted}
       , file_updated_date = sysdate()
-    where file_no = #{no}
+    where board_no = #{no}
   </update>
 
   <!-- void insertNoticeFile(@Param("uploadFile") UploadFile uploadFile); -->
@@ -66,7 +66,7 @@
 
   <!-- UploadFile getFileByNoticeNo(int noticeNo); -->
   <select id="getFileByNoticeNo" parameterType="int" resultType="store.seub2hu2.community.vo.UploadFile">
-    select n.notice_no          as no
+    select n.notice_no as no
         , nu.file_no            as fileNo
         , nu.file_original_name as originalName
         , nu.file_save_name     as saveName
@@ -83,11 +83,9 @@
   <!-- void updateNoticeFile(UploadFile uploadFile); -->
   <update id="updateNoticeFile" parameterType="store.seub2hu2.community.vo.UploadFile">
     update NOTICE_UPLOADFILES
-    set (
-          is_deleted = #{deleted}
-          , file_updated_date = sysdate()
-          )
-    where file_no = #{no}
+    set is_deleted        = #{deleted}
+      , file_updated_date = sysdate()
+    where notice_no = #{no}
   </update>
 
 </mapper>
