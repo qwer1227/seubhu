@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
@@ -90,6 +91,7 @@ public class LessonController {
         return lessons;
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/reservation")
     public String reservation(@RequestParam("userId") String userId,
                               @ModelAttribute("condition") ReservationSearchCondition condition,
@@ -117,7 +119,7 @@ public class LessonController {
         return "lesson/lesson-reservation";
     }
 
-
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/reservation/detail")
     public String reservationDetail(@RequestParam("reservationNo") int reservationNo,
                                     Model model) {
