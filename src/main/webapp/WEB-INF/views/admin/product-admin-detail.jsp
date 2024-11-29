@@ -151,19 +151,39 @@
                         </div>
                     </div>
                 </div>
-                <div>
-                  <a href="register-color?no=${prodDetailDto.no}">
-                    <button class="btn btn-outline btn-success btn-sm">상품 색상 추가</button>
-                  </a>
-                  <a href="register-size?no=${prodDetailDto.no}">
-                    <button class="btn btn-outline btn-success btn-sm">상품 사이즈 추가</button>
-                  </a>
-                  <a href="register-image?no=${prodDetailDto.no}">
-                    <button class="btn btn-outline btn-success btn-sm">상품 이미지 추가</button>
-                  </a>
-                    <a href="register-editform?no=${prodDetailDto.no}">
-                        <button class="btn btn-outline btn-success btn-sm">상품 수정&대표 색상 설정</button>
-                    </a>
+                <div class="row m-2">
+                    <div class="mr-2">
+                      <a href="register-color?no=${prodDetailDto.no}">
+                        <button class="btn btn-outline btn-success btn-sm">상품 색상 추가</button>
+                      </a>
+                    </div>
+                    <div class="mr-2">
+                      <a href="register-size?no=${prodDetailDto.no}">
+                        <button class="btn btn-outline btn-success btn-sm">상품 사이즈 추가</button>
+                      </a>
+                    </div>
+                    <div class="mr-2">
+                      <a href="register-image?no=${prodDetailDto.no}">
+                        <button class="btn btn-outline btn-success btn-sm">상품 이미지 추가</button>
+                      </a>
+                    </div>
+                </div>
+                <div class="row m-2">
+                    <div class="mr-2">
+                        <a href="register-editform?no=${param.no}&colorNo=${param.colorNo}">
+                            <button class="btn btn-outline btn-success btn-sm">상품 수정&대표 색상 설정</button>
+                        </a>
+                    </div>
+                    <div class="mr-2">
+                        <a href="image-editform?no=${param.no}&colorNo=${param.colorNo}">
+                            <button class="btn btn-outline btn-success btn-sm">상품 이미지 편집</button>
+                        </a>
+                    </div>
+                    <div class="mr-2">
+                        <a href="image-changeThumb?no=${param.no}&colorNo=${param.colorNo}">
+                            <button class="btn btn-outline btn-success btn-sm">대표 이미지 설정</button>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

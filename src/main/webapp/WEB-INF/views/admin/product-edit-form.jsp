@@ -96,7 +96,7 @@
                                         <label class="form-label">대표 색상 설정</label>
                                         <select name="colorNum" class="form-control" id="colorNum">
                                             <c:forEach var="c" items="${colors}">
-                                                <option value="${c.no}">${c.color}</option>
+                                                <option value="${c.no}">${c.name}</option>
                                             </c:forEach>
                                         </select>
                                     </div>

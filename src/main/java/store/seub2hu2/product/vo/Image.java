@@ -11,6 +11,8 @@ public class Image {
 
     private int no;
     private String url;
-    private boolean isThum;
+    private String isThum;
     private Product product;
+    private int colorNo;
+    private int prodNo;
 }

@@ -62,8 +62,7 @@
     </div>
     <div class="meta d-flex justify-content-between mb-3">
       <span>
-        ${board.user.nickname} | <fmt:formatDate value="${board.createdDate}"
-                                                 pattern="yyyy.MM.dd hh:mm:ss"></fmt:formatDate>
+        ${board.user.nickname} | <fmt:formatDate value="${board.createdDate}" pattern="yyyy.MM.dd hh:mm:ss"/>
       </span>
       <span>
         <i class="bi bi-eye"></i> ${board.viewCnt}

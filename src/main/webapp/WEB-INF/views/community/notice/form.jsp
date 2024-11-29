@@ -20,35 +20,28 @@
   
   <h2>공지사항 글 작성</h2>
   
+  <form method="post" action="register" enctype="multipart/form-data">
   <div class="row p-3">
     <table id="notice-table" style="width: 98%">
       <colgroup>
-        <col width="10%">
-        <col width="40%">
-        <col width="15%">
-        <col width="35%">
+        <col width="20%">
+        <col width="*">
       </colgroup>
       <tbody>
       <tr>
-        <th>카테고리</th>
-        <td style="text-align: start">
-          <select>
-            <option hidden="hidden">카테고리를 선택해 주세요.</option>
-            <option>공지사항</option>
-            <option>자주 묻는 질문</option>
-          </select>
-        </td>
         <th>상위 노출 여부</th>
         <td>
           <div class="form-check form-switch">
-            <input class="form-check-input" checked type="checkbox" role="switch" id="flexSwitchCheckChecked">
-            <label class="form-check-label" for="flexSwitchCheckChecked"></label>
+            <input class="form-check-input" checked type="checkbox" role="switch"
+                   id="first-check" onclick="changeFirst()">
+            <input type="hidden" id="first" name="first" value="true">
+            <label class="form-check-label"></label>
           </div>
         </td>
       </tr>
       <tr>
         <th>글제목</th>
-        <td colspan="3"><input type="text" value="" style="width: 100%"></td>
+        <td colspan="3"><input type="text" id="title" name="title" style="width: 100%"></td>
       </tr>
       <tr>
         <th>글내용</th>
@@ -79,8 +72,15 @@
       </div>
     </div>
   </div>
-
+  </form>
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
+<script type="text/javascript">
+    function changeFirst(){
+        let checked = document.querySelector("#first");
+
+        checked.value = document.querySelector("#first-check").checked ? "true" : "false";
+    }
+</script>
 </html>

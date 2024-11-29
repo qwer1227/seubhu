@@ -11,6 +11,7 @@ import store.seub2hu2.lesson.mapper.LessonFileMapper;
 import store.seub2hu2.lesson.mapper.LessonMapper;
 import store.seub2hu2.lesson.mapper.LessonReservationMapper;
 import store.seub2hu2.lesson.vo.*;
+import store.seub2hu2.user.vo.User;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -41,28 +42,19 @@ public class LessonService {
         lessonMapper.insertLesson(lesson);
     }
 
-
-    // lessonNo에 맞는 이미지 파일 정보 가져오기
-    public Map<String, String> getImagesByLessonNo(int lessonNo) {
-        List<LessonFile> lessonFiles = lessonFileMapper.getImagesByLessonNo(lessonNo);
-
-        // 썸네일과 본문 이미지 경로를 Map으로 구분하여 반환
-        Map<String, String> images = new HashMap<>();
-        for (LessonFile file : lessonFiles) {
-            if ("THUMBNAIL".equals(file.getFileType())) {
-                images.put("THUMBNAIL", file.getFileName());
-                log.info("THUMBNAIL = {}", file.getFileName());
-            } else if ("MAIN_IMAGE".equals(file.getFileType())) {
-                images.put("MAIN_IMAGE",  file.getFileName());
-                log.info("MAIN_IMAGE = {}",  file.getFileName());
-            }
-        }
-        return images;
-    }
-
-
-    public void registerLesson(Lesson lesson, LessonRegisterForm form) {
+    public void registerLesson(LessonRegisterForm form) {
         // Convert LessonRegisterForm to Lesson
+        Lesson lesson = new Lesson();
+        lesson.setTitle(form.getTitle());
+        lesson.setPrice(form.getPrice());
+        User user = new User();
+        user.setNo(29); // Or dynamically assign user ID
+        user.setId(form.getLecturerName());
+        lesson.setLecturer(user);
+        lesson.setSubject(form.getSubject());
+        lesson.setPlan(form.getPlan());
+        lesson.setStart(form.getStart());
+        lesson.setEnd(form.getEnd());
 
         lessonMapper.insertLesson(lesson); // Save lesson details and generate lessonNo
 
@@ -75,26 +67,9 @@ public class LessonService {
         return lessonFileMapper.lastInsertedLessonNo();
     }
 
-
-    public List<LessonReservation> searchLessonReservationList(ReservationSearchCondition condition, int userNo) {
-        // startDate, endDate 기본값 설정 (현재 날짜 기준 한 달)
-        if (condition.getStartDate() == null || condition.getEndDate() == null) {
-            Calendar calendar = Calendar.getInstance();
-
-            // endDate 기본값: 현재 날짜
-            if (condition.getEndDate() == null) {
-                condition.setEndDate(calendar.getTime());
-            }
-
-            // startDate 기본값: 한 달 전
-            if (condition.getStartDate() == null) {
-                calendar.add(Calendar.MONTH, -1);
-                condition.setStartDate(calendar.getTime());
-            }
-        }
-
-        // MyBatis 매퍼 호출
-        return lessonReservationMapper.getReservationByCondition(condition, userNo);
+    public void updateLesson(Lesson lesson) {
+        lessonMapper.updateLesson(lesson);
     }
+
 
 }

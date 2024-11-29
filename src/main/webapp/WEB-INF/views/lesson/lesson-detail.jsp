@@ -8,7 +8,7 @@
 </head>
 <body>
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
-<security:authentication property="principal" var="loginUser"/>
+
 <div class="container-xxl" id="wrap">
     <div class="row mb-5">
         <div class="col-2"></div>
@@ -62,14 +62,14 @@
             </table>
         </div>
     </div>
-<%--    <div class="row text-white text-start mb-3">--%>
-<%--        <div class="col-2"></div>--%>
-<%--        <div class="col-4 bg-black">${lesson.title}</div>--%>
-<%--        <div class="col-1 bg-black">결제 금액</div>--%>
-<%--        <div class="col-1 bg-black">${lesson.price}</div>--%>
-<%--        <div class="col-2 bg-black"></div>--%>
-<%--        <div class="col-2"></div>--%>
-<%--    </div>--%>
+    <%--    <div class="row text-white text-start mb-3">--%>
+    <%--        <div class="col-2"></div>--%>
+    <%--        <div class="col-4 bg-black">${lesson.title}</div>--%>
+    <%--        <div class="col-1 bg-black">결제 금액</div>--%>
+    <%--        <div class="col-1 bg-black">${lesson.price}</div>--%>
+    <%--        <div class="col-2 bg-black"></div>--%>
+    <%--        <div class="col-2"></div>--%>
+    <%--    </div>--%>
     <div class="row text-end mb-3">
         <div class="col-2"></div>
         <div class="col border-bottom border-dark border-2 pb-3">
@@ -84,7 +84,16 @@
                 <input type="hidden" name="subject" value="${lesson.subject}">
                 <input type="hidden" name="place" value="${lesson.place}">
                 <input type="hidden" name="participant" value="${lesson.participant}">
-                <button type="submit" class="btn btn-primary">수강신청</button>
+                <security:authorize access="isAuthenticated()">
+                    <security:authentication property="principal" var="loginUser"/>
+                    <c:if test="${loginUser != null}">
+                        <input type="hidden" name="userNo" value="${loginUser.no}">
+                        <button type="submit" class="btn btn-primary">수강신청</button>
+                    </c:if>
+                    <c:if test="${loginUser == null}">
+                        <button type="button" id="non-login" class="btn btn-primary">수강신청</button>
+                    </c:if>
+                </security:authorize>
             </form>
         </div>
         <div class="col-2"></div>
@@ -113,7 +122,15 @@
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script>
+    document.getElementById("non-login").addEventListener("click", function () {
+        // 사용자에게 로그인 요청 메시지 표시
+        var confirmResult = confirm("로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?");
 
+        // 사용자가 '확인'을 클릭하면 /login 페이지로 이동
+        if (confirmResult) {
+            window.location.href = "/login";  // 로그인 페이지로 리다이렉트
+        }
+    });
 </script>
 </body>
 </html>
