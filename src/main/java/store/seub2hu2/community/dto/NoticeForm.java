@@ -13,6 +13,7 @@ import store.seub2hu2.community.vo.UploadFile;
 @Setter
 public class NoticeForm {
 
+    private int no;
     private String category;
     private boolean first;
     private String title;

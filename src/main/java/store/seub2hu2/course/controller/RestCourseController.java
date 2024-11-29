@@ -8,7 +8,7 @@ import store.seub2hu2.security.dto.RestResponseDto;
 
 @RestController
 @RequestMapping("/course")
-public class UserCourseController {
+public class RestCourseController {
     @Autowired
     private UserCourseService userCourseService;
 

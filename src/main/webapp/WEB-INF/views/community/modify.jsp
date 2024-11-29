@@ -18,7 +18,7 @@
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
 <div class="container-xxl text-center" id="wrap">
   
-  <h2> 커뮤니티 글 작성 </h2>
+  <h2> 커뮤니티 글 수정 </h2>
   
   <div class="row p-3 m-3">
     <form id="form-register" action="modify" method="post" enctype="multipart/form-data">

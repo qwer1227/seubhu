@@ -6,6 +6,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import store.seub2hu2.community.dto.NoticeForm;
+import store.seub2hu2.community.exception.CommunityException;
 import store.seub2hu2.community.mapper.NoticeMapper;
 import store.seub2hu2.community.mapper.UploadMapper;
 import store.seub2hu2.community.vo.Notice;
@@ -30,11 +31,10 @@ public class NoticeService {
     @Autowired
     private UploadMapper uploadMapper;
 
-    public void addNewNotice(NoticeForm form
-                            , @AuthenticationPrincipal LoginUser loginUser) {
+    public Notice addNewNotice(NoticeForm form) {
 
         Notice notice = new Notice();
-        notice.setTitle(form.getTitle());
+        notice.setNo(form.getNo());
         notice.setFirst(form.isFirst());
         notice.setTitle(form.getTitle());
         notice.setContent(form.getContent());
@@ -50,19 +50,21 @@ public class NoticeService {
             uploadFile.setOriginalName(originalFilename);
             uploadFile.setSaveName(filename);
 
-            notice.setUpfile(uploadFile);
+            notice.setUploadFile(uploadFile);
         }
 
         noticeMapper.insertNotice(notice);
 
-        if (notice.getUpfile() != null) {
-            UploadFile uploadFile = notice.getUpfile();
+        if (notice.getUploadFile() != null) {
+            UploadFile uploadFile = notice.getUploadFile();
             uploadFile.setNo(notice.getNo());
-            uploadFile.setSaveName(notice.getUpfile().getSaveName());
-            uploadFile.setOriginalName(notice.getUpfile().getOriginalName());
+            uploadFile.setSaveName(notice.getUploadFile().getSaveName());
+            uploadFile.setOriginalName(notice.getUploadFile().getOriginalName());
 
             uploadMapper.insertNoticeFile(uploadFile);
         }
+
+        return notice;
     }
 
     public ListDto<Notice> getNotices(Map<String, Object> condition) {
@@ -79,5 +81,70 @@ public class NoticeService {
         ListDto<Notice> dto = new ListDto<>(notices, pagination);
 
         return dto;
+    }
+
+    public Notice getNoticeDetail(int noticeNo) {
+        Notice notice = noticeMapper.getNoticeByNo(noticeNo);
+
+        if (notice != null) {
+            UploadFile uploadFile = uploadMapper.getFileByNoticeNo(noticeNo);
+            if (notice.getUploadFile() != null) {
+                notice.setUploadFile(uploadFile);
+            }
+        }
+
+        return notice;
+    }
+
+    public void updateNoticeViewCnt(int noticeNo) {
+        Notice notice = noticeMapper.getNoticeByNo(noticeNo);
+        notice.setViewCnt(notice.getViewCnt() + 1);
+        noticeMapper.updateNoticeCnt(notice);
+    }
+
+    public void updateNotice(NoticeForm form) {
+        Notice savedNotice = noticeMapper.getNoticeByNo(form.getNo());
+        savedNotice.setFirst(form.isFirst());
+        savedNotice.setTitle(form.getTitle());
+        savedNotice.setContent(form.getContent());
+        savedNotice.setDeleted("N");
+
+        MultipartFile multipartFile = form.getUpfile();
+
+        // 수정할 첨부파일이 있으면,
+        if (!multipartFile.isEmpty()) {
+            // 기존 파일 정보 조회
+            UploadFile prevFile = uploadMapper.getFileByNoticeNo(savedNotice.getNo());
+            // 기존 파일이 있으면 기존 파일 삭제
+            if (prevFile != null) {
+                prevFile.setDeleted("Y");
+                uploadMapper.updateNoticeFile(prevFile);
+            }
+
+            String originalFilename = multipartFile.getOriginalFilename();
+            String filename = System.currentTimeMillis() + originalFilename;
+            FileUtils.saveMultipartFile(multipartFile, saveDirectory, filename);
+
+            UploadFile uploadFile = new UploadFile();
+            uploadFile.setOriginalName(originalFilename);
+            uploadFile.setSaveName(filename);
+            uploadFile.setNo(savedNotice.getNo());
+            savedNotice.setUploadFile(uploadFile);
+
+            uploadMapper.insertNoticeFile(uploadFile);
+        }
+
+        noticeMapper.updateNotice(savedNotice);
+    }
+
+    public void deleteNotice(int noticeNo) {
+        Notice notice = noticeMapper.getNoticeByNo(noticeNo);
+        notice.setDeleted("Y");
+        notice.setFirst(false);
+        notice.setTitle(notice.getTitle());
+        notice.setContent(notice.getContent());
+        notice.setUploadFile(notice.getUploadFile());
+
+        noticeMapper.updateNotice(notice);
     }
 }

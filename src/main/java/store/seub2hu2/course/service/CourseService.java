@@ -18,15 +18,27 @@ public class CourseService {
     private CourseMapper courseMapper;
 
     /**
+     * 전체 코스 목록을 가져온다.
+     * @return 코스 목록
+     */
+    public List<Course> getCourses() {
+        // 1. 전체 코스 목록을 가져온다.
+        List<Course> courses = courseMapper.getAllCourses();
+
+        // 2. 전체 코스 목록을 반환한다.
+        return courses;
+    }
+
+    /**
      * 검색에 해당하는 코스 목록을 가져온다.
      * @param condition 검색 정보
      * @return 코스 목록
      */
     public ListDto<Course> getAllCourses(Map<String, Object> condition) {
-        // 1. 전체 데이터 갯수를 조회한다.
+        // 1. 전체 코스의 갯수를 조회한다.
         int totalRows = courseMapper.getTotalRows(condition);
 
-        // 2. 페이징 처리 정보를 가져온다.
+        // 2. 페이징 처리 정보를 가져오고, Pagination 객체에 저장한다.
         int page = (Integer) condition.get("page");
         Pagination pagination = new Pagination(page, totalRows, 8);
 
@@ -34,10 +46,10 @@ public class CourseService {
         condition.put("begin", pagination.getBegin());
         condition.put("end", pagination.getEnd());
 
-        // 4. 조회범위에 맞는 데이터를 조회한다.
+        // 4. 조회범위에 맞는 코스 목록을 조회한다.
         List<Course> courses = courseMapper.getCourses(condition);
 
-        // 5. ListDto 객체에 화면에 표시할 데이터(코스 목록, 페이징처리정보)를 담고, 반환한다.
+        // 5. ListDto 객체에 화면에 표시할 데이터(코스 목록, 페이징 처리 정보)를 담고, 반환한다.
         ListDto<Course> dto = new ListDto<>(courses, pagination);
         return dto;
     }

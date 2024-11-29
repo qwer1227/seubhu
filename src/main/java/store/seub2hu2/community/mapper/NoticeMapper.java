@@ -12,6 +12,10 @@ public interface NoticeMapper {
 
     void insertNotice(@Param("notice") Notice notice);
     List<Notice> getNotices(@Param("condition") Map<String, Object> condition);
+    List<Notice> getNoticesTopFive(@Param("condition") Map<String, Object> condition);
     int getTotalRowsForNotice(@Param("condition") Map<String, Object> condition);
-    Notice getNoticeByNo(@Param("no") int no);
+    Notice getNoticeByNo(@Param("no") int noticeNo);
+    void updateNotice(@Param("notice") Notice notice);  // 공지사항 수정 및 삭제
+
+    void updateNoticeCnt(@Param("notice") Notice notice);
 }
