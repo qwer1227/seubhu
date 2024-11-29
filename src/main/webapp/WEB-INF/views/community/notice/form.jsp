@@ -55,7 +55,7 @@
         <td colspan="3">
           <textarea style="width: 100%" class="form-control" rows="10" id="content" name="content"
                     placeholder="내용을 입력해주세요."></textarea>
-          <!--%@include file="../write.jsp"%-->
+
         </td>
       </tr>
       <tr>

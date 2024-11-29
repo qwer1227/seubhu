@@ -3,8 +3,11 @@ package store.seub2hu2.mypage.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import store.seub2hu2.community.service.BoardService;
+import store.seub2hu2.community.vo.Board;
 import store.seub2hu2.mypage.dto.CommentRequest;
 import store.seub2hu2.mypage.dto.CommentResponse;
 import store.seub2hu2.mypage.dto.ImageDeleteRequest;
@@ -13,6 +16,7 @@ import store.seub2hu2.mypage.service.PostService;
 import store.seub2hu2.mypage.vo.Post;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.service.UserService;
+import store.seub2hu2.util.ListDto;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,7 +32,12 @@ public class MyPageRestController {
     private PostService postService;
 
     @Autowired
+    private BoardService boardService;
+
+    @Autowired
     private FileUploadService fileUploadService;
+
+
     @Autowired
     private UserService userService;
 
@@ -167,7 +176,5 @@ public class MyPageRestController {
             response.put("message", "서버 오류");
             return ResponseEntity.status(500).body(response);
         }
-
     }
-
 }

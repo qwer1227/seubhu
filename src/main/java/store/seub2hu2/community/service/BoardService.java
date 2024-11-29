@@ -91,8 +91,6 @@ public class BoardService {
         // 검색 조건에 맞는 데이터 전체 갯수 조회
         int totalRows = boardMapper.getTotalRowsForBoard(condition);
 
-
-
         // pagination 객체 생성
         int page = (Integer) condition.get("page");
         int rows = (Integer) condition.get("rows");

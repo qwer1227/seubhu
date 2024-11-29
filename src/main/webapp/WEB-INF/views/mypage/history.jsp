@@ -3,6 +3,7 @@
 <!doctype html>
 <html lang="ko">
 <head>
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
   <%@include file="/WEB-INF/views/common/common.jsp" %>
 </head>
 <style>
@@ -20,43 +21,36 @@
     </div>
   </div>
 
-
-
-
-
-
   <!-- 게시글 정렬 기능 -->
-  <form id="form-search" method="get" action="main">
+  <form id="form-search" method="get" action="history">
     <input type="hidden" name="page" value="${param.page != null ? param.page : 1}">
     <input type="hidden" name="category" id="categoryInput" value="${param.category }">
-    <!-- 카테고리 종류에 따른 게시글 목록 반환 기능 -->
-    <div class="p-3 row row-cols-2 row-cols-lg-5 g-2 g-lg-3 justify-content-center" id="category">
-      <div class="col">
-        <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
-           href="javascript:void(0)" onclick="changeCategory('일반게시판')">일반</a>
-      </div>
-      <div class="col ">
-        <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
-           href="javascript:void(0)" onclick="changeCategory('자랑게시판')">자랑</a>
-      </div>
-    </div>
 
-    <div class="p-1 col d-flex justify-content-end">
-      <div class="form-check form-check-inline">
-        <input class="form-check-input" type="radio" name="sort" value="date" onchange="changeSort()"
-        ${empty param.sort or param.sort eq 'date' ? 'checked' : ''}>
-        <label class="form-check-label">최신순</label>
+    <div class="p-1 col d-flex justify-content-between">
+      <!-- 왼쪽 끝단 버튼 영역 -->
+      <div>
+        <input type="hidden" name="type" id="typeInput">
+        <button class="btn btn-outline-primary me-2" id="btnValue1">내가 쓴 글 보기</button>
+        <button class="btn btn-outline-secondary" id="btnValue2" >내가 쓴 댓글 보기</button>
       </div>
-      <div class="form-check-inline">
-        <input class="form-check-input" type="radio" name="sort" value="like" onchange="changeSort()"
-        ${param.sort eq 'like' ? 'checked' : ''}>
-        <label class="form-check-label">추천순</label>
-      </div>
-      <div class="form-check-inline">
-        <input class="form-check-input" type="radio" name="sort" value="viewCnt" onchange="changeSort()"
-        ${param.sort eq 'viewCnt' ? 'checked' : ''}>
-        <label class="form-check-label">조회순</label>
-      </div>
+
+      <!-- 오른쪽 끝단 검색 옵션 영역 -->
+      <div class="d-flex justify-content-end">
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="sort" value="date" onchange="changeSort()"
+          ${empty param.sort or param.sort eq 'date' ? 'checked' : ''}>
+          <label class="form-check-label">최신순</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="sort" value="like" onchange="changeSort()"
+          ${param.sort eq 'like' ? 'checked' : ''}>
+          <label class="form-check-label">추천순</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="sort" value="viewCnt" onchange="changeSort()"
+          ${param.sort eq 'viewCnt' ? 'checked' : ''}>
+          <label class="form-check-label">조회순</label>
+        </div>
       <div>
         <select class="form-control-sm" name="rows" onchange="changeRows()">
           <option value="5" ${param.rows eq 5 ? 'selected' : ''}>5개씩 보기</option>
@@ -66,6 +60,7 @@
         </select>
       </div>
     </div>
+  </div>
 
     <!--  게시글 목록 -->
     <div class="row p-3">
@@ -224,5 +219,22 @@
 
         form.submit();
     }
+
+
+    $(document).ready(function (){
+      $("#btnValue1").on("click", function (){
+        $("#typeInput").val("value1");
+
+      });
+
+      $("#btnValue2").on("click", function (){
+        $("#typeInput").val("value2");
+
+      });
+    })
+
+
+
+
 </script>
 </html>

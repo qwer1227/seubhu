@@ -54,7 +54,7 @@
             <h3><a href="/mypage/verify-password" id="edit">내정보변경</a></h3>
         </div>
         <div class="item">
-            <h3><a href="/mypage/history" id="history">활동기록</a></h3>
+            <h3><a href="/mypage/history?type=value1" id="history">활동기록</a></h3>
         </div>
         <div class="item">
             <h3>장바구니</h3>
