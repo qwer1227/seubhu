@@ -66,15 +66,16 @@
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
 <main>
     <!-- 쪽지 버튼 -->
-    <a class="nav-link ">
+    <a href="/message/received?userNo=${loginUser.no}" class="nav-link">
         <button type="button" class="btn btn-dark position-relative">
             쪽지
             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-    99+
-    <span class="visually-hidden">unread messages</span>
-  </span>
+            ${unreadCount > 99 ? '99+' : unreadCount}
+            <span class="visually-hidden">unread messages</span>
+        </span>
         </button>
     </a>
+
     <!-- 메인 이미지 캐러셀 -->
     <section class="container my-5">
     <div id="main-carousel" class="carousel slide">
@@ -471,10 +472,26 @@
     <!-- 우측 하단 세로 배치 버튼 -->
     <div class="position-fixed bottom-0 end-0 p-3">
         <!-- 챗봇 연결 버튼 -->
-        <a href="챗봇_URL" class="btn btn-light text-dark mb-2 px-3 py-2 rounded-3 d-block" style="width: 45px;"
-           title="챗봇 연결">
+        <button type="button" class="btn btn-light text-dark mb-3 px-3 py-2 rounded-3 d-block" style="width: 45px;"
+                data-bs-toggle="modal" data-bs-target="#chatModal" title="관리자-유저 채팅">
             <i class="bi bi-chat-dots me-2"></i>
-        </a>
+        </button>
+
+        <!-- 모달 -->
+        <div class="modal fade" id="chatModal" tabindex="-1" aria-labelledby="chatModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="chatModalLabel">관리자-유저 채팅</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- JSP 페이지 로드 -->
+                        <iframe src="/chat/chatSend" style="width: 100%; height: 400px; border: none;"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- 탑 버튼 -->
         <a href="#top" class="btn btn-dark text-light px-3 py-2 rounded-3 d-block" style="width: 45px;" title="상단으로 가기">

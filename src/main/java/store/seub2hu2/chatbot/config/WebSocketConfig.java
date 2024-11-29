@@ -1,4 +1,4 @@
-package store.seub2hu2.message.config;
+package store.seub2hu2.chatbot.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
