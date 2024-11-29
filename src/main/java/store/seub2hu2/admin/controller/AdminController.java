@@ -24,6 +24,7 @@ import store.seub2hu2.product.vo.Category;
 import store.seub2hu2.product.vo.Color;
 import store.seub2hu2.product.vo.Image;
 import store.seub2hu2.product.vo.Product;
+import store.seub2hu2.user.service.UserService;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.ListDto;
 
@@ -50,6 +51,7 @@ public class AdminController {
     private final LessonService lessonService;
     private final LessonFileService lessonFileService;
     private final ProductService productService;
+    private final UserService userService;
 
     @GetMapping("/home")
     public String home() {
@@ -100,7 +102,12 @@ public class AdminController {
     }*/
 
     @GetMapping("/lesson-register-form")
-    public String lessonRegisterForm() {
+    public String lessonRegisterForm(Model model) {
+
+        // 사용자 권한이 강사인 사용자 목록을 조회한다.
+        List<User> lecturers =  userService.findUsersByUserRoleNo(3);
+        model.addAttribute("lecturers", lecturers);
+
         return "admin/lesson-register-form";
     }
 

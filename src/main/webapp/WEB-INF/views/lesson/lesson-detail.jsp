@@ -86,11 +86,11 @@
                 <input type="hidden" name="participant" value="${lesson.participant}">
                 <security:authorize access="isAuthenticated()">
                     <security:authentication property="principal" var="loginUser"/>
-                    <c:if test="${loginUser != null}">
+                    <c:if test="${loginUser ne null}">
                         <input type="hidden" name="userNo" value="${loginUser.no}">
                         <button type="submit" class="btn btn-primary">수강신청</button>
                     </c:if>
-                    <c:if test="${loginUser == null}">
+                    <c:if test="${loginUser eq null}">
                         <button type="button" id="non-login" class="btn btn-primary">수강신청</button>
                     </c:if>
                 </security:authorize>

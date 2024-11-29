@@ -12,6 +12,8 @@ import store.seub2hu2.user.vo.User;
 import store.seub2hu2.user.mapper.UserMapper;
 import store.seub2hu2.user.vo.UserRole;
 
+import java.util.List;
+
 @Service
 @Transactional
 public class UserService {
@@ -82,5 +84,15 @@ public class UserService {
 
         // 사용자 역할 추가 메서드 호출
         userMapper.insertUserRole(userRole);
+    }
+
+    /**
+     * 권한 번호로 해당 권한을 가진 사용자 목록을 조회하는 서비스
+     * @param roleNo 권한번호
+     * @return 조회된 사용자 목록 반환
+     */
+    public List<User> findUsersByUserRoleNo(int roleNo) {
+        List<User> findUsers = userMapper.getUsersByRoleNo(roleNo);
+        return findUsers;
     }
 }

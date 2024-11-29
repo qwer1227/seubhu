@@ -22,6 +22,7 @@ public class LessonRegisterForm {
     private String title;
     private int price;
     private int lecturerNo;
+    private String lecturerId;
     private String subject;
     private String lecturerName;
     private int group;
