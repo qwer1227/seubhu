@@ -57,10 +57,10 @@
     </div>
     <div class="row p-3 d-flex justify-content-left">
       <div class="col-4">
-        <input type="text" class="form-control" name="value" value="">
+        <input type="text" class="form-control" name="keyword" value="${param.keyword}">
       </div>
       <div class="col-1">
-        <button class="btn btn-outline-primary">검색</button>
+        <button class="btn btn-outline-primary" onclick="searchKeyword()">검색</button>
       </div>
       <div class="col d-flex justify-content-center">
       
@@ -109,6 +109,11 @@
         // 페이지 번호를 원하는 값으로 설정
         pageInput.value = page;
         // 폼 제출
+        form.submit();
+    }
+
+    function searchKeyword() {
+        pageInput.value = 1;
         form.submit();
     }
 </script>

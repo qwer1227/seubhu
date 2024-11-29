@@ -42,6 +42,10 @@
           from NOTICES
           where is_deleted = 'N') notice
     where notice.rn between #{condition.begin} and #{condition.end}
+    <if test="condition.keyword != null">
+      and notice.title like concat ('%', #{condition.keyword}, '%')
+    || notice.content like concat ('%', #{condition.keyword}, '%')
+    </if>
     order by rn
   </select>
 
@@ -61,6 +65,10 @@
     select count(*)
     from NOTICES
     where is_deleted = "N"
+    <if test="condition.keyword != null">
+      and notice_title like concat ('%', #{condition.keyword}, '%')
+      || notice_content like concat ('%', #{condition.keyword}, '%')
+    </if>
   </select>
 
   <!-- Notice getNoticeByNo(@Param("no") int noticeNo); -->

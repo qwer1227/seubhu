@@ -85,13 +85,10 @@ public class NoticeService {
 
     public Notice getNoticeDetail(int noticeNo) {
         Notice notice = noticeMapper.getNoticeByNo(noticeNo);
-        System.out.println("~!~~~!~!~!!~!~~!" + notice.getOriginalFileName());
 
-        UploadFile uploadFile = uploadMapper.getFileByNoticeNo(noticeNo);
-        System.out.println("===========파일 없음");
         if (notice.getUploadFile() != null) {
+            UploadFile uploadFile = uploadMapper.getFileByNoticeNo(noticeNo);
             notice.setUploadFile(uploadFile);
-            System.out.println("~~~~~~~~~~~~~파일 있음");
         }
 
         return notice;
