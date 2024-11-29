@@ -15,4 +15,5 @@ public class Size {
     private String size;
     private int amount;
     private Color color;
+
 }

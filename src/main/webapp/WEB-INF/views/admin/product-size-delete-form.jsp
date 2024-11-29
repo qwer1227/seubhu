@@ -47,18 +47,18 @@
             <div class="container-fluid">
                 <!-- Page Heading -->
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h3 mb-0 text-gray-800">기존 상품 사이즈 추가</h1>
+                    <h1 class="h3 mb-0 text-gray-800">기존 상품 사이즈 삭제</h1>
                 </div>
                 <div class="container my-3">
                     <div class="row mb-3">
                         <div class="col-6">
-                            <div class="border p-2 bg-dark text-white fw-bold">사이즈 등록</div>
+                            <div class="border p-2 bg-dark text-white fw-bold">사이즈 삭제</div>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-6">
-                            <form class="border bg-light p-3"
-                                  method="post" action="/admin/register-size"
+                            <form id="getForm" class="border bg-light p-3"
+                                  method="get" action="/admin/delete-size"
                                   enctype="multipart/form-data">
                                 <div class="form-group mb-3 col-4">
                                     <input type="hidden" name="no" value="${param.no}">
@@ -71,7 +71,7 @@
                                 <div class="col form-group mb-3 col-4">
                                     <label class="form-label">색상: ${color.name}</label>
                                 </div>
-                                <div class="form-group mb-3 col-6">
+                              <div class="form-group mb-3 col-6">
                                     <label class="form-label">기존 등록된 사이즈 :</label>
                                      <div>
                                         <c:choose>
@@ -88,45 +88,29 @@
                                         </c:choose>
                                     </div>
                                 </div>
-
-                                <div class="form-group mb-3 col-4">
-                                    <label class="form-label"></label>
-                                    <select name="size" class="form-control" id="size">
-                                            <option value="S">S</option>
-                                            <option value="M">M</option>
-                                            <option value="L">L</option>
-                                            <option value="XL">XL</option>
-                                            <option value="XXL">XXL</option>
-                                            <option value="3XL">3XL</option>
-                                            <option value="FREE">FREE</option>
-                                            <option value="220" selected>220</option>
-                                            <option value="225">225</option>
-                                            <option value="230">230</option>
-                                            <option value="235">235</option>
-                                            <option value="240">240</option>
-                                            <option value="245">245</option>
-                                            <option value="250">250</option>
-                                            <option value="255">255</option>
-                                            <option value="260">260</option>
-                                            <option value="265">265</option>
-                                            <option value="270">270</option>
-                                            <option value="275">275</option>
-                                            <option value="280">280</option>
-                                            <option value="285">285</option>
-                                            <option value="290">290</option>
-                                            <option value="295">295</option>
-                                            <option value="300">300</option>
-                                    </select>
+                                <div class="text-end" style="text-align: right">
+                                    <button type="button" id="getSubmitButton" class="btn btn-primary">조회</button>
                                 </div>
-                                <div>
-                                    <c:if test="${not empty errorMessage}">
-                                        <div class="alert alert-danger">${errorMessage}</div>
-                                    </c:if>
+                            </form>
+
+                            <form id="postForm" class="border bg-light p-3" method="post" action="/admin/delete-size" enctype="multipart/form-data" style="display: none;">
+                                <input type="hidden" name="no" value="${param.no}">
+                                <input type="hidden" name="colorNo" value="${param.colorNo}"/>
+                                <div id="imageContainer">
+                                    <label class="form-label mb-3 mr-2">사이즈</label>
+                                    <c:forEach var="s" items="${sizes}">
+                                        <div class="form-group col mb-3">
+                                            <label class="form-label mb-3 mr-2">${s.size}</label>
+                                            <input type="radio" class="form-check-input ml-2 " name="sizeNo" value="${s.no}" /><br>
+                                            <label class="form-label mb-3 mr-2">수량 : ${s.amount}</label>
+                                        </div>
+                                    </c:forEach>
                                 </div>
                                 <div class="text-end" style="text-align: right">
                                     <button type="submit" class="btn btn-primary">등록</button>
                                 </div>
                             </form>
+
                         </div>
                     </div>
                 </div>
@@ -140,7 +124,19 @@
 <!-- End of Footer -->
 
 <%@include file="/WEB-INF/views/admincommon/common.jsp" %>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const getSubmitButton = document.getElementById("getSubmitButton");
+    const postForm = document.getElementById("postForm");
 
+    // 조회 버튼 클릭 이벤트
+    getSubmitButton.addEventListener("click", function () {
+      // POST Form 보이기
+      postForm.style.display = "block";
+    });
+  });
+
+</script>
 </body>
 
 </html>
