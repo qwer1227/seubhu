@@ -75,6 +75,16 @@ public class CourseController {
         return "course/list";
     }
 
+    @GetMapping("/finishRecords")
+    @ResponseBody
+    public List<Records> finishRecords(int userNo, int page) {
+        // 1. 페이지에 맞는 로그인한 사용자의 완주 기록 데이터를 가져온다.
+        List<Records> records;
+
+        // 2. 완주 기록 데이터, 페이정 처리 정보를 반환한다.
+        return null;
+    }
+
     @GetMapping("/detail")
     public String detail(@RequestParam(name = "no") int courseNo, @AuthenticationPrincipal LoginUser loginUser, Model model) {
         // 1. 코스의 상세 정보를 가져온다.

@@ -95,7 +95,6 @@
 
     <!--
         List<Records> getRecords(@Param("condition") Map<String, Object> condition);
-        List<Records> getRecords(@Param("condition") Map<String, Object> condition);
     -->
     <select id="getRecords" resultType="store.seub2hu2.course.vo.Records">
         select *

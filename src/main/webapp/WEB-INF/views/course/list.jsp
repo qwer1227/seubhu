@@ -58,11 +58,7 @@
                         </tr>
                         <tr>
                             <th scope="row">나의 완주 기록</th>
-                            <td><button class="btn btn-primary" onclick="seeUserFinishRecords()">완주 기록 보기</button></td>
-                        </tr>
-                        <tr>
-                            <th scope="row">성공한 코스 목록</th>
-                            <td><button class="btn btn-primary" onclick="seeUserSuccessfulCourses()">성공한 코스 보기</button></td>
+                            <td><button class="btn btn-primary" onclick="seeUserFinishRecords(${loginUser.no})">완주 기록 보기</button></td>
                         </tr>
                         </tbody>
                     </table>
@@ -168,23 +164,92 @@
     </div>
 </div>
 
+<%-- 완주 기록 보기 Modal창 --%>
+<div class="modal fade" id="modal-finish-records" tabindex="-1" aria-labelledby="modal-finish-records" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <%-- 완주 기록 목록 --%>
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modal-user-finish-records">${loginUser.nickname}님의 코스 완주 기록</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table">
+                    <input type="hidden" name="modalPage"/>
+                    <thead>
+                        <tr class="table-info">
+                            <th scope="col">번호</th>
+                            <th scope="col">코스 이름</th>
+                            <th scope="col">코스 거리</th>
+                            <th scope="col">코스 난이도</th>
+                            <th scope="col">완주 날짜</th>
+                            <th scope="col">완주 시간</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th><span>1</span></th>
+                            <td><span>석촌호수</span></td>
+                            <td><span>3KM</span></td>
+                            <td><span>1단계</span></td>
+                            <td><span>2024년 7월 10일</span></td>
+                            <td><span>30분</span></td>
+                        </tr>
+                        <tr>
+                            <th><span>2</span></th>
+                            <td><span>가로수길</span></td>
+                            <td><span>2KM</span></td>
+                            <td><span>2단계</span></td>
+                            <td><span>2024년 10월 10일</span></td>
+                            <td><span>40분</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <%-- 페이징 처리 --%>
+            <div class="row mb-3">
+                <div class="col-12">
+                    <nav>
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item ${paging.first ? 'disabled' : '' }">
+                                <button class="btn btn-primary" onclick="changeModalPage(${paging.prevPage}, event)">이전</button>
+                            </li>
+
+                            <c:forEach var="num" begin="${paging.beginPage }" end="${paging.endPage }">
+                                <li class="page-item ${paging.page eq num ? 'active' : '' }">
+                                    <button class="btn btn-outline-dark" onclick="changeModalPage(${num }, event)">${num }</button>
+                                </li>
+                            </c:forEach>
+
+                            <li class="page-item ${paging.last ? 'disabled' : '' }">
+                                <button class="btn btn-primary" onclick="changeModalPage(${paging.nextPage}, event)">다음</button>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+		    </div>
+
+            <%-- 닫기 버튼 --%>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script type="text/javascript">
-    // 로그인한 사용자의 완주 기록을 확인한다.
-    async function seeUserFinishRecords() {
-
-    }
-
-    // 로그인한 사용자의 성공한 코스 목록을 확인한다.
-    async function seeUserSuccessfulCourses() {
-
-    }
-
     // form 태그를 가져온다.
     let form = document.querySelector("#form-search");
     let pageInput = document.querySelector("input[name=page]");
 
-    // 페이지 번호를 클릭했을 때, 요청 파라미터 정보를 제출한다.
+    // 검색 버튼을 클릭했을 때, 요청 파라미터 정보를 제출한다.
+    function searchKeyword() {
+        pageInput.value = 1;
+        form.submit();
+    }
+
+    // 코스 목록의 페이지 번호를 클릭했을 때, 요청 파라미터 정보를 제출한다.
     function changePage(page, event) {
         event.preventDefault();
 
@@ -192,10 +257,20 @@
         form.submit();
     }
 
-    // 검색 버튼을 클릭했을 때, 요청 파라미터 정보를 제출한다.
-    function searchKeyword() {
-        pageInput.value = 1;
-        form.submit();
+    // 완주 기록 보기 Modal창을 가져온다.
+    let myModal = new bootstrap.Modal('#modal-finish-records');
+
+    // 로그인 후 완주 기록 보기 버튼을 클릭하면, 로그인한 사용자의 완주 기록을 확인한다. (Modal창을 열 때마다 항상 1페이지 표시)
+    async function seeUserFinishRecords(userNo) {
+        // 1. 완주 기록 데이터를 가져온다.
+        let response = await fetch("/course/finishRecords?userNo=" + userNo);
+
+        // 2. 데이터를 javascript 객체로 변환한다.
+
+        // 3. 데이터를 완주 기록 목록 안에 저장한다.
+
+        // 4. Modal창을 화면에 표시한다.
+        myModal.show();
     }
 </script>
 </body>
