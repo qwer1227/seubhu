@@ -83,41 +83,34 @@
   <div class="order-section">
     <div class="order-title">주문 상세</div>
 
-    <!-- 주문 1의 상세 내역 -->
+    <!-- 주문 상세 내역 -->
     <div class="order-details">
-      <p><span>주문일:</span> 2024년 7월 1일</p>
-      <p><span>주문 상태:</span> 배송 준비중</p>
-      <p><span>총 금액:</span> 110,000원</p>
+      <p><span>주문일:</span> ${orderDetail.orders.orderDate}</p>
+      <p><span>주문 상태:</span> ${orderDetail.orders.orderStatus}</p>
+      <p><span>총 금액:</span> ${orderDetail.orders.orderPrice}원</p>
     </div>
 
-    <div class="order-item">
-      <img src="/path/to/product-image.jpg" alt="상품 이미지">
-      <div class="order-item-details">
-        <p><span>상품명:</span> 청바지</p>
-        <p><span>옵션:</span> 사이즈 M</p>
-        <p><span>수량:</span> 2개</p>
-        <p><span>가격:</span> 80,000원</p>
+    <!-- 상품 목록 -->
+    <c:forEach var="item" items="${orderDetail.products}">
+      <div class="order-item">
+        <img src="${item.prodImgUrl}" alt="상품 이미지">
+        <div class="order-item-details">
+          <p><span>상품명:</span> ${item.prodName}</p>
+          <p><span>옵션:</span> ${item.sizeName} / ${item.colorName}</p>
+          <p><span>수량:</span> ${item.orderQty}개</p>
+          <p><span>가격:</span> ${item.prodPrice}원</p>
+        </div>
       </div>
-    </div>
-
-    <div class="order-item">
-      <img src="/path/to/product-image.jpg" alt="상품 이미지">
-      <div class="order-item-details">
-        <p><span>상품명:</span> 티셔츠</p>
-        <p><span>옵션:</span> 사이즈 L</p>
-        <p><span>수량:</span> 1개</p>
-        <p><span>가격:</span> 30,000원</p>
-      </div>
-    </div>
+    </c:forEach>
 
     <div class="payment-info">결제 정보</div>
     <div class="payment-details">
-      <p><span>결제 ID:</span> PAY123456</p>
-      <p><span>결제 방법:</span> 신용카드</p>
-      <p><span>결제 금액:</span> 110,000원</p>
-      <p><span>결제일:</span> 2024-07-01 14:30</p>
-      <p><span>결제 상태:</span> 완료</p>
-      <p><span>환불 여부:</span> N</p>
+      <p><span>결제 ID:</span> ${orderDetail.payments.payId}</p>
+      <p><span>결제 방법:</span> ${orderDetail.payments.payMethod}</p>
+      <p><span>결제 금액:</span> ${orderDetail.payments.payAmount}원</p>
+      <p><span>결제일:</span> ${orderDetail.payments.payDate}</p>
+      <p><span>결제 상태:</span> ${orderDetail.payments.payType}</p>
+      <p><span>환불 여부:</span> ${orderDetail.payments.refund}</p>
     </div>
   </div>
 

@@ -1,7 +1,5 @@
 package store.seub2hu2.mypage.controller;
 
-import com.nimbusds.openid.connect.sdk.claims.UserInfo;
-import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -28,8 +26,11 @@ import store.seub2hu2.community.service.ScrapService;
 import store.seub2hu2.community.vo.Board;
 import store.seub2hu2.community.vo.Reply;
 import store.seub2hu2.lesson.view.FileDownloadView;
+import store.seub2hu2.mypage.dto.OrderResponse;
+import store.seub2hu2.mypage.dto.ResponseDTO;
 import store.seub2hu2.mypage.dto.UserInfoReq;
 import store.seub2hu2.mypage.service.CartService;
+import store.seub2hu2.mypage.service.OrderService;
 import store.seub2hu2.mypage.service.PostService;
 import store.seub2hu2.mypage.vo.Post;
 import store.seub2hu2.security.user.LoginUser;
@@ -64,6 +65,9 @@ public class MyPageController {
     BoardService boardService;
 
     @Autowired
+    OrderService orderService;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -84,8 +88,6 @@ public class MyPageController {
 
         model.addAttribute("posts",posts);
         model.addAttribute("user",user);
-
-        System.out.println(posts);
 
         return "mypage/publicpage";
     }
@@ -480,14 +482,22 @@ public class MyPageController {
     @GetMapping("/orderhistory")
     public String orderHistory(Model model, @AuthenticationPrincipal LoginUser loginUser) {
 
+        // 주문내역 가져오기
+        User user = User.builder().no(loginUser.getNo()).build();
+
+        List<OrderResponse> orders = orderService.getAllOrders(user.getNo());
+
+        model.addAttribute("orders", orders);
 
         return "mypage/orderhistory";
     }
     
     // 주문내역-상세 화면으로 간다
-    @GetMapping("/orderhistorydetail")
-    public String orderHistoryDetail(Model model, @AuthenticationPrincipal LoginUser loginUser) {
+    @GetMapping("/orderhistorydetail/{orderNo}")
+    public String orderHistoryDetail(@PathVariable("orderNo") int orderNo, Model model, @AuthenticationPrincipal LoginUser loginUser) {
 
+        ResponseDTO responseDTO = orderService.getOrderDetails(orderNo);
+        model.addAttribute("orderDetail", responseDTO);
 
 
         return "mypage/orderhistorydetail";

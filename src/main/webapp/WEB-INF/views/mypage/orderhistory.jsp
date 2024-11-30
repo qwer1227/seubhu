@@ -69,21 +69,14 @@
         <div class="order-title">주문내역</div>
 
         <!-- 주문 1 -->
-        <div class="order-date">2024년 7월 1일</div>
+        <c:forEach var="order" items="${orders}">
+        <div class="order-date">${order.orderDate}</div>
         <div class="order-summary">
-            <p><span>주문 상품:</span> 청바지, 티셔츠</p>
-            <p><span>총 주문 금액:</span> 110,000원</p>
+            <p><span>주문 상품:</span> ${order.productName}</p>
+            <p><span>총 주문 금액:</span> ${order.productPrice}원</p>
         </div>
-        <a href="/mypage/orderhistorydetail" class="view-details-btn">상세보기</a> <!-- 주문 상세 페이지 링크 -->
-
-
-        <!-- 주문 2 -->
-        <div class="order-date">2024년 7월 2일</div>
-        <div class="order-summary">
-            <p><span>주문 상품:</span> 운동화, 모자</p>
-            <p><span>총 주문 금액:</span> 90,000원</p>
-        </div>
-        <a href="/order/detail/2" class="view-details-btn">상세보기</a> <!-- 주문 상세 페이지 링크 -->
+        <a href="/mypage/orderhistorydetail/${order.orderNo}" class="view-details-btn">상세보기</a> <!-- 주문 상세 페이지 링크 -->
+        </c:forEach>
     </div>
 
 </div>
