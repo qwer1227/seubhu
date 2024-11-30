@@ -269,7 +269,10 @@ public class AdminController {
     @PostMapping("/delete-size")
     public String deleteSize(@RequestParam("no") int no,
                              @RequestParam("colorNo") Integer colorNo,
+                             @RequestParam("sizeNo") int sizeNo,
                              Model model) {
+
+        adminService.getDeletedSize(sizeNo);
 
         return "redirect:/admin/delete-size?no=" + no + "&colorNo=" + colorNo;
     }
@@ -308,10 +311,14 @@ public class AdminController {
         condition.put("size", size);
 
         try {
+
             adminService.getCheckSize(condition);
         } catch (IllegalArgumentException e) {
+
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
+
+
 
         return "redirect:/admin/register-size?no=" + no + "&colorNo=" + colorNo;
 

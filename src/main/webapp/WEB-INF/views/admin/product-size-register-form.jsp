@@ -88,7 +88,6 @@
                                         </c:choose>
                                     </div>
                                 </div>
-
                                 <div class="form-group mb-3 col-4">
                                     <label class="form-label"></label>
                                     <select name="size" class="form-control" id="size">

@@ -300,11 +300,23 @@ public class AdminService {
 
         Size existingSize = adminMapper.getCheckSizeByCon(size);
 
-        if (existingSize != null) {
+        System.out.println("-------------------------------------------------existingSize"+ existingSize);
+
+        System.out.println("------------------------------------------------conditionSizeNo: " + condition.get("sizeNo"));
+
+        if (existingSize != null && existingSize.getIsDeleted().equals("N")) {
             throw new IllegalArgumentException("이미 등록된 사이즈입니다.");
+
+        } else if (existingSize != null && existingSize.getIsDeleted().equals("Y")) {
+            adminMapper.getChangeIsDeleted(size);
         } else {
             adminMapper.getInsertSize(size);
         }
+    }
+
+    public void getDeletedSize(int sizeNo) {
+
+        adminMapper.getDeleteSize(sizeNo);
     }
 //    public Color getProductByColorNo(Integer colorNo) {
 //

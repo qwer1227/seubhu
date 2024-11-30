@@ -48,16 +48,7 @@ public interface AdminMapper {
 
     // 색상 등록
     void insertColor(@Param("condition") HashMap<String, Object> condition);
-
-    //
-
-    /*
-     * 재고
-     */
-
-    /*
-     * 레슨
-     */
+    
     List<Lesson> getAllLessons(@Param("condition") Map<String, Object> condition);
     
 
@@ -84,4 +75,16 @@ public interface AdminMapper {
     Size getCheckSizeByCon(@Param("size") Size size);
 
     void getInsertSize(@Param("size") Size size);
+
+    void getDeleteSize(int sizeNo);
+
+    void getChangeIsDeleted(@Param("size") Size size);
+
+    /*
+     * 재고
+     */
+
+    /*
+     * 레슨
+     */
 }
