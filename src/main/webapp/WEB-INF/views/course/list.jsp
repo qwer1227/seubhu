@@ -27,7 +27,7 @@
         <sec:authentication property="principal" var="loginUser" />
     </sec:authorize>
 
-    <%-- 로그인한 사용자의 정보 표시 --%>
+    <%-- 로그인한 사용자의 배지와 코스 기록 표시 --%>
     <div class="row row-cols-1 row-cols-md-1 g-4 mt-3 mb-3">
         <div class="col">
             <c:choose>
@@ -39,19 +39,30 @@
                         <tbody>
                         <tr>
                             <th scope="row">닉네임</th>
-                            <td>헤이요</td>
+                            <td>${loginUser.nickname}</td>
                         </tr>
                         <tr>
-                            <th scope="row">현재 배지 + 배지 설명</th>
-                            <td>배지 이미지 / 2단계 코스 3개 성공</td>
+                            <th scope="row">현재 배지</th>
+                            <td>
+                                <c:forEach var="userBadge" items="${userBadges}">
+                                    <div>
+                                        <img src="/resources/images/badge/${userBadge.badge.image}" width="40px" height="40px">
+                                        ${userBadge.badge.name} : ${userBadge.badge.description}
+                                    </div>
+                                </c:forEach>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">현재 도전 가능한 난이도</th>
+                            <td>${userLevel.level}단계</td>
                         </tr>
                         <tr>
                             <th scope="row">나의 완주 기록</th>
-                            <td><button class="btn btn-primary">완주 기록 보기</button></td>
+                            <td><button class="btn btn-primary" onclick="seeUserFinishRecords()">완주 기록 보기</button></td>
                         </tr>
                         <tr>
                             <th scope="row">성공한 코스 목록</th>
-                            <td><button class="btn btn-primary">성공한 코스 보기</button></td>
+                            <td><button class="btn btn-primary" onclick="seeUserSuccessfulCourses()">성공한 코스 보기</button></td>
                         </tr>
                         </tbody>
                     </table>
@@ -159,6 +170,16 @@
 
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script type="text/javascript">
+    // 로그인한 사용자의 완주 기록을 확인한다.
+    async function seeUserFinishRecords() {
+
+    }
+
+    // 로그인한 사용자의 성공한 코스 목록을 확인한다.
+    async function seeUserSuccessfulCourses() {
+
+    }
+
     // form 태그를 가져온다.
     let form = document.querySelector("#form-search");
     let pageInput = document.querySelector("input[name=page]");

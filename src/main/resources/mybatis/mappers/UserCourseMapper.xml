@@ -2,6 +2,32 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="store.seub2hu2.course.mapper.UserCourseMapper">
     <!--
+        List<UserBadge> getUserBadge(@Param("userNo") int userNo);
+    -->
+    <select id="getUserBadge" resultType="store.seub2hu2.course.vo.UserBadge">
+        select ub.user_no as "user.no"
+             , b.badge_no as "badge.no"
+             , b.badge_name as "badge.name"
+             , b.badge_description as "badge.description"
+             , b.badge_img as "badge.image"
+        from USER_BADGES ub inner join BADGES b
+        on ub.badge_no = b.badge_no
+        where ub.user_no = #{userNo}
+        order by b.badge_no
+    </select>
+
+    <!--
+        UserLevel getUserLevel(@Param("userNo") int userNo);
+    -->
+    <select id="getUserLevel" resultType="store.seub2hu2.course.vo.UserLevel">
+        select u.user_no as "user.no"
+            , l.challenge_level as level
+        from USERS u inner join COURSE_USER_LEVELS l
+        on u.user_no = l.user_no
+        where u.user_no = #{userNo}
+    </select>
+
+    <!--
         int getTotalRows(@Param("condition") Map<String, Object> condition);
      -->
     <select id="getTotalRows" resultType="int">

@@ -13,6 +13,8 @@ import store.seub2hu2.course.service.CourseService;
 import store.seub2hu2.course.service.UserCourseService;
 import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.course.vo.Records;
+import store.seub2hu2.course.vo.UserBadge;
+import store.seub2hu2.course.vo.UserLevel;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.util.ListDto;
 
@@ -56,9 +58,16 @@ public class CourseController {
         // 2. 검색에 해당하는 코스 목록을 가져온다.
         ListDto<Course> dto = courseService.getAllCourses(condition);
 
-        // 3. 로그인한 사용자의 정보(이름, 닉네임, 현재 배지의 사진, 도전 가능한 단계)를 가져온다.
+        // 3. 로그인한 사용자의 코스 관련 정보(현재 배지, 현재 도전 가능한 단계)를 가져오고, Model 객체에 저장한다.
+        if (loginUser != null) {
+            List<UserBadge> userBadges = userCourseService.getUserBadge(loginUser.getNo());
+            UserLevel userLevel = userCourseService.getUserLevel(loginUser.getNo());
 
-        // 4. Model 객체에 화면에 표시할 데이터(코스 목록, 페이징 처리 정보)를 저장한다.
+            model.addAttribute("userBadges", userBadges);
+            model.addAttribute("userLevel", userLevel);
+        }
+
+        // 4. Model 객체에 코스 목록, 페이징 처리 정보를 저장한다.
         model.addAttribute("courses", dto.getData());
         model.addAttribute("pagination", dto.getPaging());
 
