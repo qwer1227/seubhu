@@ -3,9 +3,13 @@
 <!doctype html>
 <html lang="ko">
 <head>
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <%@ include file="/WEB-INF/views/common/common.jsp" %>
     <style>
+        /* a 태그에 밑줄 없애기*/
+        a {
+            color: black;
+            text-decoration-line: none;
+        }
         /* 전체 컨테이너 중앙 정렬 */
         #wrap {
             display: flex;
@@ -79,5 +83,4 @@
 
 <%@ include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
-
 </html>

@@ -42,6 +42,10 @@
           from NOTICES
           where is_deleted = 'N') notice
     where notice.rn between #{condition.begin} and #{condition.end}
+    <if test="condition.keyword != null">
+      and notice.title like concat ('%', #{condition.keyword}, '%')
+    || notice.content like concat ('%', #{condition.keyword}, '%')
+    </if>
     order by rn
   </select>
 
@@ -61,14 +65,18 @@
     select count(*)
     from NOTICES
     where is_deleted = "N"
+    <if test="condition.keyword != null">
+      and notice_title like concat ('%', #{condition.keyword}, '%')
+      || notice_content like concat ('%', #{condition.keyword}, '%')
+    </if>
   </select>
 
   <!-- Notice getNoticeByNo(@Param("no") int noticeNo); -->
-  <select id="getNoticeByNo" parameterType="int">
+  <select id="getNoticeByNo" resultType="store.seub2hu2.community.vo.Notice">
     select notice_no as no
          , notice_title        as title
          , notice_content      as content
-         , file_name           as uploadFile
+         , file_name           as "uploadFile.originalName"
          , notice_created_date as createdDate
          , notice_view_cnt     as viewCnt
     from NOTICES
@@ -85,7 +93,7 @@
     , notice_updated_date = sysdate()
     , is_deleted = #{notice.deleted}
     <if test="notice.uploadFile != null">
-      , file_name = #{notice.uploadFile}
+      , file_name = #{notice.uploadFile.originalName}
     </if>
     where notice_no = #{notice.no}
   </update>
