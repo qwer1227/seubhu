@@ -13,6 +13,7 @@
     , crew_name
     , crew_description
     , crew_thumbnail
+    , crew_updated_date
     <if test="crew.uploadFile != null">
       , file_name
     </if>
@@ -21,16 +22,17 @@
     (
     #{crew.category}
     , #{crew.schedule}
-    , #{crew_location}
+    , #{crew.location}
     , #{crew.title}
-    , #{crew_name}
-    , #{crew_description}
-    , #{crew_thumbnail}
+    , #{crew.name}
+    , #{crew.description}
+    , #{crew.thumbnail.saveName}
+    , null
     <if test="crew.uploadFile != null">
-      , #{file_name}
+      , #{crew.uploadFile.saveName}
     </if>
     )
-    <selectKey resultType="int" keyProperty="board.no" keyColumn="board_no" order="AFTER">
+    <selectKey resultType="int" keyProperty="crew.no" keyColumn="crew_no" order="AFTER">
       SELECT LAST_INSERT_ID()
     </selectKey>
   </insert>

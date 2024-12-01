@@ -30,6 +30,7 @@ public class CrewService {
 
     public Crew addNewCrew(CrewForm form, @AuthenticationPrincipal LoginUser loginUser){
         Crew crew = new Crew();
+        crew.setNo(form.getNo());
         crew.setTitle(form.getTitle());
         crew.setCategory(form.getCategory());
         crew.setName(form.getName());
@@ -68,7 +69,7 @@ public class CrewService {
         crewMapper.insertCrew(crew);
 
         // 썸네일/첨부파일 추가 시, crew_files 테이블에 저장
-        if (crew.getThumbnail() != null || crew.getUploadFile() != null) {
+        if (crew.getThumbnail() != null) {
             UploadFile uploadFile = crew.getUploadFile();
             uploadFile.setNo(crew.getNo());
             uploadFile.setSaveName(crew.getUploadFile().getSaveName());

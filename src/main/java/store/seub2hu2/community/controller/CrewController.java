@@ -34,8 +34,10 @@ public class CrewController {
     }
 
     @PostMapping("/register")
-    public String register(CrewForm form, @AuthenticationPrincipal LoginUser loginUser) {
-        Crew crew = crewService.addNewCrew(form, loginUser);
+    public String register(CrewForm form
+            , @AuthenticationPrincipal LoginUser loginUser) {
+
+        crewService.addNewCrew(form, loginUser);
         return "redirect:main";
     }
 }
