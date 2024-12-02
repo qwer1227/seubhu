@@ -78,7 +78,7 @@ public class LessonFileService {
 
         log.info("updateLessonImages mainImage: " + mainImage.getOriginalFilename());
 
-        if (thumbnail != null && !thumbnail.isEmpty()) {
+        if (thumbnail == null && thumbnail.isEmpty()) {
             String thumbnailFileName = UUID.randomUUID() + thumbnail.getOriginalFilename();
             webContentFileUtils.saveWebContentFile(thumbnail, saveDirectory, thumbnailFileName);
             LessonFile thumbnailFile = new LessonFile(
@@ -87,7 +87,7 @@ public class LessonFileService {
             lessonFileMapper.insertLessonFile(thumbnailFile);
         }
 
-        if (mainImage != null && !mainImage.isEmpty()) {
+        if (mainImage == null && mainImage.isEmpty()) {
             String mainImageFileName = UUID.randomUUID() + mainImage.getOriginalFilename();
             webContentFileUtils.saveWebContentFile(mainImage, saveDirectory, mainImageFileName);
             LessonFile mainImageFile = new LessonFile(
