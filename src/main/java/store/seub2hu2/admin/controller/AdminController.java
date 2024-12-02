@@ -521,15 +521,12 @@ public class AdminController {
         List<Color> colorSize = adminService.getStockByColorNum(condition);
 
         if (colorSize == null || colorSize.isEmpty()) {
-            model.addAttribute("sizeMessage", "등록된 사이즈가 없습니다.");
-            colorSize = Collections.emptyList();
+            model.addAttribute("colorSize", colorSize);
+            model.addAttribute("sizeMessage", "사이즈 정보가 없습니다.");
         } else {
-            model.addAttribute("sizeMessage", null);
+            model.addAttribute("colorSize", null);
+            model.addAttribute("sizeMessage", "사이즈 정보가 없습니다.");
         }
-        log.info("no = {}", no);
-        System.out.println("colorName" + colorName);
-
-        System.out.println("colorSize: " + colorSize);
 
         model.addAttribute("colorSize", colorSize);
         model.addAttribute("sizes", sizes);
@@ -546,18 +543,18 @@ public class AdminController {
                                      @RequestParam(name = "colorName", required = false) String colorName,
                                      Model model) {
 
-        List<String> sizeList = Arrays.asList(size.split(","));
+
+
 
         Map<String, Object> condition = new HashMap<>();
         condition.put("no", no);
         condition.put("colorName", colorName);
-        condition.put("sizeList", sizeList);
         condition.put("size", size);
         condition.put("amount", amount);
 
         System.out.println("condition:" + condition);
 
-        int rowsAffected = adminService.getInsertStock(condition);
+        List<Color> colorList= adminService.getInsertStock(condition);
 
         return "redirect:/admin/product-detail?no=" + no + "&colorNo=" + colorNo;
     }
@@ -566,7 +563,7 @@ public class AdminController {
     public String getProductStock(@RequestParam(name= "topNo") int topNo,
                                   @RequestParam(name = "catNo", required = false, defaultValue = "0") int catNo,
                                   @RequestParam(name = "page", required = false, defaultValue = "1") int page,
-                                  @RequestParam(name = "rows", required = false, defaultValue = "5") int rows,
+                                  @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
                                   @RequestParam(name = "sort" , required = false, defaultValue = "date") String sort,
                                   @RequestParam(name = "opt", required = false) String opt,
                                   @RequestParam(name = "value", required = false) String value,

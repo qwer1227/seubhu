@@ -166,16 +166,12 @@
             PROD_COLORS PC
         ON
             PC.color_no = PS.color_no
-            set
-                PROD_AMOUNT = #{condition.amount}
+        set
+            PROD_AMOUNT = #{condition.amount}
         where
             PC.prod_no = #{condition.no}
           and
             PC.color_name = #{condition.colorName}
-        and PS.PROD_SIZE IN
-        <foreach item="size" collection="condition.sizeList" open="(" separator="," close=")">
-            #{size}
-        </foreach>
     </update>
 
     <!--
