@@ -29,6 +29,13 @@
             color: blue;
             text-decoration: none;
         }
+
+        .fc-event {
+            overflow: hidden;  /* 넘치는 텍스트 숨기기 */
+            text-overflow: ellipsis;  /* 넘치는 텍스트에 '...' 표시 */
+            white-space: nowrap;  /* 텍스트가 줄 바꿈 없이 한 줄로 표시 */
+        }
+
     </style>
 </head>
 <body>
@@ -164,7 +171,8 @@
                         const borderColor = backgroundColor; // 테두리 색상도 동일하게 설정
 
                         return {
-                            title: event.title,
+
+                            title: event.title + " / "+ event.status ,
                             start: event.start,
                             end: event.end,
                             allDay: false,
@@ -178,6 +186,7 @@
                             },
                         };
                     });
+
                     console.log("Formatted Events:", formattedEvents);
 
                     // 캘린더에 렌더링할 이벤트 데이터 전달
