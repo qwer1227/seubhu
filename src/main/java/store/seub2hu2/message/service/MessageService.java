@@ -16,6 +16,7 @@ import store.seub2hu2.util.FileUtils;
 import store.seub2hu2.util.ListDto;
 import store.seub2hu2.util.Pagination;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -31,41 +32,34 @@ public class MessageService {
     @Value("C:/Users/jhta/Desktop/MessageFiles")
     private String saveDirectory;
 
-    public void insertMessage(MessageForm form, LoginUser loginUser, int receiverNo) {
+    public void insertMessage(MessageForm form, MultipartFile file) throws Exception {
         // 1. 메시지 객체 생성
         Message message = new Message();
-        message.setUserNo(loginUser.getNo());  // 로그인된 사용자 번호
+        message.setUserNo(form.getSenderUserNo()); // senderId 대신 senderUserNo 사용
         message.setTitle(form.getTitle());
         message.setContent(form.getContent());
 
-        // 2. 첨부파일 처리
-        MultipartFile multipartFile = form.getMessageFile();
-        if (!multipartFile.isEmpty()) {
-            String originalFilename = multipartFile.getOriginalFilename();
-            String filename = System.currentTimeMillis() + originalFilename;
+        // 2. 메시지 저장
+        messageMapper.insertMessage(message); // 저장 후 messageNo 자동 생성됨
+
+        // 3. 파일 처리 (기존 코드와 동일)
+        if (file != null && !file.isEmpty()) {
+            String originalFilename = file.getOriginalFilename();
+            String savedFilename = System.currentTimeMillis() + "_" + originalFilename;
+
             // 파일 저장
-            FileUtils.saveMultipartFile(multipartFile, saveDirectory, filename);
+            File saveFile = new File(saveDirectory, savedFilename);
+            file.transferTo(saveFile);
 
+            // 파일 정보 DB 저장
             MessageFile messageFile = new MessageFile();
+            messageFile.setMessageNo(message.getMessageNo()); // 저장된 메시지 번호 연결
             messageFile.setOriginalName(originalFilename);
-            messageFile.setSavedName(filename);
-
-            message.setMessageFile(messageFile);
+            messageFile.setSavedName(savedFilename);
+            messageFileMapper.insertMessageFile(messageFile);
         }
-
-        // 3. 메시지 저장
-        messageMapper.insertMessage(message); // 메시지를 먼저 저장하여 messageNo를 생성
-
-        // 4. 첨부파일 저장 (있을 경우)
-        if (message.getMessageFile() != null) {
-            MessageFile messageFile = message.getMessageFile();
-            messageFile.setMessageNo(message.getMessageNo());  // DB에 저장될 messageNo 설정
-            messageFileMapper.insertMessageFile(messageFile);  // 파일 정보 저장
-        }
-
-        // 5. 메시지 수신자 저장
-        messageMapper.insertMessageReceiver(message.getMessageNo(), receiverNo);
     }
+
 
 
     // 공통 메시지 목록 조회
