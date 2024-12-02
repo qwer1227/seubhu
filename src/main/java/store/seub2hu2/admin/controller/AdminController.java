@@ -75,8 +75,6 @@ public class AdminController {
             model.addAttribute("lessonNo", lessonNo);
             model.addAttribute("images", images);
 
-
-
             log.info("lesson start = {}", lesson);
 
             return "admin/lesson-edit-form";
