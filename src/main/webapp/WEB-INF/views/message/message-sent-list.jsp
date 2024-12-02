@@ -1,4 +1,4 @@
-message-list.jsp<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="/WEB-INF/views/common/tags.jsp" %>
 <!doctype html>
 <html lang="ko">
@@ -22,11 +22,13 @@ message-list.jsp<%@ page contentType="text/html;charset=UTF-8" language="java" %
 
 
     <div class="row d-flex justify-content-between">
-        <div class="col " >
-            <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="#">받은 쪽지</a>
+        <div class="col ">
+            <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
+               href="/message/list">받은 쪽지</a>
         </div>
-        <div class="col " >
-            <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="#">보낸 쪽지</a>
+        <div class="col ">
+            <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
+               href="/message/sent">보낸 쪽지</a>
         </div>
     </div>
 

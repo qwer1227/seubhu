@@ -1,4 +1,4 @@
-message-list.jsp<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="/WEB-INF/views/common/tags.jsp" %>
 <!doctype html>
 <html lang="ko">
@@ -6,7 +6,7 @@ message-list.jsp<%@ page contentType="text/html;charset=UTF-8" language="java" %
     <%@include file="/WEB-INF/views/common/common.jsp" %>
 </head>
 <style>
-    #content-title:hover{
+    #content-title:hover {
         text-decoration: black underline;
         font-weight: bold;
     }
@@ -22,11 +22,13 @@ message-list.jsp<%@ page contentType="text/html;charset=UTF-8" language="java" %
 
 
     <div class="row d-flex justify-content-between">
-        <div class="col " >
-            <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="#">받은 쪽지</a>
+        <div class="col ">
+            <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
+               href="/message/list">받은 쪽지</a>
         </div>
-        <div class="col " >
-            <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="#">보낸 쪽지</a>
+        <div class="col ">
+            <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;"
+               href="/message/sent">보낸 쪽지</a>
         </div>
     </div>
 
@@ -51,22 +53,16 @@ message-list.jsp<%@ page contentType="text/html;charset=UTF-8" language="java" %
             </tr>
             </thead>
             <tbody style="text-align: center">
-            <tr>
-                <td>1</td>
-                <td>아몬드가 죽으면?</td>
-                <td>깔깔유머</td>
-                <td>2024-11-27</td>
-                <td>Y</td>
-                <td>2024-11-29</td>
-            </tr>
-            <tr>
-                <td>1</td>
-                <td>배치고사 안내</td>
-                <td>Riot Games</td>
-                <td>2024-11-27</td>
-                <td>N</td>
-                <td>-</td>
-            </tr>
+            <c:forEach var="message" items="${messages}">
+                <tr>
+                    <td>${message.messageNo}</td>
+                    <td>${message.title}</td>
+                    <td>${message.senderUserNo}</td>
+                    <td>${message.createDate}</td>
+                    <td>${message.readStatus}</td>
+                    <td>${message.readDate}</td>
+                </tr>
+            </c:forEach>
             </tbody>
 
         </table>
@@ -81,36 +77,37 @@ message-list.jsp<%@ page contentType="text/html;charset=UTF-8" language="java" %
         <div class="col d-flex justify-content-center">
 
         </div>
+        <!-- 메시지 작성 버튼 -->
         <div class="col d-flex justify-content-end">
-            <a href="form" type="button" class="btn btn-primary">글쓰기</a>
+            <a href="/message/send" type="button" class="btn btn-primary">글쓰기</a>
         </div>
     </div>
     <!-- 페이징 처리 -->
-            <div class="row mb-3">
-				<div class="col-12">
-                    <nav>
-                        <ul class="pagination justify-content-center">
-                            <li class="page-item ${paging.first? 'disabled' : ''}">
-                                <a class="page-link"
-                                onclick="changePage(${paging.prevPage}, event)"
-                                href="list?page=${paging.prevPage}">이전</a>
-                            </li>
-                            <c:forEach var="num" begin="${paging.beginPage}" end="${paging.endPage}">
-                                <li class="page-item ${paging.page eq num ? 'active' : ''}">
-                                    <a class="page-link"
-                                    onclick="changePage(${num}, event)"
-                                    href="list?page=${num}">${num}</a>
-                                </li>
-                            </c:forEach>
-                            <li class="page-item ${paging.last ? 'disabled' : ''}" >
-                                <a class="page-link"
-                                onclick="changePage(${paging.nextPage}, event)"
-                                href="list?page=${paging.nextPage}">다음</a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-            </div>
+    <div class="row mb-3">
+        <div class="col-12">
+            <nav>
+                <ul class="pagination justify-content-center">
+                    <li class="page-item ${paging.first? 'disabled' : ''}">
+                        <a class="page-link"
+                           onclick="changePage(${paging.prevPage}, event)"
+                           href="list?page=${paging.prevPage}">이전</a>
+                    </li>
+                    <c:forEach var="num" begin="${paging.beginPage}" end="${paging.endPage}">
+                        <li class="page-item ${paging.page eq num ? 'active' : ''}">
+                            <a class="page-link"
+                               onclick="changePage(${num}, event)"
+                               href="list?page=${num}">${num}</a>
+                        </li>
+                    </c:forEach>
+                    <li class="page-item ${paging.last ? 'disabled' : ''}">
+                        <a class="page-link"
+                           onclick="changePage(${paging.nextPage}, event)"
+                           href="list?page=${paging.nextPage}">다음</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
 </div>
 
 <script type="text/javascript">

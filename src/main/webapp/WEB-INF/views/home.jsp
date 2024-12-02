@@ -66,7 +66,7 @@
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
 <main>
     <!-- 쪽지 버튼 -->
-    <a href="/message/received?userNo=${loginUser.no}" class="nav-link">
+    <a href="/message/list" class="nav-link">
         <button type="button" class="btn btn-dark position-relative">
             쪽지
             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">

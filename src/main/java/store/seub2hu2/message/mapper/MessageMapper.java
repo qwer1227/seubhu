@@ -3,6 +3,7 @@ package store.seub2hu2.message.mapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import store.seub2hu2.message.dto.MessageForm;
+import store.seub2hu2.message.dto.MessageRecieved;
 import store.seub2hu2.message.vo.Message;
 
 import java.util.List;
@@ -24,7 +25,7 @@ public interface MessageMapper {
     int getTotalRows(@Param("condition") Map<String, Object> condition);
 
     // 조건에 맞는 메시지 목록 조회
-    List<MessageForm> getMessages(@Param("condition") Map<String, Object> condition);
+    List<MessageRecieved> getMessages(@Param("condition") Map<String, Object> condition);
 
     // 메시지 수신자 삽입
     void insertMessageReceiver(@Param("messageNo") int messageNo, @Param("userNo") int userNo);
@@ -33,8 +34,8 @@ public interface MessageMapper {
     void markMessageAsRead(@Param("messageNo") int messageNo, @Param("userNo") int userNo);
 
     // 받은 메시지 목록 조회 (검색 및 페이징 조건 포함)
-    List<Message> getReceivedMessages(Map<String, Object> condition);
+    List<MessageRecieved> getReceivedMessages(@Param("condition") Map<String, Object> condition);
 
     // 보낸 메시지 목록 조회
-    List<Message> getSentMessages(Map<String, Object> condition);
+    List<Message> getSentMessages(@Param("condition") Map<String, Object> condition);
 }
