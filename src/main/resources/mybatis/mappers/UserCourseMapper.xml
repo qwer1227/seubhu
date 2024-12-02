@@ -33,7 +33,15 @@
     <select id="getTotalRows" resultType="int">
         select count(*)
         from COURSE_RECORDS
-        where course_no = #{condition.courseNo}
+        <where>
+            <if test="condition.courseNo != null">
+                and course_no = #{condition.courseNo}
+            </if>
+            <if test="condition.userNo != null">
+                and user_no = #{condition.userNo}
+            </if>
+        </where>
+
     </select>
 
     <!--
@@ -101,21 +109,29 @@
         from (
               select dense_rank() over (order by r.finished_time) as no
                     , row_number() over (order by r.finished_time) as rn
+                   , c.course_no
+                   , c.course_name as "course.name"
+                   , c.course_distance as "course.distance"
+                   , c.course_level as "course.level"
                    , r.finished_no
                    , r.finished_date as finishedDate
                    , r.finished_time as finishedTime
                    , r.course_no as "course.no"
                    , u.user_no as "user.no"
                    , u.user_nickname as "user.nickname"
-              from COURSE_RECORDS r inner join USERS u
+              from COURSES c inner join COURSE_RECORDS r
+              on c.course_no = r.course_no
+              inner join USERS u
               on r.user_no = u.user_no
-              where course_no = #{condition.courseNo}
-              <if test="condition.userNo != null">
-                  and r.user_no = #{condition.userNo}
-              </if>
+              <where>
+                  <if test="condition.courseNo != null">
+                      course_no = #{condition.courseNo}
+                  </if>
+                  <if test="condition.userNo != null">
+                      and r.user_no = #{condition.userNo}
+                  </if>
+              </where>
              ) ar
-        <if test="condition.userNo == null">
-            where rn between #{condition.begin} and #{condition.end}
-        </if>
+        where rn between #{condition.begin} and #{condition.end}
     </select>
 </mapper>
