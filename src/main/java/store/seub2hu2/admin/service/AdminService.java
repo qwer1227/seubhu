@@ -323,22 +323,9 @@ public class AdminService {
         return dto;
     }
 
-    public List<Color> getInsertStock(Map<String, Object> condition) {
+    public void getInsertStock(Map<String, Object> condition) {
 
-        for (Map<String, Object> conditions : condition) {
-
-            Color color = new Color();
-            color.setNo((Integer) conditions.get("no"));
-            color.setName((String) conditions.get("colorName"));
-
-            Size size = new Size();
-            size.setSize((String) conditions.get("size"));
-            size.setAmount((Integer) conditions.get("amount"));
-            color.setSize(size);
-
-            return adminMapper.insertStock(color);
-        }
-
+        adminMapper.insertStock(condition);
     }
 
 //    public Color getProductByColorNo(Integer colorNo) {

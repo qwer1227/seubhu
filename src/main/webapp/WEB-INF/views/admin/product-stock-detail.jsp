@@ -87,10 +87,10 @@
                   <form id="postForm" class="border bg-light p-3" method="post" action="/admin/product-stock-detail">
                     <div class="text-end">
                       <div id="Container" class="mb-2">
+                          <input type="hidden" name="colorName" value="${param.colorName}">
                         <c:forEach var="cs" items="${colorSize}">
                           <input type="hidden" name="no" value="${param.no}">
                           <input type="hidden" name="colorNo" value="${param.colorNo}">
-                          <input type="hidden" name="colorName" value="${param.colorName}">
                           <label class="form-label">사이즈: ${cs.size.size}</label>
                           <input type="hidden" name="size" value="${cs.size.size}"><br>
                           <label class="form-label">수량:</label>

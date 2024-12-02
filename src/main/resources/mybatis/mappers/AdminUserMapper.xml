@@ -167,11 +167,13 @@
         ON
             PC.color_no = PS.color_no
         set
-            PROD_AMOUNT = #{condition.amount}
+            PS.PROD_AMOUNT = #{condition.amount}
         where
             PC.prod_no = #{condition.no}
-          and
+        and
             PC.color_name = #{condition.colorName}
+        and
+            PS.prod_size = #{condition.size}
     </update>
 
     <!--

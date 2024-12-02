@@ -537,24 +537,27 @@ public class AdminController {
     }
     @PostMapping("/product-stock-detail")
     public String productStockDetail(@RequestParam("no") int no,
-                                     @RequestParam("size") String size,
                                      @RequestParam(name = "colorNo") Integer colorNo,
-                                     @RequestParam("amount") int amount,
                                      @RequestParam(name = "colorName", required = false) String colorName,
+                                     @RequestParam("size") List<String> size,
+                                     @RequestParam("amount") List<Integer> amount,
                                      Model model) {
-
-
-
 
         Map<String, Object> condition = new HashMap<>();
         condition.put("no", no);
         condition.put("colorName", colorName);
-        condition.put("size", size);
-        condition.put("amount", amount);
 
-        System.out.println("condition:" + condition);
+        for (int i =0; i< size.size(); i++) {
+            String currentSize = size.get(i);
+            Integer currentAmount = amount.get(i);
 
-        List<Color> colorList= adminService.getInsertStock(condition);
+            condition.put("size", currentSize);
+            condition.put("amount", currentAmount);
+
+            System.out.println("condition:" + condition);
+
+            adminService.getInsertStock(condition);
+        }
 
         return "redirect:/admin/product-detail?no=" + no + "&colorNo=" + colorNo;
     }

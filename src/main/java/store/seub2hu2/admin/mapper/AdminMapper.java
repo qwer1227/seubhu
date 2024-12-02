@@ -82,7 +82,7 @@ public interface AdminMapper {
 
     List<Color> getStockByColorNumber(@Param("condition") Map<String, Object> condition);
 
-    List<Color> insertStock(@Param("condition") Color color);
+    void insertStock(@Param("condition") Map<String, Object> condition);
 
     /*
      * 재고
