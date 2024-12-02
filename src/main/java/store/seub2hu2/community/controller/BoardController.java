@@ -143,7 +143,6 @@ public class BoardController {
     }
 
     @PostMapping("/register")
-//    @PreAuthorize("isAuthenticated()")
     public String register(BoardForm form
             , @AuthenticationPrincipal LoginUser loginUser) {
 

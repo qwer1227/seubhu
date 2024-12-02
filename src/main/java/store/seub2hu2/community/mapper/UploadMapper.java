@@ -17,4 +17,8 @@ public interface UploadMapper {
     void insertNoticeFile(@Param("uploadFile") UploadFile uploadFile);
     UploadFile getFileByNoticeNo(int noticeNo);
     void updateNoticeFile(UploadFile uploadFile);
+
+    void insertCrewFile(@Param("uploadFile") UploadFile uploadFile);
+    UploadFile getFileByCrewNo(int crewNo);
+    void updateCrewFile(UploadFile uploadFile);
 }

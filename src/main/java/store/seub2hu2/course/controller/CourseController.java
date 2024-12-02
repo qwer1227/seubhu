@@ -1,6 +1,8 @@
 package store.seub2hu2.course.controller;
 
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -33,6 +35,7 @@ public class CourseController {
                        @RequestParam(name = "distance", required = false, defaultValue = "10") Double distance,
                        @RequestParam(name = "level", required = false) Integer level,
                        @RequestParam(name = "keyword", required = false) String keyword,
+                       @AuthenticationPrincipal LoginUser loginUser,
                        Model model){
         // 1. 요청 파라미터 정보를 Map 객체에 저장한다.
         Map<String, Object> condition = new HashMap<>();
@@ -53,11 +56,13 @@ public class CourseController {
         // 2. 검색에 해당하는 코스 목록을 가져온다.
         ListDto<Course> dto = courseService.getAllCourses(condition);
 
-        // 3. Model 객체에 화면에 표시할 데이터(코스 목록, 페이징 처리 정보)를 저장한다.
+        // 3. 로그인한 사용자의 정보(이름, 닉네임, 현재 배지의 사진, 도전 가능한 단계)를 가져온다.
+
+        // 4. Model 객체에 화면에 표시할 데이터(코스 목록, 페이징 처리 정보)를 저장한다.
         model.addAttribute("courses", dto.getData());
         model.addAttribute("pagination", dto.getPaging());
 
-        // 4. 뷰 이름을 반환한다.
+        // 5. 뷰 이름을 반환한다.
         return "course/list";
     }
 
@@ -94,26 +99,38 @@ public class CourseController {
 
     @GetMapping("/best-runner")
     public String bestRunner(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
-                             @RequestParam(name = "courseNo", required = false) Integer courseNo, Model model) {
+                             @RequestParam(name = "courseNo", required = false) Integer courseNo,
+                             @AuthenticationPrincipal LoginUser loginUser,
+                             Model model) {
         // 1. 모든 코스 목록을 가져온다.
         List<Course> courses = courseService.getCourses();
+        model.addAttribute("courses", courses);
 
-        // 2. 요청 파라미터 정보를 Map 객체에 저장한다.
+        // 2. Map 객체를 생성하고, page(페이지)를 Map 객체에 저장한다.
         Map<String, Object> condition = new HashMap<>();
         condition.put("page", page);
+
+        // 3. 코스 번호가 존재하는 경우에만 해당 코스의 완주 기록을 가져온다.
         if (courseNo != null) {
+            // 4. 요청 파라미터 정보를 Map 객체에 저장한다.
             condition.put("courseNo", courseNo);
+
+            // 5. 해당 코스의 모든 완주 기록을 가져온다.
+            ListDto<Records> dto = userCourseService.getAllRecords(condition);
+
+            // 6. 해당 코스의 로그인한 사용자의 완주 기록을 가져온다.
+            if (loginUser != null) {
+                condition.put("userNo", loginUser.getNo());
+                List<Records> records = userCourseService.getMyRecords(condition);
+                model.addAttribute("myRecord", records);
+            }
+
+            // 7. Model 객체에 코스 완주 기록, 페이징 처리 정보를 저장한다.
+            model.addAttribute("records", dto.getData());
+            model.addAttribute("pagination", dto.getPaging());
         }
 
-        // 3. 코스 완주 기록을 가져온다.
-        ListDto<Records> dto = userCourseService.getAllRecords(condition);
-
-        // 4. Model 객체에 저장한다.
-        model.addAttribute("courses", courses);
-        model.addAttribute("records", dto.getData());
-        model.addAttribute("pagination", dto.getPaging());
-
-        // 5. 뷰이름을 반환한다.
+        // 8. 뷰이름을 반환한다.
         return "course/best-runner";
     }
 }

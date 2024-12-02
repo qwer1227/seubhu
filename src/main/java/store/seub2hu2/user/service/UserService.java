@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import store.seub2hu2.mypage.dto.UserInfoReq;
+import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.dto.UserJoinForm;
 import store.seub2hu2.user.exception.AlreadyUsedIdException;
 import store.seub2hu2.user.vo.Role;
@@ -84,6 +86,60 @@ public class UserService {
 
         // 사용자 역할 추가 메서드 호출
         userMapper.insertUserRole(userRole);
+    }
+
+    public boolean verifyPassword(String password, LoginUser loginUser){
+
+        // 로그인한 사용자 정보 가져오기
+        User user = userMapper.getUserById(loginUser.getId());
+
+        // 입력된 비밀번호 확인
+        if (passwordEncoder.matches(password, user.getPassword())) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     *
+     * @param userInfoReq 사용자가 입력한 내용
+     * @return 참 여부
+     */
+    public int updateUser(UserInfoReq userInfoReq, LoginUser loginUser){
+
+        // userId를 사용해 유저 정보를 조회
+        User user = userMapper.getUserById(loginUser.getId());
+
+        // 입력한 비밀번호 인코딩
+        String EncodedPwd = passwordEncoder.encode(userInfoReq.getPassword());
+
+        // 사용자가 입력한 정보를 USER객체에 저장
+        user.setNo(loginUser.getNo());
+        user.setName(userInfoReq.getName());
+        user.setNickname(userInfoReq.getNickname());
+        user.setPassword(EncodedPwd);
+        user.setTel(userInfoReq.getPhone());
+        user.setEmail(userInfoReq.getEmail());
+
+        // 이전비밀번호 중복입력검증
+        if(userInfoReq.getPassword().equals(user.getPassword())){
+            return 1;
+        }
+
+        // 비밀번호확인 검증
+        if(!userInfoReq.getPassword().equals(userInfoReq.getConfirmPassword())){
+            return 2;
+        }
+
+        // 저장한 객체를 Mapper에 전달
+        userMapper.updateUser(user);
+
+        return 0;
+    }
+
+    public User findbyUserNo(String userId){
+        return userMapper.getUserById(userId);
     }
 
     /**

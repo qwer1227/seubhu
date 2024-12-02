@@ -40,7 +40,6 @@
   <h2> 커뮤니티 글 상세 </h2>
   
   <div>
-    <security:authentication property="principal" var="loginUser"/>
     <div class="col d-flex justify-content-left">
       <div>
         <a href="main?category=${board.catName}" style="text-decoration-line: none">${board.catName}</a>
@@ -52,6 +51,7 @@
       </div>
       <div class="ml-auto">
         <security:authorize access="isAuthenticated()">
+          <security:authentication property="principal" var="loginUser"/>
           <button class="btn btn-outline-success btn-lg" id="scrapButton"
                   onclick="scrapButton(${board.no}, ${loginUser.getNo()})">
             <i id="icon-scrap"
