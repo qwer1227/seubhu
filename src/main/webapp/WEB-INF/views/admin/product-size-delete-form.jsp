@@ -107,7 +107,7 @@
                                     </c:forEach>
                                 </div>
                                 <div class="text-end" style="text-align: right">
-                                    <button type="submit" class="btn btn-primary">등록</button>
+                                    <button type="submit" class="btn btn-primary">삭제</button>
                                 </div>
                             </form>
 

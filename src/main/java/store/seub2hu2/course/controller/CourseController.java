@@ -1,8 +1,6 @@
 package store.seub2hu2.course.controller;
 
-import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -13,6 +11,8 @@ import store.seub2hu2.course.service.CourseService;
 import store.seub2hu2.course.service.UserCourseService;
 import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.course.vo.Records;
+import store.seub2hu2.course.vo.UserBadge;
+import store.seub2hu2.course.vo.UserLevel;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.util.ListDto;
 
@@ -29,13 +29,41 @@ public class CourseController {
     @Autowired
     private UserCourseService userCourseService;
 
+    @GetMapping("/my-course")
+    public String myCourse(@AuthenticationPrincipal LoginUser loginUser,
+                           Model model) {
+        // 1. 로그인한 사용자의 코스 관련 정보(현재 배지, 현재 도전 가능한 단계)를 가져오고, Model 객체에 저장한다.
+        if (loginUser != null) {
+            List<UserBadge> userBadges = userCourseService.getUserBadge(loginUser.getNo());
+            UserLevel userLevel = userCourseService.getUserLevel(loginUser.getNo());
+
+            model.addAttribute("userBadges", userBadges);
+            model.addAttribute("userLevel", userLevel);
+        }
+
+        return "course/my-course";
+    }
+
+    @GetMapping("/finishRecords")
+    @ResponseBody
+    public ListDto<Records> finishRecords(@RequestParam(name = "page") int page,
+                                          @AuthenticationPrincipal LoginUser loginUser) {
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("page", page);
+
+        // 1. 페이지에 맞는 로그인한 사용자의 완주 기록 데이터를 가져온다.
+        ListDto<Records> dto = userCourseService.getAllRecords(condition, loginUser);
+
+        // 2. 완주 기록 데이터, 페이정 처리 정보를 반환한다.
+        return dto;
+    }
+
     @GetMapping("/list")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
                        @RequestParam(name = "sort", required = false) String sort,
                        @RequestParam(name = "distance", required = false, defaultValue = "10") Double distance,
                        @RequestParam(name = "level", required = false) Integer level,
                        @RequestParam(name = "keyword", required = false) String keyword,
-                       @AuthenticationPrincipal LoginUser loginUser,
                        Model model){
         // 1. 요청 파라미터 정보를 Map 객체에 저장한다.
         Map<String, Object> condition = new HashMap<>();
@@ -56,18 +84,18 @@ public class CourseController {
         // 2. 검색에 해당하는 코스 목록을 가져온다.
         ListDto<Course> dto = courseService.getAllCourses(condition);
 
-        // 3. 로그인한 사용자의 정보(이름, 닉네임, 현재 배지의 사진, 도전 가능한 단계)를 가져온다.
-
-        // 4. Model 객체에 화면에 표시할 데이터(코스 목록, 페이징 처리 정보)를 저장한다.
+        // 3. Model 객체에 코스 목록, 페이징 처리 정보를 저장한다.
         model.addAttribute("courses", dto.getData());
         model.addAttribute("pagination", dto.getPaging());
 
-        // 5. 뷰 이름을 반환한다.
+        // 4. 뷰 이름을 반환한다.
         return "course/list";
     }
 
     @GetMapping("/detail")
-    public String detail(@RequestParam(name = "no") int courseNo, @AuthenticationPrincipal LoginUser loginUser, Model model) {
+    public String detail(@RequestParam(name = "no") int courseNo,
+                         @AuthenticationPrincipal LoginUser loginUser,
+                         Model model) {
         // 1. 코스의 상세 정보를 가져온다.
         Course course = courseService.getCourseDetail(courseNo);
 
@@ -89,7 +117,8 @@ public class CourseController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/controlLikeCount")
-    public String controlLikeCount(@RequestParam(name = "courseNo") int courseNo, @AuthenticationPrincipal LoginUser loginUser) {
+    public String controlLikeCount(@RequestParam(name = "courseNo") int courseNo,
+                                   @AuthenticationPrincipal LoginUser loginUser) {
         // 1. 코스의 좋아요 수를 증가시키거나 감소시킨다.
         userCourseService.addOrReduceLikeCount(courseNo, loginUser.getNo());
 
@@ -97,11 +126,11 @@ public class CourseController {
         return "redirect:detail?no=" + courseNo;
     }
 
-    @GetMapping("/best-runner")
-    public String bestRunner(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
-                             @RequestParam(name = "courseNo", required = false) Integer courseNo,
-                             @AuthenticationPrincipal LoginUser loginUser,
-                             Model model) {
+    @GetMapping("/runner-ranking")
+    public String runnerRanking(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                                @RequestParam(name = "courseNo", required = false) Integer courseNo,
+                                @AuthenticationPrincipal LoginUser loginUser,
+                                Model model) {
         // 1. 모든 코스 목록을 가져온다.
         List<Course> courses = courseService.getCourses();
         model.addAttribute("courses", courses);
@@ -116,7 +145,7 @@ public class CourseController {
             condition.put("courseNo", courseNo);
 
             // 5. 해당 코스의 모든 완주 기록을 가져온다.
-            ListDto<Records> dto = userCourseService.getAllRecords(condition);
+            ListDto<Records> dto = userCourseService.getAllRecords(condition, loginUser);
 
             // 6. 해당 코스의 로그인한 사용자의 완주 기록을 가져온다.
             if (loginUser != null) {
@@ -131,6 +160,6 @@ public class CourseController {
         }
 
         // 8. 뷰이름을 반환한다.
-        return "course/best-runner";
+        return "course/runner-ranking";
     }
 }

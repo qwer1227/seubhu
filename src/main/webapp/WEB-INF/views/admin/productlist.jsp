@@ -117,7 +117,7 @@
                                     <option value="18" ${param.rows eq 18? "selected" : ""}>18개씩 보기</option>
                                 </select>
                             </div>
-                            <div class="col-2 pt-2">
+                            <div class="col-3 pt-2">
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input"
                                            type="radio"

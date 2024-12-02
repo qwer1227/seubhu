@@ -16,6 +16,7 @@ import store.seub2hu2.admin.service.AdminService;
 import store.seub2hu2.course.service.CourseService;
 import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.lesson.dto.LessonRegisterForm;
+import store.seub2hu2.lesson.dto.LessonUpdateDto;
 import store.seub2hu2.lesson.service.LessonFileService;
 import store.seub2hu2.lesson.service.LessonService;
 import store.seub2hu2.lesson.vo.Lesson;
@@ -63,6 +64,8 @@ public class AdminController {
 
         try {
 
+            // 강사 정보 가져오기
+            List<User> lecturers =  userService.findUsersByUserRoleNo(3);
 
             // Lesson 정보 가져오기
             Lesson lesson = lessonService.getLessonByNo(lessonNo);
@@ -70,12 +73,11 @@ public class AdminController {
             // 이미지 파일 정보 가져오기
             Map<String, String> images = lessonFileService.getImagesByLessonNo(lessonNo);
 
-            // 모델에 lesson과 images 정보 추가
+            // 모델에 레슨, 이미지, 강사 정보 추가
+            model.addAttribute("lecturers", lecturers);
             model.addAttribute("lesson", lesson);
             model.addAttribute("lessonNo", lessonNo);
             model.addAttribute("images", images);
-
-
 
             log.info("lesson start = {}", lesson);
 
@@ -85,20 +87,14 @@ public class AdminController {
         }
     }
 
-/*    @GetMapping("/lesson-edit-form")
-    public String lessonEditForm(@RequestParam("lessonNo")Integer lessonNo, Model model) {
-
-        Lesson lesson = lessonService.getLessonByNo(lessonNo);
-
-
-        return "admin/lesson-edit-form";
-    }
-
     @PostMapping("/lesson-edit-form")
-    public String lessonEditForm(LessonRegisterForm form,Model model) {
+    public String lessonEditForm(@ModelAttribute("dto") LessonUpdateDto dto) {
 
-        return "admin/lesson-edit-form";
-    }*/
+        log.info("레슨 수정 정보 {} ", dto);
+        lessonService.updateLesson(dto);
+
+        return "redirect:/admin/lesson";
+    }
 
     @GetMapping("/lesson-register-form")
     public String lessonRegisterForm(Model model) {
@@ -112,6 +108,8 @@ public class AdminController {
 
     @PostMapping("/lesson-register-form")
     public String form(@ModelAttribute("form") LessonRegisterForm form, Model model) throws IOException {
+
+
 
         lessonService.registerLesson(form);
 
@@ -280,7 +278,10 @@ public class AdminController {
     @PostMapping("/delete-size")
     public String deleteSize(@RequestParam("no") int no,
                              @RequestParam("colorNo") Integer colorNo,
+                             @RequestParam("sizeNo") int sizeNo,
                              Model model) {
+
+        adminService.getDeletedSize(sizeNo);
 
         return "redirect:/admin/delete-size?no=" + no + "&colorNo=" + colorNo;
     }
@@ -319,10 +320,14 @@ public class AdminController {
         condition.put("size", size);
 
         try {
+
             adminService.getCheckSize(condition);
         } catch (IllegalArgumentException e) {
+
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
+
+
 
         return "redirect:/admin/register-size?no=" + no + "&colorNo=" + colorNo;
 
@@ -500,6 +505,59 @@ public class AdminController {
         Category category = adminService.getCategory(form.getCategoryNo());
 
          return "redirect:/admin/product?topNo="+ category.getTopNo();
+    }
+
+    @GetMapping("/product-stock-detail")
+    public String getProductStockDetail(@RequestParam("no") int no,
+                                        @RequestParam("colorNo") Integer colorNo,
+                                     Model model) {
+
+        Product product = adminService.getProductNo(no);
+        List<Color> colors = adminService.getColorName(no);
+
+        model.addAttribute("product", product);
+        model.addAttribute("colors", colors);
+
+        return "admin/product-stock-detail";
+    }
+    @PostMapping("/product-stock-detail")
+    public String productStockDetail(@RequestParam("no") int no,
+                                     Model model) {
+
+        return "admin/product-stock-detail";
+    }
+
+    @GetMapping("/product-stock")
+    public String getProductStock(@RequestParam(name= "topNo") int topNo,
+                                  @RequestParam(name = "catNo", required = false, defaultValue = "0") int catNo,
+                                  @RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                                  @RequestParam(name = "rows", required = false, defaultValue = "5") int rows,
+                                  @RequestParam(name = "sort" , required = false, defaultValue = "date") String sort,
+                                  @RequestParam(name = "opt", required = false) String opt,
+                                  @RequestParam(name = "value", required = false) String value,
+                                  Model model) {
+
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("topNo", topNo);
+        if(catNo != 0) {
+            condition.put("catNo", catNo);
+        }
+
+        condition.put("page", page);
+        condition.put("rows", rows);
+        condition.put("sort", sort);
+        if(StringUtils.hasText(opt)) {
+            condition.put("opt", opt);
+            condition.put("value", value);
+        }
+
+        ListDto<ProdListDto> dto = productService.getProducts(condition);
+        model.addAttribute("topNo", topNo);
+        model.addAttribute("catNo", catNo);
+        model.addAttribute("products", dto.getData());
+        model.addAttribute("paging", dto.getPaging());
+
+        return "admin/product-stock";
     }
 
     @GetMapping("/product")

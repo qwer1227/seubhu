@@ -3,6 +3,7 @@
 <mapper namespace="store.seub2hu2.lesson.mapper.LessonMapper">
 
     <!--
+
     // 전체 레슨 조회하기
     public List<Lesson> getAllLessons(@Param("param") Map<String, Object> param, @Param("subject") String subject);
 
@@ -16,10 +17,10 @@
     public void deleteLessonByNo(@Param("lesson") Lesson lesson);
 
     // 레슨 수정
-    public void updateLessonByNo(@Param("lesson") Lesson lesson);
+    public void updateLesson(@Param("dto") LessonUpdateDto dto);
 
-    // 결제번호로 결제한 레슨 조회
-    public Lesson getLessonByPayNo(@Param("payNo") String payNo);
+    // 레슨 수강생 수 수정
+    public void updateLessonParticipant(@Param("dto") LessonUpdateDto dto);
 
     -->
 
@@ -98,14 +99,21 @@
     <!-- 레슨 수정 -->
     <update id="updateLesson">
         UPDATE LESSONS
-        SET PARTICIPANT    = #{lesson.participant}
-          , LESSON_STATUS  = #{lesson.status}
-          , USER_ID        = #{lesson.lecturer.id}
-          , LESSON_TITLE   = #{lesson.title}
-          , LESSON_PLAN    = #{lesson.plan}
-          , LESSON_SUBJECT = #{lesson.subject}
-          , LESSON_PRICE   = #{lesson.price}
-        WHERE LESSON_NO = #{lesson.lessonNo}
+        SET PARTICIPANT    = #{dto.participant}
+          , LESSON_STATUS  = #{dto.status}
+          , USER_ID        = #{dto.lecturerId}
+          , LESSON_TITLE   = #{dto.title}
+          , LESSON_PLAN    = #{dto.plan}
+          , LESSON_SUBJECT = #{dto.subject}
+          , LESSON_PRICE   = #{dto.price}
+        WHERE LESSON_NO = #{dto.lessonNo}
+    </update>
+
+    <!-- 레슨 수강생 수 수정 -->
+    <update id="updateLessonParticipant">
+        UPDATE LESSONS
+        SET PARTICIPANT    = #{dto.participant}
+        WHERE LESSON_NO = #{dto.lessonNo}
     </update>
 
     <!-- 레슨 삭제 -->

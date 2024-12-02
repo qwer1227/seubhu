@@ -9,6 +9,7 @@ import store.seub2hu2.mypage.dto.UserInfoReq;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.dto.UserJoinForm;
 import store.seub2hu2.user.exception.AlreadyUsedIdException;
+import store.seub2hu2.user.exception.InvalidCredentialsException;
 import store.seub2hu2.user.vo.Role;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.user.mapper.UserMapper;
@@ -150,5 +151,24 @@ public class UserService {
     public List<User> findUsersByUserRoleNo(int roleNo) {
         List<User> findUsers = userMapper.getUsersByRoleNo(roleNo);
         return findUsers;
+    }
+
+    public User login(String id, String password) throws InvalidCredentialsException {
+        // 아이디로 사용자 조회
+        User user = userMapper.getUserById(id);
+
+        if (user == null) {
+            // 사용자가 없으면 예외 발생
+            throw new InvalidCredentialsException("User not found.");
+        }
+
+        // 비밀번호 확인 (입력된 비밀번호와 DB에 저장된 비밀번호를 비교)
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            // 비밀번호가 일치하지 않으면 예외 발생
+            throw new InvalidCredentialsException("Invalid password.");
+        }
+
+        // 로그인 성공 시, 사용자 객체 반환
+        return user;
     }
 }
