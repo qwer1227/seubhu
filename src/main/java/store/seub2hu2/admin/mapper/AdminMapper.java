@@ -6,10 +6,7 @@ import store.seub2hu2.admin.dto.ImageUrlDto;
 import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.course.vo.Region;
 import store.seub2hu2.lesson.vo.Lesson;
-import store.seub2hu2.product.vo.Category;
-import store.seub2hu2.product.vo.Color;
-import store.seub2hu2.product.vo.Image;
-import store.seub2hu2.product.vo.Product;
+import store.seub2hu2.product.vo.*;
 import store.seub2hu2.user.vo.User;
 
 import java.util.HashMap;
@@ -18,7 +15,6 @@ import java.util.Map;
 
 @Mapper
 public interface AdminMapper {
-
 
     /*
      * 회원
@@ -52,16 +48,7 @@ public interface AdminMapper {
 
     // 색상 등록
     void insertColor(@Param("condition") HashMap<String, Object> condition);
-
-    //
-
-    /*
-     * 재고
-     */
-
-    /*
-     * 레슨
-     */
+    
     List<Lesson> getAllLessons(@Param("condition") Map<String, Object> condition);
     
 
@@ -82,4 +69,22 @@ public interface AdminMapper {
     void getNullImageThum(Integer imgNo);
 
     void editUrl(Image img);
+
+    List<Size> getAllSizesByColorNo(Integer colorNo);
+
+    Size getCheckSizeByCon(@Param("size") Size size);
+
+    void getInsertSize(@Param("size") Size size);
+
+    void getDeleteSize(int sizeNo);
+
+    void getChangeIsDeleted(@Param("size") Size size);
+
+    /*
+     * 재고
+     */
+
+    /*
+     * 레슨
+     */
 }

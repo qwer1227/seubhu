@@ -2,14 +2,14 @@ package store.seub2hu2.course.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.seub2hu2.course.mapper.CourseMapper;
 import store.seub2hu2.course.mapper.UserCourseMapper;
-import store.seub2hu2.course.vo.Course;
-import store.seub2hu2.course.vo.CourseLike;
-import store.seub2hu2.course.vo.CourseWhether;
-import store.seub2hu2.course.vo.Records;
+import store.seub2hu2.course.vo.*;
+import store.seub2hu2.security.user.LoginUser;
+import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.ListDto;
 import store.seub2hu2.util.Pagination;
 
@@ -26,6 +26,32 @@ public class UserCourseService {
     private CourseMapper courseMapper;
 
     /**
+     * 로그인한 사용자의 현재 배지 정보를 가져온다.
+     * @param userNo 사용자 번호
+     * @return 현재 배지 정보
+     */
+    public List<UserBadge> getUserBadge(int userNo) {
+        // 1. 로그인한 사용자의 현재 배지 정보를 가져온다.
+        List<UserBadge> userBadge = userCourseMapper.getUserBadge(userNo);
+
+        // 2. 로그인한 사용자의 배지 정보를 반환한다.
+        return userBadge;
+    }
+
+    /**
+     * 로그인한 사용자의 현재 도전 가능한 단계를 가져온다.
+     * @param userNo 사용자 번호
+     * @return 현재 도전 가능한 단계
+     */
+    public UserLevel getUserLevel(int userNo) {
+        // 1. 로그인한 사용자의 현재 도전 가능한 단계(난이도)를 가져온다.
+        UserLevel userLevel = userCourseMapper.getUserLevel(userNo);
+
+        // 2. 로그인한 사용자의 현재 도전 가능한 단계(난이도)를 반환한다.
+        return userLevel;
+    }
+
+    /**
      * 로그인한 사용자가 코스를 성공했는지 확인한다.
      * @param userNo 사용자 번호
      * @param courseNo 코스 번호
@@ -34,7 +60,6 @@ public class UserCourseService {
     public boolean checkSuccess(int userNo, int courseNo) {
         // 1. 로그인한 사용자가 코스를 성공했는지 확인한다.
         CourseWhether courseWhether = userCourseMapper.checkSuccess(userNo, courseNo);
-        System.out.println("코스 성공 여부:" + courseWhether);
 
         // 2. 코스 성공 여부를 반환한다.
         return courseWhether != null;
@@ -49,7 +74,6 @@ public class UserCourseService {
     public boolean checkLike(int userNo, int courseNo) {
         // 1. 로그인한 사용자가 좋아요를 클릭했는지 확인한다.
         CourseLike courseLike = userCourseMapper.getCourseLike(userNo, courseNo);
-        System.out.println("좋아요 클릭 여부:" + courseLike);
 
         // 2. 좋아요 클릭 여부를 반환한다.
         return courseLike != null;
@@ -82,10 +106,16 @@ public class UserCourseService {
 
     /**
      * 코스에 해당하는 모든 사용자의 완주 기록을 시간이 낮은 순으로 가져온다.
-     * @param condition 페이지, 선택한 코스
+     * @param condition 페이지, 코스 번호
      * @return 완주 기록 목록
      */
-    public ListDto<Records> getAllRecords(Map<String, Object> condition) {
+    public ListDto<Records> getAllRecords(Map<String, Object> condition) { // @AuthenticationPrincipal LoginUser loginUser
+//        if (loginUser != null) {
+//            condition.put("userNo", loginUser.getNo());
+//        } else {
+//            return null;
+//        }
+
         // 1. 코스에 해당하는 전체 완주 기록의 갯수를 조회한다.
         int totalRows = userCourseMapper.getTotalRows(condition);
 
@@ -100,8 +130,21 @@ public class UserCourseService {
         // 4. 조회 범위에 맞는 완주 기록 목록을 가져온다.
         List<Records> records = userCourseMapper.getRecords(condition);
 
-        // ListDto 객체에 화면에 표시할 데이터(완주 기록 목록, 페이징 처리 정보)를 담고, 반환한다.
+        // 5. ListDto 객체에 화면에 표시할 데이터(완주 기록 목록, 페이징 처리 정보)를 담고, 반환한다.
         ListDto<Records> dto = new ListDto<>(records, pagination);
         return dto;
+    }
+
+    /**
+     * 코스에 해당하는 로그인한 사용자의 완주 기록을 시간이 낮은 순으로 가져온다.
+     * @param condition 코스 번호, 사용자 번호
+     * @return 완주 기록 목록
+     */
+    public List<Records> getMyRecords(Map<String, Object> condition) {
+        // 1. 나의 완주 기록 목록을 가져온다.
+        List<Records> records = userCourseMapper.getRecords(condition);
+
+        // 2. 나의 완주 기록 목록을 반환한다.
+        return records;
     }
 }

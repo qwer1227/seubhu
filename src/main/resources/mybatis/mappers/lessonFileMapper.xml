@@ -7,7 +7,7 @@
         FROM LESSONS L
                  INNER JOIN
              USERS U
-             ON L.USER_NO = U.USER_NO
+             ON L.USER_ID = U.USER_ID
         ORDER BY L.LESSON_NO DESC LIMIT 1;
     </select>
 

@@ -27,4 +27,5 @@ public class Product {
     private Category category;
     private Size size;
     private Brand brand;
+    private Color color;
 }

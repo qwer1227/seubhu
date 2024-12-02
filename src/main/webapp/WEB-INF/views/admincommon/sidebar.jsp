@@ -76,6 +76,7 @@
                 <a class="collapse-item" href="product?topNo=20">여성 상품 전체</a>
                 <a class="collapse-item" href="product?topNo=30">러닝용품 전체</a>
                 <a class="collapse-item" href="product-register-form">상품 등록하기</a>
+                <a class="collapse-item" href="product-stock?topNo=0">상품 재고 등록하기</a>
             </div>
         </div>
     </li>

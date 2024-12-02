@@ -11,6 +11,8 @@ import store.seub2hu2.lesson.mapper.LessonFileMapper;
 import store.seub2hu2.lesson.mapper.LessonMapper;
 import store.seub2hu2.lesson.mapper.LessonReservationMapper;
 import store.seub2hu2.lesson.vo.*;
+import store.seub2hu2.user.mapper.UserMapper;
+import store.seub2hu2.user.service.UserService;
 import store.seub2hu2.user.vo.User;
 
 import java.text.SimpleDateFormat;
@@ -25,6 +27,8 @@ public class LessonService {
     private final LessonFileMapper lessonFileMapper;
     private final LessonFileService lessonFileService;
     private final LessonReservationMapper lessonReservationMapper;
+    private final UserMapper userMapper;
+    private final UserService userService;
 
     public List<Lesson> getAllLessons(Map<String, Object> param, String subject) {
         return lessonMapper.getAllLessons(param, subject);
@@ -34,8 +38,8 @@ public class LessonService {
         return lessonMapper.getLessonByNo(lessonNo);
     }
 
-    public List<LessonReservation> getLessonsByUserNo(int userNo) {
-        return lessonReservationMapper.getLessonReservationByUserNo(userNo);
+    public List<LessonReservation> getLessonsByUserId(String userId) {
+        return lessonReservationMapper.getLessonReservationByUserId(userId);
     }
 
     public void addNewLesson(Lesson lesson) {
@@ -47,10 +51,9 @@ public class LessonService {
         Lesson lesson = new Lesson();
         lesson.setTitle(form.getTitle());
         lesson.setPrice(form.getPrice());
-        User user = new User();
-        user.setNo(29); // Or dynamically assign user ID
-        user.setId(form.getLecturerName());
+        User user = userMapper.getUserById(form.getLecturerId());
         lesson.setLecturer(user);
+        lesson.setPlace(form.getPlace());
         lesson.setSubject(form.getSubject());
         lesson.setPlan(form.getPlan());
         lesson.setStart(form.getStart());

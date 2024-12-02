@@ -69,7 +69,7 @@
                                 </div>
                                 <div class="form-group mb-3 col-4">
                                     <label class="form-label">색상</label>
-                                    <input type="text" class="form-control" name="color"/>
+                                    <input type="text" class="form-control" name="name"/>
                                 </div>
                                 <div class="text-end" style="text-align: right">
                                     <button type="submit" class="btn btn-primary">등록</button>

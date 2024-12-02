@@ -7,12 +7,12 @@
 </head>
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
 <body>
-<div class="container-xxl border align-content-center" id="wrap">
+<div class="container-xxl align-content-center" id="wrap">
     <div class="row text-center mb-5">
         <h1>레슨 예약 완료</h1>
     </div>
     <div class="row d-flex justify-content-center mb-3">
-        <div class="col-5 border border-dark">
+        <div class="col-5">
             <img src="${pageContext.request.contextPath}/resources/images/lesson/${images['THUMBNAIL']}"
                  alt="Thumbnail" id="Thumbnail" style="width: 100%; height: 300px;"/>
         </div>
@@ -50,7 +50,7 @@
     <div class="row">
         <div class="col-1"></div>
         <div class="col">
-            <a href="/lesson/reservation?userNo=${lessonReservation.user.no}" class="btn btn-dark w-100">예약 내역</a>
+            <a href="/lesson/reservation?userId=${lessonReservation.user.Id}" class="btn btn-dark w-100">예약 내역</a>
         </div>
         <div class="col-1"></div>
     </div>

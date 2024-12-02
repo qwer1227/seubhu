@@ -1,3 +1,4 @@
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="/WEB-INF/views/common/tags.jsp" %>
 <!doctype html>
@@ -15,20 +16,20 @@
     <%-- 카테고리 --%>
     <div class="row row-cols-2 row-cols-lg-4 g-2 g-lg-3 justify-content-center">
         <div class="col " >
-            <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="#">나의 코스 기록</a>
+            <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="my-course">나의 코스 기록</a>
         </div>
         <div class="col " >
             <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="list">코스 목록</a>
         </div>
         <div class="col " >
-            <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="best-runner">베스트 런너</a>
+            <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="runner-ranking">런너 랭킹</a>
         </div>
     </div>
 
     <%-- 검색 기능 --%>
     <%-- 요청 파라미터(검색 정보) : page, distance, level, keyword --%>
     <div class="row row-cols-1 row-cols-md-1 g-4 mt-3 mb-3">
-        <div class="col">
+        <div class="col" style="border: 1px solid black; padding: 20px">
             <form id="form-search" method="get" action="list">
                 <input type="hidden" name="page"/>
                 <div class="row g-3 d-flex justify-content-center">
@@ -123,17 +124,17 @@
     let form = document.querySelector("#form-search");
     let pageInput = document.querySelector("input[name=page]");
 
-    // 페이지 번호를 클릭했을 때, 요청 파라미터 정보를 제출한다.
+    // 검색 버튼을 클릭했을 때, 요청 파라미터 정보를 제출한다.
+    function searchKeyword() {
+        pageInput.value = 1;
+        form.submit();
+    }
+
+    // 코스 목록의 페이지 번호를 클릭했을 때, 요청 파라미터 정보를 제출한다.
     function changePage(page, event) {
         event.preventDefault();
 
         pageInput.value = page;
-        form.submit();
-    }
-
-    // 검색 버튼을 클릭했을 때, 요청 파라미터 정보를 제출한다.
-    function searchKeyword() {
-        pageInput.value = 1;
         form.submit();
     }
 </script>

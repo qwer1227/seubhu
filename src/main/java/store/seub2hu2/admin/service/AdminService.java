@@ -16,10 +16,7 @@ import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.course.vo.Region;
 import store.seub2hu2.lesson.mapper.LessonMapper;
 import store.seub2hu2.lesson.vo.Lesson;
-import store.seub2hu2.product.vo.Category;
-import store.seub2hu2.product.vo.Color;
-import store.seub2hu2.product.vo.Image;
-import store.seub2hu2.product.vo.Product;
+import store.seub2hu2.product.vo.*;
 import store.seub2hu2.user.mapper.UserMapper;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.FileUtils;
@@ -283,6 +280,43 @@ public class AdminService {
 
             adminMapper.editUrl(img);
         }
+    }
+
+    public List<Size> getAllSizeByColorNo(Integer colorNo) {
+
+        List<Size> sizeList = adminMapper.getAllSizesByColorNo(colorNo);
+
+        return sizeList;
+
+    }
+
+    public void getCheckSize(Map<String, Object> condition) {
+        Size size = new Size();
+        size.setSize((String) condition.get("size"));
+
+        Color color = new Color();
+        color.setNo((Integer) condition.get("colorNo"));
+        size.setColor(color);
+
+        Size existingSize = adminMapper.getCheckSizeByCon(size);
+
+        System.out.println("-------------------------------------------------existingSize"+ existingSize);
+
+        System.out.println("------------------------------------------------conditionSizeNo: " + condition.get("sizeNo"));
+
+        if (existingSize != null && existingSize.getIsDeleted().equals("N")) {
+            throw new IllegalArgumentException("이미 등록된 사이즈입니다.");
+
+        } else if (existingSize != null && existingSize.getIsDeleted().equals("Y")) {
+            adminMapper.getChangeIsDeleted(size);
+        } else {
+            adminMapper.getInsertSize(size);
+        }
+    }
+
+    public void getDeletedSize(int sizeNo) {
+
+        adminMapper.getDeleteSize(sizeNo);
     }
 
 //    public Color getProductByColorNo(Integer colorNo) {

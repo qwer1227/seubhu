@@ -58,17 +58,69 @@
                     <div class="row mb-3">
                         <div class="col-6">
                             <form class="border bg-light p-3"
-                                  method="post" action="/admin/register-color"
+                                  method="post" action="/admin/register-size"
                                   enctype="multipart/form-data">
                                 <div class="form-group mb-3 col-4">
-                                    <label class="form-label">상품번호: ${prodDetailDto.no}</label>
+                                    <input type="hidden" name="no" value="${param.no}">
+                                    <input type="hidden" name="colorNo" value="${param.colorNo}">
+                                    <label class="form-label">상품번호: ${param.no}</label>
                                 </div>
                                 <div class="form-group mb-3 col">
-                                    <label class="form-label">상품명: ${prodDetailDto.name}</label>
+                                    <label class="form-label">상품명: ${product.name}</label>
+                                </div>
+                                <div class="col form-group mb-3 col-4">
+                                    <label class="form-label">색상: ${color.name}</label>
+                                </div>
+                                <div class="form-group mb-3 col-6">
+                                    <label class="form-label">기존 등록된 사이즈 :</label>
+                                     <div>
+                                        <c:choose>
+                                            <c:when test="${not empty sizes}">
+                                                <ul>
+                                                    <c:forEach var="size" items="${sizes}">
+                                                        <li>${size.size} (수량: ${size.amount})</li>
+                                                    </c:forEach>
+                                                </ul>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <p> ${sizeMessage}</p>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </div>
                                 </div>
                                 <div class="form-group mb-3 col-4">
-                                    <label class="form-label">사이즈</label>
-                                    <input type="text" class="form-control" name="size" />
+                                    <label class="form-label"></label>
+                                    <select name="size" class="form-control" id="size">
+                                            <option value="S">S</option>
+                                            <option value="M">M</option>
+                                            <option value="L">L</option>
+                                            <option value="XL">XL</option>
+                                            <option value="XXL">XXL</option>
+                                            <option value="3XL">3XL</option>
+                                            <option value="FREE">FREE</option>
+                                            <option value="220" selected>220</option>
+                                            <option value="225">225</option>
+                                            <option value="230">230</option>
+                                            <option value="235">235</option>
+                                            <option value="240">240</option>
+                                            <option value="245">245</option>
+                                            <option value="250">250</option>
+                                            <option value="255">255</option>
+                                            <option value="260">260</option>
+                                            <option value="265">265</option>
+                                            <option value="270">270</option>
+                                            <option value="275">275</option>
+                                            <option value="280">280</option>
+                                            <option value="285">285</option>
+                                            <option value="290">290</option>
+                                            <option value="295">295</option>
+                                            <option value="300">300</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <c:if test="${not empty errorMessage}">
+                                        <div class="alert alert-danger">${errorMessage}</div>
+                                    </c:if>
                                 </div>
                                 <div class="text-end" style="text-align: right">
                                     <button type="submit" class="btn btn-primary">등록</button>

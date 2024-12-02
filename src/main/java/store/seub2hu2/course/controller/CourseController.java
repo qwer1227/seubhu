@@ -11,6 +11,8 @@ import store.seub2hu2.course.service.CourseService;
 import store.seub2hu2.course.service.UserCourseService;
 import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.course.vo.Records;
+import store.seub2hu2.course.vo.UserBadge;
+import store.seub2hu2.course.vo.UserLevel;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.util.ListDto;
 
@@ -26,6 +28,33 @@ public class CourseController {
 
     @Autowired
     private UserCourseService userCourseService;
+
+    @GetMapping("/my-course")
+    public String myCourse(@AuthenticationPrincipal LoginUser loginUser, Model model) {
+        // 1. 로그인한 사용자의 코스 관련 정보(현재 배지, 현재 도전 가능한 단계)를 가져오고, Model 객체에 저장한다.
+        if (loginUser != null) {
+            List<UserBadge> userBadges = userCourseService.getUserBadge(loginUser.getNo());
+            UserLevel userLevel = userCourseService.getUserLevel(loginUser.getNo());
+
+            model.addAttribute("userBadges", userBadges);
+            model.addAttribute("userLevel", userLevel);
+        }
+
+        return "course/my-course";
+    }
+
+    //    @GetMapping("/finishRecords")
+//    @ResponseBody
+//    public List<Records> finishRecords(@AuthenticationPrincipal LoginUser loginUser, int page) {
+//        Map<String, Object> condition = new HashMap<>();
+//        condition.put("page", page);
+//
+//        // 1. 페이지에 맞는 로그인한 사용자의 완주 기록 데이터를 가져온다.
+//        ListDto<Records> records = userCourseService.getAllRecords(condition, loginUser);
+//
+//        // 2. 완주 기록 데이터, 페이정 처리 정보를 반환한다.
+//        return null;
+//    }
 
     @GetMapping("/list")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
@@ -53,7 +82,7 @@ public class CourseController {
         // 2. 검색에 해당하는 코스 목록을 가져온다.
         ListDto<Course> dto = courseService.getAllCourses(condition);
 
-        // 3. Model 객체에 화면에 표시할 데이터(코스 목록, 페이징 처리 정보)를 저장한다.
+        // 3. Model 객체에 코스 목록, 페이징 처리 정보를 저장한다.
         model.addAttribute("courses", dto.getData());
         model.addAttribute("pagination", dto.getPaging());
 
@@ -92,28 +121,40 @@ public class CourseController {
         return "redirect:detail?no=" + courseNo;
     }
 
-    @GetMapping("/best-runner")
-    public String bestRunner(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
-                             @RequestParam(name = "courseNo", required = false) Integer courseNo, Model model) {
+    @GetMapping("/runner-ranking")
+    public String runnerRanking(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                                @RequestParam(name = "courseNo", required = false) Integer courseNo,
+                                @AuthenticationPrincipal LoginUser loginUser,
+                                Model model) {
         // 1. 모든 코스 목록을 가져온다.
         List<Course> courses = courseService.getCourses();
+        model.addAttribute("courses", courses);
 
-        // 2. 요청 파라미터 정보를 Map 객체에 저장한다.
+        // 2. Map 객체를 생성하고, page(페이지)를 Map 객체에 저장한다.
         Map<String, Object> condition = new HashMap<>();
         condition.put("page", page);
+
+        // 3. 코스 번호가 존재하는 경우에만 해당 코스의 완주 기록을 가져온다.
         if (courseNo != null) {
+            // 4. 요청 파라미터 정보를 Map 객체에 저장한다.
             condition.put("courseNo", courseNo);
+
+            // 5. 해당 코스의 모든 완주 기록을 가져온다.
+            ListDto<Records> dto = userCourseService.getAllRecords(condition);
+
+            // 6. 해당 코스의 로그인한 사용자의 완주 기록을 가져온다.
+            if (loginUser != null) {
+                condition.put("userNo", loginUser.getNo());
+                List<Records> records = userCourseService.getMyRecords(condition);
+                model.addAttribute("myRecord", records);
+            }
+
+            // 7. Model 객체에 코스 완주 기록, 페이징 처리 정보를 저장한다.
+            model.addAttribute("records", dto.getData());
+            model.addAttribute("pagination", dto.getPaging());
         }
 
-        // 3. 코스 완주 기록을 가져온다.
-        ListDto<Records> dto = userCourseService.getAllRecords(condition);
-
-        // 4. Model 객체에 저장한다.
-        model.addAttribute("courses", courses);
-        model.addAttribute("records", dto.getData());
-        model.addAttribute("pagination", dto.getPaging());
-
-        // 5. 뷰이름을 반환한다.
-        return "course/best-runner";
+        // 8. 뷰이름을 반환한다.
+        return "course/runner-ranking";
     }
 }

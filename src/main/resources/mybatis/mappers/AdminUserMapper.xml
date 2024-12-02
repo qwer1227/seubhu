@@ -3,12 +3,83 @@
 
 <mapper namespace="store.seub2hu2.admin.mapper.AdminMapper">
 
+    <!--
+        void getChangeIsDeleted(Object sizeNo);
+    -->
 
+    <update id="getChangeIsDeleted">
+        update
+            PROD_SIZES
+        set
+            deleted_size = 'N'
+        where
+            prod_size = #{size.size}
+        and
+            color_no = #{size.color.no}
+    </update>
+
+    <!--
+        void getDeleteSize(int sizeNo);
+    -->
+    <update id="getDeleteSize">
+        update
+            PROD_SIZES
+        set
+            deleted_size = 'Y'
+        where
+            size_no = #{sizeNo};
+    </update>
+
+    <!--
+        void getInsertSize(@Param("size") Size size);
+    -->
+    <insert id="getInsertSize">
+        insert into PROD_SIZES
+        (color_no, prod_size, prod_amount)
+        values
+        (#{size.color.no}, #{size.size}, 0)
+    </insert>
+
+    <!--
+         Size getCheckSizeByCon(@Param("size") Size size);
+    -->
+
+    <select id="getCheckSizeByCon" resultType="store.seub2hu2.product.vo.Size">
+        SELECT
+            size_no         as no
+            , color_no      as "color.no"
+            , prod_size     as size
+            , prod_amount   as amount
+            , deleted_size  as isDeleted
+        FROM
+            PROD_SIZES
+        WHERE
+            prod_size = #{size.size}
+          AND color_no = #{size.color.no}
+    </select>
+    <!--
+        List<Size> getAllSizesByColorNo(Integer colorNo);
+    -->
+    <select id="getAllSizesByColorNo">
+        select
+            size_no         as no
+             , color_no     as "color.no"
+             , prod_size    as size
+             , prod_amount  as amount
+             , deleted_size  as isDeleted
+        from
+            PROD_SIZES
+        where
+            color_no = #{colorNo}
+        and
+            deleted_size = 'N'
+        order by
+            prod_size ASC
+    </select>
     <!--
         이미지 수정
         void EditUrl(Image img);
     -->
-
     <update id="editUrl" parameterType="store.seub2hu2.product.vo.Image">
         update
             PROD_IMGS
@@ -17,8 +88,6 @@
         where
             img_no = #{no}
     </update>
-
-
 
     <!--
         이미지 테이블의 IMG_THUM을 전부 null로 바꾼 후 해당 imgNo에만 Y설정
@@ -121,7 +190,7 @@
 
     <!--
         상품 번호로 그 상품에 해당 정보 조회
-        Product getProductByNo(@Param("product") Product product);
+        Product getProductByNo(int no);
     -->
     <select id="getProductByNo">
         select
@@ -379,7 +448,7 @@
                 from
                     LESSONS L, USERS U
                 where
-                    L.user_no = U.user_no
+                    L.user_ID = U.user_ID
                     <if test="condition.opt != null">
                         <choose>
                             <when test="condition.opt == 'name'">

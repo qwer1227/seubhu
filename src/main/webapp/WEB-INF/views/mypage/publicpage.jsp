@@ -99,7 +99,7 @@
     <!-- User Profile -->
     <div class="profile-header">
         <img src="https://via.placeholder.com/120" alt="User Image">
-        <div class="name">홍길동 dd<span class="badge">Verified</span></div>
+        <div class="name">${user.nickname}<span class="badge">Verified</span></div>
         <div>
             <button type="button" id="insertPost" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newPostModal">
                 새 글 작성
@@ -694,7 +694,8 @@
                 alert("게시글이 성공적으로 작성되었습니다!");
 
             },
-            error: function() {
+            error: function(xhr, status, error) {
+                console.log(xhr.responseText);
                 alert("게시글 작성 실패.");
             }
         });
