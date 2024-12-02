@@ -13,6 +13,7 @@
     , crew_name
     , crew_description
     , crew_thumbnail
+    , crew_updated_date
     <if test="crew.uploadFile != null">
       , file_name
     </if>
@@ -21,16 +22,17 @@
     (
     #{crew.category}
     , #{crew.schedule}
-    , #{crew_location}
+    , #{crew.location}
     , #{crew.title}
-    , #{crew_name}
-    , #{crew_description}
-    , #{crew_thumbnail}
+    , #{crew.name}
+    , #{crew.description}
+    , #{crew.thumbnail.saveName}
+    , null
     <if test="crew.uploadFile != null">
-      , #{file_name}
+      , #{crew.uploadFile.saveName}
     </if>
     )
-    <selectKey resultType="int" keyProperty="board.no" keyColumn="board_no" order="AFTER">
+    <selectKey resultType="int" keyProperty="crew.no" keyColumn="crew_no" order="AFTER">
       SELECT LAST_INSERT_ID()
     </selectKey>
   </insert>
@@ -54,4 +56,38 @@
           , #{member.user.no}
         )
   </insert>
+
+  <!-- List<Crew> getCrews(@Param("condition") Map<String, Object> condition); -->
+  <select id="getCrews" resultType="store.seub2hu2.community.vo.Crew">
+    select *
+    from (
+           select row_number() over(order by c.crew_created_date desc) rn
+              , c.crew_no         as no
+              , c.crew_title      as title
+              , c.crew_category   as category
+              , c.crew_location   as location
+              , c.crew_name       as name
+              , c.is_joined       as joined
+              , c.file_name       as "thumbnail.saveName"
+           from
+             CREWS c
+           where c.is_deleted = 'N'
+         ) as crew
+    where rn between #{condition.begin} and #{condition.end}
+    order by rn
+  </select>
+
+  <!-- int getTotalRowsForCrew(@Param("condition") Map<String, Object> condition); -->
+  <select id="getTotalRowsForCrew" resultType="int">
+    select count(*)
+    from CREWS crew
+    where is_deleted = 'N'
+    <if test="condition.category != null">
+      and crew.crew_category = #{condition.category}
+    </if>
+  </select>
+
+  <!-- void getCrewDetailByNo(@Param("no") int crewNo); -->
+
+
 </mapper>
