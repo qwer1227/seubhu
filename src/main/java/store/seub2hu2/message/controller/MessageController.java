@@ -11,7 +11,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import store.seub2hu2.community.view.FileDownloadView;
 import store.seub2hu2.message.dto.MessageForm;
 import store.seub2hu2.message.dto.MessageRecieved;
@@ -114,24 +116,39 @@ public class MessageController {
         return "message/message-detail";
     }
 
-
-    // 메시지 작성 폼을 반환하는 GET 요청 처리
     @GetMapping("/send")
-    public String send() {
-        // 메시지 작성 폼을 보여주는 뷰 반환
-        return "message/message-send-form";
+    public String showSendForm(@AuthenticationPrincipal LoginUser loginUser, Model model) {
+        // 로그인된 사용자 정보에서 보낸 사람을 구성
+        String sender = loginUser.getNickname() + " <" + loginUser.getId() + ">";
+
+        // 기본적으로 받는 사람은 빈 값으로 설정
+        String receiver = ""; // 기본값 설정
+
+        model.addAttribute("sender", sender);
+        model.addAttribute("receiver", receiver); // receiver 값 전달
+
+        return "message/message-send-form";  // JSP 경로
     }
 
-    // 메시지 전송을 처리하는 POST 요청
-    @PostMapping("/send")
-    public String sendMessage(@ModelAttribute MessageForm form,
-                              @RequestParam("receiverNo") int receiverNo,
-                              @AuthenticationPrincipal LoginUser loginUser) {
-        // 메시지 전송 서비스 호출 (로그인된 사용자 정보와 수신자 번호 함께 전달)
-        messageService.insertMessage(form, loginUser, receiverNo);
 
-        // 메시지 전송 후 메시지 목록 페이지로 리다이렉트
-        return "redirect:/message/message-list";  // 메시지 목록 페이지로 리다이렉트
+    @PostMapping("/send")
+    public String submitMessage(@AuthenticationPrincipal LoginUser loginUser,
+                                @ModelAttribute MessageForm form,
+                                @RequestParam(value = "file", required = false) MultipartFile file,
+                                RedirectAttributes redirectAttributes) {
+        try {
+            // 작성자의 사용자 번호를 MessageForm에 설정
+            form.setSenderUserNo(loginUser.getNo());
+
+            // 서비스 호출
+            messageService.insertMessage(form, file);
+
+            redirectAttributes.addFlashAttribute("success", "쪽지가 성공적으로 등록되었습니다.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "쪽지 등록에 실패했습니다.");
+            e.printStackTrace(); // 디버깅용 로그
+        }
+        return "redirect:/message/list"; // 작성 후 목록 페이지로 이동
     }
 
 
