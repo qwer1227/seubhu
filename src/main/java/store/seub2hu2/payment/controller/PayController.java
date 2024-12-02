@@ -13,12 +13,10 @@ import store.seub2hu2.lesson.vo.LessonReservation;
 import store.seub2hu2.payment.dto.PaymentDto;
 import store.seub2hu2.payment.service.KakaoPayService;
 import store.seub2hu2.lesson.service.LessonReservationService;
-import store.seub2hu2.lesson.service.LessonService;
-import store.seub2hu2.lesson.vo.Lesson;
-import store.seub2hu2.payment.SessionUtils;
 import store.seub2hu2.payment.dto.ApproveResponse;
 import store.seub2hu2.payment.dto.CancelResponse;
 import store.seub2hu2.payment.service.PaymentService;
+import store.seub2hu2.util.SessionUtils;
 
 import java.util.Map;
 
