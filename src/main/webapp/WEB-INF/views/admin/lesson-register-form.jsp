@@ -88,6 +88,12 @@
                                         <input type="number" class="form-control" name="price" id="price">
                                     </div>
                                 </div>
+                                <div class="row p-3 ">
+                                    <div class="col-5">
+                                        <label for="place">장소</label>
+                                        <input type="text" class="form-control" name="place" id="place"/>
+                                    </div>
+                                </div>
                                 <div class="row row-cols-1 p-3">
                                     <div class="col-1 pb-3">
                                         게시글

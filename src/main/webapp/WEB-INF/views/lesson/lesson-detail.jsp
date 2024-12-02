@@ -48,7 +48,7 @@
                 </tr>
                 <tr>
                     <th>레슨날짜</th>
-                    <td>${startDate} ${startTime}</td>
+                    <td>${startDate} ${startTime} ~ ${endTime}</td>
                 </tr>
                 <tr>
                     <th>참여인원</th>

@@ -53,6 +53,7 @@ public class LessonService {
         lesson.setPrice(form.getPrice());
         User user = userMapper.getUserById(form.getLecturerId());
         lesson.setLecturer(user);
+        lesson.setPlace(form.getPlace());
         lesson.setSubject(form.getSubject());
         lesson.setPlan(form.getPlan());
         lesson.setStart(form.getStart());

@@ -57,6 +57,7 @@
              , L.lesson_status       as status
              , L.lesson_created_date as createdDate
              , L.LESSON_START_DATE   as start
+             , L.LESSON_END_DATE     as end
              , L.PARTICIPANT         as participant
              , L.lesson_plan         as plan
              , L.LESSON_SUBJECT      as subject
@@ -80,6 +81,7 @@
         , LESSON_SUBJECT
         , PARTICIPANT
         , LESSON_PLAN
+        , LESSON_PLACE
         , LESSON_START_DATE
         , LESSON_END_DATE)
         values ( #{lesson.lecturer.id}
@@ -88,6 +90,7 @@
                , #{lesson.subject}
                , #{lesson.participant}
                , #{lesson.plan}
+               , #{lesson.place}
                , #{lesson.start}
                , #{lesson.end})
     </insert>
