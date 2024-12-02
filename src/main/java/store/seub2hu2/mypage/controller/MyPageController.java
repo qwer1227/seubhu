@@ -30,9 +30,9 @@ import store.seub2hu2.mypage.dto.OrderResponse;
 import store.seub2hu2.mypage.dto.ResponseDTO;
 import store.seub2hu2.mypage.dto.UserInfoReq;
 import store.seub2hu2.mypage.service.CartService;
-import store.seub2hu2.mypage.service.OrderService;
 import store.seub2hu2.mypage.service.PostService;
 import store.seub2hu2.mypage.vo.Post;
+import store.seub2hu2.order.service.OrderService;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.service.UserService;
 import store.seub2hu2.user.vo.User;
@@ -62,10 +62,10 @@ public class MyPageController {
     UserService userService;
 
     @Autowired
-    BoardService boardService;
+    OrderService orderService;
 
     @Autowired
-    OrderService orderService;
+    BoardService boardService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;

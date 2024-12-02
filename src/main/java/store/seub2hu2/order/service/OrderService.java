@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.seub2hu2.cart.dto.CartItemDto;
+import store.seub2hu2.mypage.dto.OrderResponse;
+import store.seub2hu2.mypage.dto.ResponseDTO;
 import store.seub2hu2.order.mapper.OrderMapper;
 
 import java.util.HashMap;
@@ -37,5 +39,15 @@ public class OrderService {
         }
 
         return orderDto;
+    }
+
+    public List<OrderResponse> getAllOrders(int userNo) {
+        System.out.println(orderMapper.getOrders(userNo));
+        return orderMapper.getOrders(userNo);
+    }
+
+    public ResponseDTO getOrderDetails(int orderNo){
+        System.out.println("테스트"+orderMapper.getOrderDetails(orderNo));
+        return orderMapper.getOrderDetails(orderNo);
     }
 }
