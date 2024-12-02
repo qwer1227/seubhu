@@ -2,11 +2,13 @@ package store.seub2hu2.course.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.seub2hu2.course.mapper.CourseMapper;
 import store.seub2hu2.course.mapper.UserCourseMapper;
 import store.seub2hu2.course.vo.*;
+import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.ListDto;
 import store.seub2hu2.util.Pagination;
@@ -107,7 +109,13 @@ public class UserCourseService {
      * @param condition 페이지, 코스 번호
      * @return 완주 기록 목록
      */
-    public ListDto<Records> getAllRecords(Map<String, Object> condition) {
+    public ListDto<Records> getAllRecords(Map<String, Object> condition) { // @AuthenticationPrincipal LoginUser loginUser
+//        if (loginUser != null) {
+//            condition.put("userNo", loginUser.getNo());
+//        } else {
+//            return null;
+//        }
+
         // 1. 코스에 해당하는 전체 완주 기록의 갯수를 조회한다.
         int totalRows = userCourseMapper.getTotalRows(condition);
 
