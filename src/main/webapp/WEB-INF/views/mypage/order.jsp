@@ -116,7 +116,16 @@
                     <tr>
                         <th><label>배송 메모</label></th>
                         <td>
-                            <input type="text" class="form-control">
+                            <input type="text" class="form-control" id="memo-box-direct" name="memo-box-direct" />
+                            <select id="memo-box" class="form-control" name="memo">
+                                <option value="">-- 메시지 선택 --</option>
+                                <option value="배송 전에 미리 연락바랍니다.">배송 전에 미리 연락바랍니다.</option>
+                                <option value="부재 시 경비실에 맡겨주세요.">부재 시 경비실에 맡겨주세요.</option>
+                                <option value="부재 시 문 앞에 놓아주세요.">부재 시 문 앞에 놓아주세요.</option>
+                                <option value="빠른 배송 부탁드립니다.">빠른 배송 부탁드립니다.</option>
+                                <option value="택배함에 보관해주세요.">택배함에 보관해주세요.</option>
+                                <option value="direct">직접입력</option>
+                            </select>
                         </td>
                     </tr>
                 </tbody>
@@ -274,6 +283,23 @@
                     document.getElementById("address-detail").focus();
                 }
             }).open();
+
+            $(function() {
+                // 직접 입력 인풋박스 기존에는 숨어있다가
+                $("#memo-box-direct").hide();
+
+                $("#memo-box").change(function () {
+                    // 직접 입력 누를 때 나타남
+                    if($("#memo-box").val() === "direct") {
+                        $("#memo-box-direct").show();
+                    } else {
+                        $("#memo-box-direct").hide();
+                    }
+                })
+            });
+
+
+
         }
     </script>
 
