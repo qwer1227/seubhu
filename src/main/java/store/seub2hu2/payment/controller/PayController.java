@@ -31,6 +31,7 @@ public class PayController {
     private final KakaoPayService kakaoPayService;
 
     private final LessonReservationService lessonReservationService;
+    private final LessonService lessonService;
     private final LessonFileService lessonFileService;
     private final PaymentService paymentService;
 
@@ -130,10 +131,15 @@ public class PayController {
 
         if (type.equals("레슨")) {
             LessonReservation lessonReservation = lessonReservationService.getLessonReservationByPayId(payId);
+            int lessonNo = lessonReservation.getLesson().getLessonNo();
+            Map<String, String> startAndEnd = lessonService.getStartAndEnd(lessonNo);
             log.info("/success lessonReservation 객체 = {} ", lessonReservation);
-            Map<String, String> images = lessonFileService.getImagesByLessonNo(lessonReservation.getLesson().getLessonNo());
+            Map<String, String> images = lessonFileService.getImagesByLessonNo(lessonNo);
             model.addAttribute("lessonReservation", lessonReservation);
             model.addAttribute("images", images);
+            model.addAttribute("startDate", startAndEnd.get("startDate"));
+            model.addAttribute("startTime", startAndEnd.get("startTime"));
+            model.addAttribute("endTime", startAndEnd.get("endTime"));
         }
 
         if (type.equals("상품")) {

@@ -16,6 +16,7 @@ import store.seub2hu2.admin.service.AdminService;
 import store.seub2hu2.course.service.CourseService;
 import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.lesson.dto.LessonRegisterForm;
+import store.seub2hu2.lesson.dto.LessonUpdateDto;
 import store.seub2hu2.lesson.service.LessonFileService;
 import store.seub2hu2.lesson.service.LessonService;
 import store.seub2hu2.lesson.vo.Lesson;
@@ -63,6 +64,8 @@ public class AdminController {
 
         try {
 
+            // 강사 정보 가져오기
+            List<User> lecturers =  userService.findUsersByUserRoleNo(3);
 
             // Lesson 정보 가져오기
             Lesson lesson = lessonService.getLessonByNo(lessonNo);
@@ -70,7 +73,8 @@ public class AdminController {
             // 이미지 파일 정보 가져오기
             Map<String, String> images = lessonFileService.getImagesByLessonNo(lessonNo);
 
-            // 모델에 lesson과 images 정보 추가
+            // 모델에 레슨, 이미지, 강사 정보 추가
+            model.addAttribute("lecturers", lecturers);
             model.addAttribute("lesson", lesson);
             model.addAttribute("lessonNo", lessonNo);
             model.addAttribute("images", images);
@@ -83,20 +87,14 @@ public class AdminController {
         }
     }
 
-/*    @GetMapping("/lesson-edit-form")
-    public String lessonEditForm(@RequestParam("lessonNo")Integer lessonNo, Model model) {
-
-        Lesson lesson = lessonService.getLessonByNo(lessonNo);
-
-
-        return "admin/lesson-edit-form";
-    }
-
     @PostMapping("/lesson-edit-form")
-    public String lessonEditForm(LessonRegisterForm form,Model model) {
+    public String lessonEditForm(@ModelAttribute("dto") LessonUpdateDto dto) {
 
-        return "admin/lesson-edit-form";
-    }*/
+        log.info("레슨 수정 정보 {} ", dto);
+        lessonService.updateLesson(dto);
+
+        return "redirect:/admin/lesson";
+    }
 
     @GetMapping("/lesson-register-form")
     public String lessonRegisterForm(Model model) {
@@ -110,6 +108,8 @@ public class AdminController {
 
     @PostMapping("/lesson-register-form")
     public String form(@ModelAttribute("form") LessonRegisterForm form, Model model) throws IOException {
+
+
 
         lessonService.registerLesson(form);
 

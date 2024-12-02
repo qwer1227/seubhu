@@ -73,6 +73,48 @@ public class LessonFileService {
         return images;
     }
 
+    public void updateLessonImages(Integer lessonNo, MultipartFile thumbnail, MultipartFile mainImage)  {
+        System.out.println("saveLessonImages lessonNo: " + lessonNo);
+
+        log.info("updateLessonImages mainImage: " + mainImage.getOriginalFilename());
+
+        if (thumbnail != null && !thumbnail.isEmpty()) {
+            String thumbnailFileName = UUID.randomUUID() + thumbnail.getOriginalFilename();
+            webContentFileUtils.saveWebContentFile(thumbnail, saveDirectory, thumbnailFileName);
+            LessonFile thumbnailFile = new LessonFile(
+                    lessonNo, thumbnailFileName, "THUMBNAIL", saveDirectory
+            );
+            lessonFileMapper.insertLessonFile(thumbnailFile);
+        }
+
+        if (mainImage != null && !mainImage.isEmpty()) {
+            String mainImageFileName = UUID.randomUUID() + mainImage.getOriginalFilename();
+            webContentFileUtils.saveWebContentFile(mainImage, saveDirectory, mainImageFileName);
+            LessonFile mainImageFile = new LessonFile(
+                    lessonNo, mainImageFileName, "MAIN_IMAGE", saveDirectory
+            );
+            lessonFileMapper.insertLessonFile(mainImageFile);
+        }
+
+        if (thumbnail != null && !thumbnail.isEmpty()) {
+            String thumbnailFileName = UUID.randomUUID() + thumbnail.getOriginalFilename();
+            webContentFileUtils.saveWebContentFile(thumbnail, saveDirectory, thumbnailFileName);
+            LessonFile thumbnailFile = new LessonFile(
+                    lessonNo, thumbnailFileName , "THUMBNAIL", saveDirectory
+            );
+            lessonFileMapper.updateLessonFile(thumbnailFile);
+        }
+
+        if (mainImage != null && !mainImage.isEmpty()) {
+            String mainImageFileName = UUID.randomUUID() + mainImage.getOriginalFilename();
+            webContentFileUtils.saveWebContentFile(mainImage, saveDirectory, mainImageFileName);
+            LessonFile mainImageFile = new LessonFile(
+                    lessonNo,  mainImageFileName, "MAIN_IMAGE", saveDirectory
+            );
+            lessonFileMapper.updateLessonFile(mainImageFile);
+        }
+
+    }
 
 
 
