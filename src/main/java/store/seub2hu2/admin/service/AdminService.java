@@ -323,11 +323,9 @@ public class AdminService {
         return dto;
     }
 
-    public List<Color> getInsertStock(Map<String, Object> condition) {
+    public int getInsertStock(Map<String, Object> condition) {
 
-        List<Color> dto = adminMapper.insertStock(condition);
-
-        return dto;
+        return adminMapper.insertStock(condition);
     }
 
 //    public Color getProductByColorNo(Integer colorNo) {

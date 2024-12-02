@@ -172,8 +172,10 @@
             PC.prod_no = #{condition.no}
           and
             PC.color_name = #{condition.colorName}
-          and
-            PS.PROD_SIZE = #{condition.size}
+        and PS.PROD_SIZE IN
+        <foreach item="size" collection="condition.sizeList" open="(" separator="," close=")">
+            #{size}
+        </foreach>
     </update>
 
     <!--

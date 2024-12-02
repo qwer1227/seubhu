@@ -546,15 +546,18 @@ public class AdminController {
                                      @RequestParam(name = "colorName", required = false) String colorName,
                                      Model model) {
 
+        List<String> sizeList = Arrays.asList(size.split(","));
+
         Map<String, Object> condition = new HashMap<>();
         condition.put("no", no);
         condition.put("colorName", colorName);
+        condition.put("sizeList", sizeList);
         condition.put("size", size);
         condition.put("amount", amount);
 
         System.out.println("condition:" + condition);
 
-        List<Color> colors = adminService.getInsertStock(condition);
+        int rowsAffected = adminService.getInsertStock(condition);
 
         return "redirect:/admin/product-detail?no=" + no + "&colorNo=" + colorNo;
     }
