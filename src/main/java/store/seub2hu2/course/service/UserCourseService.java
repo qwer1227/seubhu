@@ -109,28 +109,27 @@ public class UserCourseService {
      * @param condition 페이지, 코스 번호
      * @return 완주 기록 목록
      */
-    public ListDto<Records> getAllRecords(Map<String, Object> condition) { // @AuthenticationPrincipal LoginUser loginUser
-//        if (loginUser != null) {
-//            condition.put("userNo", loginUser.getNo());
-//        } else {
-//            return null;
-//        }
+    public ListDto<Records> getAllRecords(Map<String, Object> condition, @AuthenticationPrincipal LoginUser loginUser) {
+        // 1. 로그인한 상태라면, Map 객체에 사용자 번호를 저장한다.
+        if (loginUser != null) {
+            condition.put("userNo", loginUser.getNo());
+        }
 
-        // 1. 코스에 해당하는 전체 완주 기록의 갯수를 조회한다.
+        // 2. 코스에 해당하는 전체 완주 기록의 갯수를 조회한다.
         int totalRows = userCourseMapper.getTotalRows(condition);
 
-        // 2. 페이징 처리 정보를 가져오고, Pagination 객체에 저장한다.
+        // 3. 페이징 처리 정보를 가져오고, Pagination 객체에 저장한다.
         int page = (Integer) condition.get("page");
         Pagination pagination = new Pagination(page, totalRows, 10);
 
-        // 3. 데이터 검색 범위를 조회해서 Map 객체에 저장한다.
+        // 4. 데이터 검색 범위를 조회해서 Map 객체에 저장한다.
         condition.put("begin", pagination.getBegin());
         condition.put("end", pagination.getEnd());
 
-        // 4. 조회 범위에 맞는 완주 기록 목록을 가져온다.
+        // 5. 조회 범위에 맞는 완주 기록 목록을 가져온다.
         List<Records> records = userCourseMapper.getRecords(condition);
 
-        // 5. ListDto 객체에 화면에 표시할 데이터(완주 기록 목록, 페이징 처리 정보)를 담고, 반환한다.
+        // 6. ListDto 객체에 화면에 표시할 데이터(완주 기록 목록, 페이징 처리 정보)를 담고, 반환한다.
         ListDto<Records> dto = new ListDto<>(records, pagination);
         return dto;
     }
