@@ -11,8 +11,8 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/queue", "/topic");  // 메시지를 보낼 대상 설정(/queue: 1대1, /topic: 1대N)
-        config.setApplicationDestinationPrefixes("/app"); // 클라이언트 요청 처리 경로 설정
+        config.enableSimpleBroker("/sub");  // 메시지를 보낼 대상 설정(/queue: 1대1, /topic: 1대N)
+        config.setApplicationDestinationPrefixes("/pub"); // 클라이언트 요청 처리 경로 설정
     }
 
     @Override

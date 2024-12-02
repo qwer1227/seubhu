@@ -33,6 +33,7 @@ public class SecurityConfig {
 
     @Autowired
     private CustomOAuth2UserService customOAuth2UserService;
+
     // 스마트 에디터 적용 코드
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
@@ -103,7 +104,7 @@ public class SecurityConfig {
                 .oauth2Login(oauth2Configurer -> oauth2Configurer
                         .loginPage("/login")
                         .defaultSuccessUrl("/home")
-                        .failureUrl("/login")
+                        .failureUrl("/login?error=fail")
                         .userInfoEndpoint(userEndpoint -> userEndpoint.userService(customOAuth2UserService)))
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         // 인증되지 않은 사용자가 인증이 필요한 리소스를 요청했을 때

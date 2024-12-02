@@ -7,6 +7,7 @@ import org.apache.xmlbeans.impl.xb.xsdschema.Attribute;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import store.seub2hu2.lesson.dto.LessonUpdateDto;
 import store.seub2hu2.lesson.dto.ReservationSearchCondition;
 import store.seub2hu2.lesson.enums.ReservationStatus;
 import store.seub2hu2.payment.dto.PaymentDto;
@@ -79,7 +80,11 @@ public class LessonReservationService {
             // 5. 참가자 수 업데이트
             lesson.setParticipant(lesson.getParticipant() + 1);
             log.info("참가자 수 업데이트 할 lesson = {}", lesson);
-            lessonMapper.updateLesson(lesson); // 업데이트 후 커밋
+
+            LessonUpdateDto lessonUpdateDto = new LessonUpdateDto();
+            lessonUpdateDto.setLessonNo(paymentDto.getLessonNo());
+            lessonUpdateDto.setParticipant(lesson.getParticipant());
+            lessonMapper.updateLessonParticipant(lessonUpdateDto); // 업데이트 후 커밋
 
             log.info("레슨 예약 저장 완료: {}", paymentDto);
         } catch (Exception e) {
@@ -126,8 +131,10 @@ public class LessonReservationService {
 
         // 레슨 예약 인원 감소
         Lesson lesson  = lessonService.getLessonByNo(lessonNo);
-        lesson.setParticipant(lesson.getParticipant() - 1);
-        lessonMapper.updateLesson(lesson);
+        LessonUpdateDto lessonUpdateDto = new LessonUpdateDto();
+        lessonUpdateDto.setLessonNo(lessonNo);
+        lessonUpdateDto.setParticipant(lesson.getParticipant() - 1);
+        lessonMapper.updateLessonParticipant(lessonUpdateDto);
 
         log.info("status.label() = {}", status.label());
     }

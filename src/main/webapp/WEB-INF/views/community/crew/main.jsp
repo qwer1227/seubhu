@@ -34,17 +34,29 @@
   
   <div class="row row-cols-1 row-cols-md-3 g-4">
     <!-- 카드 1 -->
-    <div class="col">
-      <a href="detail" style="text-decoration-line: none">
-        <div class="card">
-          <img src="image2.jpg" style="height: 200px" class="card-img-top" alt="크루 대표 이미지">
-          <div class="card-body text-center">
-            <h5 class="card-title">크루제목</h5>
-            <p class="card-text">크루명 | 지역</p>
+    <c:forEach var="crew" items="${crews}">
+      <div class="col">
+                <p>번호 : ${crew.thumbnail}</p>
+        <a href="detail" style="text-decoration-line: none">
+          <div class="card">
+          <c:choose>
+          <c:when test="${not empty crew.thumbnail}">
+            <img src="/resources/images/community/inviting_default_main.jpg" alt="크루 대표 이미지" class="card-img-top"
+                 style="height: 200px; filter: ${crew.joined ? 'grayscale(0%)' : 'grayscale(100%)'}">
+          </c:when>
+          <c:otherwise>
+            <img src="/resources/images/community/${crew.thumbnail.saveName}" alt="크루 대표 이미지" class="card-img-top"
+                   style="height: 200px; filter: ${crew.joined ? 'grayscale(0%)' : 'grayscale(100%)'}">
+          </c:otherwise>
+          </c:choose>
+            <div class="card-body text-center">
+              <h5 class="card-title">${crew.title}</h5>
+              <p class="card-text">${crew.name} | 지역</p>
+            </div>
           </div>
-        </div>
-      </a>
-    </div>
+        </a>
+      </div>
+    </c:forEach>
   </div>
   
   <div class="row p-3 d-flex justify-content-left">

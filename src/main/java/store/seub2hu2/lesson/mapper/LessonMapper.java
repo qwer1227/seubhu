@@ -2,6 +2,7 @@ package store.seub2hu2.lesson.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import store.seub2hu2.lesson.dto.LessonUpdateDto;
 import store.seub2hu2.lesson.vo.Lesson;
 
 
@@ -24,6 +25,9 @@ public interface LessonMapper {
     public void deleteLessonByNo(@Param("lesson") Lesson lesson);
 
     // 레슨 수정
-    public void updateLesson(@Param("lesson") Lesson lesson);
+    public void updateLesson(@Param("dto") LessonUpdateDto dto);
+
+    // 레슨 수강생 수 수정
+    public void updateLessonParticipant(@Param("dto") LessonUpdateDto dto);
 
 }

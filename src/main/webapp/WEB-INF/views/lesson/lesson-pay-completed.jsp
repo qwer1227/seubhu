@@ -24,7 +24,9 @@
                 </colgroup>
                 <tr>
                     <th>레슨명</th>
-                    <td><a href="/lesson/detail?lessonNo=${lessonReservation.lesson.lessonNo}">${lessonReservation.lesson.title}</td>
+                    <td>
+                        <a href="/lesson/detail?lessonNo=${lessonReservation.lesson.lessonNo}">${lessonReservation.lesson.title}
+                    </td>
                 </tr>
                 <tr>
                     <th>과정</th>
@@ -37,7 +39,7 @@
                 <tr>
                     <th>레슨날짜</th>
                     <td>
-                        ${lessonReservation.lesson.startDate}
+                        ${startDate} ${startTime} ~ ${endTime}
                     </td>
                 </tr>
                 <tr>
@@ -50,7 +52,7 @@
     <div class="row">
         <div class="col-1"></div>
         <div class="col">
-            <a href="/lesson/reservation?userId=${lessonReservation.user.Id}" class="btn btn-dark w-100">예약 내역</a>
+            <a href="/lesson/reservation?userId=${lessonReservation.user.id}" class="btn btn-dark w-100">예약 내역</a>
         </div>
         <div class="col-1"></div>
     </div>

@@ -8,8 +8,8 @@ import lombok.*;
 @Getter
 @Setter
 public class ProductDTO {
+    private int prodNo;
     private String prodName;
-    private int sizeNo;
     private String sizeName;
     private int colorNo;
     private String colorName;
