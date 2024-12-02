@@ -36,11 +36,10 @@
     <!-- 카드 1 -->
     <c:forEach var="crew" items="${crews}">
       <div class="col">
-                <p>번호 : ${crew.thumbnail}</p>
         <a href="detail" style="text-decoration-line: none">
           <div class="card">
           <c:choose>
-          <c:when test="${not empty crew.thumbnail}">
+          <c:when test="${empty crew.thumbnail}">
             <img src="/resources/images/community/inviting_default_main.jpg" alt="크루 대표 이미지" class="card-img-top"
                  style="height: 200px; filter: ${crew.joined ? 'grayscale(0%)' : 'grayscale(100%)'}">
           </c:when>

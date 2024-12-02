@@ -26,7 +26,11 @@ import java.util.Map;
 public class CrewService {
 
     @Value("${upload.directory.community}")
-    private String saveDirectory;
+    private String saveImageDirectory;
+
+    @Value("C:/files/crew")
+    private String saveFileDirectory;
+
 
     @Autowired
     private WebContentFileUtils webContentFileUtils;
@@ -53,7 +57,7 @@ public class CrewService {
         if (!image.isEmpty()) {
             String originalImageName = image.getOriginalFilename();
             String ImageName = System.currentTimeMillis() + originalImageName;
-            webContentFileUtils.saveWebContentFile(image, saveDirectory, ImageName);
+            webContentFileUtils.saveWebContentFile(image, saveImageDirectory, ImageName);
 
             UploadFile uploadThumbnail = new UploadFile();
             uploadThumbnail.setOriginalName(originalImageName);
@@ -66,7 +70,7 @@ public class CrewService {
         if (!upfile.isEmpty()) {
             String originalFileName = upfile.getOriginalFilename();
             String filename = System.currentTimeMillis() + originalFileName;
-            FileUtils.saveMultipartFile(upfile, saveDirectory, filename);
+            FileUtils.saveMultipartFile(upfile, saveFileDirectory, filename);
 
             UploadFile uploadFile = new UploadFile();
             uploadFile.setOriginalName(originalFileName);

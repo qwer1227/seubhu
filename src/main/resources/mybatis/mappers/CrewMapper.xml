@@ -68,7 +68,7 @@
               , c.crew_location   as location
               , c.crew_name       as name
               , c.is_joined       as joined
-              , c.file_name       as "thumbnail.saveName"
+              , c.crew_thumbnail  as "thumbnail.saveName"
            from
              CREWS c
            where c.is_deleted = 'N'
