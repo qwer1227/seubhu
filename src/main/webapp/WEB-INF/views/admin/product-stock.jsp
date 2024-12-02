@@ -144,7 +144,11 @@
                                                 <td>${p.no}</td>
                                                 <td>${p.brand.name}</td>
                                                 <td>${p.category.name}</td>
-                                                <td>${p.name}</td>
+                                                <td>
+                                                    <a href="product-detail?no=${p.no}&colorNo=${p.colorNum}">
+                                                        ${p.name}
+                                                    </a>
+                                                </td>
                                                 <td><fmt:formatNumber value="${p.price }"/> 원</td>
                                                 <td>${p.color.name}</td>
                                                 <td>${p.status}</td>
