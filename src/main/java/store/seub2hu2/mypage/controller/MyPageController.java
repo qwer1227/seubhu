@@ -145,7 +145,6 @@ public class MyPageController {
             ,Model model) {
 
 
-
         List<CartItemDto> orderItems = orderService.getOrderItemBySizeNo(sizeNoList, stock);
         model.addAttribute("orderItems", orderItems);
 

@@ -17,6 +17,12 @@ public class OrderService {
     @Autowired
     OrderMapper orderMapper;
 
+    /**
+     * 장바구니에서 선택한 주문 상품을 조회한다.
+     * @param sizeNoList 상품 사이즈 번호(고유번호)
+     * @param stocks 수량들
+     * @return
+     */
     public List<CartItemDto> getOrderItemBySizeNo(List<Integer> sizeNoList, List<Integer> stocks) {
 
         Map <Integer, Integer> map = new HashMap<>();
@@ -24,12 +30,9 @@ public class OrderService {
             map.put(sizeNoList.get(i), stocks.get(i));
         }
 
-        System.out.println("----------------------------------------------" + map);
 
         List<CartItemDto> orderDto = orderMapper.getOrderItemBySizeNo(sizeNoList);
         for(CartItemDto cartItemDto : orderDto){
-            System.out.println("++++++++++++++++++++++++++++++" + cartItemDto.getSize().getNo());
-
             cartItemDto.setStock(map.get(cartItemDto.getSize().getNo()));
         }
 

@@ -30,15 +30,15 @@
                     <c:forEach items="${orderItems}" var="item">
                         <tr>
                             <td>
-                                <img src="https://static.nike.com/a/images/t_PDP_936_v1/f_auto,q_auto:eco/12a2f74f-b392-4ff1-8d15-480de194bd0c/AIR+ZOOM+PEGASUS+41.png" class="rounded mx-auto d-block" width="90">
+                                <img src="${item.imgThum}" class="rounded mx-auto d-block" width="90">
                             </td>
                             <td>
                                 <span>${item.product.name}</span>
-                                <p class="text-secondary">[레몬/285] / 1 개</p>
+                                <p class="text-secondary">[${item.color.name}/${item.size.size}] /  ${item.stock}개</p>
 
                             </td>
                             <td class="text-end">
-                                <span>169,000 원</span>
+                                <span><fmt:formatNumber value="${item.product.price * item.stock}"/> 원</span>
                                 <button type="button" class="btn btn-lg delete-button" data-target-id="#item-\${sizeNo}"><i class="bi bi-x"></i></button>
                             </td>
                         </tr>
@@ -71,19 +71,19 @@
                     <tr>
                         <th>받으실 분</th>
                         <td>
-                            <input type="text" class="form-control me-2" placeholder="이름을 입력하세요" required>
+                            <input type="text" name="name" class="form-control me-2" placeholder="이름을 입력하세요" required>
                         </td>
                     </tr>
                     <tr>
                         <th>주소</th>
                         <td>
                             <div class="d-flex align-items-center mb-2">
-                                <input type="text" class="form-control me-2" id="postcode" placeholder="우편번호" required readonly>
+                                <input type="text" name="postcode" class="form-control me-2" id="postcode" placeholder="우편번호" required readonly>
                                 <input type="button" onclick="openPostcode()" class="btn btn-secondary" value="우편번호검색">
                             </div>
-                                <input type="text" id="address" class="form-control mb-2" placeholder="기본주소"/>
-                                <input type="text" id="address-detail" class="form-control mb-2" placeholder="나머지 주소(선택입력 가능)"/>
-                                <input type="text" id="address-extra" class="form-control mb-2" placeholder="참고항목"/>
+                                <input type="text" name="address" id="address" class="form-control mb-2" placeholder="기본주소"/>
+                                <input type="text" name="address-detail" id="address-detail" class="form-control mb-2" placeholder="나머지 주소(선택입력 가능)"/>
+                                <input type="text" name="address-extra" id="address-extra" class="form-control mb-2" placeholder="참고항목"/>
 
                         </td>
                     </tr>
@@ -91,7 +91,7 @@
                         <th><label>휴대폰 번호</label></th>
                         <td>
                             <div class="d-flex">
-                                <input type="text" class="form-control">
+                                <input type="text" class="form-control" value="010">
                                 <input type="text" class="form-control">
                                 <input type="text" class="form-control">
                             </div>
@@ -121,6 +121,7 @@
                     </tr>
                 </tbody>
             </table>
+            <button class="btn btn-outline-secondary" type="submit">저장</button>
         </div>
     </div>
     <!--
