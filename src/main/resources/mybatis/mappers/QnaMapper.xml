@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="store.seub2hu2.mypage.mapper.QnaMapper">
+
+    <resultMap id="QnaCategoryMap" type="store.seub2hu2.mypage.dto.QnaCategory">
+        <result property="categoryNo" column="CATEGORY_NO"/>
+        <result property="categoryName" column="CATEGORY_NAME"/>
+    </resultMap>
+
+    <resultMap id="QnaResponseMap" type="store.seub2hu2.mypage.dto.QnaResponse">
+        <result property="qnaNo" column="QNA_NO"/>
+        <result property="qnaTitle" column="QNA_TITLE"/>
+        <result property="qnaContent" column="QNA_CONTENT"/>
+        <result property="qnaStatus" column="QNA_STATUS" typeHandler="store.seub2hu2.handler.QnaStatusTypeHandler"/>
+        <result property="answerContent" column="ANSWER_CONTENT"/>
+        <result property="answerCreatedDate" column="ANSWER_CREATED_DATE"/>
+        <result property="qnaCreatedDate" column="QNA_CREATED_DATE"/>
+        <result property="qnaUpdatedDate" column="QNA_UPDATED_DATE"/>
+        <result property="qnaAnswerdDate" column="QNA_ANSWERD_DATE"/>
+        <result property="qnaIsDeleted" column="QNA_ISDELETED"/>
+        <result property="questionUserNo" column="QUESTION_USER_NO"/>
+        <result property="categoryNo" column="CATEGORY_NO"/>
+        <result property="answerUserNo" column="ANSWER_USER_NO"/>
+        
+        <association property="qnaCategory" resultMap="QnaCategoryMap"/>
+    </resultMap>
+
+    <!-- List<QnaResponse> getQnasByUserNo(@Param("userNo") int userNo); -->
+
+    <select id="getQnasByUserNo" resultMap="QnaResponseMap">
+        SELECT
+            q.QNA_NO, q.QNA_TITLE, q.QNA_CONTENT, q.QNA_STATUS,
+            q.ANSWER_CONTENT, q.ANSWER_CREATED_DATE, q.QNA_CREATED_DATE,
+            q.QNA_UPDATED_DATE, q.QNA_ANSWERD_DATE, q.QNA_ISDELETED,
+            q.QUESTION_USER_NO, q.ANSWER_USER_NO, q.CATEGORY_NO,
+            c.CATEGORY_NO AS CATEGORY_NO, c.CATEGORY_NAME
+        FROM
+            USER_QNA q
+                INNER JOIN
+            QNA_CATEGORY c ON q.CATEGORY_NO = c.CATEGORY_NO
+        WHERE
+            q.QNA_ISDELETED = 'N'
+        AND
+            q.QUESTION_USER_NO = #{userNo}
+    </select>
+
+    <!-- QnaResponse getQnaByQnaNo(@Param("qnaNo") int qnaNo); -->
+
+    <select id="getQnaByQnaNo" resultMap="QnaResponseMap">
+        SELECT
+            q.qna_title,
+            q.qna_content,
+            q.qna_created_date,
+            q.qna_status,
+            c.category_name
+        FROM
+            USER_QNA q
+                INNER JOIN
+            QNA_CATEGORY c ON q.category_no = c.category_no
+        WHERE
+            q.qna_no = #{qnaNo}
+    </select>
+
+</mapper>
