@@ -44,7 +44,6 @@ public class CrewService {
         Crew crew = new Crew();
         crew.setNo(form.getNo());
         crew.setTitle(form.getTitle());
-        crew.setCategory(form.getCategory());
         crew.setName(form.getName());
         crew.setSchedule(form.getSchedule());
         crew.setLocation(form.getLocation());

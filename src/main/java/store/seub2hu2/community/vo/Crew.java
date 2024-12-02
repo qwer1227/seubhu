@@ -15,7 +15,6 @@ import java.util.Date;
 public class Crew {
 
     private int no;
-    private String category;
     private String name;
     private String schedule;
     private String location;

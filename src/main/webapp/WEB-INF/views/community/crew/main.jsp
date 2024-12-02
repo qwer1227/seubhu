@@ -50,7 +50,7 @@
           </c:choose>
             <div class="card-body text-center">
               <h5 class="card-title">${crew.title}</h5>
-              <p class="card-text">${crew.name} | 지역</p>
+              <p class="card-text">${crew.name}</p>
             </div>
           </div>
         </a>

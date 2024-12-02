@@ -40,39 +40,31 @@
   <!-- void insertCrewMember(@Param("member") CrewMember member); -->
   <insert id="insertCrewMember">
     insert into CREW_MEMBERS
-        (
-         crew_no
-          , is_reader
-          , crew_join_date
-          , is_join
-          , user_no
-        )
-    values
-        (
-         #{member.crewNo}
-          , #{member.reader}
-          , #{member.joinDate}
-          , #{member.join}
-          , #{member.user.no}
-        )
+    ( crew_no
+    , is_reader
+    , crew_join_date
+    , is_join
+    , user_no)
+    values ( #{member.crewNo}
+           , #{member.reader}
+           , #{member.joinDate}
+           , #{member.join}
+           , #{member.user.no})
   </insert>
 
   <!-- List<Crew> getCrews(@Param("condition") Map<String, Object> condition); -->
   <select id="getCrews" resultType="store.seub2hu2.community.vo.Crew">
     select *
-    from (
-           select row_number() over(order by c.crew_created_date desc) rn
-              , c.crew_no         as no
+    from (select row_number() over(order by c.crew_created_date desc) rn
+              , c.crew_no as no
               , c.crew_title      as title
-              , c.crew_category   as category
               , c.crew_location   as location
               , c.crew_name       as name
               , c.is_joined       as joined
               , c.crew_thumbnail  as "thumbnail.saveName"
-           from
-             CREWS c
-           where c.is_deleted = 'N'
-         ) as crew
+          from
+            CREWS c
+          where c.is_deleted = 'N') as crew
     where rn between #{condition.begin} and #{condition.end}
     order by rn
   </select>
@@ -88,6 +80,28 @@
   </select>
 
   <!-- void getCrewDetailByNo(@Param("no") int crewNo); -->
-
+  <select id="getCrewDetailByNo" resultType="store.seub2hu2.community.vo.Crew">
+    select
+        c.crew_no
+    , c.crew_title
+    , c.crew_schedule
+    , c.location
+    , c.crew_name
+    , c.crew_description
+    , c.crew_created_date
+    , c.crew_thumbnail
+    , c.file_name
+    , c.is_joined
+    , u.user_no
+    , cf.file_no
+    , cf.file_original_name
+    from CREWS c
+           join CREW_MEMBERS cm
+                on c.crew_no = cm.crew_no
+           join CREW_FILES cf
+                on c.crew_no = cf.crew_no
+           join USERS u
+                on cf.user_no = u.user_no
+  </select>
 
 </mapper>
