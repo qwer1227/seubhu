@@ -14,22 +14,31 @@ import store.seub2hu2.community.vo.UploadFile;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.FileUtils;
+import store.seub2hu2.util.ListDto;
+import store.seub2hu2.util.Pagination;
+import store.seub2hu2.util.WebContentFileUtils;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class CrewService {
 
-    @Value("C:/files/crew")
+    @Value("${upload.directory.community}")
     private String saveDirectory;
 
+    @Autowired
+    private WebContentFileUtils webContentFileUtils;
     @Autowired
     private CrewMapper crewMapper;
     @Autowired
     private UploadMapper uploadMapper;
 
-    public Crew addNewCrew(CrewForm form, @AuthenticationPrincipal LoginUser loginUser){
+    public Crew addNewCrew(CrewForm form
+            , @AuthenticationPrincipal LoginUser loginUser) {
         Crew crew = new Crew();
+        crew.setNo(form.getNo());
         crew.setTitle(form.getTitle());
         crew.setCategory(form.getCategory());
         crew.setName(form.getName());
@@ -44,7 +53,7 @@ public class CrewService {
         if (!image.isEmpty()) {
             String originalImageName = image.getOriginalFilename();
             String ImageName = System.currentTimeMillis() + originalImageName;
-            FileUtils.saveMultipartFile(image, saveDirectory, ImageName);
+            webContentFileUtils.saveWebContentFile(image, saveDirectory, ImageName);
 
             UploadFile uploadThumbnail = new UploadFile();
             uploadThumbnail.setOriginalName(originalImageName);
@@ -68,7 +77,15 @@ public class CrewService {
         crewMapper.insertCrew(crew);
 
         // 썸네일/첨부파일 추가 시, crew_files 테이블에 저장
-        if (crew.getThumbnail() != null || crew.getUploadFile() != null) {
+
+        if (crew.getThumbnail() != null) {
+            UploadFile uploadThumbnail = crew.getThumbnail();
+            uploadThumbnail.setNo(crew.getNo());
+            uploadThumbnail.setSaveName(crew.getThumbnail().getSaveName());
+            uploadThumbnail.setOriginalName(crew.getThumbnail().getOriginalName());
+            uploadMapper.insertCrewFile(uploadThumbnail);
+        }
+        if (crew.getUploadFile() != null) {
             UploadFile uploadFile = crew.getUploadFile();
             uploadFile.setNo(crew.getNo());
             uploadFile.setSaveName(crew.getUploadFile().getSaveName());
@@ -90,5 +107,21 @@ public class CrewService {
         crewMapper.insertCrewMember(member);
 
         return crew;
+    }
+
+    public ListDto<Crew> getCrews(Map<String, Object> condition) {
+        int totalRows = crewMapper.getTotalRowsForCrew(condition);
+
+        int page = (Integer) condition.get("page");
+        int rows = (Integer) condition.get("rows");
+        Pagination pagination = new Pagination(page, totalRows, rows);
+
+        condition.put("begin", pagination.getBegin());
+        condition.put("end", pagination.getEnd());
+
+        List<Crew> crews = crewMapper.getCrews(condition);
+        ListDto<Crew> dto = new ListDto<>(crews, pagination);
+
+        return dto;
     }
 }
