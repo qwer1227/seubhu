@@ -318,6 +318,7 @@ public class AdminService {
 
         adminMapper.getDeleteSize(sizeNo);
     }
+
 //    public Color getProductByColorNo(Integer colorNo) {
 //
 //        return adminMapper.getCallProductByColorNo(colorNo);

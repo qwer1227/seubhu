@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 import store.seub2hu2.product.vo.Brand;
 import store.seub2hu2.product.vo.Category;
+import store.seub2hu2.product.vo.Color;
 import store.seub2hu2.product.vo.Image;
 
 import java.util.Date;
@@ -27,5 +28,6 @@ public class ProdListDto {
     private String imgThum; // 대표 이미지 URL
     private Category category; // 카테고리 객체
     private Brand brand; // 브랜드 객체
+    private Color color;
 
 }

@@ -498,6 +498,59 @@ public class AdminController {
          return "redirect:/admin/product?topNo="+ category.getTopNo();
     }
 
+    @GetMapping("/product-stock-detail")
+    public String getProductStockDetail(@RequestParam("no") int no,
+                                        @RequestParam("colorNo") Integer colorNo,
+                                     Model model) {
+
+        Product product = adminService.getProductNo(no);
+        List<Color> colors = adminService.getColorName(no);
+
+        model.addAttribute("product", product);
+        model.addAttribute("colors", colors);
+
+        return "admin/product-stock-detail";
+    }
+    @PostMapping("/product-stock-detail")
+    public String productStockDetail(@RequestParam("no") int no,
+                                     Model model) {
+
+        return "admin/product-stock-detail";
+    }
+
+    @GetMapping("/product-stock")
+    public String getProductStock(@RequestParam(name= "topNo") int topNo,
+                                  @RequestParam(name = "catNo", required = false, defaultValue = "0") int catNo,
+                                  @RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                                  @RequestParam(name = "rows", required = false, defaultValue = "5") int rows,
+                                  @RequestParam(name = "sort" , required = false, defaultValue = "date") String sort,
+                                  @RequestParam(name = "opt", required = false) String opt,
+                                  @RequestParam(name = "value", required = false) String value,
+                                  Model model) {
+
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("topNo", topNo);
+        if(catNo != 0) {
+            condition.put("catNo", catNo);
+        }
+
+        condition.put("page", page);
+        condition.put("rows", rows);
+        condition.put("sort", sort);
+        if(StringUtils.hasText(opt)) {
+            condition.put("opt", opt);
+            condition.put("value", value);
+        }
+
+        ListDto<ProdListDto> dto = productService.getProducts(condition);
+        model.addAttribute("topNo", topNo);
+        model.addAttribute("catNo", catNo);
+        model.addAttribute("products", dto.getData());
+        model.addAttribute("paging", dto.getPaging());
+
+        return "admin/product-stock";
+    }
+
     @GetMapping("/product")
     public String list(@RequestParam(name= "topNo") int topNo,
                        @RequestParam(name = "catNo", required = false, defaultValue = "0") int catNo,
