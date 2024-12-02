@@ -28,7 +28,7 @@
     <select id="getAllLessons" resultType="store.seub2hu2.lesson.vo.Lesson">
         SELECT
         LESSON_NO AS lessonNo,
-        USER_NO AS "user.no",
+        USER_ID AS "user.id",
         LESSON_TITLE AS title,
         LESSON_PRICE AS price,
         LESSON_STATUS AS status,
@@ -51,12 +51,13 @@
     <!-- 레슨에서 조회되는 user.no는 강사 번호-->
     <select id="getLessonByNo" resultType="store.seub2hu2.lesson.vo.Lesson">
         select L.LESSON_NO           as lessonNo
-             , L.USER_NO as 'lecturer.no'
+             , L.USER_ID as 'lecturer.id'
              , L.LESSON_TITLE as title
              , L.LESSON_PRICE        as price
              , L.lesson_status       as status
              , L.lesson_created_date as createdDate
              , L.LESSON_START_DATE   as start
+             , L.LESSON_END_DATE     as end
              , L.PARTICIPANT         as participant
              , L.lesson_plan         as plan
              , L.LESSON_SUBJECT      as subject
@@ -65,7 +66,7 @@
         from LESSONS L
                  INNER JOIN USERS U
                             ON
-                                L.USER_NO = U.USER_NO
+                                L.USER_ID = U.USER_ID
         WHERE LESSON_NO = #{no}
         FOR UPDATE
     </select>
@@ -74,20 +75,22 @@
     <insert id="insertLesson" useGeneratedKeys="true" keyProperty="lessonNo"
             parameterType="store.seub2hu2.lesson.vo.Lesson">
         insert into LESSONS
-        ( USER_NO
+        ( USER_ID
         , LESSON_TITLE
         , LESSON_PRICE
         , LESSON_SUBJECT
         , PARTICIPANT
         , LESSON_PLAN
+        , LESSON_PLACE
         , LESSON_START_DATE
         , LESSON_END_DATE)
-        values ( #{lesson.lecturer.no}
+        values ( #{lesson.lecturer.id}
                , #{lesson.title}
                , #{lesson.price}
                , #{lesson.subject}
                , #{lesson.participant}
                , #{lesson.plan}
+               , #{lesson.place}
                , #{lesson.start}
                , #{lesson.end})
     </insert>
@@ -97,7 +100,7 @@
         UPDATE LESSONS
         SET PARTICIPANT    = #{lesson.participant}
           , LESSON_STATUS  = #{lesson.status}
-          , USER_NO        = #{lesson.lecturer.no}
+          , USER_ID        = #{lesson.lecturer.id}
           , LESSON_TITLE   = #{lesson.title}
           , LESSON_PLAN    = #{lesson.plan}
           , LESSON_SUBJECT = #{lesson.subject}

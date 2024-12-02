@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="store.seub2hu2.order.mapper.OrderMapper">
+
+    <!--
+        List<CartItemDto> getOrderItemBySizeNo(@Param("sizeNoList") List<Integer> sizeNoList);
+    -->
+    <select id="getOrderItemBySizeNo" resultType="store.seub2hu2.cart.dto.CartItemDto">
+        SELECT
+            P.PROD_NAME AS "product.name"
+             , P.PROD_PRICE AS "product.price"
+             , PC.COLOR_NAME AS "COLOR.NAME"
+             , PS.SIZE_NO  AS "SIZE.NO"
+             , PS.PROD_SIZE "SIZE.SIZE"
+             , PI.IMG_URL AS imgThum
+        FROM PRODUCTS P
+                 JOIN PROD_COLORS PC
+                      ON P.PROD_NO = PC.PROD_NO
+                 JOIN PROD_SIZES PS
+                      ON PC.COLOR_NO = PS.COLOR_NO
+                 JOIN PROD_IMGS PI
+                      ON PC.COLOR_NO = PI.COLOR_NO
+        WHERE PI.IMG_THUM = 'Y'
+          AND SIZE_NO IN
+              <foreach collection="sizeNoList" item="sizeNo" open="(" separator="," close=")">
+                #{sizeNo}
+              </foreach>
+    </select>
+
+    <resultMap id="responseDTOResultMap" type="store.seub2hu2.mypage.dto.ResponseDTO">
+
+        <!-- 먼저 association 태그로 객체 관계를 매핑 -->
+        <association property="payments" resultMap="paymentsResultMap"/>
+        <association property="productImg" resultMap="productImgResultMap"/>
+        <association property="orders" resultMap="ordersResultMap"/>
+
+        <!-- 여러 상품 정보를 리스트로 매핑 -->
+        <collection property="products" ofType="store.seub2hu2.mypage.dto.ProductDTO">
+            <result property="prodName" column="prod_Name"/>
+            <result property="sizeNo" column="size_No"/>
+            <result property="colorNo" column="color_No"/>
+            <result property="colorName" column="color_Name"/>
+            <result property="prodPrice" column="prod_price"/>
+            <result property="prodImgUrl" column="prod_img_url"/>
+            <result property="orderQty" column="order_qty"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="paymentsResultMap" type="store.seub2hu2.mypage.dto.PaymentsDTO">
+        <result property="payNo" column="pay_no"/>
+        <result property="payId" column="pay_id"/>
+        <result property="payMethod" column="pay_method"/>
+        <result property="payAmount" column="pay_amount"/>
+        <result property="refund" column="refund"/>
+        <result property="payDate" column="pay_date"/>
+        <result property="payType" column="pay_type"/>
+    </resultMap>
+
+    <resultMap id="productImgResultMap" type="store.seub2hu2.mypage.dto.ProductImgDTO">
+        <result property="prodNo" column="prod_no"/>
+        <result property="prodImgUrl" column="prod_img_url"/>
+    </resultMap>
+
+    <resultMap id="ordersResultMap" type="store.seub2hu2.mypage.dto.OrdersDTO">
+        <result property="orderNo" column="order_no"/>
+        <result property="orderDate" column="order_date"/>
+        <result property="orderStatus" column="order_status"/>
+        <result property="orderPrice" column="order_price"/>
+    </resultMap>
+
+
+    <!-- ResponseDTO getOrderDetails(@Param("orderNo") int orderNo); -->
+
+    <select id="getOrderDetails" resultMap="responseDTOResultMap">
+        SELECT DISTINCT
+        p.pay_no AS pay_no,
+        p.pay_id AS pay_id,
+        p.pay_method AS pay_method,
+        p.pay_amount AS pay_amount,
+        p.pay_date AS pay_date,
+        p.pay_type AS pay_type,
+        p.refund AS refund,
+        o.order_no AS order_no,
+        o.order_date AS order_date,
+        o.order_status AS order_status,
+        o.order_price AS order_price,
+        ps.size_no AS size_No,            <!-- 상품 사이즈 번호 -->
+        pc.color_no AS color_No,          <!-- 상품 색상 번호 -->
+        pc.color_name AS color_Name,      <!-- 상품 색상 이름 -->
+        pi.prod_name AS prod_Name,        <!-- 상품 이름 -->
+        pi.prod_price AS prod_price,
+        pi.prod_img_thum AS prod_img_url
+        FROM
+        PAYMENTS p
+        JOIN ORDERS o ON p.pay_no = o.pay_no                <!-- 결제와 주문 연결 -->
+        LEFT JOIN ORDER_PRODUCTS op ON o.order_no = op.order_no  <!-- 주문 상품 연결 -->
+        LEFT JOIN PRODUCTS pi ON op.prod_no = pi.prod_no          <!-- 상품과 상품 이미지 연결 -->
+        LEFT JOIN PROD_SIZES ps ON op.size_no = ps.size_no        <!-- 상품 사이즈 연결 -->
+        LEFT JOIN PROD_COLORS pc ON ps.color_no = pc.color_no      <!-- 상품 색상 연결 -->
+        LEFT JOIN PROD_IMGS pi_img ON pc.color_no = pi_img.color_no  <!-- 상품 색상과 상품 이미지 연결 -->
+        WHERE
+        o.order_no = #{orderNo}
+    </select>
+
+    <!-- List<OrderRequest> getOrders(@Param("userNo") int userNo); -->
+
+    <select id="getOrders" resultType="store.seub2hu2.mypage.dto.OrderResponse">
+        SELECT
+            o.order_no AS orderNo,
+            o.ORDER_DATE AS orderDate,
+            p.prod_name AS productName,
+            o.REAL_PRICE AS productPrice
+        FROM
+            ORDERS o
+                JOIN
+            ORDER_PRODUCTS op ON o.ORDER_NO = op.ORDER_NO
+                JOIN
+            PRODUCTS p ON op.PROD_NO = p.PROD_NO
+        WHERE
+            o.USER_NO = #{userNo}
+    </select>
+</mapper>

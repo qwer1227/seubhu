@@ -30,14 +30,16 @@ public class PostService {
         return post;
     }
 
-    public int insertPost(Post post){
+    public int insertPost(Post post, int userNo){
         // 게시물을 먼저 INSERT 하여 POST_NO를 생성
-        postMapper.insertPost(post);
+        postMapper.insertPost(userNo, post);
         // 생성된 post_no 를 반환
         return post.getNo();
     }
 
     public List<Post> getPostsByNo(int userNo) {
+
+        System.out.println("userno = " + userNo);
 
         List<Post> posts = postMapper.getPostsByNo(userNo);
 

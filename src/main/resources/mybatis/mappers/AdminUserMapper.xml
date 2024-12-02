@@ -448,7 +448,7 @@
                 from
                     LESSONS L, USERS U
                 where
-                    L.user_no = U.user_no
+                    L.user_ID = U.user_ID
                     <if test="condition.opt != null">
                         <choose>
                             <when test="condition.opt == 'name'">

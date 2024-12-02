@@ -27,20 +27,22 @@
                     </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td>
-                        <img src="https://static.nike.com/a/images/t_PDP_936_v1/f_auto,q_auto:eco/12a2f74f-b392-4ff1-8d15-480de194bd0c/AIR+ZOOM+PEGASUS+41.png" class="rounded mx-auto d-block" width="90">
-                    </td>
-                    <td>
-                        <span>남성 칼데라 7 레몬 (MEDIUM)</span>
-                        <p class="text-secondary">[레몬/285] / 1 개</p>
+                    <c:forEach items="${orderItems}" var="item">
+                        <tr>
+                            <td>
+                                <img src="${item.imgThum}" class="rounded mx-auto d-block" width="90">
+                            </td>
+                            <td>
+                                <span>${item.product.name}</span>
+                                <p class="text-secondary">[${item.color.name}/${item.size.size}] /  ${item.stock}개</p>
 
-                    </td>
-                    <td class="text-end">
-                        <span>169,000 원</span>
-                        <button type="button" class="btn btn-lg delete-button" data-target-id="#item-\${sizeNo}"><i class="bi bi-x"></i></button>
-                    </td>
-                </tr>
+                            </td>
+                            <td class="text-end">
+                                <span><fmt:formatNumber value="${item.product.price * item.stock}"/> 원</span>
+                                <button type="button" class="btn btn-lg delete-button" data-target-id="#item-\${sizeNo}"><i class="bi bi-x"></i></button>
+                            </td>
+                        </tr>
+                    </c:forEach>
                 </tbody>
             </table>
         </div>
@@ -69,19 +71,19 @@
                     <tr>
                         <th>받으실 분</th>
                         <td>
-                            <input type="text" class="form-control me-2" placeholder="이름을 입력하세요" required>
+                            <input type="text" name="name" class="form-control me-2" placeholder="이름을 입력하세요" required>
                         </td>
                     </tr>
                     <tr>
                         <th>주소</th>
                         <td>
                             <div class="d-flex align-items-center mb-2">
-                                <input type="text" class="form-control me-2" id="postcode" placeholder="우편번호" required readonly>
+                                <input type="text" name="postcode" class="form-control me-2" id="postcode" placeholder="우편번호" required readonly>
                                 <input type="button" onclick="openPostcode()" class="btn btn-secondary" value="우편번호검색">
                             </div>
-                                <input type="text" id="address" class="form-control mb-2" placeholder="기본주소"/>
-                                <input type="text" id="address-detail" class="form-control mb-2" placeholder="나머지 주소(선택입력 가능)"/>
-                                <input type="text" id="address-extra" class="form-control mb-2" placeholder="참고항목"/>
+                                <input type="text" name="address" id="address" class="form-control mb-2" placeholder="기본주소"/>
+                                <input type="text" name="address-detail" id="address-detail" class="form-control mb-2" placeholder="나머지 주소(선택입력 가능)"/>
+                                <input type="text" name="address-extra" id="address-extra" class="form-control mb-2" placeholder="참고항목"/>
 
                         </td>
                     </tr>
@@ -89,7 +91,7 @@
                         <th><label>휴대폰 번호</label></th>
                         <td>
                             <div class="d-flex">
-                                <input type="text" class="form-control">
+                                <input type="text" class="form-control" value="010">
                                 <input type="text" class="form-control">
                                 <input type="text" class="form-control">
                             </div>
@@ -114,11 +116,21 @@
                     <tr>
                         <th><label>배송 메모</label></th>
                         <td>
-                            <input type="text" class="form-control">
+                            <input type="text" class="form-control" id="memo-box-direct" name="memo-box-direct" />
+                            <select id="memo-box" class="form-control" name="memo">
+                                <option value="">-- 메시지 선택 --</option>
+                                <option value="배송 전에 미리 연락바랍니다.">배송 전에 미리 연락바랍니다.</option>
+                                <option value="부재 시 경비실에 맡겨주세요.">부재 시 경비실에 맡겨주세요.</option>
+                                <option value="부재 시 문 앞에 놓아주세요.">부재 시 문 앞에 놓아주세요.</option>
+                                <option value="빠른 배송 부탁드립니다.">빠른 배송 부탁드립니다.</option>
+                                <option value="택배함에 보관해주세요.">택배함에 보관해주세요.</option>
+                                <option value="direct">직접입력</option>
+                            </select>
                         </td>
                     </tr>
                 </tbody>
             </table>
+            <button class="btn btn-outline-secondary" type="submit">저장</button>
         </div>
     </div>
     <!--
@@ -217,7 +229,8 @@
                 </tbody>
             </table>
             <div class="d-grid gap-2">
-                <button class="btn btn-dark" type="button">결제하기</button>
+                <button class="col btn btn-dark" type="button" disabled>주문취소하기</button>
+                <button class="col btn btn-dark" type="button" disabled>결제하기</button>
             </div>
         </div>
 </div>
@@ -270,6 +283,23 @@
                     document.getElementById("address-detail").focus();
                 }
             }).open();
+
+            $(function() {
+                // 직접 입력 인풋박스 기존에는 숨어있다가
+                $("#memo-box-direct").hide();
+
+                $("#memo-box").change(function () {
+                    // 직접 입력 누를 때 나타남
+                    if($("#memo-box").val() === "direct") {
+                        $("#memo-box-direct").show();
+                    } else {
+                        $("#memo-box-direct").hide();
+                    }
+                })
+            });
+
+
+
         }
     </script>
 

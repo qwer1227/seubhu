@@ -24,13 +24,13 @@ public class Lesson {
     private int participant;
     private String plan;
     private String status;
+    private User lecturer;
+    private String place;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime createdDate;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime updatedDate;
-    private User lecturer;
     private String filename;
-    private String place;
 
 
     public String getOriginalFilename() {

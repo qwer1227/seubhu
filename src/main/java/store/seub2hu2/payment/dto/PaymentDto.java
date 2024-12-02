@@ -11,8 +11,8 @@ import java.util.List;
 @Setter
 @ToString
 public class PaymentDto {
-    private String payId;       // tid
-    private int userNo;         // 유저 번호
+    private String paymentId;       // tid
+    private String userId;         // 유저 ID
     private int totalAmount;    // 총 상품가격
     private int quantity;       // 수량
     private String method;      // 결제 방식
@@ -26,10 +26,10 @@ public class PaymentDto {
 
 
     public PaymentDto(Payment payment) {
-        this.payId = payment.getId();
+        this.paymentId = payment.getId();
         this.totalAmount = payment.getAmount();
         this.type = payment.getType();
-        this.userNo = payment.getUserNo();
+        this.userId = payment.getUserId();
     }
 
 }

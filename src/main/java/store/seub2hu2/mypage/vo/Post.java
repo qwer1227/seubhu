@@ -22,4 +22,5 @@ public class Post {
     private User user;
     private List<PostComment> postComment;
     private List<PostImage> images;
+
 }

@@ -5,11 +5,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import retrofit2.http.GET;
 import store.seub2hu2.lesson.dto.LessonDto;
 import store.seub2hu2.lesson.dto.LessonRegisterForm;
 import store.seub2hu2.lesson.dto.ReservationSearchCondition;
@@ -56,6 +58,7 @@ public class LessonController {
             Lesson lesson = lessonService.getLessonByNo(lessonNo);
             String startDate = lesson.getStartDate();
             String startTime = lesson.getStartTime();
+            String endTime = lesson.getEndTime();
 
             // 이미지 파일 정보 가져오기
             Map<String, String> images = lessonFileService.getImagesByLessonNo(lessonNo);
@@ -64,6 +67,7 @@ public class LessonController {
             model.addAttribute("lesson", lesson);
             model.addAttribute("startDate", startDate);
             model.addAttribute("startTime", startTime);
+            model.addAttribute("endTime", endTime);
             model.addAttribute("lessonNo", lessonNo);
             model.addAttribute("images", images);
 
@@ -89,8 +93,9 @@ public class LessonController {
         return lessons;
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/reservation")
-    public String reservation(@RequestParam("userNo") int userNo,
+    public String reservation(@RequestParam("userId") String userId,
                               @ModelAttribute("condition") ReservationSearchCondition condition,
                               Model model) {
 
@@ -111,12 +116,12 @@ public class LessonController {
             }
         }
 
-        List<LessonReservation> lessonReservations = lessonReservationService.searchLessonReservationList(condition, userNo);
+        List<LessonReservation> lessonReservations = lessonReservationService.searchLessonReservationList(condition, userId);
         model.addAttribute("lessonReservations", lessonReservations);
         return "lesson/lesson-reservation";
     }
 
-
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/reservation/detail")
     public String reservationDetail(@RequestParam("reservationNo") int reservationNo,
                                     Model model) {

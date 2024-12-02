@@ -17,10 +17,10 @@ public interface LessonReservationMapper {
     public void insertLessonReservation(@Param("lessonReservation") LessonReservation lessonReservation);
 
     // 회원 번호로 회원이 예약한 레슨 조회
-    public List<LessonReservation> getLessonReservationByUserNo (@Param("userNo") int userNo);
+    public List<LessonReservation> getLessonReservationByUserId (@Param("userId") String userId);
 
     // 예약한 레슨 조건 검색
-    List<LessonReservation> getReservationByCondition(@Param("condition") ReservationSearchCondition condition, @Param("userNo") int userNo);
+    List<LessonReservation> getReservationByCondition(@Param("condition") ReservationSearchCondition condition, @Param("userId") String userId);
 
     // 결제번호로 결제한 예약 조회
     public LessonReservation getLessonReservationByPayId(@Param("payId") String payId);

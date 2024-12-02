@@ -27,7 +27,7 @@
                 </colgroup>
                 <tr>
                     <th>레슨명</th>
-                    <td><a href="/lesson/detail?lessonNo=${lessonDto.lessonNo}">${lessonDto.title}</td>
+                    <td><a href="/lesson/detail?lessonNo=${lessonDto.lessonNo}">${lessonDto.title}</a></td>
                 </tr>
                 <tr>
                     <th>과목</th>
@@ -80,7 +80,7 @@
                 title: '${lessonDto.title}',    // 카카오페이에 보낼 대표 상품명
                 totalAmount: ${lessonDto.price},
                 quantity: 1, // 총 개수
-                userNo: ${loginUser.no},
+                userId: '${loginUser.id}',
                 type: "레슨"
             };
 
