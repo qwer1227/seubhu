@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import store.seub2hu2.lesson.dto.*;
 import store.seub2hu2.lesson.enums.ReservationStatus;
 import store.seub2hu2.lesson.service.LessonFileService;
+import store.seub2hu2.lesson.service.LessonService;
 import store.seub2hu2.lesson.vo.LessonReservation;
 import store.seub2hu2.payment.dto.PaymentDto;
 import store.seub2hu2.payment.service.KakaoPayService;
