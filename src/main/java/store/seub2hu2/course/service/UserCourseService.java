@@ -9,6 +9,12 @@ import store.seub2hu2.course.mapper.UserCourseMapper;
 import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.course.vo.CourseLike;
 import store.seub2hu2.course.vo.CourseWhether;
+import store.seub2hu2.course.vo.Records;
+import store.seub2hu2.util.ListDto;
+import store.seub2hu2.util.Pagination;
+
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -72,5 +78,43 @@ public class UserCourseService {
             userCourseMapper.updateLikeCount(courseNo, course.getLikeCnt());
             userCourseMapper.deleteLikeUser(userNo, courseNo);
         }
+    }
+
+    /**
+     * 코스에 해당하는 모든 사용자의 완주 기록을 시간이 낮은 순으로 가져온다.
+     * @param condition 페이지, 코스 번호
+     * @return 완주 기록 목록
+     */
+    public ListDto<Records> getAllRecords(Map<String, Object> condition) {
+        // 1. 코스에 해당하는 전체 완주 기록의 갯수를 조회한다.
+        int totalRows = userCourseMapper.getTotalRows(condition);
+
+        // 2. 페이징 처리 정보를 가져오고, Pagination 객체에 저장한다.
+        int page = (Integer) condition.get("page");
+        Pagination pagination = new Pagination(page, totalRows, 10);
+
+        // 3. 데이터 검색 범위를 조회해서 Map 객체에 저장한다.
+        condition.put("begin", pagination.getBegin());
+        condition.put("end", pagination.getEnd());
+
+        // 4. 조회 범위에 맞는 완주 기록 목록을 가져온다.
+        List<Records> records = userCourseMapper.getRecords(condition);
+
+        // 5. ListDto 객체에 화면에 표시할 데이터(완주 기록 목록, 페이징 처리 정보)를 담고, 반환한다.
+        ListDto<Records> dto = new ListDto<>(records, pagination);
+        return dto;
+    }
+
+    /**
+     * 코스에 해당하는 로그인한 사용자의 완주 기록을 시간이 낮은 순으로 가져온다.
+     * @param condition 코스 번호, 사용자 번호
+     * @return 완주 기록 목록
+     */
+    public List<Records> getMyRecords(Map<String, Object> condition) {
+        // 1. 나의 완주 기록 목록을 가져온다.
+        List<Records> records = userCourseMapper.getRecords(condition);
+
+        // 2. 나의 완주 기록 목록을 반환한다.
+        return records;
     }
 }

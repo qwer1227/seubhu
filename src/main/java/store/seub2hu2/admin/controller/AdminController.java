@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import store.seub2hu2.admin.dto.ColorThumbnailForm;
 import store.seub2hu2.admin.dto.CourseRegisterForm;
 import store.seub2hu2.admin.dto.ImageUrlDto;
@@ -20,20 +21,19 @@ import store.seub2hu2.lesson.service.LessonService;
 import store.seub2hu2.lesson.vo.Lesson;
 import store.seub2hu2.product.dto.*;
 import store.seub2hu2.product.service.ProductService;
+import store.seub2hu2.product.vo.*;
 import store.seub2hu2.product.vo.Category;
 import store.seub2hu2.product.vo.Color;
 import store.seub2hu2.product.vo.Image;
 import store.seub2hu2.product.vo.Product;
+import store.seub2hu2.user.service.UserService;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.ListDto;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Controller
@@ -50,6 +50,7 @@ public class AdminController {
     private final LessonService lessonService;
     private final LessonFileService lessonFileService;
     private final ProductService productService;
+    private final UserService userService;
 
     @GetMapping("/home")
     public String home() {
@@ -100,7 +101,12 @@ public class AdminController {
     }*/
 
     @GetMapping("/lesson-register-form")
-    public String lessonRegisterForm() {
+    public String lessonRegisterForm(Model model) {
+
+        // 사용자 권한이 강사인 사용자 목록을 조회한다.
+        List<User> lecturers =  userService.findUsersByUserRoleNo(3);
+        model.addAttribute("lecturers", lecturers);
+
         return "admin/lesson-register-form";
     }
 
@@ -247,15 +253,82 @@ public class AdminController {
         return "redirect:/admin/product-detail?no=" + product.getNo() + "&colorNo=" + product.getColorNum();
     }
 
+    @GetMapping("/delete-size")
+    public String getDeleteSize(@RequestParam("no") int no,
+                                @RequestParam("colorNo") Integer colorNo,
+                                Model model) {
+
+        // 상품 정보 가져오기
+        Product product = adminService.getProductNo(no);
+        List<Color> colors = adminService.getColorName(no);
+        Color color = adminService.getColorNo(colorNo);
+        List<Size> sizes = adminService.getAllSizeByColorNo(colorNo);
+
+        model.addAttribute("product", product);
+        model.addAttribute("colors", colors);
+        model.addAttribute("color", color);
+        model.addAttribute("sizes", sizes);
+
+        if (sizes == null || sizes.isEmpty()) {
+            model.addAttribute("sizeMessage", "등록된 사이즈가 없습니다.");
+            sizes = Collections.emptyList(); // 비어 있는 리스트 전달
+        }
+
+        return "admin/product-size-delete-form";
+    }
+
+    @PostMapping("/delete-size")
+    public String deleteSize(@RequestParam("no") int no,
+                             @RequestParam("colorNo") Integer colorNo,
+                             Model model) {
+
+        return "redirect:/admin/delete-size?no=" + no + "&colorNo=" + colorNo;
+    }
+
     @GetMapping("/register-size")
     public String registerSize(@RequestParam("no") int no,
+                               @RequestParam("colorNo") Integer colorNo,
                                Model model) {
 
-        ProdDetailDto prodDetailDto = productService.getProductByNo(no);
-        model.addAttribute("prodDetailDto", prodDetailDto);
+        // 상품 정보 가져오기
+        Product product = adminService.getProductNo(no);
+        List<Color> colors = adminService.getColorName(no);
+        Color color = adminService.getColorNo(colorNo);
+        List<Size> sizes = adminService.getAllSizeByColorNo(colorNo);
+
+        if (sizes == null || sizes.isEmpty()) {
+            model.addAttribute("sizeMessage", "등록된 사이즈가 없습니다.");
+            sizes = Collections.emptyList(); // 비어 있는 리스트 전달
+        }
+        // 모델에 데이터 추가
+        model.addAttribute("product", product);
+        model.addAttribute("colors", colors);
+        model.addAttribute("color", color);
+        model.addAttribute("sizes", sizes);
 
         return "admin/product-size-register-form";
     }
+    @PostMapping("/register-size")
+    public String registerSize(@RequestParam("no") int no,
+                               @RequestParam("colorNo") Integer colorNo,
+                               @RequestParam("size") String size,
+                               RedirectAttributes redirectAttributes) {
+
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("colorNo", colorNo);
+        condition.put("size", size);
+
+        try {
+            adminService.getCheckSize(condition);
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+
+        return "redirect:/admin/register-size?no=" + no + "&colorNo=" + colorNo;
+
+
+    }
+
 
     @GetMapping("/image-editform")
     public String getImageEditForm(@RequestParam("no") int no,
@@ -365,16 +438,16 @@ public class AdminController {
 
     @PostMapping("/register-color")
     public String registerColor(@RequestParam(name="no", required = false) Integer no,
-                                @RequestParam(name="color", required = false) String color,
+                                @RequestParam(name="name", required = false) String name,
                                 Model model) {
 
-        if (no == null || color == null || color.isEmpty()) {
+        if (no == null || name == null || name.isEmpty()) {
             throw new IllegalArgumentException("상품 번호와 색상은 필수 입력 값입니다.");
         }
 
         Map<String, Object> condition = new HashMap<>();
         condition.put("no", no);
-        condition.put("color", color);
+        condition.put("name", name);
 
         System.out.println("condition:" + condition);
 

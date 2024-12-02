@@ -2,15 +2,21 @@ package store.seub2hu2.mypage.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import store.seub2hu2.community.service.BoardService;
+import store.seub2hu2.community.vo.Board;
 import store.seub2hu2.mypage.dto.CommentRequest;
 import store.seub2hu2.mypage.dto.CommentResponse;
 import store.seub2hu2.mypage.dto.ImageDeleteRequest;
 import store.seub2hu2.mypage.service.FileUploadService;
 import store.seub2hu2.mypage.service.PostService;
 import store.seub2hu2.mypage.vo.Post;
+import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.service.UserService;
+import store.seub2hu2.util.ListDto;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,21 +32,26 @@ public class MyPageRestController {
     private PostService postService;
 
     @Autowired
+    private BoardService boardService;
+
+    @Autowired
     private FileUploadService fileUploadService;
+
+
     @Autowired
     private UserService userService;
 
     @PostMapping("/public/insert")
     public ResponseEntity<Map<String, Object>> insertPost(@RequestParam("content") String postContent,
                                                           @RequestParam("thumbnailImage") String thumb,
-                                                          @RequestParam("files") List<MultipartFile> files) {
+                                                          @RequestParam("files") List<MultipartFile> files,
+                                                          @AuthenticationPrincipal LoginUser loginUser) {
         try {
             // 1. 게시글 생성
             Post post = new Post();
             post.setPostContent(postContent);
             post.setThumbnail(thumb);
-            int postNo = postService.insertPost(post);  // 게시글 생성 후 postNo 반환
-//            post.setNo(postNo);
+            int postNo = postService.insertPost(post, loginUser.getNo());  // 게시글 생성 후 postNo 반환
 
             // 2. 파일 업로드 및 이미지 연결
             fileUploadService.saveFile(files, postNo, thumb);  // postNo와 함께 이미지 업로드
@@ -53,6 +64,7 @@ public class MyPageRestController {
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(500).body(Map.of("message", "포스트 생성 실패: " + e.getMessage()));
         }
     }
@@ -164,7 +176,5 @@ public class MyPageRestController {
             response.put("message", "서버 오류");
             return ResponseEntity.status(500).body(response);
         }
-
     }
-
 }

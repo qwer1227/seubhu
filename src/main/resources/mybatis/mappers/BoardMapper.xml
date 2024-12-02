@@ -71,6 +71,20 @@
     BOARDS b join USERS u
     on b.user_no = u.user_no
     where b.is_deleted = 'N'
+
+    <!-- Type 1: 내가 쓴 글 -->
+    <if test="condition.type == 'value1'">
+      and b.user_no = #{condition.userNo}
+    </if>
+    <!-- Type 2: 내가 쓴 댓글이 있는 글 -->
+    <if test="condition.type == 'value2'">
+      and b.board_no in (
+      select distinct r.board_no
+      from BOARD_REPLIES r
+      where r.user_no = #{condition.userNo}
+      and r.is_deleted = 'N'
+      )
+    </if>
     <if test="condition.category != null">
       and b.board_cat_name = #{condition.category}
     </if>
@@ -97,6 +111,25 @@
     select count(*)
     from BOARDS board
     where is_deleted = 'N'
+<!--    <choose>-->
+<!--      &lt;!&ndash; 내가 쓴 글 보기 &ndash;&gt;-->
+<!--      <when test="condition.type == 'value1'">-->
+<!--        and user_no = #{condition.userNo}-->
+<!--      </when>-->
+<!--      &lt;!&ndash; 내가 쓴 댓글을 작성한 글 보기 &ndash;&gt;-->
+<!--      <when test="condition.type == 'value2'">-->
+<!--        and board.board_no in (-->
+<!--        select distinct board_no-->
+<!--        from BOARD_REPLIES-->
+<!--        where user_no = #{condition.userNo}-->
+<!--        and is_deleted = 'N'-->
+<!--        )-->
+<!--      </when>-->
+<!--      &lt;!&ndash; 기본 조건 (type 값이 없을 경우 등) &ndash;&gt;-->
+<!--      <otherwise>-->
+<!--        and user_no = #{condition.userNo} &lt;!&ndash; 필요 시 기본 조건 추가 &ndash;&gt;-->
+<!--      </otherwise>-->
+<!--    </choose>-->
     <if test="condition.category != null">
       and board.board_cat_name = #{condition.category}
     </if>
@@ -108,9 +141,9 @@
         <when test="condition.opt == 'content'">
           and board.board_content like concat('%', #{condition.keyword}, '%')
         </when>
-<!--        <when test="condition.opt == 'writer'">-->
-<!--          and board.user_no like concat('%', #{condition.keyword}, '%')-->
-<!--        </when>-->
+        <!--        <when test="condition.opt == 'writer'">-->
+        <!--          and board.user_no like concat('%', #{condition.keyword}, '%')-->
+        <!--        </when>-->
       </choose>
     </if>
   </select>
@@ -119,8 +152,7 @@
   <update id="updateBoard">
     update
     BOARDS
-    set
-    board_cat_name = #{board.catName}
+    set board_cat_name = #{board.catName}
     , board_title = #{board.title}
     , board_content = #{board.content}
     , board_updated_date = sysdate()

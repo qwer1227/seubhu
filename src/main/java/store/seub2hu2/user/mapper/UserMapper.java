@@ -45,4 +45,6 @@ public interface UserMapper {
     // 비밀번호 업데이트 (임시 비밀번호 발급)
     void updatePassword(@Param("id") String id, @Param("email") String email);
 
+    // 사용자 권한 번호로 사용자 조회(사용자 번호, 이름, 아이디)
+    List<User> getUsersByRoleNo(@Param("roleNo") int roleNo);
 }

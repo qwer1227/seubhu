@@ -37,10 +37,10 @@
     <div class="col">
       <a href="detail" style="text-decoration-line: none">
         <div class="card">
-          <img src="image2.jpg" style="height: 200px" class="card-img-top" alt="마라톤 이미지">
+          <img src="image2.jpg" style="height: 200px" class="card-img-top" alt="크루 대표 이미지">
           <div class="card-body text-center">
-            <h5 class="card-title">크루명</h5>
-            <p class="card-text">크루에 대한 정보를 확인할 수 있습니다.</p>
+            <h5 class="card-title">크루제목</h5>
+            <p class="card-text">크루명 | 지역</p>
           </div>
         </div>
       </a>
