@@ -11,9 +11,11 @@ import store.seub2hu2.course.service.ReviewService;
 import store.seub2hu2.course.vo.Review;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.security.dto.RestResponseDto;
+import store.seub2hu2.util.ListDto;
 
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/course")
@@ -21,13 +23,19 @@ public class ReviewController {
     @Autowired
     private ReviewService reviewService;
 
-    @GetMapping("/reviews/{no}")
-    public ResponseEntity<RestResponseDto<List<Review>>> reviews(@PathVariable("no") int courseNo) {
-        // 1. 코스에 등록된 모든 리뷰를 가져온다.
-        List<Review> reviews = reviewService.getReviews(courseNo);
+    @GetMapping("/reviews/{no}/{page}")
+    public ResponseEntity<RestResponseDto<ListDto<Review>>> reviews(@PathVariable("no") int courseNo,
+                                                                    @PathVariable("page") int page) {
+        // 1. Map 객체에 코스 번호, 페이지를 저장한다.
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("courseNo", courseNo);
+        condition.put("page", page);
 
-        // 2. 응답 데이터를 반환한다.
-        return ResponseEntity.ok(RestResponseDto.success(reviews));
+        // 2. 코스에 등록된 모든 리뷰를 가져온다.
+        ListDto<Review> dto = reviewService.getReviews(condition);
+
+        // 3. 응답 데이터를 반환한다.
+        return ResponseEntity.ok(RestResponseDto.success(dto));
     }
 
     @PreAuthorize("isAuthenticated()")
