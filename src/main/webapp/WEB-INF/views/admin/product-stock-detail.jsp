@@ -57,30 +57,63 @@
           </div>
           <div class="row mb-3">
             <div class="col-6">
-              <form class="border bg-light p-3"
-                    method="post" action="/admin/product-stock-detail"
+              <form id="getForm"
+                    class="border bg-light p-3"
+                    method="get" action="/admin/product-stock-detail"
                     enctype="multipart/form-data">
                 <div class="form-group mb-3 col-4">
+                  <input type="hidden" name="no" value="${param.no}">
+                  <input type="hidden" name="colorNo" value="${param.colorNo}">
                   <label class="form-label">상품번호 ${product.no}</label>
                 </div>
                 <div class="form-group mb-3 col">
                   <label class="form-label">상품명: ${product.name}</label>
                 </div>
-                <div class="form-group mb-3 col-4">
-                  <label class="form-label">색상선택</label>
-                  <select class="form-control" name="colorNo">
-                    <c:forEach var="c" items="${colors}">
-                      <option value="${c.no}">${c.name}</option>
-                    </c:forEach>
-                  </select>
-                </div>
-                <div class="form-group mb-3 col-4">
-
+                <div class="row form-group mb-3 col">
+                  <div class="form-group mb-3 col-6">
+                    <label class="form-label">색상:</label>
+                      <select class="form-control" name="colorName">
+                        <c:forEach var="c" items="${colors}">
+                          <option value="${c.name}">${c.name}</option>
+                        </c:forEach>
+                      </select>
+                  </div>
                 </div>
                 <div class="text-end" style="text-align: right">
-                  <button type="submit" class="btn btn-primary">재고 등록</button>
+                  <button type="submit" id="getSubmitButton" class="btn btn-primary">재고 조회</button>
                 </div>
               </form>
+                <c:if test="${not empty colorSize}">
+                  <form id="postForm" class="border bg-light p-3" method="post" action="/admin/product-stock-detail">
+                    <div class="text-end">
+                      <div id="Container" class="mb-2">
+                          <input type="hidden" name="colorName" value="${param.colorName}">
+                        <c:forEach var="cs" items="${colorSize}">
+                          <input type="hidden" name="no" value="${param.no}">
+                          <input type="hidden" name="colorNo" value="${param.colorNo}">
+                          <label class="form-label">사이즈: ${cs.size.size}</label>
+                          <input type="hidden" name="size" value="${cs.size.size}"><br>
+                          <label class="form-label">수량:</label>
+                          <input type="text" class="form-control col-4" name="amount" value="${cs.size.amount}"><br>
+                        </c:forEach>
+                      </div>
+                      <div>
+                        <button type="submit" class="btn btn-primary">재고 등록</button>
+                      </div>
+                    </div>
+                  </form>
+                </c:if>
+                    <!-- sizeMessage가 있을 때만 표시 -->
+                  <c:if test="${empty colorSize}">
+                      <div class="alert alert-danger">
+                        <p class="mr-3">${sizeMessage}</p>
+                        <a href="register-size?no=${param.no}&colorNo=${param.colorNo}">
+                            <button type="button" class="btn btn-primary">
+                                사이즈 등록하러 가기
+                            </button>
+                        </a>
+                      </div>
+                  </c:if>
             </div>
           </div>
         </div>
@@ -95,6 +128,15 @@
 
 <%@include file="/WEB-INF/views/admincommon/common.jsp" %>
 
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const getSubmitButton = document.getElementById("getSubmitButton");
+    getSubmitButton.addEventListener("click", function () {
+      console.log("GET 요청 실행!");
+      // 기본 GET 동작은 유지, 페이지 새로고침 후 서버 응답에 따라 POST 폼 보임.
+    });
+  });
+</script>
 </body>
 
 </html>

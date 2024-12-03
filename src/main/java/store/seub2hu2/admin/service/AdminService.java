@@ -6,10 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import store.seub2hu2.admin.dto.ColorThumbnailForm;
-import store.seub2hu2.admin.dto.CourseRegisterForm;
-import store.seub2hu2.admin.dto.ImageUrlDto;
-import store.seub2hu2.admin.dto.ProductRegisterForm;
+import store.seub2hu2.admin.dto.*;
 import store.seub2hu2.admin.mapper.AdminMapper;
 import store.seub2hu2.course.mapper.CourseMapper;
 import store.seub2hu2.course.vo.Course;
@@ -317,6 +314,18 @@ public class AdminService {
     public void getDeletedSize(int sizeNo) {
 
         adminMapper.getDeleteSize(sizeNo);
+    }
+
+    public List<Color> getStockByColorNum(Map<String, Object> condition) {
+
+        List<Color> dto = adminMapper.getStockByColorNumber(condition);
+
+        return dto;
+    }
+
+    public void getInsertStock(Map<String, Object> condition) {
+
+        adminMapper.insertStock(condition);
     }
 
 //    public Color getProductByColorNo(Integer colorNo) {
