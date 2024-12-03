@@ -473,6 +473,42 @@
     </select>
 
     <!--
+        List<Lesson> getLessonUserByNo(int lessonNo);
+    -->
+    <select id="getLessonUserByNo" parameterType="Integer" resultType="store.seub2hu2.admin.dto.LessonUsersDto">
+        select
+/*            L.LESSON_NO                     as "no"
+             , L.USER_ID                    as "lesson.lecturer.id"
+             , L.LESSON_TITLE               as "lesson.title"
+             , L.LESSON_PRICE               as "lesson.price"
+             , L.PARTICIPANT                as "lesson.participant"
+             , L.LESSON_STATUS              as "lesson.status"
+             , L.LESSON_PLAN                as "lesson.plan"
+             , L.LESSON_START_DATE          as "lesson.start"
+             , L.LESSON_SUBJECT             as "lesson.subject"
+             , L.LESSON_DELETED             as "lesson.status"
+             , L.LESSON_PLACE               as "lesson.place"
+             , LR.LESSON_RESERVATION_STATUS as "status"
+             , */
+               LR.USER_ID                   as "id"
+             , U.USER_NO                    as "no"
+             , U.USER_NAME                  as "name"
+             , U.USER_NICKNAME              as "nickname"
+             , U.USER_EMAIL                 as "email"
+             , U.USER_TEL                   as "tel"
+        from
+            LESSONS L , LESSON_RESERVATIONS LR, USERS U
+        where
+            L.LESSON_NO = LR.LESSON_NO
+          and
+            LR.USER_ID = U.USER_ID
+          and
+            LESSON_RESERVATION_STATUS = '예약'
+          and
+            L.LESSON_NO = #{lessonNo}
+    </select>
+
+    <!--
         List<Lesson> getAllLessons(@Param("condition") Map<String, Object> condition);
     -->
 

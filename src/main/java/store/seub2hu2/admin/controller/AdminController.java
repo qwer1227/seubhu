@@ -114,11 +114,22 @@ public class AdminController {
         return "redirect:/admin/lesson";
 
     }
+
+    @GetMapping("/lesson/preview")
+    @ResponseBody
+    public List<LessonUsersDto> lessonPreview(@RequestParam("no") Integer lessonNo,
+                                           Model model) {
+
+        List<LessonUsersDto> reservations = adminService.getLessonUser(lessonNo);
+
+        return reservations;
+    }
+
     @GetMapping("/lesson")
     public String lesson(@RequestParam(name = "opt", required = false) String opt,
                          @RequestParam(name = "day", required = false)
                          @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate day,
-                               @RequestParam(name = "value", required = false) String value,
+                         @RequestParam(name = "value", required = false) String value,
                                Model model) {
 
         if (day == null) {
@@ -133,8 +144,6 @@ public class AdminController {
             condition.put("opt", opt);
             condition.put("value", value);
         }
-
-        System.out.println("condition: " + condition);
 
         List<Lesson> lessons = adminService.getLessons(condition);
         model.addAttribute("lessons", lessons);
@@ -243,7 +252,8 @@ public class AdminController {
 
         adminService.getUpdateProduct(product);
 
-        System.out.println("---------------------------------------product:"+ product);
+
+
 
         return "redirect:/admin/product-detail?no=" + product.getNo() + "&colorNo=" + product.getColorNum();
     }
@@ -451,14 +461,14 @@ public class AdminController {
         condition.put("no", no);
         condition.put("name", name);
 
-        System.out.println("condition:" + condition);
+
+
 
         model.addAttribute("condition", condition);
         adminService.addColor(condition);
 
         int colorNo = adminService.getColor(condition);
 
-        System.out.println("colorNo: " + colorNo);
         return "redirect:/admin/product-detail?no=" + condition.get("no") + "&colorNo=" + colorNo;
     }
 
@@ -554,7 +564,7 @@ public class AdminController {
             condition.put("size", currentSize);
             condition.put("amount", currentAmount);
 
-            System.out.println("condition:" + condition);
+
 
             adminService.getInsertStock(condition);
         }
@@ -628,10 +638,16 @@ public class AdminController {
         return "admin/productlist";
     }
 
-    @GetMapping("/stock")
-    public String stock() {
+    @GetMapping("/settlement")
+    public String settlement() {
 
-        return "admin/stocklist";
+        return "admin/settlement";
+    }
+
+    @GetMapping("/qna")
+    public String qna() {
+
+        return "admin/qnalist";
     }
 
     @GetMapping("/community")
