@@ -13,6 +13,7 @@ import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.course.vo.Region;
 import store.seub2hu2.lesson.mapper.LessonMapper;
 import store.seub2hu2.lesson.vo.Lesson;
+import store.seub2hu2.lesson.vo.LessonReservation;
 import store.seub2hu2.product.vo.*;
 import store.seub2hu2.user.mapper.UserMapper;
 import store.seub2hu2.user.vo.User;
@@ -327,6 +328,14 @@ public class AdminService {
 
         adminMapper.insertStock(condition);
     }
+
+    public List<LessonUsersDto> getLessonUser(Integer lessonNo) {
+
+        List<LessonUsersDto> dto = adminMapper.getLessonUserByNo(lessonNo);
+
+        return dto;
+    }
+
 
 //    public Color getProductByColorNo(Integer colorNo) {
 //

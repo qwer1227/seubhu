@@ -17,6 +17,7 @@ import store.seub2hu2.lesson.dto.LessonUpdateDto;
 import store.seub2hu2.lesson.service.LessonFileService;
 import store.seub2hu2.lesson.service.LessonService;
 import store.seub2hu2.lesson.vo.Lesson;
+import store.seub2hu2.lesson.vo.LessonReservation;
 import store.seub2hu2.product.dto.*;
 import store.seub2hu2.product.service.ProductService;
 import store.seub2hu2.product.vo.*;
@@ -114,11 +115,25 @@ public class AdminController {
         return "redirect:/admin/lesson";
 
     }
+
+    @GetMapping("/lesson/preview")
+    @ResponseBody
+    public List<LessonUsersDto> lessonPreview(@RequestParam("no") Integer lessonNo,
+                                           Model model) {
+
+
+        List<LessonUsersDto> reservations = adminService.getLessonUser(lessonNo);
+
+        System.out.println("-------------------------------------reservations = " + reservations);
+
+        return reservations;
+    }
+
     @GetMapping("/lesson")
     public String lesson(@RequestParam(name = "opt", required = false) String opt,
                          @RequestParam(name = "day", required = false)
                          @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate day,
-                               @RequestParam(name = "value", required = false) String value,
+                         @RequestParam(name = "value", required = false) String value,
                                Model model) {
 
         if (day == null) {
@@ -133,8 +148,6 @@ public class AdminController {
             condition.put("opt", opt);
             condition.put("value", value);
         }
-
-        System.out.println("condition: " + condition);
 
         List<Lesson> lessons = adminService.getLessons(condition);
         model.addAttribute("lessons", lessons);
