@@ -126,14 +126,22 @@
             <div class="inquiry-item">
                 <h4>${qna.qnaTitle}</h4>
                 <p>${qna.qnaContent}</p>
-                <p><small>${qna.qnaCreatedDate}</small></p>
+                <c:choose>
+                    <c:when test="${qna.qnaUpdatedDate != null}">
+                        <p><small><fmt:formatDate value="${qna.qnaUpdatedDate}" pattern="yyyy-MM-dd" timeZone="Asia/Seoul" /></small></p>
+                    </c:when>
+                    <c:otherwise>
+                        <p><small><fmt:formatDate value="${qna.qnaCreatedDate}" pattern="yyyy-MM-dd" timeZone="Asia/Seoul" /></small></p>
+                    </c:otherwise>
+                </c:choose>
+                <br>
                 <a href="qna/detail/${qna.qnaNo}" class="btn-detail">상세보기</a>
             </div>
         </c:forEach>
     </div>
 
     <!-- 문의 작성 버튼 -->
-    <a href="/qna/create" class="btn-create">문의 작성</a>
+    <a href="/mypage/qna/create" class="btn-create">문의 작성</a>
 
 </div>
 <%@ include file="/WEB-INF/views/common/footer.jsp" %>
