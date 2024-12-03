@@ -7,7 +7,8 @@
     -->
     <select id="getOrderItemBySizeNo" resultType="store.seub2hu2.cart.dto.CartItemDto">
         SELECT
-            P.PROD_NAME AS "product.name"
+            P.PROD_NO AS "product.no"
+            ,P.PROD_NAME AS "product.name"
              , P.PROD_PRICE AS "product.price"
              , PC.COLOR_NAME AS "COLOR.NAME"
              , PS.SIZE_NO  AS "SIZE.NO"
@@ -37,12 +38,12 @@
         <!-- 여러 상품 정보를 리스트로 매핑 -->
         <collection property="products" ofType="store.seub2hu2.mypage.dto.ProductDTO">
             <result property="prodName" column="prod_Name"/>
-            <result property="sizeNo" column="size_No"/>
+            <result property="sizeName" column="prod_size"/>
             <result property="colorNo" column="color_No"/>
             <result property="colorName" column="color_Name"/>
             <result property="prodPrice" column="prod_price"/>
-            <result property="prodImgUrl" column="prod_img_url"/>
-            <result property="orderQty" column="order_qty"/>
+            <result property="prodImgUrl" column="prod_img_thum"/>
+            <result property="orderQty" column="order_prod_amount"/>
         </collection>
     </resultMap>
 
@@ -66,6 +67,12 @@
         <result property="orderDate" column="order_date"/>
         <result property="orderStatus" column="order_status"/>
         <result property="orderPrice" column="order_price"/>
+        <result property="receiverName" column="user_name"/>
+        <result property="deliveryAddress" column="addr_no"/>
+        <result property="receiverPhone" column="user_tel"/>
+        <result property="delPayment" column="del_payment"/>
+        <result property="disPrice" column="dis_price"/>
+        <result property="realPrice" column="real_price"/>
     </resultMap>
 
 
@@ -73,23 +80,30 @@
 
     <select id="getOrderDetails" resultMap="responseDTOResultMap">
         SELECT DISTINCT
-        p.pay_no AS pay_no,
-        p.pay_id AS pay_id,
-        p.pay_method AS pay_method,
-        p.pay_amount AS pay_amount,
-        p.pay_date AS pay_date,
-        p.pay_type AS pay_type,
-        p.refund AS refund,
-        o.order_no AS order_no,
-        o.order_date AS order_date,
-        o.order_status AS order_status,
-        o.order_price AS order_price,
-        ps.size_no AS size_No,            <!-- 상품 사이즈 번호 -->
-        pc.color_no AS color_No,          <!-- 상품 색상 번호 -->
-        pc.color_name AS color_Name,      <!-- 상품 색상 이름 -->
-        pi.prod_name AS prod_Name,        <!-- 상품 이름 -->
-        pi.prod_price AS prod_price,
-        pi.prod_img_thum AS prod_img_url
+        p.pay_no,
+        p.pay_id,
+        p.pay_method,
+        p.pay_amount,
+        p.pay_date,
+        p.pay_type,
+        p.refund,
+        o.order_no,
+        o.order_date,
+        o.order_status,
+        o.order_price,
+        o.del_payment,
+        o.dis_price,
+        o.real_price,
+        op.order_prod_amount,
+        ps.prod_size,
+        pc.color_no,
+        pc.color_name,
+        pi.prod_name,
+        pi.prod_price,
+        pi.prod_img_thum,
+        u.user_name,
+        u.user_tel,
+        d.addr_no
         FROM
         PAYMENTS p
         JOIN ORDERS o ON p.pay_no = o.pay_no                <!-- 결제와 주문 연결 -->
@@ -98,6 +112,8 @@
         LEFT JOIN PROD_SIZES ps ON op.size_no = ps.size_no        <!-- 상품 사이즈 연결 -->
         LEFT JOIN PROD_COLORS pc ON ps.color_no = pc.color_no      <!-- 상품 색상 연결 -->
         LEFT JOIN PROD_IMGS pi_img ON pc.color_no = pi_img.color_no  <!-- 상품 색상과 상품 이미지 연결 -->
+        LEFT JOIN USERS u ON o.user_no = u.user_no
+        LEFT JOIN DELIVERIES d ON o.order_no = d.order_no
         WHERE
         o.order_no = #{orderNo}
     </select>
@@ -109,13 +125,20 @@
             o.order_no AS orderNo,
             o.ORDER_DATE AS orderDate,
             p.prod_name AS productName,
-            o.REAL_PRICE AS productPrice
+            p.prod_img_thum AS productImage,
+            o.REAL_PRICE AS productPrice,
+            op.order_prod_amount AS quantity,
+            o.order_status AS orderStatus,
+            d.deli_status AS deliveryStatus,
+            d.deli_no AS deliveryNo
         FROM
             ORDERS o
                 JOIN
             ORDER_PRODUCTS op ON o.ORDER_NO = op.ORDER_NO
                 JOIN
             PRODUCTS p ON op.PROD_NO = p.PROD_NO
+                JOIN
+            DELIVERIES d ON o.ORDER_NO = d.ORDER_NO
         WHERE
             o.USER_NO = #{userNo}
     </select>

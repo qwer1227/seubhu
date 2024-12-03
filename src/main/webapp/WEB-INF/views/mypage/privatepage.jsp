@@ -67,7 +67,7 @@
             <h3><a href="/mypage/orderhistory">주문내역</a></h3>
         </div>
         <div class="item">
-            <h3>문의내역</h3>
+            <h3><a href="/mypage/qna">문의내역</a></h3>
         </div>
         <div class="item">
             <h3>운동일지</h3>
@@ -76,7 +76,7 @@
             <h3>참여크루</h3>
         </div>
         <div class="item">
-            <h3>레슨</h3>
+            <h3><a href="/lesson/reservation?userId=${userId}">레슨예약내역</a></h3>
         </div>
     </div>
 </div>

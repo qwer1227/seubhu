@@ -31,7 +31,7 @@
     </sec:authorize>
 
     <%-- 로그인한 사용자의 배지와 코스 기록 표시 --%>
-    <div class="row row-cols-1 row-cols-md-1 g-4 mt-3 mb-3">
+    <div class="row row-cols-1 row-cols-md-1 g-4 mt-3">
         <div class="col">
             <c:choose>
                 <c:when test="${not empty loginUser}">
@@ -61,7 +61,7 @@
                         </tr>
                         <tr>
                             <th scope="row">나의 완주 기록</th>
-                            <td><button class="btn btn-primary" onclick="seeUserFinishRecords(${loginUser.no})">완주 기록 보기</button></td>
+                            <td><button class="btn btn-primary" onclick="showFinishRecords()">완주 기록 보기</button></td>
                         </tr>
                         </tbody>
                     </table>
@@ -86,44 +86,26 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <table class="table">
+                <table class="table" id="finish-records">
                     <thead>
-                    <tr class="table-info">
-                        <th scope="col">번호</th>
-                        <th scope="col">코스 이름</th>
-                        <th scope="col">코스 거리</th>
-                        <th scope="col">코스 난이도</th>
-                        <th scope="col">완주 날짜</th>
-                        <th scope="col">완주 시간</th>
-                    </tr>
+                        <tr class="table-info">
+                            <th scope="col">번호</th>
+                            <th scope="col">코스 이름</th>
+                            <th scope="col">코스 거리</th>
+                            <th scope="col">코스 난이도</th>
+                            <th scope="col">완주 날짜</th>
+                            <th scope="col">완주 시간</th>
+                        </tr>
                     </thead>
-                    <tbody>
-                    <tr>
-                        <th><span>1</span></th>
-                        <td><span>석촌호수</span></td>
-                        <td><span>3KM</span></td>
-                        <td><span>1단계</span></td>
-                        <td><span>2024년 7월 10일</span></td>
-                        <td><span>30분</span></td>
-                    </tr>
-                    </tbody>
+                    <tbody></tbody>
                 </table>
             </div>
+
             <%-- 페이징 처리 --%>
             <div class="row mb-3">
                 <div class="col-12">
                     <nav>
-                        <ul class="pagination justify-content-center">
-                            <li class="page-item">
-                                <button class="btn btn-primary" onclick="prevModalPage()">이전</button> <%-- 이전 페이지를 클릭하면, 1페이지 이전으로 이동 --%>
-                            </li>
-                            <li class="page-item">
-                                <button class="btn btn-outline-dark" onclick="currentModalPage()">현재 페이지</button> <%-- 현재 페이지를 클릭하면, 현재 페이지로 이동 --%>
-                            </li>
-                            <li class="page-item">
-                                <button class="btn btn-primary" onclick="nextModalPage()">다음</button> <%-- 다음 페이지를 클릭하면, 1페이지 이후로 이동 --%>
-                            </li>
-                        </ul>
+                        <ul class="pagination justify-content-center" id="current-paging"></ul>
                     </nav>
                 </div>
             </div>
@@ -141,20 +123,76 @@
     // 완주 기록 보기 Modal창을 가져온다.
     let myModal = new bootstrap.Modal('#modal-finish-records');
 
-    // 로그인 후 완주 기록 보기 버튼을 클릭하면, 로그인한 사용자의 완주 기록을 확인한다. (Modal창을 열 때마다 항상 1페이지 표시)
-    async function seeUserFinishRecords(userNo) {
-        // 1. 완주 기록 데이터를 가져온다.
-        let response = await fetch("/course/finishRecords");
+    // 완주 기록 보기 버튼을 클릭하면, 완주 기록을 보여준다.
+    function showFinishRecords() {
+        getFinishRecords(1);
+    }
 
-        // 2. List 데이터를 javascript 객체로 변환한다.
+    // 완주 기록 보기 버튼을 클릭하면, 로그인한 사용자의 완주 기록을 확인한다.
+    async function getFinishRecords(page, event) {
+        // 1. 페이지 클릭 시 링크 이동을 방지한다.
+        if (event) {
+            event.preventDefault();
+        }
 
-        // 3. 데이터를 완주 기록 목록 안에 저장한다.
+        // 2. 완주 기록, 페이징 처리 정보 데이터를 가져온다.
+        let response = await fetch("/course/finishRecords?page=" + page);
 
-        // 페이지를 클릭할 때마다 해당 페이지로 이동한다.
+        // 3. 데이터를 javascript 객체로 변환하고, 변수에 저장한다.
+        let result = await response.json();
+        let records = result.data;
+        let paging = result.paging;
+        let num = paging.begin;
 
-        // 4. Modal창을 화면에 표시한다.
+        // 4. 완주 기록 목록을 화면에 표시한다.
+        let rows = "";
+
+        for (let record of records) {
+            rows += `
+                <tr>
+                    <th><span>\${num}</span></th>
+                    <td><span>\${record.course.name}</span></td>
+                    <td><span>\${record.course.distance}KM</span></td>
+                    <td><span>\${record.course.level}단계</span></td>
+                    <td><span>\${record.finishedDate}</span></td>
+                    <td><span>\${record.finishedTime}분</span></td>
+                </tr>
+            `;
+            num++;
+        }
+
+        document.querySelector("#finish-records tbody").innerHTML = rows;
+
+        // 5. 페이징 처리 기능을 화면에 표시한다.
+        let pages = "";
+
+        pages += `
+            <li class="page-item \${paging.first ? 'disabled' : ''}">
+                <a class="page-link" href="" onclick="getFinishRecords(\${paging.prevPage}, event)">이전</a>
+            </li>
+        `
+
+        for (let num = paging.beginPage; num <= paging.endPage; num++) {
+            pages += `
+                <li class="page-item ">
+                    <a class="page-link \${paging.page == num ? 'active' : ''}"
+                        href="" onclick="getFinishRecords(\${num}, event)">\${num}</a>
+                </li>
+            `;
+        }
+
+        pages += `
+            <li class="page-item \${paging.last ? 'disabled' : ''}">
+                <a class="page-link" href="" onclick="getFinishRecords(\${paging.nextPage}, event)">다음</a>
+            </li>
+        `;
+
+        document.querySelector("#current-paging").innerHTML = pages;
+
+        // 6. Modal창을 화면에 표시한다.
         myModal.show();
     }
+
 </script>
 </body>
 </html>

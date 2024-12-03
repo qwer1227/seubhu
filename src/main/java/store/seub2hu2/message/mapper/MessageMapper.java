@@ -2,7 +2,6 @@ package store.seub2hu2.message.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import store.seub2hu2.message.dto.MessageForm;
 import store.seub2hu2.message.dto.MessageRecieved;
 import store.seub2hu2.message.vo.Message;
 
@@ -33,9 +32,10 @@ public interface MessageMapper {
     // 수신자 메시지 읽음 처리
     void markMessageAsRead(@Param("messageNo") int messageNo, @Param("userNo") int userNo);
 
-    // 받은 메시지 목록 조회 (검색 및 페이징 조건 포함)
-    List<MessageRecieved> getReceivedMessages(@Param("condition") Map<String, Object> condition);
+    List<MessageRecieved> getReceivedMessages(Map<String, Object> condition);
+    List<MessageRecieved> getSentMessages(Map<String, Object> condition);
 
-    // 보낸 메시지 목록 조회
-    List<Message> getSentMessages(@Param("condition") Map<String, Object> condition);
+
+    // unread 메시지 개수 조회
+    int countUnreadMessages(@Param("userNo") int userNo);
 }

@@ -69,8 +69,8 @@
     <div class="row">
         <div class="col-1"></div>
         <div class="col">
-            <c:if test="${not empty lessonReservation.user.no}">
-                <a href="/lesson/reservation?userNo=${lessonReservation.user.no}" class="btn btn-dark w-100">예약 내역</a>
+            <c:if test="${not empty lessonReservation.user.id}">
+                <a href="/lesson/reservation?userId=${lessonReservation.user.id}" class="btn btn-dark w-100">예약 내역</a>
             </c:if>
         </div>
         <div class="col-1"></div>

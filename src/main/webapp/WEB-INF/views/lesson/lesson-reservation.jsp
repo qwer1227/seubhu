@@ -8,6 +8,7 @@
 </head>
 <body>
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
+<security:authentication property="principal" var="loginUser"/>
 <div class="container-xxl" id="wrap">
     <div class="row text-center mb-3">
         <div class="col">
@@ -15,7 +16,7 @@
         </div>
     </div>
     <form form="condition" method="get" action="/lesson/reservation">
-        <input type="hidden" name="userNo" value="29">
+        <input type="hidden" name="userId" value="${loginUser.id}">
         <div class="row mb-3">
             <div class="col-1">
                 <label for="subject">과목</label>

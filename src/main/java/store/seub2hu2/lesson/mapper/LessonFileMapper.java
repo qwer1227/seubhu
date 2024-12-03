@@ -16,4 +16,6 @@ public interface LessonFileMapper {
 
     int lastInsertedLessonNo();
 
+    void updateLessonFile(@Param("lessonFile") LessonFile file);
+
 }

@@ -81,6 +81,15 @@
             </div>
         </div>
     </div>
+
+    <%-- 코스 리뷰 목록 - 페이징 처리 --%>
+    <div class="row mb-3">
+        <div class="col-12">
+            <nav>
+                <ul class="pagination justify-content-center" id="paging"></ul>
+            </nav>
+        </div>
+    </div>
 </div>
 
 <%-- 코스 리뷰 등록 Modal창 --%>
@@ -143,19 +152,30 @@
     }
 
     // 리뷰 목록이 화면에 표시된다.
-    async function getReviews() {
+    async function getReviews(page, event) {
+        document.querySelector("#box-reviews").innerHTML = "";
+
+        if (event) {
+            event.preventDefault();
+        }
+        // 1. 코스 번호를 가져온다.
         let courseNo = document.querySelector("input[name=courseNo]").value;
 
-        let response = await fetch("/course/reviews/" + courseNo);
+        // 2. 코스에 해당하는 리뷰를 가져오고, javascript 객체로 변환한다.
+        let response = await fetch("/course/reviews/" + courseNo + "/" + page);
         let result = await response.json();
 
-        let reviews = result.data;
+        // 3. 리뷰 목록, 페이징 처리 기능을 화면에 표시한다.
+        let reviews = result.data.data;
+        let paging = result.data.paging;
+
         for (let review of reviews) {
             appendReview(review);
         }
+        pagingReviews(paging);
     }
 
-    getReviews();
+    getReviews(1);
 
     // 입력한 코스 리뷰 정보(코스번호, 제목, 내용, 첨부파일)를 컨트롤러에 제출한다.
     async function submitReview() {
@@ -214,6 +234,7 @@
 	                <div id="box-images-\${review.no}"></div>
 	            </div>
 	            <div class="card-footer text-end">
+                    <button class="btn btn-success btn-sm" onclick="modifyReview(\${review.no})">수정</button>
 	                <button class="btn btn-danger btn-sm" onclick="removeReview(\${review.no})">삭제</button>
 	            </div>
 	        </div>
@@ -235,6 +256,41 @@
         }
     }
 
+    // 페이징 처리 기능을 사용한다.
+    function pagingReviews(paging) {
+        let pages = "";
+
+        pages += `
+            <li class="page-item \${paging.first ? 'disabled' : ''}">
+                <a class="page-link" href="" onclick="getReviews(\${paging.prevPage}, event)">이전</a>
+            </li>
+        `;
+
+        for (let num = paging.beginPage; num <= paging.endPage; num++) {
+            pages += `
+                <li class="page-item">
+                    <a class="page-link \${paging.page == num ? 'active' : ''}"
+                       href="" onclick="getReviews(\${num}, event)">\${num}</a>
+                </li>
+            `;
+        }
+
+        pages += `
+            <li class="page-item \${paging.last ? 'disabled' : ''}">
+                <a class="page-link" href="" onclick="getReviews(\${paging.nextPage}, event)">다음</a>
+            </li>
+        `;
+
+        document.querySelector("#paging").innerHTML = pages;
+    }
+
+    // 리뷰를 수정한다.
+    async function modifyReview(reviewNo) {
+        // 리뷰 번호를 서버에 보낸다.
+
+        // 로그인한 사용자와 리뷰 수정하는 자가 동일한 지 확인 후, 리뷰를 수정한다.
+    }
+
     // 리뷰를 삭제한다.
     async function removeReview(reviewNo) {
         // 1. 리뷰 번호를 서버에 보낸다.
@@ -246,6 +302,7 @@
 
         if (response.ok) {
             if (status === 500) {
+                // message = "해당 리뷰 작성자만 삭제 가능합니다."
                 let message = result.message;
                 alert(message);
             } else {
@@ -253,7 +310,7 @@
                 div.remove();
             }
         } else {
-            alert("로그인한 해당 리뷰 작성자만 삭제 가능합니다.");
+            alert("로그인 후 이용 가능합니다.");
         }
     }
 </script>

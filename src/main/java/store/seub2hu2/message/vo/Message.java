@@ -15,11 +15,12 @@ public class Message {
 
     private int messageNo;
     private int userNo;
+    private String senderNickname;
     private String title;
     private String content;
     private Date createdDate;
     private Date updatedDate;
-    private String Deleted;
+    private String deleted;
     private MessageFile messageFile;
 
 }

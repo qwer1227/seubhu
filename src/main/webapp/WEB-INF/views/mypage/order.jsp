@@ -4,6 +4,46 @@
 <html lang="ko">
 <head>
     <%@include file="/WEB-INF/views/common/common.jsp" %>
+    <style>
+        .tab-content {
+            display: none; /* 기본적으로 모든 탭 내용을 숨기기 */
+        }
+        .tab-content.active {
+            display: table-row; /* 활성화된 탭 내용만 보이기 */
+        }
+
+        .btn-no-style {
+            background: none;
+            border: none;
+            color: inherit;
+            text-decoration: none;
+            padding: 5px 15px;
+            cursor: pointer;
+            font-size: 18px; /* 기본 글씨 크기 */
+            transition: all 0.3s ease; /* 애니메이션 효과 */
+        }
+
+        .btn-no-style:hover {
+            transform: scale(1.1); /* hover 시 글씨 크기 확대 */
+        }
+
+        .btn-no-style:active,
+        .btn-no-style:focus {
+            text-decoration: underline; /* 클릭 시 밑줄 */
+            font-weight: bold; /* 클릭 시 진하게 표시 */
+        }
+
+        .border-right {
+            border-right: 1px solid #ccc; /* 버튼 오른쪽에 선 추가 */
+            padding-right: 10px; /* 버튼과 선 사이에 여백 */
+        }
+
+        .border-left {
+            border-left: 1px solid #ccc; /* 버튼 오른쪽에 선 추가 */
+            padding-left: 10px; /* 버튼과 선 사이에 여백 */
+        }
+
+    </style>
 </head>
 <body>
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
@@ -26,20 +66,21 @@
                         <th colspan="3">주문상품</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="order-items">
                     <c:forEach items="${orderItems}" var="item">
                         <tr>
                             <td>
                                 <img src="${item.imgThum}" class="rounded mx-auto d-block" width="90">
                             </td>
                             <td>
-                                <span>${item.product.name}</span>
-                                <p class="text-secondary">[${item.color.name}/${item.size.size}] /  ${item.stock}개</p>
+                                <div data-prodNo="${item.product.no}"></div>
+                                <span data-prodName="${item.product.name}">${item.product.name}</span>
+                                <p class="text-secondary" id="stock-${item.size.no}" data-sizeNo="${item.size.no}" data-stock="${item.stock}">[${item.color.name}/${item.size.size}] / ${item.stock}개</p>
 
                             </td>
                             <td class="text-end">
-                                <span><fmt:formatNumber value="${item.product.price * item.stock}"/> 원</span>
-                                <button type="button" class="btn btn-lg delete-button" data-target-id="#item-\${sizeNo}"><i class="bi bi-x"></i></button>
+                                <span id="price-${item.size.no}" data-price="${item.product.price}"><fmt:formatNumber value="${item.product.price * item.stock}"/> 원</span>
+                                <button type="button" class="btn btn-lg delete-button" data-target-id="#item-${item.size.no}}"><i class="bi bi-x"></i></button>
                             </td>
                         </tr>
                     </c:forEach>
@@ -65,72 +106,92 @@
                 </colgroup>
                 <tbody>
                     <tr>
-                        <th><a href="#" class="text-secondary">최신 배송지</a></th>
-                        <th><a href="#" class="text-secondary">신규 입력</a></th>
-                    </tr>
-                    <tr>
-                        <th>받으실 분</th>
-                        <td>
-                            <input type="text" name="name" class="form-control me-2" placeholder="이름을 입력하세요" required>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>주소</th>
-                        <td>
-                            <div class="d-flex align-items-center mb-2">
-                                <input type="text" name="postcode" class="form-control me-2" id="postcode" placeholder="우편번호" required readonly>
-                                <input type="button" onclick="openPostcode()" class="btn btn-secondary" value="우편번호검색">
+                        <th colspan="3">
+                            <div class="d-flex">
+                                <button class="btn btn-no-style btn-sm w-50 me-2 border-left border-right">최신 배송지</button>
+                                <button class="btn btn-no-style btn-sm w-50 border-right border-left">신규 입력</button>
                             </div>
-                                <input type="text" name="address" id="address" class="form-control mb-2" placeholder="기본주소"/>
-                                <input type="text" name="address-detail" id="address-detail" class="form-control mb-2" placeholder="나머지 주소(선택입력 가능)"/>
-                                <input type="text" name="address-extra" id="address-extra" class="form-control mb-2" placeholder="참고항목"/>
+                        </th>
+                    </tr>
+                    <!--  배송 주소록 -->
+                    <tr class="tab-content" id="latest-tab">
+                        <td colspan="3">
+                            <table class="table">
+                                <tr>
 
+                                </tr>
+                            </table>
                         </td>
                     </tr>
-                    <tr>
-                        <th><label>휴대폰 번호</label></th>
-                        <td>
-                            <div class="d-flex">
-                                <input type="text" class="form-control" value="010">
-                                <input type="text" class="form-control">
-                                <input type="text" class="form-control">
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th><label>이메일</label></th>
-                        <td>
-                            <div class="d-flex">
-                                <input type="email" class="form-control"> @
-                                <input type="email" class="form-control">
-                                <select class="form-control" name="email">
-                                    <option>선택하세요</option>
-                                    <option>직접입력</option>
-                                    <option>gmail.com</option>
-                                    <option>naver.com</option>
-                                    <option>hanmail.net</option>
-                                </select>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th><label>배송 메모</label></th>
-                        <td>
-                            <input type="text" class="form-control" id="memo-box-direct" name="memo-box-direct" />
-                            <select id="memo-box" class="form-control" name="memo">
-                                <option value="">-- 메시지 선택 --</option>
-                                <option value="배송 전에 미리 연락바랍니다.">배송 전에 미리 연락바랍니다.</option>
-                                <option value="부재 시 경비실에 맡겨주세요.">부재 시 경비실에 맡겨주세요.</option>
-                                <option value="부재 시 문 앞에 놓아주세요.">부재 시 문 앞에 놓아주세요.</option>
-                                <option value="빠른 배송 부탁드립니다.">빠른 배송 부탁드립니다.</option>
-                                <option value="택배함에 보관해주세요.">택배함에 보관해주세요.</option>
-                                <option value="direct">직접입력</option>
-                            </select>
+
+                    <!-- 신규 입력 내용 (초기값으로 표시됨) -->
+                    <tr class="tab-content active" id="new-tab">
+                        <td colspan="3">
+                            <table class="table">
+                                <tr>
+                                    <th>받으실 분</th>
+                                    <td>
+                                        <input type="text" name="name" class="form-control me-2" placeholder="이름을 입력하세요" required>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>주소</th>
+                                    <td>
+                                        <div class="d-flex align-items-center mb-2">
+                                            <input type="text" name="postcode" class="form-control me-2" id="postcode" placeholder="우편번호" required readonly>
+                                            <input type="button" onclick="openPostcode()" class="btn btn-secondary" value="우편번호검색">
+                                        </div>
+                                        <input type="text" name="address" id="address" class="form-control mb-2" placeholder="기본주소"/>
+                                        <input type="text" name="address-detail" id="address-detail" class="form-control mb-2" placeholder="나머지 주소(선택입력 가능)"/>
+                                        <input type="text" name="address-extra" id="address-extra" class="form-control mb-2" placeholder="참고항목"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th><label>휴대폰 번호</label></th>
+                                    <td>
+                                        <div class="d-flex">
+                                            <input type="text" class="form-control" id="phone-number" name="phone-number">
+                                            <div id="phone-error" style="color: red; font-size: 12px; display: none;"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th><label>이메일</label></th>
+                                    <td>
+                                        <div class="d-flex">
+                                            <input type="email" id="email-user-name" name="email-user-name" class="form-control" oninput="validateEmail()"> @
+                                            <input type="email" id="email-domain" class="form-control" name="email-domain" disabled oninput="validateEmail()">
+                                            <select id="email-selector" class="form-control" name="email" onchange="updateEmailDomain()" oninput="validateEmail()">
+                                                <option>선택하세요</option>
+                                                <option value="direct">직접입력</option>
+                                                <option value="gmail.com">gmail.com</option>
+                                                <option value="naver.com">naver.com</option>
+                                                <option value="hanmail.net">hanmail.net</option>
+                                            </select>
+                                        </div>
+                                        <div id="error-message" style="color: red; display: none;">유효하지 않은 이메일 주소입니다.</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th><label class="form-check-label" for="memo-box">배송 메모</label></th>
+                                    <td>
+                                        <select id="memo-box" class="form-control" name="memo" aria-labelledby="memo-label">
+                                            <option value="" selected>-- 메시지 선택 --</option>
+                                            <option value="배송 전에 미리 연락바랍니다.">배송 전에 미리 연락바랍니다.</option>
+                                            <option value="부재 시 경비실에 맡겨주세요.">부재 시 경비실에 맡겨주세요.</option>
+                                            <option value="부재 시 문 앞에 놓아주세요.">부재 시 문 앞에 놓아주세요.</option>
+                                            <option value="빠른 배송 부탁드립니다.">빠른 배송 부탁드립니다.</option>
+                                            <option value="택배함에 보관해주세요.">택배함에 보관해주세요.</option>
+                                            <option value="direct">직접입력</option>
+                                        </select>
+                                        <input type="text" class="form-control" id="memo-box-direct" name="memo-direct"  placeholder="배송 메모를 입력하세요"/>
+                                    </td>
+                                </tr>
+                            </table>
                         </td>
                     </tr>
                 </tbody>
             </table>
-            <button class="btn btn-outline-secondary" type="submit">저장</button>
         </div>
     </div>
     <!--
@@ -183,10 +244,10 @@
                 <tbody>
                     <tr>
                         <th><label>결제 수단</label></th>
-                        <td><input type="radio"><img src="https://ecimg.cafe24img.com/pg90b05313110010/brooksrunning/web/upload/icon_202210121023113100.png" /></td>
-                        <td><input type="radio" checked><img src="https://ecimg.cafe24img.com/pg90b05313110010/brooksrunning/web/upload/icon_202210121022402200.png"/></td>
-                        <td><input type="radio"><img src="https://img.echosting.cafe24.com/design/skin/admin/ko_KR/ico_payco_disabled.gif" /></td>
-                        <td><input type="radio"><img src="https://img.echosting.cafe24.com/skin/admin_ko_KR/order/admin_naverpay_disabled.gif" /></td>
+                        <td><input type="radio" name="paymentMethod" value="신용카드"><img src="https://ecimg.cafe24img.com/pg90b05313110010/brooksrunning/web/upload/icon_202210121023113100.png" /></td>
+                        <td><input type="radio" name="paymentMethod" value="카카오페이" checked><img src="https://ecimg.cafe24img.com/pg90b05313110010/brooksrunning/web/upload/icon_202210121022402200.png"/></td>
+                        <td><input type="radio" name="paymentMethod" value="페이코"><img src="https://img.echosting.cafe24.com/design/skin/admin/ko_KR/ico_payco_disabled.gif" /></td>
+                        <td><input type="radio" name="paymentMethod" value="네이버페이"><img src="https://img.echosting.cafe24.com/skin/admin_ko_KR/order/admin_naverpay_disabled.gif" /></td>
                     </tr>
                 </tbody>
             </table>
@@ -208,29 +269,29 @@
                 <tbody>
                 <tr>
                     <td class="text-start">상품금액</td>
-                    <td class="text-end">169,000 원</td>
+                    <td class="text-end" id="total-price"> 0 원</td>
                 </tr>
                 <tr>
                     <td class="text-start">배송비</td>
-                    <td class="text-end">0 원</td>
+                    <td class="text-end" id="delivery-price">0 원</td>
                 </tr>
                 <tr>
                     <td class="text-start">총 할인금액</td>
-                    <td class="text-end">0 원</td>
+                    <td class="text-end" id="discount-price">0 원</td>
                 </tr>
                 <tr>
                     <td class="text-start">
                         <strong>총결제 금액</strong>
                     </td>
                     <td class="text-end">
-                        <strong class="text-danger fs-4">169,000 원</strong>
+                        <strong class="text-danger fs-4" id="final-total-price"> 0 원</strong>
                     </td>
                 </tr>
                 </tbody>
             </table>
             <div class="d-grid gap-2">
                 <button class="col btn btn-dark" type="button" disabled>주문취소하기</button>
-                <button class="col btn btn-dark" type="button" disabled>결제하기</button>
+                <button class="col btn btn-dark" type="submit">결제하기 <small id="total-quantity"></small></button>
             </div>
         </div>
 </div>
@@ -283,24 +344,298 @@
                     document.getElementById("address-detail").focus();
                 }
             }).open();
+        }
 
-            $(function() {
-                // 직접 입력 인풋박스 기존에는 숨어있다가
-                $("#memo-box-direct").hide();
+        $(document).ready(function () {
+            //
+            $("#memo-box-direct").hide();
 
-                $("#memo-box").change(function () {
-                    // 직접 입력 누를 때 나타남
-                    if($("#memo-box").val() === "direct") {
-                        $("#memo-box-direct").show();
-                    } else {
-                        $("#memo-box-direct").hide();
+            // 변경 이벤트 처리
+            $("#memo-box").change(function () {
+                if ($(this).val() === "direct") {
+                    $("#memo-box-direct").show();
+                } else {
+                    $("#memo-box-direct").hide().val("");
+                }
+            });
+        });
+
+        // 핸드폰 번호 정규식
+        $(document).on("focus", "#phone-number", function() {
+            // 입력 시 자동으로 010을 채워넣기
+            if ($(this).val() === "") {
+                $(this).val("010");
+            }
+        });
+
+        $(document).on("keyup", "#phone-number", function() {
+            var phoneNumber = $(this).val().replace(/[^0-9]/g, "");  // 숫자만 남기기
+
+            // 입력이 비어있으면 에러 메시지 제거
+            if (phoneNumber === "") {
+                $("#phone-error").text("").hide();  // 에러 메시지 숨기기
+                return;
+            }
+
+            // 전화번호가 010으로 시작하는지 체크
+            if (phoneNumber.startsWith("010")) {
+                // 길이가 10자리 이상이고 11자리 이하일 때만 유효
+                if (phoneNumber.length >= 10 && phoneNumber.length <= 11) {
+                    // 010으로 시작하면 포맷팅: 010-xxxx-xxxx
+                    $(this).val(
+                        phoneNumber
+                            .replace(/^(\d{3})(\d{1,4})(\d{0,4})$/, function(_, p1, p2, p3) {
+                                if (p3) {
+                                    return p1 + '-' + p2 + '-' + p3;  // 010-xxxx-xxxx 형식
+                                } else if (p2) {
+                                    return p1 + '-' + p2;  // 010-xxxx 형식
+                                } else {
+                                    return p1;  // 010만 있을 경우
+                                }
+                            })
+                    );
+
+                    // 에러 메시지 숨기기
+                    $("#phone-error").text("").hide();
+                } else {
+                    // 길이가 잘못된 경우, 에러 메시지 표시
+                    $(this).val(phoneNumber);  // 숫자만 남기고 입력
+
+                    // 에러 메시지가 이미 있으면 새로 추가하지 않도록 처리
+                    if ($("#phone-error").length === 0) {
+                        $(this).after('<div id="phone-error" style="color: red; font-size: 12px;"></div>');
                     }
-                })
+
+                    // 에러 메시지 업데이트
+                    $("#phone-error").text("전화번호는 010-xxxx-xxxx 형식이어야 합니다.").show();
+                }
+            } else {
+                // 010으로 시작하지 않으면 잘못된 입력으로 처리
+                $(this).val(phoneNumber);  // 숫자만 남기고 입력
+
+                // 에러 메시지가 이미 있으면 새로 추가하지 않도록 처리
+                if ($("#phone-error").length === 0) {
+                    $(this).after('<div id="phone-error" style="color: red; font-size: 12px;"></div>');
+                }
+
+                // 에러 메시지 업데이트
+                $("#phone-error").text("올바른 전화번호 형식(010-xxxx-xxxx)을 입력해주세요.").show();
+            }
+        });
+
+        // 이메일 유효성 검사 함수
+        function isValidEmail(email) {
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            return emailRegex.test(email);
+        }
+
+        // 이메일 도메인 갱신 함수
+        function updateEmailDomain() {
+            const domainSelector = document.getElementById('email-selector');
+            const emailDomainInput = document.getElementById('email-domain');
+
+            if (domainSelector.value === 'direct') {
+                emailDomainInput.disabled = false;  // 사용자가 직접 입력할 수 있도록 활성화
+                emailDomainInput.placeholder = '도메인 입력';
+                emailDomainInput.value = '';  // 기존 선택된 값 지우기
+            } else {
+                emailDomainInput.disabled = true;  // 도메인 입력을 비활성화
+                emailDomainInput.value = domainSelector.value;  // 선택한 도메인 자동 입력
+            }
+            validateEmail();  // 도메인 갱신 후 즉시 유효성 검사
+        }
+
+        // 실시간 이메일 유효성 검사 함수
+        function validateEmail() {
+            const emailUsername = document.getElementById('email-user-name').value;
+            const emailDomain = document.getElementById('email-domain').value;
+            const emailSelector = document.getElementById('email-selector');
+            const errorMessage = document.getElementById('error-message');
+
+            // 이메일을 완성하기
+            const fullEmail = emailUsername + '@' + (emailDomain || emailSelector.value);
+
+            // 이메일 입력이 비어있거나, 이메일 형식이 잘못되었을 경우 에러 메시지 숨기기
+            if (!emailUsername || !fullEmail || !isValidEmail(fullEmail)) {
+                errorMessage.style.display = 'none';  // 이메일이 비어있거나 형식이 잘못되면 에러 메시지 숨기기
+                return;
+            }
+
+            // 이메일 유효성 검사
+            if (isValidEmail(fullEmail)) {
+                errorMessage.style.display = 'block';  // 에러 메시지 표시
+                errorMessage.textContent = '유효한 이메일 주소입니다.';  // 유효한 이메일 메시지
+                errorMessage.style.color = 'green';  // 글씨 색을 초록색으로 변경
+            } else {
+                errorMessage.style.display = 'block';  // 에러 메시지 표시
+                errorMessage.textContent = '유효하지 않은 이메일 주소입니다.';  // 유효하지 않은 이메일 메시지
+                errorMessage.style.color = 'red';  // 글씨 색을 빨간색으로 변경
+            }
+        }
+
+        $(document).ready(function() {
+            // 초기 상태 설정 (기본적으로 신규 입력 탭을 활성화)
+            $('#new-tab').addClass('active');
+            $('#latest-tab').removeClass('active');
+
+            // 버튼 클릭 시 탭 전환
+            $('.btn-no-style').click(function() {
+                const tabId = $(this).text() === '최신 배송지' ? '#latest-tab' : '#new-tab';
+
+                // 모든 탭 내용 숨기고 선택된 탭만 보이게
+                $('.tab-content').removeClass('active');
+                $(tabId).addClass('active');
+            });
+        });
+
+        // 총 계산
+        $(document).ready(function() {
+            // 기본 변수 초기화
+            let totalPrice = 0; // 주문 상품들 총 가격
+            let totalQuantity = 0; // 총 수량
+            let deliveryPrice = 0; // 배송비 초기값
+            let discountPrice = 0; // 할인 금액
+
+            // 각 아이템에 대해 반복 처리
+            $('#order-items tr').each(function() {
+                // 각 아이템의 가격과 재고 가져오기
+                let price = parseInt($(this).find('[id^="price-"]').data('price'));  // 가격
+                let stock = parseInt($(this).find('[id^="stock-"]').data('stock'));  // 재고
+
+                // 상품의 총 금액 계산
+                let itemTotalPrice = price * stock;
+                totalPrice += itemTotalPrice;  // 총 금액 합산
+
+                totalQuantity += stock;
             });
 
+            // 배송비 계산 (50,000원 이상이면 배송비 면제)
+            if (totalPrice >= 50000) {
+                deliveryPrice = 0; // 배송비 면제
+            } else {
+                deliveryPrice = 3000; // 예시 배송비 3000원
+            }
+
+            // 할인금액 계산 (예시: 할인율 50%)
+            discountPrice = totalPrice * 0.5;
+
+            // 최종 결제 금액 계산
+            let finalTotalPrice = totalPrice + deliveryPrice - discountPrice;
+
+            // HTML에 값 설정
+            $('#total-price').text(totalPrice.toLocaleString() + ' 원');
+            $('#delivery-price').text(deliveryPrice.toLocaleString() + ' 원');
+            $('#discount-price').text(discountPrice.toLocaleString() + ' 원');
+            $('#final-total-price').text(finalTotalPrice.toLocaleString() + ' 원');
+            $('#total-quantity').text(`(` +totalQuantity + ' 개)');
+        });
 
 
-        }
+        // 주문 정보 담기
+        $(document).ready(function () {
+            // 주문 정보 가져오기: 담을 그릇을 만들기
+            const orderData = {
+                orderItems: [], // 주문 상품들
+                deliveryInfo: {}, // 배송지 정보
+                paymentInfo: {}, // 결제 정보
+                totalPriceInfo: {}, // 가격 정보(상품 총 금액, 배송비, 할인금액 등)
+            };
+
+            const orderItem = [];
+            // 주문 상품 정보 가져오기
+            $("#order-items tr").each(function () {
+                const item = {
+                    prodNo: $(this).find("[data-prodNo]").data("prodno"),
+                    prodName: $(this).find("[data-prodName]").data("prodname"),
+                    sizeNo: $(this).find('[data-sizeNo]').data('sizeno'),
+                    stock: $(this).find('[data-stock]').data('stock'),
+                    price: parseInt($(this).find('[data-price]').data('price'))
+                }
+                orderItem.push(item);
+            });
+            orderData.orderItems = orderItem;
+            console.log(orderItem);
+
+            // 배송지 정보
+            const deliveryInfo = {
+                recipientName: $("input[name='name']").val(),
+                postcode: $("input[name='postcode']").val(),
+                address: $("input[name='address']").val(),
+                addressDetail: $("input[name='address-detail']").val(),
+                phoneNumber: $("input[name='phone-number']").val(),
+                email:$("input[name='email-user-name']").val() + "@" + $("input[name='email-domain']").val(),
+                memo: $("#memo-box").val()
+            }
+            orderData.deliveryInfo = deliveryInfo;
+            console.log(deliveryInfo);
+
+            // 결제 정보 수집
+            const paymentInfo = {
+                paymentMethod: $("input[name='paymentMethod']:checked").val(), // 결제 방법
+            };
+            orderData.paymentInfo = paymentInfo;
+            console.log(paymentInfo);
+
+            // 총 계산
+            let totalPrice = 0; // 주문 상품들 총 가격
+            let totalQuantity = 0; // 총 수량
+            let deliveryPrice = 0; // 배송비 초기값
+            let discountPrice = 0; // 할인 금액
+
+            // 각 아이템에 대해 반복 처리
+            $('#order-items tr').each(function() {
+                // 각 아이템의 가격과 재고 가져오기
+                let price = parseInt($(this).find('[id^="price-"]').data('price'));  // 가격
+                let stock = parseInt($(this).find('[id^="stock-"]').data('stock'));  // 재고
+
+                // 상품의 총 금액 계산
+                let itemTotalPrice = price * stock;
+                totalPrice += itemTotalPrice;  // 총 금액 합산
+                totalQuantity += stock;
+            });
+
+            // 배송비 계산 (50,000원 이상이면 배송비 면제)
+            if (totalPrice >= 50000) {
+                deliveryPrice = 0; // 배송비 면제
+            } else {
+                deliveryPrice = 3000; // 예시 배송비 3000원
+            }
+
+            // 할인금액 계산 (예시: 할인율 10%)
+            discountPrice = totalPrice * 0.1;
+
+            // 최종 결제 금액 계산
+            let finalTotalPrice = totalPrice + deliveryPrice - discountPrice;
+
+            // 가격 정보 저장
+            orderData.totalPriceInfo = {
+                totalPrice: totalPrice,
+                deliveryPrice: deliveryPrice,
+                discountPrice: discountPrice,
+                finalTotalPrice: finalTotalPrice,
+                totalQuantity: totalQuantity
+            };
+
+            console.log(orderData);
+
+            // 서버에 요청
+            $.ajax({
+                url: '/pay/ready', // 서버 URL
+                method: 'POST', // HTTP 요청 방식
+                contentType: 'application/json', // JSON 형식으로 데이터 전송
+                data: JSON.stringify(orderData), // JSON.stringify()로 객체를 JSON 문자열로 변환
+
+                success: function (response) {
+                    // response => {tid:"xxx", next_redirect_pc_url:"카카오결재화면URL"}
+                    location.href = response.next_redirect_pc_url;
+                },
+                error: function (xhr, status, error) {
+                    alert('결제 준비 중 문제가 발생했습니다: ' + error);
+                }
+            });
+        });
+
+
     </script>
 
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
