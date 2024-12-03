@@ -156,6 +156,52 @@
     </insert>
 
     <!--
+        List<Color> insertStock(@Param("condition") Map<String, Object> condition);
+    -->
+
+    <update id="insertStock">
+        update
+            PROD_SIZES PS
+        JOIN
+            PROD_COLORS PC
+        ON
+            PC.color_no = PS.color_no
+        set
+            PS.PROD_AMOUNT = #{condition.amount}
+        where
+            PC.prod_no = #{condition.no}
+        and
+            PC.color_name = #{condition.colorName}
+        and
+            PS.prod_size = #{condition.size}
+    </update>
+
+    <!--
+        상품번호와 색상명으로 재고수량 조회
+        List<Color> getStockByColorNumber(Map<String, Object> condition);
+    -->
+    <select id="getStockByColorNumber" resultType="store.seub2hu2.product.vo.Color">
+        select
+            PC.prod_no         as "product.no"
+            , PC.color_no      as no
+            , PC.color_name    as name
+            , PS.PROD_SIZE	   as "size.size"
+            , PS.prod_amount   as "size.amount"
+        from
+            PROD_COLORS PC
+        JOIN
+            PROD_SIZES PS
+        ON
+            PC.COLOR_NO = PS.COLOR_NO
+        where
+            prod_no = #{condition.no}
+        and
+            color_name = #{condition.colorName}
+        order by
+            PS.prod_size asc;
+    </select>
+
+    <!--
         상품 번호로 상품색상 테이블 내용 조회
         List<Color> colorNames(int no);
     -->

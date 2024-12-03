@@ -8,10 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import store.seub2hu2.admin.dto.ColorThumbnailForm;
-import store.seub2hu2.admin.dto.CourseRegisterForm;
-import store.seub2hu2.admin.dto.ImageUrlDto;
-import store.seub2hu2.admin.dto.ProductRegisterForm;
+import store.seub2hu2.admin.dto.*;
 import store.seub2hu2.admin.service.AdminService;
 import store.seub2hu2.course.service.CourseService;
 import store.seub2hu2.course.vo.Course;
@@ -510,11 +507,29 @@ public class AdminController {
     @GetMapping("/product-stock-detail")
     public String getProductStockDetail(@RequestParam("no") int no,
                                         @RequestParam("colorNo") Integer colorNo,
+                                        @RequestParam(name = "colorName", required = false) String colorName,
                                      Model model) {
 
         Product product = adminService.getProductNo(no);
         List<Color> colors = adminService.getColorName(no);
+        List<Size> sizes = adminService.getAllSizeByColorNo(colorNo);
 
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("no", no);
+        condition.put("colorName", colorName);
+
+        List<Color> colorSize = adminService.getStockByColorNum(condition);
+
+        if (colorSize == null || colorSize.isEmpty()) {
+            model.addAttribute("colorSize", colorSize);
+            model.addAttribute("sizeMessage", "사이즈 정보가 없습니다.");
+        } else {
+            model.addAttribute("colorSize", null);
+            model.addAttribute("sizeMessage", "사이즈 정보가 없습니다.");
+        }
+
+        model.addAttribute("colorSize", colorSize);
+        model.addAttribute("sizes", sizes);
         model.addAttribute("product", product);
         model.addAttribute("colors", colors);
 
@@ -522,16 +537,36 @@ public class AdminController {
     }
     @PostMapping("/product-stock-detail")
     public String productStockDetail(@RequestParam("no") int no,
+                                     @RequestParam(name = "colorNo") Integer colorNo,
+                                     @RequestParam(name = "colorName", required = false) String colorName,
+                                     @RequestParam("size") List<String> size,
+                                     @RequestParam("amount") List<Integer> amount,
                                      Model model) {
 
-        return "admin/product-stock-detail";
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("no", no);
+        condition.put("colorName", colorName);
+
+        for (int i =0; i< size.size(); i++) {
+            String currentSize = size.get(i);
+            Integer currentAmount = amount.get(i);
+
+            condition.put("size", currentSize);
+            condition.put("amount", currentAmount);
+
+            System.out.println("condition:" + condition);
+
+            adminService.getInsertStock(condition);
+        }
+
+        return "redirect:/admin/product-detail?no=" + no + "&colorNo=" + colorNo;
     }
 
     @GetMapping("/product-stock")
     public String getProductStock(@RequestParam(name= "topNo") int topNo,
                                   @RequestParam(name = "catNo", required = false, defaultValue = "0") int catNo,
                                   @RequestParam(name = "page", required = false, defaultValue = "1") int page,
-                                  @RequestParam(name = "rows", required = false, defaultValue = "5") int rows,
+                                  @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
                                   @RequestParam(name = "sort" , required = false, defaultValue = "date") String sort,
                                   @RequestParam(name = "opt", required = false) String opt,
                                   @RequestParam(name = "value", required = false) String value,

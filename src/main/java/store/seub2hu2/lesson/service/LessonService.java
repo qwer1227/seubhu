@@ -29,7 +29,6 @@ public class LessonService {
     private final LessonFileService lessonFileService;
     private final LessonReservationMapper lessonReservationMapper;
     private final UserMapper userMapper;
-    private final UserService userService;
 
     public List<Lesson> getAllLessons(Map<String, Object> param, String subject) {
         return lessonMapper.getAllLessons(param, subject);
