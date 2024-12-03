@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import store.seub2hu2.lesson.dto.LessonUpdateDto;
 import store.seub2hu2.lesson.dto.ReservationSearchCondition;
+import store.seub2hu2.lesson.enums.LessonStatus;
 import store.seub2hu2.lesson.enums.ReservationStatus;
 import store.seub2hu2.payment.dto.PaymentDto;
 import store.seub2hu2.lesson.mapper.LessonMapper;
@@ -41,12 +42,15 @@ public class LessonReservationService {
         try {
             // 1. 레슨 정보 조회
             Lesson lesson = lessonMapper.getLessonByNo(paymentDto.getLessonNo());
+            LessonUpdateDto lessonUpdateDto = new LessonUpdateDto();
+            lessonUpdateDto.setLessonNo(paymentDto.getLessonNo());
+            lessonUpdateDto.setParticipant(lesson.getParticipant());
 
             if (lesson == null) {
                 throw new RuntimeException("존재하지 않는 레슨입니다. LessonNo: " + paymentDto.getLessonNo());
             }
 
-            if(paymentDto.getUserId() == null) {
+            if (paymentDto.getUserId() == null) {
                 throw new RuntimeException("로그인 되지 않은 상태입니다. userId : " + paymentDto.getUserId());
             }
 
@@ -82,12 +86,12 @@ public class LessonReservationService {
             lessonReservationMapper.insertLessonReservation(lessonReservation);
 
             // 5. 참가자 수 업데이트
-            lesson.setParticipant(lesson.getParticipant() + 1);
+            lessonUpdateDto.setParticipant(lesson.getParticipant() + 1);
+            if (lessonUpdateDto.getParticipant() == 5) {
+                lessonUpdateDto.setStatus("마감");
+                lessonMapper.updateLessonStatus(lessonUpdateDto);
+            }
             log.info("참가자 수 업데이트 할 lesson = {}", lesson);
-
-            LessonUpdateDto lessonUpdateDto = new LessonUpdateDto();
-            lessonUpdateDto.setLessonNo(paymentDto.getLessonNo());
-            lessonUpdateDto.setParticipant(lesson.getParticipant());
             lessonMapper.updateLessonParticipant(lessonUpdateDto); // 업데이트 후 커밋
 
             log.info("레슨 예약 저장 완료: {}", paymentDto);
@@ -111,11 +115,11 @@ public class LessonReservationService {
 
         // startDate와 endDate 초기화 및 기본값 설정
         if (condition.getStart() == null) {
-                condition.setStart(LocalDate.now().minusMonths(1)); // 기본값: 한 달 전
+            condition.setStart(LocalDate.now().minusMonths(1)); // 기본값: 한 달 전
         }
 
         if (condition.getEnd() == null) {
-                condition.setEnd(LocalDate.parse(condition.getEndDate(), formatter));
+            condition.setEnd(LocalDate.parse(condition.getEndDate(), formatter));
         }
 
         log.info("condition.getStart() = {}", condition.getStart());
@@ -134,10 +138,15 @@ public class LessonReservationService {
         lessonReservationMapper.updateReservationStatus(paymentId, status.label());
 
         // 레슨 예약 인원 감소
-        Lesson lesson  = lessonService.getLessonByNo(lessonNo);
+        Lesson lesson = lessonService.getLessonByNo(lessonNo);
         LessonUpdateDto lessonUpdateDto = new LessonUpdateDto();
         lessonUpdateDto.setLessonNo(lessonNo);
+        int participant = lesson.getParticipant();
         lessonUpdateDto.setParticipant(lesson.getParticipant() - 1);
+        if (participant == 5) {
+            lessonUpdateDto.setStatus(LessonStatus.RECRUITMENT.label());
+            lessonMapper.updateLessonStatus(lessonUpdateDto);
+        }
         lessonMapper.updateLessonParticipant(lessonUpdateDto);
 
         log.info("status.label() = {}", status.label());

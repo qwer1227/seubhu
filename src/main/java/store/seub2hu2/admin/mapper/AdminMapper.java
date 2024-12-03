@@ -80,6 +80,10 @@ public interface AdminMapper {
 
     void getChangeIsDeleted(@Param("size") Size size);
 
+    List<Color> getStockByColorNumber(@Param("condition") Map<String, Object> condition);
+
+    void insertStock(@Param("condition") Map<String, Object> condition);
+
     /*
      * 재고
      */

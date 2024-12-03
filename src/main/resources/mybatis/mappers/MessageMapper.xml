@@ -96,17 +96,17 @@
             M.MESSAGE_TITLE AS title,
             M.USER_NO AS senderUserNo,
             M.MESSAGE_CREATED_DATE AS createDate,
-            MR.MESSAGE_READ AS readStatus,
-            MR.MESSAGE_READ_DATE AS readDate
+            R.MESSAGE_READ AS readStatus,
+            R.MESSAGE_READ_DATE AS readDate
         FROM
-            MESSAGE_RECEIVERS MR
+            MESSAGE_RECEIVERS R
                 INNER JOIN
             MESSAGES M
             ON
-                MR.MESSAGE_NO = M.MESSAGE_NO
+                R.MESSAGE_NO = M.MESSAGE_NO
         WHERE
-            MR.USER_NO = #{condition.userNo}
-          AND MR.MESSAGE_DELETE = 'N'
+            R.USER_NO = #{condition.userNo}
+          AND R.MESSAGE_DELETE = 'N'
         ORDER BY M.MESSAGE_CREATED_DATE DESC
             LIMIT #{rows} OFFSET #{begin};
     </select>

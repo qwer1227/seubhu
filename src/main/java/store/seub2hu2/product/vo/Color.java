@@ -13,4 +13,5 @@ public class Color {
     private String name; // 색상명
     private String img;
     private Product product; // 상품 객체
+    private Size size;
 }

@@ -39,7 +39,8 @@
                     <td>
                         <span class="badge ${lesson.status == '모집중' ? 'bg-success'  :
                         lesson.status == '완료' ? 'bg-secondary' :
-                         lesson.status == '취소' ? 'bg-danger' : ''}">${lesson.status}</span>
+                         lesson.status == '취소' ? 'bg-danger' :
+                         lesson.status == '마감' ? 'bg-secondary' : '' }">${lesson.status}</span>
                     </td>
                 </tr>
                 <tr>

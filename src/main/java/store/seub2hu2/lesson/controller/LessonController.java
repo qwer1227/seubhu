@@ -139,5 +139,4 @@ public class LessonController {
         model.addAttribute("startTime", startTime);
         return "lesson/lesson-reservation-detail";
     }
-
 }

@@ -30,4 +30,9 @@ public interface LessonMapper {
     // 레슨 수강생 수 수정
     public void updateLessonParticipant(@Param("dto") LessonUpdateDto dto);
 
+    // 레슨 상태 변경
+    public void updateLessonStatus(@Param("dto") LessonUpdateDto dto);
+
+    public void updatePastLessonStatus(@Param("dto") LessonUpdateDto dto);
+
 }
