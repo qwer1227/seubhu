@@ -35,6 +35,14 @@
                     <td>${lesson.title}</td>
                 </tr>
                 <tr>
+                    <th>모집상태</th>
+                    <td>
+                        <span class="badge ${lesson.status == '모집중' ? 'bg-success'  :
+                        lesson.status == '완료' ? 'bg-secondary' :
+                         lesson.status == '취소' ? 'bg-danger' : ''}">${lesson.status}</span>
+                    </td>
+                </tr>
+                <tr>
                     <th>과목</th>
                     <td>${lesson.subject}</td>
                 </tr>
@@ -61,14 +69,6 @@
             </table>
         </div>
     </div>
-    <%--    <div class="row text-white text-start mb-3">--%>
-    <%--        <div class="col-2"></div>--%>
-    <%--        <div class="col-4 bg-black">${lesson.title}</div>--%>
-    <%--        <div class="col-1 bg-black">결제 금액</div>--%>
-    <%--        <div class="col-1 bg-black">${lesson.price}</div>--%>
-    <%--        <div class="col-2 bg-black"></div>--%>
-    <%--        <div class="col-2"></div>--%>
-    <%--    </div>--%>
     <div class="row text-end mb-3">
         <div class="col-2"></div>
         <div class="col border-bottom border-dark border-2 pb-3">
@@ -90,9 +90,9 @@
                         <button type="submit" class="btn btn-primary">수강신청</button>
                     </c:if>
                 </security:authorize>
-                    <c:if test="${empty loginUser}">
-                        <button type="button" id="non-login" class="btn btn-primary">수강신청</button>
-                    </c:if>
+                <c:if test="${empty loginUser}">
+                    <button type="button" id="non-login" class="btn btn-primary">수강신청</button>
+                </c:if>
             </form>
         </div>
         <div class="col-2"></div>

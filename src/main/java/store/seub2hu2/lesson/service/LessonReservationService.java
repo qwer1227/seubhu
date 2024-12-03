@@ -46,6 +46,10 @@ public class LessonReservationService {
                 throw new RuntimeException("존재하지 않는 레슨입니다. LessonNo: " + paymentDto.getLessonNo());
             }
 
+            if(paymentDto.getUserId() == null) {
+                throw new RuntimeException("로그인 되지 않은 상태입니다. userId : " + paymentDto.getUserId());
+            }
+
             log.info("레슨 예약 시도: {}", paymentDto);
             log.info("현재 참가자 수: {}", lesson.getParticipant());
 

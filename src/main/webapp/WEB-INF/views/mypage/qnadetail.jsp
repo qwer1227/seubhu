@@ -43,14 +43,42 @@
             line-height: 1.5;
         }
 
-        .btn-back {
-            background-color: #3498db;
+        .btn-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .btn-group-left {
+            display: flex;
+            justify-content: flex-start;
+            flex: 1;
+        }
+
+        .btn-group-right {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .btn-back, .btn-edit, .btn-delete {
             color: white;
             padding: 5px 10px;
             border-radius: 5px;
             text-decoration: none;
             font-weight: bold;
-            margin-top: 20px;
+        }
+
+        .btn-back {
+            background-color: #95a5a6; /* 회색 버튼 */
+        }
+
+        .btn-edit {
+            background-color: #3498db;
+        }
+
+        .btn-delete {
+            background-color: #e74c3c;
+            border: none; /* 삭제 버튼의 검은색 테두리 제거 */
         }
     </style>
 </head>
@@ -67,13 +95,26 @@
     <div class="inquiry-detail">
         <h3>${qna.qnaTitle}</h3>
         <p>${qna.qnaContent}</p>
-        <p><strong>작성일:</strong> ${qna.qnaCreatedDate}</p>
+        <p><strong>작성일:</strong> <fmt:formatDate value="${qna.qnaCreatedDate}" pattern="yyyy-MM-dd" timeZone="Asia/Seoul" /></p>
         <p><strong>문의 상태:</strong> ${qna.qnaStatus}</p>
         <p><strong>카테고리:</strong> ${qna.qnaCategory.categoryName}</p>
     </div>
 
-    <!-- Back Button -->
-    <a href="/qna" class="btn-back">목록으로 돌아가기</a>
+    <!-- Button Group -->
+    <div class="btn-group">
+        <!-- Left Side: "목록으로 돌아가기" button -->
+        <div class="btn-group-left">
+            <a href="/mypage/qna" class="btn-back">목록으로 돌아가기</a>
+        </div>
+
+        <!-- Right Side: "수정", "삭제" buttons -->
+        <div class="btn-group-right">
+            <a href="/mypage/qna/update/${qna.qnaNo}" class="btn-edit">수정</a>
+            <form action="/mypage/qna/delete/${qna.qnaNo}" method="post" style="display:inline;">
+                <button type="submit" class="btn-delete">삭제</button>
+            </form>
+        </div>
+    </div>
 
 </div>
 <%@ include file="/WEB-INF/views/common/footer.jsp" %>

@@ -48,6 +48,7 @@
 
     <select id="getQnaByQnaNo" resultMap="QnaResponseMap">
         SELECT
+            q.qna_no,
             q.qna_title,
             q.qna_content,
             q.qna_created_date,
@@ -60,5 +61,30 @@
         WHERE
             q.qna_no = #{qnaNo}
     </select>
+
+    <!-- void insertQna(@Param("userNo") int userNo); -->
+
+    <insert id="insertQna">
+        INSERT INTO USER_QNA
+        (QNA_TITLE, QNA_CONTENT, QNA_STATUS, QNA_CREATED_DATE, QNA_ISDELETED, QUESTION_USER_NO, CATEGORY_NO)
+        VALUES
+        (#{qna.qnaTitle}, #{qna.qnaContent}, 0, NOW(), 'N', #{qna.questionUserNo}, #{qna.categoryNo})
+    </insert>
+
+    <!-- void deleteQna(@Param("qnaNo") int qnaNo); -->
+
+    <update id="deleteQna">
+        UPDATE USER_QNA
+        SET QNA_ISDELETED = 'Y', QNA_STATUS = 2
+        WHERE QNA_NO = #{qnaNo}
+    </update>
+
+    <!-- void updateQna(@Param("qnaNo") int qnaNo, @Param("qna") QnaCreateRequest qnaCreateRequest); -->
+    
+    <update id="updateQna">
+        UPDATE USER_QNA
+        SET QNA_TITLE = #{qna.qnaTitle}, QNA_CONTENT = #{qna.qnaContent}, QNA_UPDATED_DATE = NOW(), CATEGORY_NO = #{qna.categoryNo}
+        WHERE QNA_NO = #{qnaNo}
+    </update>
 
 </mapper>

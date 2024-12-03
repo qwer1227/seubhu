@@ -26,6 +26,7 @@ public class User {
     private boolean terms;            // 이용약관 동의 여부
     private boolean privacy;          // 개인정보 수집 및 이용 동의 여부
     private String black;             // 블랙리스트
+    private Addr addr;
 
 
     @Builder.Default

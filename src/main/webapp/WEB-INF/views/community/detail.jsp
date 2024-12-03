@@ -83,29 +83,29 @@
     </div>
     
     <div class="actions d-flex justify-content-between mb-4">
-      <div>
-        <!-- 로그인 여부를 체크하기 위해 먼저 선언 -->
-        <security:authorize access="isAuthenticated()">
-        <!-- principal 프로퍼티 안의 loginUser 정보를 가져옴 -->
-        <!-- loginUser.no를 가져와서 조건문 실행 -->
-        <c:if test="${loginUser.no == board.user.no}">
-          <button class="btn btn-warning" onclick="updateBoard(${board.no})">수정</button>
-          <button class="btn btn-danger" onclick="deleteBoard(${board.no})">삭제</button>
-        </c:if>
-        <c:if test="${loginUser.no != board.user.no}">
-          <button type="button" class="btn btn-danger" onclick="report('board', ${board.no})">신고</button>
-        </c:if>
-      
-      </div>
-      <div>
-        <button class="btn btn-outline-primary" id="likeCnt"
-                onclick="boardLikeButton(${board.no}, ${loginUser.getNo()})">
-          <i id="icon-heart"
-             class="bi ${boardLiked == '1' ? 'bi-heart-fill' : (boardLiked == '0' ? 'bi-heart' : 'bi-heart')}"></i>
-        </button>
-        </security:authorize>
-        <a type="button" href="main" class="btn btn-secondary">목록</a>
-      </div>
+      <!-- 로그인 여부를 체크하기 위해 먼저 선언 -->
+      <security:authorize access="isAuthenticated()">
+        <div>
+          <!-- principal 프로퍼티 안의 loginUser 정보를 가져옴 -->
+          <!-- loginUser.no를 가져와서 조건문 실행 -->
+          <c:if test="${loginUser.no == board.user.no}">
+            <button class="btn btn-warning" onclick="updateBoard(${board.no})">수정</button>
+            <button class="btn btn-danger" onclick="deleteBoard(${board.no})">삭제</button>
+          </c:if>
+          <c:if test="${loginUser.no != board.user.no}">
+            <button type="button" class="btn btn-danger" onclick="report('board', ${board.no})">신고</button>
+          </c:if>
+        
+        </div>
+        <div>
+          <button class="btn btn-outline-primary" id="likeCnt"
+                  onclick="boardLikeButton(${board.no}, ${loginUser.getNo()})">
+            <i id="icon-heart"
+               class="bi ${boardLiked == '1' ? 'bi-heart-fill' : (boardLiked == '0' ? 'bi-heart' : 'bi-heart')}"></i>
+          </button>
+          <a type="button" href="main" class="btn btn-secondary">목록</a>
+        </div>
+      </security:authorize>
     </div>
     
     <!-- 댓글 작성 -->

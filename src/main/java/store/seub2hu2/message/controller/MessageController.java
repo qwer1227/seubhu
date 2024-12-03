@@ -2,10 +2,6 @@ package store.seub2hu2.message.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,9 +18,6 @@ import store.seub2hu2.message.vo.Message;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.util.ListDto;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,11 +28,14 @@ public class MessageController {
     @Value("C:/Users/jhta/Desktop/MessageFiles")
     private String saveDirectory;
 
-    @Autowired
-    public MessageService messageService;
+    private final MessageService messageService;
+    private final FileDownloadView fileDownloadView;
 
     @Autowired
-    public FileDownloadView fileDownloadView;
+    public MessageController(MessageService messageService, FileDownloadView fileDownloadView) {
+        this.messageService = messageService;
+        this.fileDownloadView = fileDownloadView;
+    }
 
     // 받은 메시지 목록 조회
     @GetMapping("/list")
@@ -59,6 +55,11 @@ public class MessageController {
         // 받은 메시지 목록 조회
         ListDto<MessageRecieved> dto = messageService.getReceivedMessages(condition, opt, keyword);
 
+        // unread message count 가져오기
+        int unreadCount = messageService.getUnreadMessageCount(userNo);
+
+        // 모델에 데이터 추가
+        model.addAttribute("unreadCount", unreadCount);
         model.addAttribute("messages", dto.getData());
         model.addAttribute("paging", dto.getPaging());
 
@@ -83,6 +84,7 @@ public class MessageController {
         // 보낸 메시지 목록 조회
         ListDto<MessageRecieved> dto = messageService.getSentMessages(condition, opt, keyword);
 
+        // 모델에 데이터 추가
         model.addAttribute("messages", dto.getData());
         model.addAttribute("paging", dto.getPaging());
 
@@ -109,20 +111,29 @@ public class MessageController {
             @AuthenticationPrincipal LoginUser loginUser,
             Model model) {
         int userNo = loginUser.getNo();  // 로그인된 사용자 번호
+        Message message = messageService.getMessageDetail(messageNo);
 
-        //MessageForm message = messageService.getMessageDetail(messageNo);  // userNo는 필요 없으면 삭제
-        //model.addAttribute("message", message);
-        //model.addAttribute("userNo", userNo);  // userNo를 model에 추가
-        return "message/message-detail";
+        model.addAttribute("message", message);
+        model.addAttribute("userNo", userNo); // userNo를 model에 추가
+
+        return "message/message-detail";  // JSP 경로
     }
 
+    // 메시지 삭제
+    @GetMapping("/delete")
+    public String delete(@RequestParam("messageNo") int messageNo) {
+        messageService.deleteMessage(messageNo);
+        return "redirect:/message/list";  // 삭제 후 목록 페이지로 이동
+    }
+
+
+
+
+    // 메시지 보내기 폼
     @GetMapping("/send")
     public String showSendForm(@AuthenticationPrincipal LoginUser loginUser, Model model) {
-        // 로그인된 사용자 정보에서 보낸 사람을 구성
         String sender = loginUser.getNickname() + " <" + loginUser.getId() + ">";
-
-        // 기본적으로 받는 사람은 빈 값으로 설정
-        String receiver = ""; // 기본값 설정
+        String receiver = "";  // 기본값 설정
 
         model.addAttribute("sender", sender);
         model.addAttribute("receiver", receiver); // receiver 값 전달
@@ -130,57 +141,32 @@ public class MessageController {
         return "message/message-send-form";  // JSP 경로
     }
 
-
+    // 메시지 보내기 처리
     @PostMapping("/send")
     public String submitMessage(@AuthenticationPrincipal LoginUser loginUser,
                                 @ModelAttribute MessageForm form,
                                 @RequestParam(value = "file", required = false) MultipartFile file,
                                 RedirectAttributes redirectAttributes) {
         try {
-            // 작성자의 사용자 번호를 MessageForm에 설정
-            form.setSenderUserNo(loginUser.getNo());
-
-            // 서비스 호출
-            messageService.insertMessage(form, file);
+            form.setSenderUserNo(loginUser.getNo());  // 작성자 사용자 번호 설정
+            messageService.insertMessage(form, file);  // 메시지 저장
 
             redirectAttributes.addFlashAttribute("success", "쪽지가 성공적으로 등록되었습니다.");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "쪽지 등록에 실패했습니다.");
-            e.printStackTrace(); // 디버깅용 로그
+            e.printStackTrace();  // 디버깅용 로그
         }
-        return "redirect:/message/list"; // 작성 후 목록 페이지로 이동
+        return "redirect:/message/list";  // 목록 페이지로 이동
     }
 
 
 
-    @GetMapping("/delete")
-    public String delete(@RequestParam("messageNo") int messageNo) {
-        MessageForm form = new MessageForm();
-        form.setMessageNo(messageNo);
-        messageService.deleteMessage(messageNo);
-        return "redirect:message/message-list";
-    }
-
-    // 파일 다운로드 요청 (ModelAndView 사용)
+    // 파일 다운로드 요청
     @GetMapping("/filedown")
-    public ModelAndView downloadFile(@RequestParam("messageNo") int messageNo,
-                                     @AuthenticationPrincipal LoginUser loginUser) {
-
-        // 메시지 상세 조회 (messageNo만 전달)
-        //MessageForm message = messageService.getMessageDetail(messageNo);
-
-        // 파일이 존재하지 않으면 오류 처리
-        //if (message.getMessageFile() == null || message.getMessageFile().getSavedName() == null) {
-        //    throw new IllegalArgumentException("첨부파일이 존재하지 않습니다.");
-        //}
-
-        // 파일 다운로드 설정
+    public ModelAndView downloadFile(@RequestParam("messageNo") int messageNo) {
         ModelAndView mav = new ModelAndView(fileDownloadView);
-        //String filePath = saveDirectory + File.separator + message.getMessageFile().getSavedName();  // 파일 경로 설정
-        //mav.addObject("filePath", filePath);  // 실제 경로 전달
-        //mav.addObject("filename", message.getMessageFile().getOriginalName());  // 파일 이름
-
+        // 파일 경로 설정 및 ModelAndView에 데이터 전달
+        mav.addObject("messageNo", messageNo);
         return mav;
     }
 }
-

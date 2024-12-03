@@ -18,22 +18,37 @@
     </resultMap>
 
     <!--
+        int getTotalRows (@Param("condition") Map<String, Object> condition);
+    -->
+    <select id="getTotalRows" resultType="int">
+        select count(*)
+        from COURSE_REVIEWS
+        where course_no = #{condition.courseNo}
+        and is_deleted = 'N'
+    </select>
+
+    <!--
         List<Review> getReviewsByNo(@Param("no") int no);
     -->
     <select id="getReviewsByNo" resultMap="ReviewResultMap">
-        select r.review_no
-             , r.review_title
-             , r.review_content
-             , r.review_like_cnt
-             , r.review_created_date
-             , r.is_deleted
-             , r.course_no
-             , u.user_no
-             , u.user_nickname
-        from COURSE_REVIEWS r inner join USERS u
-        on r.user_no = u.user_no
-        where r.course_no = #{no}
-        and r.is_deleted = 'N'
+        select *
+        from (
+              select row_number() over (order by review_no desc) rn
+                    , r.review_no
+                    , r.review_title
+                    , r.review_content
+                    , r.review_like_cnt
+                    , r.review_created_date
+                    , r.is_deleted
+                    , r.course_no
+                    , u.user_no
+                    , u.user_nickname
+              from COURSE_REVIEWS r inner join USERS u
+              on r.user_no = u.user_no
+              where r.course_no = #{condition.courseNo}
+              and r.is_deleted = 'N'
+             ) cr
+        where rn between #{condition.begin} and #{condition.end}
     </select>
 
     <!--

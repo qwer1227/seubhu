@@ -6,6 +6,7 @@ import store.seub2hu2.user.vo.User;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @ToString
 @NoArgsConstructor
@@ -17,6 +18,7 @@ public class OrderForm {
     private User user;
 
     // 주문 상품에 대한 정보
+    private List<Map<String, Integer>> orderItems;
     private List<Integer> sizeNoList; // 사이즈번호(상품번호)
     private List<Integer> stocks; // 수량
 
@@ -31,6 +33,7 @@ public class OrderForm {
     // 배송 상태와 배송 업체
     private int deliNo; // 배송 번호
     private String deliName; // 배송 업체
+    private String deliMemo; // 배송 메모
     private Order order;
     
     // 주문에 대한 데이터
@@ -46,8 +49,8 @@ public class OrderForm {
     
     // 주문 상품
     private int orderProdNo; // 주문상품번호
+    private int orderProdPrice; // 상품의 가격
     private int orderProdAmount; // 담은 상품 수량
-    private int orderUnitPrice; // 개별 상품 가격
-    private int orderEachPrice; // 건당 상품 가격
+    private int orderUnitPrice; // 개별 상품 총가격
 
 }

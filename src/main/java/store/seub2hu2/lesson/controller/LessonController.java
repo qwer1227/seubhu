@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
@@ -19,6 +20,7 @@ import store.seub2hu2.lesson.service.LessonFileService;
 import store.seub2hu2.lesson.service.LessonReservationService;
 import store.seub2hu2.lesson.service.LessonService;
 import store.seub2hu2.lesson.vo.*;
+import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.vo.User;
 
 import java.io.IOException;
@@ -95,7 +97,7 @@ public class LessonController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/reservation")
-    public String reservation(@RequestParam("userId") String userId,
+    public String reservation(@AuthenticationPrincipal LoginUser loginUser,
                               @ModelAttribute("condition") ReservationSearchCondition condition,
                               Model model) {
 
@@ -116,7 +118,7 @@ public class LessonController {
             }
         }
 
-        List<LessonReservation> lessonReservations = lessonReservationService.searchLessonReservationList(condition, userId);
+        List<LessonReservation> lessonReservations = lessonReservationService.searchLessonReservationList(condition, loginUser.getId());
         model.addAttribute("lessonReservations", lessonReservations);
         return "lesson/lesson-reservation";
     }
