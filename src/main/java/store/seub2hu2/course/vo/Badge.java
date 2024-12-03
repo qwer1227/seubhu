@@ -1,7 +1,6 @@
 package store.seub2hu2.course.vo;
 
 import lombok.*;
-import org.apache.ibatis.type.Alias;
 
 @Getter
 @Setter

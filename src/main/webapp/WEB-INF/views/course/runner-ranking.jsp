@@ -11,20 +11,23 @@
 <div class="container-xxl text-center" id="wrap">
 
     <div class="col m-5">
-        <h2>코스</h2>
+        <h2>런너 랭킹</h2>
     </div>
     <%-- 카테고리 --%>
     <div class="row row-cols-2 row-cols-lg-4 g-2 g-lg-3 justify-content-center">
         <div class="col " >
+            <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="my-course">나의 코스 기록</a>
+        </div>
+        <div class="col " >
             <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="list">코스 목록</a>
         </div>
         <div class="col " >
-            <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="best-runner">런너 랭킹</a>
+            <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="runner-ranking">런너 랭킹</a>
         </div>
     </div>
 
     <%-- 코스를 선택하면, 해당 코스에 대한 완주자 기록 목록이 화면에 나타난다. --%>
-    <form id="form-select" method="get" action="best-runner">
+    <form id="form-select" method="get" action="runner-ranking">
         <div class="row justify-content-center mt-5">
             <input type="hidden" name="page"/>
             <select class="form-select" aria-label="Default select example" style="width: 300px"

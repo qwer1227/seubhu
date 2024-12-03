@@ -28,4 +28,5 @@ public class ListDto<T> {
     public Pagination getPaging() {
         return paging;
     }
+
 }

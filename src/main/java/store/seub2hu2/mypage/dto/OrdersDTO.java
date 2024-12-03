@@ -13,5 +13,11 @@ public class OrdersDTO {
     private int orderNo;
     private Date orderDate;
     private String orderStatus;
+    private String receiverName;
+    private String deliveryAddress;
+    private String receiverPhone;
     private double orderPrice;
+    private double delPayment;
+    private double disPrice;
+    private double realPrice;
 }

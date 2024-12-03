@@ -27,10 +27,12 @@ import store.seub2hu2.community.vo.Board;
 import store.seub2hu2.community.vo.Reply;
 import store.seub2hu2.lesson.view.FileDownloadView;
 import store.seub2hu2.mypage.dto.OrderResponse;
+import store.seub2hu2.mypage.dto.QnaResponse;
 import store.seub2hu2.mypage.dto.ResponseDTO;
 import store.seub2hu2.mypage.dto.UserInfoReq;
 import store.seub2hu2.mypage.service.CartService;
 import store.seub2hu2.mypage.service.PostService;
+import store.seub2hu2.mypage.service.QnaService;
 import store.seub2hu2.mypage.vo.Post;
 import store.seub2hu2.order.service.OrderService;
 import store.seub2hu2.security.user.LoginUser;
@@ -75,8 +77,13 @@ public class MyPageController {
 
     @Autowired
     private ScrapService scrapService;
+
     @Autowired
     private ReportService reportService;
+
+    @Autowired
+    private QnaService qnaService;
+
     @Autowired
     private FileDownloadView fileDownloadView;
 
@@ -93,7 +100,11 @@ public class MyPageController {
     }
 
     @GetMapping("/private")
-    public String mypagePrivate(){
+    public String mypagePrivate(Model model, @AuthenticationPrincipal LoginUser loginUser){
+
+        String userId = loginUser.getId();
+
+        model.addAttribute("userId", userId);
 
         return "mypage/privatepage";
     }
@@ -521,5 +532,36 @@ public class MyPageController {
         model.addAttribute("orderItems", orderItems);
 
         return "mypage/order";
+    }
+
+    // 레슨예약내역 화면으로 간다
+    @GetMapping("/reservation/{userId}")
+    public String reservation(@PathVariable("userId") String userId , @AuthenticationPrincipal LoginUser loginUser){
+
+        return "lesson/lesson-reservation";
+    }
+
+    // 문의내역 화면으로 간다
+    @GetMapping("/qna")
+    public String qna(Model model, @AuthenticationPrincipal LoginUser loginUser){
+
+        List<QnaResponse> qnaResponses = qnaService.getQnasByUserNo(loginUser.getNo());
+
+        model.addAttribute("qna", qnaResponses);
+
+        return "mypage/qna";
+    }
+
+    // 문의내역 상세화면으로 간다
+    @GetMapping("/qna/detail/{qnaNo}")
+    public String qnaDetail(@PathVariable("qnaNo") int qnaNo, Model model, @AuthenticationPrincipal LoginUser loginUser){
+
+        System.out.println(qnaNo);
+
+        QnaResponse qnaResponse = qnaService.getQnaByQnaNo(qnaNo);
+
+        model.addAttribute("qna", qnaResponse);
+
+        return "mypage/qnadetail";
     }
 }

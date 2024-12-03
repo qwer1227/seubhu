@@ -16,52 +16,13 @@
     <%-- 카테고리 --%>
     <div class="row row-cols-2 row-cols-lg-4 g-2 g-lg-3 justify-content-center">
         <div class="col " >
+            <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="my-course">나의 코스 기록</a>
+        </div>
+        <div class="col " >
             <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="list">코스 목록</a>
         </div>
         <div class="col " >
-            <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="best-runner">런너 랭킹</a>
-        </div>
-    </div>
-
-    <sec:authorize access="isAuthenticated()">
-        <sec:authentication property="principal" var="loginUser" />
-    </sec:authorize>
-
-    <%-- 로그인한 사용자의 정보 표시 --%>
-    <div class="row row-cols-1 row-cols-md-1 g-4 mt-3 mb-3">
-        <div class="col">
-            <c:choose>
-                <c:when test="${not empty loginUser}">
-                    <table class="table table-bordered">
-                        <div class="card">
-                            <div class="card-header">나의 배지와 코스 기록</div>
-                        </div>
-                        <tbody>
-                        <tr>
-                            <th scope="row">닉네임</th>
-                            <td>헤이요</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">현재 배지 + 배지 설명</th>
-                            <td>배지 이미지 / 2단계 코스 3개 성공</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">나의 완주 기록</th>
-                            <td><button class="btn btn-primary">완주 기록 보기</button></td>
-                        </tr>
-                        <tr>
-                            <th scope="row">성공한 코스 목록</th>
-                            <td><button class="btn btn-primary">성공한 코스 보기</button></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </c:when>
-                <c:otherwise>
-                    <table class="table table-bordered">
-                        <th colspan="4">로그인하면 나의 배지와 코스 기록을 확인할 수 있어요!</th>
-                    </table>
-                </c:otherwise>
-            </c:choose>
+            <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="runner-ranking">런너 랭킹</a>
         </div>
     </div>
 
@@ -163,17 +124,17 @@
     let form = document.querySelector("#form-search");
     let pageInput = document.querySelector("input[name=page]");
 
-    // 페이지 번호를 클릭했을 때, 요청 파라미터 정보를 제출한다.
+    // 검색 버튼을 클릭했을 때, 요청 파라미터 정보를 제출한다.
+    function searchKeyword() {
+        pageInput.value = 1;
+        form.submit();
+    }
+
+    // 코스 목록의 페이지 번호를 클릭했을 때, 요청 파라미터 정보를 제출한다.
     function changePage(page, event) {
         event.preventDefault();
 
         pageInput.value = page;
-        form.submit();
-    }
-
-    // 검색 버튼을 클릭했을 때, 요청 파라미터 정보를 제출한다.
-    function searchKeyword() {
-        pageInput.value = 1;
         form.submit();
     }
 </script>

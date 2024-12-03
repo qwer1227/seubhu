@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import store.seub2hu2.lesson.dto.LessonRegisterForm;
+import store.seub2hu2.lesson.dto.LessonUpdateDto;
 import store.seub2hu2.lesson.dto.ReservationSearchCondition;
 import store.seub2hu2.lesson.mapper.LessonFileMapper;
 import store.seub2hu2.lesson.mapper.LessonMapper;
@@ -66,13 +67,26 @@ public class LessonService {
 
     }
 
+
     public int getMostLatelyLessonNo() {
         return lessonFileMapper.lastInsertedLessonNo();
     }
 
-    public void updateLesson(Lesson lesson) {
-        lessonMapper.updateLesson(lesson);
+    public void updateLesson(LessonUpdateDto dto) {
+        lessonMapper.updateLesson(dto);
+
+        lessonFileService.updateLessonImages(getMostLatelyLessonNo(), dto.getThumbnail(), dto.getMainImage());
     }
 
+    public Map<String, String> getStartAndEnd (int lessonNo) {
+        Map<String, String> map = new HashMap<>();
+        Lesson lesson = lessonMapper.getLessonByNo(lessonNo);
+        map.put("startDate", lesson.getStartDate());
+        map.put("startTime" ,lesson.getStartTime());
+        map.put("endDate", lesson.getEndDate());
+        map.put("endTime" ,lesson.getEndTime());
+
+        return map;
+    }
 
 }

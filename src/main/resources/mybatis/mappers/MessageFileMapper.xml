@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="store.seub2hu2.message.mapper.MessageFileMapper">
+
+        <!-- 파일 삽입 -->
+        <insert id="insertMessageFile" parameterType="store.seub2hu2.message.vo.MessageFile">
+                INSERT INTO MESSAGE_FILES (message_no, file_name, file_path, file_size, created_date)
+                VALUES (#{messageNo}, #{fileName}, #{filePath}, #{fileSize}, NOW())
+        </insert>
+
+        <!-- 파일 상세 조회 -->
+        <select id="getMessageFileByMessageNo" parameterType="int" resultType="store.seub2hu2.message.vo.MessageFile">
+                SELECT * FROM MESSAGE_FILES
+                WHERE message_no = #{messageNo}
+        </select>
+
+        <!-- 파일 다운로드 정보 조회 -->
+        <select id="getFileForDownload" parameterType="int" resultType="store.seub2hu2.message.vo.MessageFile">
+                SELECT * FROM MESSAGE_FILES
+                WHERE file_no = #{fileNo}
+        </select>
+
+</mapper>

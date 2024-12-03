@@ -16,9 +16,14 @@ public class CrewForm {
     private String name;
     private String category;
     private String location;
-    private String schedule;
+    private String type;
+    private String detail;
     private String title;
     private String description;
     private MultipartFile image;
     private MultipartFile upfile;
+
+    public String getSchedule() {
+        return type + " " + detail;
+    }
 }
