@@ -234,7 +234,6 @@
 	                <div id="box-images-\${review.no}"></div>
 	            </div>
 	            <div class="card-footer text-end">
-                    <button class="btn btn-success btn-sm" onclick="modifyReview(\${review.no})">수정</button>
 	                <button class="btn btn-danger btn-sm" onclick="removeReview(\${review.no})">삭제</button>
 	            </div>
 	        </div>
@@ -282,13 +281,6 @@
         `;
 
         document.querySelector("#paging").innerHTML = pages;
-    }
-
-    // 리뷰를 수정한다.
-    async function modifyReview(reviewNo) {
-        // 리뷰 번호를 서버에 보낸다.
-
-        // 로그인한 사용자와 리뷰 수정하는 자가 동일한 지 확인 후, 리뷰를 수정한다.
     }
 
     // 리뷰를 삭제한다.
