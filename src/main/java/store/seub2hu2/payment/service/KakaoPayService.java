@@ -46,9 +46,19 @@ public class KakaoPayService {
 
         // 상품 결제
         if (paymentDto.getType().equals("상품")) {
-            //parameters.put("item_name", paymentDto.getProductName());
-            //parameters.put("item_code", String.valueOf(paymentDto.getProductNo()));
-            //parameters.put("total_amount", String.valueOf(paymentDto.getTotalAmount()));
+
+            // 주문정보를 저장한다.
+
+            // 결재준비
+            // item_name = paymentDto.getItem[0].getProdName()
+            // item_code = 주문번호
+            // total_amount = 총결재금액
+
+            parameters.put("approval_url", "http://localhost/pay/completed?type=" + paymentDto.getType()
+                    + "&orderNo=" + paymentDto.getLessonNo());
+
+
+
         }
 
         parameters.put("tax_free_amount", "0");
@@ -68,6 +78,8 @@ public class KakaoPayService {
         // RestTemplate의 postForEntity : POST 요청을 보내고 ResponseEntity로 결과를 반환받는 메소드
         ResponseEntity<ReadyResponse> responseEntity = template.postForEntity(url, requestEntity, ReadyResponse.class);
         log.info("결제준비 응답객체: " + responseEntity.getBody());
+
+
 
         return responseEntity.getBody();
     }

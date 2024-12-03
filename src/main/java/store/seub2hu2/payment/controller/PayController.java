@@ -92,7 +92,8 @@ public class PayController {
         }
 
         if (type.equals("상품")) {
-            // 상품 주문 정보 저장 로직
+
+            // 결재정보를 저장한다.
         }
 
         return "redirect:/pay/success?id=" + tid;
