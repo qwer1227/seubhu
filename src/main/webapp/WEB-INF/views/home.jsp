@@ -69,44 +69,46 @@
     <a href="/message/list" class="nav-link">
         <button type="button" class="btn btn-dark position-relative">
             쪽지
+            <c:if test="${unreadCount > 0}">
             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-            ${unreadCount > 99 ? '99+' : unreadCount}
-            <span class="visually-hidden">unread messages</span>
-        </span>
+                ${unreadCount > 99 ? '99+' : unreadCount}
+                <span class="visually-hidden">unread messages</span>
+            </span>
+            </c:if>
         </button>
     </a>
 
     <!-- 메인 이미지 캐러셀 -->
     <section class="container my-5">
-    <div id="main-carousel" class="carousel slide">
-        <div class="carousel-indicators">
-            <button type="button" data-bs-target="#main-carousel" data-bs-slide-to="0" class="active"
-                    aria-current="true" aria-label="Slide 1"></button>
-            <button type="button" data-bs-target="#main-carousel" data-bs-slide-to="1"
-                    aria-label="Slide 2"></button>
-            <button type="button" data-bs-target="#main-carousel" data-bs-slide-to="2"
-                    aria-label="Slide 3"></button>
+        <div id="main-carousel" class="carousel slide">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#main-carousel" data-bs-slide-to="0" class="active"
+                        aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#main-carousel" data-bs-slide-to="1"
+                        aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#main-carousel" data-bs-slide-to="2"
+                        aria-label="Slide 3"></button>
+            </div>
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="../../resources/img/nike.jpeg" class="d-block w-100" alt="...">
+                </div>
+                <div class="carousel-item">
+                    <img src="../../resources/img/adidas.jpeg" class="d-block w-100" alt="...">
+                </div>
+                <div class="carousel-item">
+                    <img src="../../resources/img/asics.jpeg" class="d-block w-100" alt="...">
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#main-carousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#main-carousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
         </div>
-        <div class="carousel-inner">
-            <div class="carousel-item active">
-                <img src="../../resources/img/nike.jpeg" class="d-block w-100" alt="...">
-            </div>
-            <div class="carousel-item">
-                <img src="../../resources/img/adidas.jpeg" class="d-block w-100" alt="...">
-            </div>
-            <div class="carousel-item">
-                <img src="../../resources/img/asics.jpeg" class="d-block w-100" alt="...">
-            </div>
-        </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#main-carousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#main-carousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-        </button>
-    </div>
     </section>
 
     <!-- 알림형 광고배너 -->
@@ -125,10 +127,12 @@
                 <h3>베스트 상품 랭킹</h3>
             </div>
             <div class="col-2 d-flex justify-content-end">
-                <button class="btn btn-outline-dark" type="button" data-bs-target="#weeklyRankingCarousel" data-bs-slide="prev">
+                <button class="btn btn-outline-dark" type="button" data-bs-target="#weeklyRankingCarousel"
+                        data-bs-slide="prev">
                     <i class="bi bi-chevron-left"></i>
                 </button>
-                <button class="btn btn-outline-dark" type="button" data-bs-target="#weeklyRankingCarousel" data-bs-slide="next">
+                <button class="btn btn-outline-dark" type="button" data-bs-target="#weeklyRankingCarousel"
+                        data-bs-slide="next">
                     <i class="bi bi-chevron-right"></i>
                 </button>
             </div>

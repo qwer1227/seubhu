@@ -10,6 +10,7 @@ import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.dto.UserJoinForm;
 import store.seub2hu2.user.exception.AlreadyUsedIdException;
 import store.seub2hu2.user.exception.InvalidCredentialsException;
+import store.seub2hu2.user.vo.Addr;
 import store.seub2hu2.user.vo.Role;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.user.mapper.UserMapper;
@@ -59,6 +60,14 @@ public class UserService {
         // User 객체로 변환
         User user = new User();
         BeanUtils.copyProperties(form, user);
+
+        // 주소 데이터가 있는 경우 먼저 주소 저장
+        if (form.getAddr() != null) {
+            Addr addr = form.getAddr();
+            addr.setUserNo(user.getNo()); // USER_NO 설정
+            int addrNo = userMapper.insertAddr(addr); // 주소 저장
+            user.getAddr().setNo(addrNo); // 사용자에 ADDR_NO 설정
+        }
 
         // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(user.getPassword());
