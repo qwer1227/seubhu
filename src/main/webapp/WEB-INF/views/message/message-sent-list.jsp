@@ -6,12 +6,18 @@
     <%@include file="/WEB-INF/views/common/common.jsp" %>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"/>
 </head>
-<body class>
+<style>
+    #content-title:hover {
+        text-decoration: underline;
+        font-weight: bold;
+    }
+</style>
+<body>
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
 <div class="container-xxl text-center my-4">
     <div class="row p-3 justify-content-center">
         <div class="col mb-3">
-            <h2>보낸 쪽지함</h2>
+            <h2>받은 쪽지함</h2>
         </div>
     </div>
 
@@ -78,8 +84,8 @@
             <tr>
                 <th><input type="checkbox" onclick="toggleSelectAll(this)"></th>  <!-- 일괄 선택 체크박스 -->
                 <th>번호</th>
-                <th>보낸 사람</th>
-                <th>제목</th>
+                <th>보낸사람</th>
+                <th class="text-start">제목</th>
                 <th>받은날</th>
                 <th>읽음</th>
                 <th>읽은날</th>
@@ -91,11 +97,28 @@
                 <tr>
                     <td><input type="checkbox" name="messageNo" value="${message.messageNo}"></td> <!-- 개별 체크박스 -->
                     <td>${message.messageNo}</td>
-                    <td>${message.senderUserNo}</td>
-                    <td>${message.title}</td>
-                    <td>${message.createDate}</td>
-                    <td>${message.readStatus}</td>
-                    <td>${message.readDate}</td>
+                    <td>${message.senderNickname}</td>
+                    <td id="content-title" class="text-start">
+                        <a href="/message/detail?messageNo=${message.messageNo}"
+                           style="text-decoration-line: none; color: black">
+                                ${message.title}
+                        </a>
+                    </td>
+
+                    <td>
+                        <fmt:formatDate value="${message.createdDate}" pattern="yyyy-MM-dd"/>
+                    </td>
+                    <td>${message.readStatus eq 'Y' ? '읽음' : '미읽음'}</td>
+                    <td>
+                        <c:choose>
+                            <c:when test="${message.readStatus eq 'Y'}">
+                                <fmt:formatDate value="${message.readDate}" pattern="yyyy-MM-dd"/>
+                            </c:when>
+                            <c:otherwise>
+                                -
+                            </c:otherwise>
+                        </c:choose>
+                    </td>
                     <td>
                         <c:if test="${not empty message.messageFile}">
                             <i class="bi bi-file-earmark-text"></i> <!-- 파일 첨부 아이콘 -->
@@ -134,7 +157,6 @@
                 <a href="/message/send" type="button" class="btn btn-dark">쪽지 작성</a>
             </div>
         </div>
-
 
 
         <!-- 페이징 처리 -->
