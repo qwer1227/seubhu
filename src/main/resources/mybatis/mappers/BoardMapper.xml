@@ -172,7 +172,7 @@
     where board_no = #{board.no}
   </update>
 
-  <!--  Board getBoardDetailByNo(@Param("no") int no); -->
+  <!--  Board getBoardDetailByNo(@Param("no") int boardNo); -->
   <select id="getBoardDetailByNo" resultType="store.seub2hu2.community.vo.Board">
     select b.board_no as no
      , b.board_cat_name          as catName

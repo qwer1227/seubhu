@@ -6,6 +6,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import store.seub2hu2.community.dto.CrewForm;
+import store.seub2hu2.community.exception.CommunityException;
 import store.seub2hu2.community.mapper.CrewMapper;
 import store.seub2hu2.community.mapper.UploadMapper;
 import store.seub2hu2.community.vo.Crew;
@@ -126,5 +127,24 @@ public class CrewService {
         ListDto<Crew> dto = new ListDto<>(crews, pagination);
 
         return dto;
+    }
+
+    public Crew getCrewDetail(int crewNo){
+        Crew crew = crewMapper.getCrewDetailByNo(crewNo);
+        UploadFile uploadFile = uploadMapper.getFileByCrewNo(crewNo);
+
+        if (crew == null){
+            throw new CommunityException("존재하지 않는 게시글입니다.");
+        }
+
+        crew.setUploadFile(uploadFile);
+
+        return crew;
+    }
+
+    public void updateCrewViewCnt(int crewNo){
+        Crew crew = crewMapper.getCrewDetailByNo(crewNo);
+        crew.setViewCnt(crew.getViewCnt() + 1);
+        crewMapper.updateCrewCnt(crew);
     }
 }

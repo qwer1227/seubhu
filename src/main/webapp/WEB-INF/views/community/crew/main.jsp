@@ -36,7 +36,7 @@
     <!-- 카드 1 -->
     <c:forEach var="crew" items="${crews}">
       <div class="col">
-        <a href="detail" style="text-decoration-line: none">
+        <a href="hit?no=${crew.no}" style="text-decoration-line: none">
           <div class="card">
           <c:choose>
           <c:when test="${empty crew.thumbnail}">

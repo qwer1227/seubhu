@@ -56,8 +56,19 @@ public class CrewController {
     }
 
     @GetMapping("/detail")
-    public String detail() {
+    public String detail(@RequestParam("no") int crewNo
+                        , @AuthenticationPrincipal LoginUser loginUser
+                        , Model model) {
+        Crew crew = crewService.getCrewDetail(crewNo);
+
+        model.addAttribute("crew", crew);
         return "community/crew/detail";
+    }
+
+    @GetMapping("/hit")
+    public String hit(@RequestParam("no") int crewNo){
+        crewService.updateCrewViewCnt(crewNo);
+        return "redirect:detail?no=" + crewNo;
     }
 
     @PostMapping("/register")
