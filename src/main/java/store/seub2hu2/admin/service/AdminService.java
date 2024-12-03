@@ -13,6 +13,7 @@ import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.course.vo.Region;
 import store.seub2hu2.lesson.mapper.LessonMapper;
 import store.seub2hu2.lesson.vo.Lesson;
+import store.seub2hu2.lesson.vo.LessonReservation;
 import store.seub2hu2.product.vo.*;
 import store.seub2hu2.user.mapper.UserMapper;
 import store.seub2hu2.user.vo.User;
@@ -75,9 +76,6 @@ public class AdminService {
         if (savedRegion == null) {
             adminMapper.insertRegion(region);
             course.setRegion(adminMapper.getRegions(region));
-
-            System.out.println(course.getRegion().getNo());
-
 
             course.setName(form.getName());
             course.setTime(form.getTime());
@@ -165,10 +163,8 @@ public class AdminService {
             condition.put("end", end);
 
 
-
             List<User> users = adminMapper.getUsers(condition);
 
-            System.out.println("users: " + users);
             ListDto<User> dto = new ListDto<>(users, pagination);
 
             return dto;
@@ -202,7 +198,6 @@ public class AdminService {
         condition.put("content", form.getContent());
         condition.put("thumbnail", form.getThumbnail());
 
-        System.out.println("condition: " + condition);
         adminMapper.insertProduct(condition);
     }
 
@@ -244,7 +239,6 @@ public class AdminService {
             img.setColorNo(form.getColorNo());
             img.setUrl(link);
 
-            System.out.println(img);
 
             adminMapper.insertImage(img);
         }
@@ -297,10 +291,6 @@ public class AdminService {
 
         Size existingSize = adminMapper.getCheckSizeByCon(size);
 
-        System.out.println("-------------------------------------------------existingSize"+ existingSize);
-
-        System.out.println("------------------------------------------------conditionSizeNo: " + condition.get("sizeNo"));
-
         if (existingSize != null && existingSize.getIsDeleted().equals("N")) {
             throw new IllegalArgumentException("이미 등록된 사이즈입니다.");
 
@@ -327,6 +317,14 @@ public class AdminService {
 
         adminMapper.insertStock(condition);
     }
+
+    public List<LessonUsersDto> getLessonUser(Integer lessonNo) {
+
+        List<LessonUsersDto> dto = adminMapper.getLessonUserByNo(lessonNo);
+
+        return dto;
+    }
+
 
 //    public Color getProductByColorNo(Integer colorNo) {
 //

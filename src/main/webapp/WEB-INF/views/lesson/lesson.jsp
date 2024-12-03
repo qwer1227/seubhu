@@ -10,9 +10,6 @@
 
 
     <style>
-        body {
-            background-color: #fafafa;
-        }
 
         .fc-day a {
             color: black;

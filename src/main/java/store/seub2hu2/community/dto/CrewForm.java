@@ -14,7 +14,6 @@ public class CrewForm {
 
     private int no;
     private String name;
-    private String category;
     private String location;
     private String type;
     private String detail;
