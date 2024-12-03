@@ -32,6 +32,14 @@ public class Lesson {
     private LocalDateTime updatedDate;
     private String filename;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime start;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime end;
+
 
     public String getOriginalFilename() {
         if (filename == null) {
@@ -55,15 +63,6 @@ public class Lesson {
     public String getEndTime() {
         return LocalDateTime.from(end).format(DateTimeFormatter.ofPattern("HH:mm"));
     }
-
-
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-    private LocalDateTime start;
-
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-    private LocalDateTime end;
 
 
 }
