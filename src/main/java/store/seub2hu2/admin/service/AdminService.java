@@ -77,9 +77,6 @@ public class AdminService {
             adminMapper.insertRegion(region);
             course.setRegion(adminMapper.getRegions(region));
 
-            System.out.println(course.getRegion().getNo());
-
-
             course.setName(form.getName());
             course.setTime(form.getTime());
             course.setLevel(form.getLevel());
@@ -166,10 +163,8 @@ public class AdminService {
             condition.put("end", end);
 
 
-
             List<User> users = adminMapper.getUsers(condition);
 
-            System.out.println("users: " + users);
             ListDto<User> dto = new ListDto<>(users, pagination);
 
             return dto;
@@ -203,7 +198,6 @@ public class AdminService {
         condition.put("content", form.getContent());
         condition.put("thumbnail", form.getThumbnail());
 
-        System.out.println("condition: " + condition);
         adminMapper.insertProduct(condition);
     }
 
@@ -245,7 +239,6 @@ public class AdminService {
             img.setColorNo(form.getColorNo());
             img.setUrl(link);
 
-            System.out.println(img);
 
             adminMapper.insertImage(img);
         }
@@ -297,10 +290,6 @@ public class AdminService {
         size.setColor(color);
 
         Size existingSize = adminMapper.getCheckSizeByCon(size);
-
-        System.out.println("-------------------------------------------------existingSize"+ existingSize);
-
-        System.out.println("------------------------------------------------conditionSizeNo: " + condition.get("sizeNo"));
 
         if (existingSize != null && existingSize.getIsDeleted().equals("N")) {
             throw new IllegalArgumentException("이미 등록된 사이즈입니다.");

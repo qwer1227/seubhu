@@ -17,7 +17,6 @@ import store.seub2hu2.lesson.dto.LessonUpdateDto;
 import store.seub2hu2.lesson.service.LessonFileService;
 import store.seub2hu2.lesson.service.LessonService;
 import store.seub2hu2.lesson.vo.Lesson;
-import store.seub2hu2.lesson.vo.LessonReservation;
 import store.seub2hu2.product.dto.*;
 import store.seub2hu2.product.service.ProductService;
 import store.seub2hu2.product.vo.*;
@@ -121,10 +120,7 @@ public class AdminController {
     public List<LessonUsersDto> lessonPreview(@RequestParam("no") Integer lessonNo,
                                            Model model) {
 
-
         List<LessonUsersDto> reservations = adminService.getLessonUser(lessonNo);
-
-        System.out.println("-------------------------------------reservations = " + reservations);
 
         return reservations;
     }
@@ -256,7 +252,8 @@ public class AdminController {
 
         adminService.getUpdateProduct(product);
 
-        System.out.println("---------------------------------------product:"+ product);
+
+
 
         return "redirect:/admin/product-detail?no=" + product.getNo() + "&colorNo=" + product.getColorNum();
     }
@@ -464,14 +461,14 @@ public class AdminController {
         condition.put("no", no);
         condition.put("name", name);
 
-        System.out.println("condition:" + condition);
+
+
 
         model.addAttribute("condition", condition);
         adminService.addColor(condition);
 
         int colorNo = adminService.getColor(condition);
 
-        System.out.println("colorNo: " + colorNo);
         return "redirect:/admin/product-detail?no=" + condition.get("no") + "&colorNo=" + colorNo;
     }
 
@@ -567,7 +564,7 @@ public class AdminController {
             condition.put("size", currentSize);
             condition.put("amount", currentAmount);
 
-            System.out.println("condition:" + condition);
+
 
             adminService.getInsertStock(condition);
         }
@@ -641,10 +638,16 @@ public class AdminController {
         return "admin/productlist";
     }
 
-    @GetMapping("/stock")
-    public String stock() {
+    @GetMapping("/settlement")
+    public String settlement() {
 
-        return "admin/stocklist";
+        return "admin/settlement";
+    }
+
+    @GetMapping("/qna")
+    public String qna() {
+
+        return "admin/qnalist";
     }
 
     @GetMapping("/community")
