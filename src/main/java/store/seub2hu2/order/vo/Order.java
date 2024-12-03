@@ -1,6 +1,8 @@
 package store.seub2hu2.order.vo;
 
 import lombok.*;
+import store.seub2hu2.payment.vo.Payment;
+import store.seub2hu2.user.vo.User;
 
 import java.util.Date;
 
@@ -19,4 +21,6 @@ public class Order {
     private int realPrice; // 실제 결제되는 금액
     private Date orderCreatedDate; // 주문 생성 날짜
     private Date orderUpdatedDate; // 주문 수정 날짜
+    private Payment payment; // 결제 객체
+    private User user;
 }

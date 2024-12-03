@@ -8,12 +8,15 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import store.seub2hu2.order.vo.Order;
+import store.seub2hu2.order.vo.OrderItem;
 import store.seub2hu2.payment.dto.PaymentDto;
 import store.seub2hu2.payment.dto.ApproveResponse;
 import store.seub2hu2.payment.dto.CancelResponse;
 import store.seub2hu2.lesson.dto.ReadyResponse;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -48,6 +51,7 @@ public class KakaoPayService {
         if (paymentDto.getType().equals("상품")) {
 
             // 주문정보를 저장한다.
+
 
             // 결재준비
             // item_name = paymentDto.getItem[0].getProdName()
