@@ -7,9 +7,7 @@
 </head>
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
 <body>
-<security:authorize access="isAuthenticated()">
-    <security:authentication property="principal" var="loginUser"/>
-</security:authorize>
+<security:authentication property="principal" var="loginUser"/>
 <div class="container-xxl border align-content-center" id="wrap">
     <div class="row text-center mb-5">
         <h1>레슨 예약</h1>
