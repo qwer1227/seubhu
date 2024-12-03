@@ -57,11 +57,17 @@
               <input type="hidden" name="topNo" value="${topNo}">
               <input type="hidden" name="catNo" value="${catNo}">
               <div class="row g-3">
-                <div class="col-2">
+                <div class="col-1">
                   <select class="form-control" name="ptype" onchange="changeRows()">
                     <option value="" >전체</option>
                     <option value="" >상품</option>
                     <option value="" >레슨</option>
+                  </select>
+                </div>
+                <div class="col-1">
+                  <select class="form-control" name="daytype" onchange="changeRows()">
+                    <option value="" >일별</option>
+                    <option value="" >월별</option>
                   </select>
                 </div>
                 <div class="col-3 pt-2">
@@ -135,6 +141,7 @@
                     <th>품명</th>
                     <th>총금액</th>
                     <th>결제상태</th>
+                    <th>날짜</th>
                     <th>시간</th>
                   </tr>
                 </thead>
