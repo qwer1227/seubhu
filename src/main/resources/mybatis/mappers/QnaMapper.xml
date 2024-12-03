@@ -87,4 +87,62 @@
         WHERE QNA_NO = #{qnaNo}
     </update>
 
+    <!-- int getTotalRows(@Param("condition")Map<String, Object> condition); -->
+
+    <select id="getTotalRows" resultType="int">
+        select
+            count(*) as cnt
+        from
+            USER_QNA uq
+        where uq.QNA_ISDELETED = 'N'
+        <if test="condition.category != null">
+            and uq.qna_category_no = #{condition.category}
+        </if>
+        <if test="condition.opt != null">
+            <choose>
+                <when test="condition.opt == 'title'">
+                    and uq.qna_title like concat('%', #{condition.keyword}, '%')
+                </when>
+                <when test="condition.opt == 'content'">
+                    and uq.qna_content like concat('%', #{condition.keyword}, '%')
+                </when>
+            </choose>
+        </if>
+    </select>
+
+    <!-- List<QnaResponse> getQnas(@Param("condition") Map<String, Object> condition); -->
+
+    <select id="getQnas" resultType="store.seub2hu2.mypage.dto.QnaResponse">
+        SELECT *
+        FROM (
+            SELECT
+                <if test="condition.sort != null">
+                    <choose>
+                        <when test="condition.sort == 'date'">
+                            row_number() over (order by  uq.qna_created_date desc ) rn
+                        </when>
+                        <otherwise>
+                            row_number() over (order by uq.qna_no desc) rn
+                        </otherwise>
+                    </choose>
+                </if>
+            , uq.qna_no as qnaNo
+            , uq.qna_title as qnaTitle
+            , uq.qna_content as qnaContent
+            , uq.qna_status as qnaStatus
+            , uq.answer_content as answerContent
+            , uq.answer_created_date as answerCreatedDate
+            , uq.qna_created_date as qnaCreatedDate
+            , uq.qna_updated_date as qnaUpdatedDate
+            , uq.qna_answerd_date as qnaAnswerdDate
+            , uq.qna_isdeleted as qnaIsDeleted
+            , uq.question_user_no as questionUserNo
+            , uq.category_no as categoryNo
+            , uq.answer_user_no as answerUserNo
+            from
+                USER_QNA uq join QNA_CATEGORY qc
+            on qc.category_no = uq.categoty_no
+             )
+    </select>
+
 </mapper>

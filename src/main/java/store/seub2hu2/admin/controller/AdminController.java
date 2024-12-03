@@ -17,6 +17,9 @@ import store.seub2hu2.lesson.dto.LessonUpdateDto;
 import store.seub2hu2.lesson.service.LessonFileService;
 import store.seub2hu2.lesson.service.LessonService;
 import store.seub2hu2.lesson.vo.Lesson;
+import store.seub2hu2.mypage.dto.QnaCreateRequest;
+import store.seub2hu2.mypage.dto.QnaResponse;
+import store.seub2hu2.mypage.service.QnaService;
 import store.seub2hu2.product.dto.*;
 import store.seub2hu2.product.service.ProductService;
 import store.seub2hu2.product.vo.*;
@@ -49,6 +52,7 @@ public class AdminController {
     private final LessonFileService lessonFileService;
     private final ProductService productService;
     private final UserService userService;
+    private final QnaService qnaService;
 
     @GetMapping("/home")
     public String home() {
@@ -644,11 +648,28 @@ public class AdminController {
         return "admin/settlement";
     }
 
-    @GetMapping("/qna")
-    public String qna() {
-
-        return "admin/qnalist";
-    }
+//    @GetMapping("/qna")
+//    public String qna(@ModelAttribute RequestParamsDto dto ,Model model) {
+//
+//        Map<String, Object> condition = new HashMap<>();
+//        condition.put("page", dto.getPage());
+//        condition.put("rows", dto.getRows());
+//        condition.put("sort", dto.getSort());
+//
+//        // 카테고리 필터링 처리
+//        if (StringUtils.hasText(dto.getCategory())){
+//            condition.put("category", dto.getCategory());
+//        }
+//
+//        if (StringUtils.hasText(dto.getKeyword())){
+//            condition.put("opt",dto.getOpt());
+//            condition.put("keyword", dto.getKeyword());
+//        }
+//
+//        ListDto<QnaResponse> qnaDto = qnaService.getQnas(condition);
+//
+//        return "admin/qnalist";
+//    }
 
     @GetMapping("/community")
     public String community() {

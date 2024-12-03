@@ -7,6 +7,7 @@ import store.seub2hu2.mypage.dto.QnaCreateRequest;
 import store.seub2hu2.mypage.dto.QnaResponse;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface QnaMapper {
@@ -15,4 +16,7 @@ public interface QnaMapper {
     void insertQna(@Param("qna") QnaCreateRequest qnaCreateRequest);
     void deleteQna(@Param("qnaNo") int qnaNo);
     void updateQna(@Param("qnaNo") int qnaNo, @Param("qna") QnaCreateRequest qnaCreateRequest);
+    int getTotalRows(@Param("condition")Map<String, Object> condition);
+    List<QnaResponse> getQnas(@Param("condition") Map<String, Object> condition);
+
 }
