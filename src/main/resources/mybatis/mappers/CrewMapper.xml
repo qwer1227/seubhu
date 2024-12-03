@@ -11,7 +11,9 @@
     , crew_title
     , crew_name
     , crew_description
-    , crew_thumbnail
+    <if test="crew.thumbnail != null">
+        , crew_thumbnail
+    </if>
     , crew_updated_date
     <if test="crew.uploadFile != null">
       , file_name
@@ -24,7 +26,9 @@
     , #{crew.title}
     , #{crew.name}
     , #{crew.description}
-    , #{crew.thumbnail.saveName}
+    <if test="crew.thumbnail != null">
+      , #{crew.thumbnail.saveName}
+    </if>
     , null
     <if test="crew.uploadFile != null">
       , #{crew.uploadFile.saveName}
@@ -83,13 +87,21 @@
     , c.crew_name              as name
     , c.crew_description       as description
     , c.crew_created_date      as createdDate
-    ,case
+    , case
         when c.file_name is not null then (select f.file_original_name
                                            from CREW_FILES f
                                            where f.crew_no = c.crew_no
                                            and f.file_save_name = c.file_name)
        else null
     end as "uploadFile.originalName"
+    , case
+        when c.crew_thumbnail is not null then (select f.file_save_name
+                                                from CREW_FILES f
+                                                where f.crew_no = c.crew_no
+                                                and f.file_save_name = c.crew_thumbnail
+                                                )
+        else null
+    end as "thumbnail.savaName"
     , c.is_joined              as joined
     , c.crew_view_cnt          as viewCnt
     , u.user_nickname          as "user.nickname"
@@ -107,4 +119,25 @@
     set crew_view_cnt = #{crew.viewCnt}
     where crew_no = #{crew.no}
   </update>
+
+  <!-- void updateCrew(@Param("crew") Crew crew); -->
+  <update id="updateCrew">
+    update CREWS
+    set crew_title = ${crew.title}
+        , crew_description = ${crew.description}
+        , crew_schedule = ${crew.schedule}
+        , crew_location = ${crew.location}
+        , crew_name = ${crew.name}
+        , crew_thumbnail = ${crew.thumbnail.saveName}
+        , crew_updated_date = sysdate()
+        , file_name = ${crew.uploadFile.saveName}
+        , is_deleted = ${crew.deleted}
+    where
+        crew_no = ${crew.no}
+
+  </update>
+
+  <!-- int getCrewMemberCnt(@Param("member") CrewMember member); -->
+
+
 </mapper>

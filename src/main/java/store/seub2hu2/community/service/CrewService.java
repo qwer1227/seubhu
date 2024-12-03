@@ -131,12 +131,14 @@ public class CrewService {
 
     public Crew getCrewDetail(int crewNo){
         Crew crew = crewMapper.getCrewDetailByNo(crewNo);
+        UploadFile uploadThumbnail = uploadMapper.getThumbnailByCrewNo(crewNo);
         UploadFile uploadFile = uploadMapper.getFileByCrewNo(crewNo);
 
         if (crew == null){
             throw new CommunityException("존재하지 않는 게시글입니다.");
         }
 
+        crew.setThumbnail(uploadThumbnail);
         crew.setUploadFile(uploadFile);
 
         return crew;
@@ -146,5 +148,44 @@ public class CrewService {
         Crew crew = crewMapper.getCrewDetailByNo(crewNo);
         crew.setViewCnt(crew.getViewCnt() + 1);
         crewMapper.updateCrewCnt(crew);
+    }
+
+    public void updateCrew(CrewForm form){
+        Crew savedCrew = crewMapper.getCrewDetailByNo(form.getNo());
+        savedCrew.setFileNo(form.getFileNo());
+        savedCrew.setTitle(form.getTitle());
+        savedCrew.setDescription(form.getDescription());
+        savedCrew.setSchedule(form.getSchedule());
+        savedCrew.setLocation(form.getLocation());
+        savedCrew.setName(form.getName());
+
+        MultipartFile image = form.getImage();
+        MultipartFile upfile = form.getUpfile();
+
+        if (!image.isEmpty()) {
+            // 기존 썸네일 정보 조회
+            UploadFile prevThumbnail = uploadMapper.getThumbnailByCrewNo(savedCrew.getNo());
+            // 기존 썸네일이 존재하면 "Y"로 변경 저장
+            if (prevThumbnail != null) {
+                prevThumbnail.setDeleted("Y");
+                prevThumbnail.setFileNo(savedCrew.getFileNo());
+                uploadMapper.updateCrewFile(prevThumbnail.getFileNo());
+            }
+
+            // 신규 썸네일 정보를 조회하여 CREW_FILES 테이블에 저장
+            String originalImageName = image.getOriginalFilename();
+            String ImageName = System.currentTimeMillis() + originalImageName;
+            webContentFileUtils.saveWebContentFile(image, saveImageDirectory, ImageName);
+
+            UploadFile uploadThumbnail = new UploadFile();
+            uploadThumbnail.setOriginalName(originalImageName);
+            uploadThumbnail.setSaveName(ImageName);
+
+            savedCrew.setThumbnail(uploadThumbnail);
+
+            uploadMapper.insertCrewFile(uploadThumbnail);
+        }
+
+        crewMapper.updateCrew(savedCrew);
     }
 }

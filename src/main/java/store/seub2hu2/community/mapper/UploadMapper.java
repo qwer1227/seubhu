@@ -19,6 +19,7 @@ public interface UploadMapper {
     void updateNoticeFile(UploadFile uploadFile);
 
     void insertCrewFile(@Param("uploadFile") UploadFile uploadFile);
+    UploadFile getThumbnailByCrewNo(int crewNo);
     UploadFile getFileByCrewNo(int crewNo);
-    void updateCrewFile(UploadFile uploadFile);
+    void updateCrewFile(int fileNo);
 }

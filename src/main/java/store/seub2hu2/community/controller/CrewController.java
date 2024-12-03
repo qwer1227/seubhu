@@ -78,4 +78,19 @@ public class CrewController {
         crewService.addNewCrew(form, loginUser);
         return "redirect:main";
     }
+
+    @GetMapping("/modify")
+    public String modifyForm(@RequestParam("no") int crewNo, Model model) {
+        Crew crew = crewService.getCrewDetail(crewNo);
+        model.addAttribute("crew", crew);
+
+        return "community/crew/modify";
+    }
+
+    @PostMapping("/modify")
+    public String update(CrewForm form){
+
+        crewService.updateCrew(form);
+        return "redirect:detail?no=" + form.getNo();
+    }
 }

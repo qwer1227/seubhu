@@ -15,6 +15,20 @@
     #inviting-table tr {
         height: 50px;
     }
+
+    .img-thumbnail {
+        position: relative;
+        display: inline-block;
+    }
+
+    .img-thumbnail .img:hover {
+        transform: scale(5); /* 이미지 확대 비율 */
+        z-index: 10;
+        position: relative;
+        left: 200px;
+        margin-left: 10px; /* 원본 이미지와 간격 추가 */
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* 부드러운 그림자 추가 */
+    }
 </style>
 <body>
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
@@ -34,19 +48,24 @@
         <tbody>
         <tr>
           <th>모집글 제목</th>
-          <td><input class="rounded" type="text" name="title" value="" style="width: 448px"></td>
+          <td><input class="rounded" type="text" name="title" value="${crew.title}" style="width: 448px"></td>
           <th>장소</th>
           <td>
-            <input class="rounded" type="text" id="location" name="location" style="width: 399px">
+            <input class="rounded" type="text" id="location" value="${crew.location}" name="location" style="width: 399px">
             <button type="button" class="btn btn-outline-dark btn-sm" onclick="searchPlaces(event)">검색</button>
           </td>
         </tr>
         <tr>
           <th>크루 이름</th>
-          <td><input class="rounded" type="text" name="name" value="" style="width: 448px"></td>
+          <td><input class="rounded" type="text" name="name" value="${crew.name}" style="width: 448px"></td>
           <th></th>
+          <c:if test="${not empty crew.thumbnail.saveName}">
+          <td rowspan="4">
+            </c:if>
+          <c:if test="${empty crew.thumbnail.saveName}">
           <td rowspan="3">
-            <div id="map" style="width: 90%; height: 200px" class="mb-2"></div>
+          </c:if>
+            <div id="map" style="width: 90%; height: 200px;" class="mb-2"></div>
           </td>
         </tr>
         <tr>
@@ -56,12 +75,23 @@
               <option value="매월">매월</option>
               <option value="매주">매주</option>
               <option value="매일">매일</option>
-              <option value="번개">입력</option>
+              <option value="입력">입력</option>
             </select>
-            <input type="text" class="rounded" id="schedule-detail" name="detail" value="" style="width: 390px"
+            <input type="text" class="rounded" id="schedule-detail" name="detail" value="${crew.schedule}" style="width: 390px"
                    placeholder="상세 모임 일시를 작성해주세요.">
           </td>
         </tr>
+        <c:if test="${not empty crew.thumbnail.saveName}">
+        <tr>
+          <th>기존 대표 이미지</th>
+          <td>
+          <div class="img-thumbnail">
+            <img src="/resources/images/community/${crew.thumbnail.saveName}" alt="크루 대표 이미지"
+                class="img" style="width: 50px">
+                </div>
+          </td>
+        </tr>
+        </c:if>
         <tr>
           <th>대표 이미지</th>
           <td>
@@ -72,9 +102,14 @@
           <th>게시글</th>
           <td colspan="3">
             <textarea style="width: 100%" class="form-control" rows="10" id="description" name="description"
-                      placeholder="내용을 입력해주세요."></textarea>
+                      placeholder="내용을 입력해주세요.">${crew.description}</textarea>
             <%--            <%@include file="../write.jsp" %>--%>
           </td>
+        </tr>
+        <tr>
+          <th>기존 첨부파일</th>
+          <td colspan="3">
+            ${crew.uploadFile.originalName}
         </tr>
         <tr>
           <th>첨부파일</th>

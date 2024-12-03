@@ -359,6 +359,12 @@
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
 <script>
+    function updateBoard(){
+        let result = confirm("해당 크루 모임글을 수정하시겠습니까?");
+        if (result) {
+            window.location.href = "modify?no=" + ${crew.no};
+        }
+    }
 
     var container = document.getElementById('map'); //지도를 담을 영역의 DOM 레퍼런스
     var options = { //지도를 생성할 때 필요한 기본 옵션
@@ -373,7 +379,6 @@
 
     function placesSearchCB(data, status, pagination) {
         if (status === kakao.maps.services.Status.OK) {
-
             // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
             // LatLngBounds 객체에 좌표를 추가합니다
             var bounds = new kakao.maps.LatLngBounds();
@@ -388,13 +393,11 @@
 
     // 지도에 마커를 표시하는 함수입니다
     function displayMarker(place) {
-
         // 마커를 생성하고 지도에 표시합니다
         var marker = new kakao.maps.Marker({
             map: map,
             position: new kakao.maps.LatLng(place.y, place.x)
         });
-
     }
 </script>
 </html>

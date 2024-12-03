@@ -159,9 +159,6 @@ public class BoardService {
             UploadFile prevFile = uploadMapper.getFileByBoardNo(savedBoard.getNo());
             // 기존 파일 정보가 존재하면 기존 파일 삭제
             if (prevFile != null) {
-
-                System.out.println("!!!!!!!!!!!!!!!!!!!!!!기존 파일 = " + prevFile);
-
                 prevFile.setDeleted("Y");
                 uploadMapper.updateBoardFile(prevFile);
             }
