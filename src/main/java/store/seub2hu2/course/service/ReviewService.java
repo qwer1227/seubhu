@@ -14,11 +14,14 @@ import store.seub2hu2.course.vo.Review;
 import store.seub2hu2.course.vo.ReviewImage;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.FileUtils;
+import store.seub2hu2.util.ListDto;
+import store.seub2hu2.util.Pagination;
 import store.seub2hu2.util.WebContentFileUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -37,14 +40,25 @@ public class ReviewService {
 
     /**
      * 코스에 등록된 리뷰 목록을 가져온다.
-     * @param courseNo 코스번호
+     * @param condition 페이지, 코스 번호
      * @return 리뷰 목록
      */
-    public List<Review> getReviews(int courseNo) {
-        // 1. 코스에 등록된 리뷰 목록, 첨부 파일 목록을 가져온다.
-        List<Review> reviews = reviewMapper.getReviewsByNo(courseNo);
+    public ListDto<Review> getReviews(Map<String, Object> condition) {
+        // 1. 코스에 해당하는 전체 리뷰의 개수를 가져온다.
+        int totalRows = reviewMapper.getTotalRows(condition);
 
-        // 2. 첨부 파일 목록이 있다면, 리뷰 객체에 저장한다.
+        // 2. Pagination 객체에 페이징 처리 정보를 저장한다.
+        int page = (Integer) condition.get("page");
+        Pagination pagination = new Pagination(page, totalRows, 5);
+
+        // 3. 데이터 검색 범위를 조회해서 Map에 저장한다.
+        condition.put("begin", pagination.getBegin());
+        condition.put("end", pagination.getEnd());
+
+        // 4. 조회범위에 맞는 리뷰 목록을 조회한다.
+        List<Review> reviews = reviewMapper.getReviewsByNo(condition);
+
+        // 5. 첨부 파일 목록이 있다면, 리뷰 객체에 저장한다.
         for (Review review : reviews) {
             int reviewNo = review.getNo();
             List<ReviewImage> reviewImages  = reviewMapper.getReviewImagesByNo(reviewNo);
@@ -53,8 +67,9 @@ public class ReviewService {
             }
         }
 
-        // 3. 리뷰 객체를 반환한다.
-        return reviews;
+        // 6. ListDto 객체에 화면에 표시할 데이터(리뷰 목록, 페이징 처리 정보)를 담고, 반환한다.
+        ListDto<Review> dto = new ListDto<>(reviews, pagination);
+        return dto;
     }
 
     /**
@@ -118,7 +133,7 @@ public class ReviewService {
 
         // 2. 리뷰 작성자와 로그인한 사용자가 동일한지 확인한다.
         if (review.getUser().getNo() != userNo) {
-            throw new CourseReviewException("로그인한 해당 리뷰 작성자만 삭제 가능합니다.");
+            throw new CourseReviewException("해당 리뷰 작성자만 삭제 가능합니다.");
         }
 
         // 3. 리뷰를 삭제한다.
