@@ -6,6 +6,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import store.seub2hu2.community.dto.CrewForm;
+import store.seub2hu2.community.exception.CommunityException;
 import store.seub2hu2.community.mapper.CrewMapper;
 import store.seub2hu2.community.mapper.UploadMapper;
 import store.seub2hu2.community.vo.Crew;
@@ -26,7 +27,11 @@ import java.util.Map;
 public class CrewService {
 
     @Value("${upload.directory.community}")
-    private String saveDirectory;
+    private String saveImageDirectory;
+
+    @Value("C:/files/crew")
+    private String saveFileDirectory;
+
 
     @Autowired
     private WebContentFileUtils webContentFileUtils;
@@ -40,7 +45,6 @@ public class CrewService {
         Crew crew = new Crew();
         crew.setNo(form.getNo());
         crew.setTitle(form.getTitle());
-        crew.setCategory(form.getCategory());
         crew.setName(form.getName());
         crew.setSchedule(form.getSchedule());
         crew.setLocation(form.getLocation());
@@ -53,7 +57,7 @@ public class CrewService {
         if (!image.isEmpty()) {
             String originalImageName = image.getOriginalFilename();
             String ImageName = System.currentTimeMillis() + originalImageName;
-            webContentFileUtils.saveWebContentFile(image, saveDirectory, ImageName);
+            webContentFileUtils.saveWebContentFile(image, saveImageDirectory, ImageName);
 
             UploadFile uploadThumbnail = new UploadFile();
             uploadThumbnail.setOriginalName(originalImageName);
@@ -66,7 +70,7 @@ public class CrewService {
         if (!upfile.isEmpty()) {
             String originalFileName = upfile.getOriginalFilename();
             String filename = System.currentTimeMillis() + originalFileName;
-            FileUtils.saveMultipartFile(upfile, saveDirectory, filename);
+            FileUtils.saveMultipartFile(upfile, saveFileDirectory, filename);
 
             UploadFile uploadFile = new UploadFile();
             uploadFile.setOriginalName(originalFileName);
@@ -123,5 +127,24 @@ public class CrewService {
         ListDto<Crew> dto = new ListDto<>(crews, pagination);
 
         return dto;
+    }
+
+    public Crew getCrewDetail(int crewNo){
+        Crew crew = crewMapper.getCrewDetailByNo(crewNo);
+        UploadFile uploadFile = uploadMapper.getFileByCrewNo(crewNo);
+
+        if (crew == null){
+            throw new CommunityException("존재하지 않는 게시글입니다.");
+        }
+
+        crew.setUploadFile(uploadFile);
+
+        return crew;
+    }
+
+    public void updateCrewViewCnt(int crewNo){
+        Crew crew = crewMapper.getCrewDetailByNo(crewNo);
+        crew.setViewCnt(crew.getViewCnt() + 1);
+        crewMapper.updateCrewCnt(crew);
     }
 }

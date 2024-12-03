@@ -15,6 +15,7 @@ public interface CrewMapper {
     void insertCrewMember(@Param("member") CrewMember member);
     List<Crew> getCrews(@Param("condition") Map<String, Object> condition);
     int getTotalRowsForCrew(@Param("condition") Map<String, Object> condition);
-    void getCrewDetailByNo(@Param("no") int crewNo);
+    Crew getCrewDetailByNo(@Param("no") int crewNo);
+    void updateCrewCnt(@Param("crew") Crew crew);
 
 }

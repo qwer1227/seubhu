@@ -7,7 +7,8 @@
     -->
     <select id="getOrderItemBySizeNo" resultType="store.seub2hu2.cart.dto.CartItemDto">
         SELECT
-            P.PROD_NAME AS "product.name"
+            P.PROD_NO AS "product.no"
+            ,P.PROD_NAME AS "product.name"
              , P.PROD_PRICE AS "product.price"
              , PC.COLOR_NAME AS "COLOR.NAME"
              , PS.SIZE_NO  AS "SIZE.NO"

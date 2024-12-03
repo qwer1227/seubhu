@@ -4,9 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.seub2hu2.cart.dto.CartItemDto;
+import store.seub2hu2.delivery.vo.Delivery;
 import store.seub2hu2.mypage.dto.OrderResponse;
 import store.seub2hu2.mypage.dto.ResponseDTO;
+import store.seub2hu2.order.dto.OrderForm;
 import store.seub2hu2.order.mapper.OrderMapper;
+import store.seub2hu2.order.vo.Order;
+import store.seub2hu2.order.vo.OrderItem;
+import store.seub2hu2.user.vo.Addr;
+import store.seub2hu2.user.vo.User;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +24,29 @@ public class OrderService {
 
     @Autowired
     OrderMapper orderMapper;
+
+    public OrderForm createOrder() {
+
+        // 유저 정보
+        User user = new User();
+
+        // 주문 정보
+        OrderForm orderFrom = new OrderForm();
+
+        // 주문
+        Order o = new Order();
+
+        // 주문상품
+        OrderItem orderItem = new OrderItem();
+    
+        // 배송
+        Delivery d = new Delivery();
+
+        // 주소(배송지)
+        Addr addr = new Addr();
+
+        return orderFrom;
+    }
 
     /**
      * 장바구니에서 선택한 주문 상품을 조회한다.

@@ -32,6 +32,17 @@
             text-decoration: underline; /* 클릭 시 밑줄 */
             font-weight: bold; /* 클릭 시 진하게 표시 */
         }
+
+        .border-right {
+            border-right: 1px solid #ccc; /* 버튼 오른쪽에 선 추가 */
+            padding-right: 10px; /* 버튼과 선 사이에 여백 */
+        }
+
+        .border-left {
+            border-left: 1px solid #ccc; /* 버튼 오른쪽에 선 추가 */
+            padding-left: 10px; /* 버튼과 선 사이에 여백 */
+        }
+
     </style>
 </head>
 <body>
@@ -62,8 +73,9 @@
                                 <img src="${item.imgThum}" class="rounded mx-auto d-block" width="90">
                             </td>
                             <td>
-                                <span>${item.product.name}</span>
-                                <p class="text-secondary" id="stock-${item.size.no}" data-stock="${item.stock}">[${item.color.name}/${item.size.size}] / ${item.stock}개</p>
+                                <div data-prodNo="${item.product.no}"></div>
+                                <span data-prodName="${item.product.name}">${item.product.name}</span>
+                                <p class="text-secondary" id="stock-${item.size.no}" data-sizeNo="${item.size.no}" data-stock="${item.stock}">[${item.color.name}/${item.size.size}] / ${item.stock}개</p>
 
                             </td>
                             <td class="text-end">
@@ -96,8 +108,8 @@
                     <tr>
                         <th colspan="3">
                             <div class="d-flex">
-                                <button class="btn btn-no-style btn-sm w-50 me-2">최신 배송지</button>
-                                <button class="btn btn-no-style btn-sm w-50">신규 입력</button>
+                                <button class="btn btn-no-style btn-sm w-50 me-2 border-left border-right">최신 배송지</button>
+                                <button class="btn btn-no-style btn-sm w-50 border-right border-left">신규 입력</button>
                             </div>
                         </th>
                     </tr>
@@ -138,7 +150,7 @@
                                     <th><label>휴대폰 번호</label></th>
                                     <td>
                                         <div class="d-flex">
-                                            <input type="text" class="form-control" id="phone-number">
+                                            <input type="text" class="form-control" id="phone-number" name="phone-number">
                                             <div id="phone-error" style="color: red; font-size: 12px; display: none;"></div>
                                         </div>
                                     </td>
@@ -147,8 +159,8 @@
                                     <th><label>이메일</label></th>
                                     <td>
                                         <div class="d-flex">
-                                            <input type="email" id="email-user-name" class="form-control" oninput="validateEmail()"> @
-                                            <input type="email" id="email-domain" class="form-control" disabled oninput="validateEmail()">
+                                            <input type="email" id="email-user-name" name="email-user-name" class="form-control" oninput="validateEmail()"> @
+                                            <input type="email" id="email-domain" class="form-control" name="email-domain" disabled oninput="validateEmail()">
                                             <select id="email-selector" class="form-control" name="email" onchange="updateEmailDomain()" oninput="validateEmail()">
                                                 <option>선택하세요</option>
                                                 <option value="direct">직접입력</option>
@@ -172,7 +184,7 @@
                                             <option value="택배함에 보관해주세요.">택배함에 보관해주세요.</option>
                                             <option value="direct">직접입력</option>
                                         </select>
-                                        <input type="text" class="form-control" id="memo-box-direct"  placeholder="배송 메모를 입력하세요"/>
+                                        <input type="text" class="form-control" id="memo-box-direct" name="memo-direct"  placeholder="배송 메모를 입력하세요"/>
                                     </td>
                                 </tr>
                             </table>
@@ -232,10 +244,10 @@
                 <tbody>
                     <tr>
                         <th><label>결제 수단</label></th>
-                        <td><input type="radio"><img src="https://ecimg.cafe24img.com/pg90b05313110010/brooksrunning/web/upload/icon_202210121023113100.png" /></td>
-                        <td><input type="radio" checked><img src="https://ecimg.cafe24img.com/pg90b05313110010/brooksrunning/web/upload/icon_202210121022402200.png"/></td>
-                        <td><input type="radio"><img src="https://img.echosting.cafe24.com/design/skin/admin/ko_KR/ico_payco_disabled.gif" /></td>
-                        <td><input type="radio"><img src="https://img.echosting.cafe24.com/skin/admin_ko_KR/order/admin_naverpay_disabled.gif" /></td>
+                        <td><input type="radio" name="paymentMethod" value="신용카드"><img src="https://ecimg.cafe24img.com/pg90b05313110010/brooksrunning/web/upload/icon_202210121023113100.png" /></td>
+                        <td><input type="radio" name="paymentMethod" value="카카오페이" checked><img src="https://ecimg.cafe24img.com/pg90b05313110010/brooksrunning/web/upload/icon_202210121022402200.png"/></td>
+                        <td><input type="radio" name="paymentMethod" value="페이코"><img src="https://img.echosting.cafe24.com/design/skin/admin/ko_KR/ico_payco_disabled.gif" /></td>
+                        <td><input type="radio" name="paymentMethod" value="네이버페이"><img src="https://img.echosting.cafe24.com/skin/admin_ko_KR/order/admin_naverpay_disabled.gif" /></td>
                     </tr>
                 </tbody>
             </table>
@@ -279,7 +291,7 @@
             </table>
             <div class="d-grid gap-2">
                 <button class="col btn btn-dark" type="button" disabled>주문취소하기</button>
-                <button class="col btn btn-dark" type="button">결제하기 <small id="total-quantity"></small></button>
+                <button class="col btn btn-dark" type="submit">결제하기 <small id="total-quantity"></small></button>
             </div>
         </div>
 </div>
@@ -517,6 +529,112 @@
             $('#final-total-price').text(finalTotalPrice.toLocaleString() + ' 원');
             $('#total-quantity').text(`(` +totalQuantity + ' 개)');
         });
+
+
+        // 주문 정보 담기
+        $(document).ready(function () {
+            // 주문 정보 가져오기: 담을 그릇을 만들기
+            const orderData = {
+                orderItems: [], // 주문 상품들
+                deliveryInfo: {}, // 배송지 정보
+                paymentInfo: {}, // 결제 정보
+                totalPriceInfo: {}, // 가격 정보(상품 총 금액, 배송비, 할인금액 등)
+            };
+
+            const orderItem = [];
+            // 주문 상품 정보 가져오기
+            $("#order-items tr").each(function () {
+                const item = {
+                    prodNo: $(this).find("[data-prodNo]").data("prodno"),
+                    prodName: $(this).find("[data-prodName]").data("prodname"),
+                    sizeNo: $(this).find('[data-sizeNo]').data('sizeno'),
+                    stock: $(this).find('[data-stock]').data('stock'),
+                    price: parseInt($(this).find('[data-price]').data('price'))
+                }
+                orderItem.push(item);
+            });
+            orderData.orderItems = orderItem;
+            console.log(orderItem);
+
+            // 배송지 정보
+            const deliveryInfo = {
+                recipientName: $("input[name='name']").val(),
+                postcode: $("input[name='postcode']").val(),
+                address: $("input[name='address']").val(),
+                addressDetail: $("input[name='address-detail']").val(),
+                phoneNumber: $("input[name='phone-number']").val(),
+                email:$("input[name='email-user-name']").val() + "@" + $("input[name='email-domain']").val(),
+                memo: $("#memo-box").val()
+            }
+            orderData.deliveryInfo = deliveryInfo;
+            console.log(deliveryInfo);
+
+            // 결제 정보 수집
+            const paymentInfo = {
+                paymentMethod: $("input[name='paymentMethod']:checked").val(), // 결제 방법
+            };
+            orderData.paymentInfo = paymentInfo;
+            console.log(paymentInfo);
+
+            // 총 계산
+            let totalPrice = 0; // 주문 상품들 총 가격
+            let totalQuantity = 0; // 총 수량
+            let deliveryPrice = 0; // 배송비 초기값
+            let discountPrice = 0; // 할인 금액
+
+            // 각 아이템에 대해 반복 처리
+            $('#order-items tr').each(function() {
+                // 각 아이템의 가격과 재고 가져오기
+                let price = parseInt($(this).find('[id^="price-"]').data('price'));  // 가격
+                let stock = parseInt($(this).find('[id^="stock-"]').data('stock'));  // 재고
+
+                // 상품의 총 금액 계산
+                let itemTotalPrice = price * stock;
+                totalPrice += itemTotalPrice;  // 총 금액 합산
+                totalQuantity += stock;
+            });
+
+            // 배송비 계산 (50,000원 이상이면 배송비 면제)
+            if (totalPrice >= 50000) {
+                deliveryPrice = 0; // 배송비 면제
+            } else {
+                deliveryPrice = 3000; // 예시 배송비 3000원
+            }
+
+            // 할인금액 계산 (예시: 할인율 10%)
+            discountPrice = totalPrice * 0.1;
+
+            // 최종 결제 금액 계산
+            let finalTotalPrice = totalPrice + deliveryPrice - discountPrice;
+
+            // 가격 정보 저장
+            orderData.totalPriceInfo = {
+                totalPrice: totalPrice,
+                deliveryPrice: deliveryPrice,
+                discountPrice: discountPrice,
+                finalTotalPrice: finalTotalPrice,
+                totalQuantity: totalQuantity
+            };
+
+            console.log(orderData);
+
+            // 서버에 요청
+            $.ajax({
+                url: '/pay/ready', // 서버 URL
+                method: 'POST', // HTTP 요청 방식
+                contentType: 'application/json', // JSON 형식으로 데이터 전송
+                data: JSON.stringify(orderData), // JSON.stringify()로 객체를 JSON 문자열로 변환
+
+                success: function (response) {
+                    // response => {tid:"xxx", next_redirect_pc_url:"카카오결재화면URL"}
+                    location.href = response.next_redirect_pc_url;
+                },
+                error: function (xhr, status, error) {
+                    alert('결제 준비 중 문제가 발생했습니다: ' + error);
+                }
+            });
+        });
+
 
     </script>
 
