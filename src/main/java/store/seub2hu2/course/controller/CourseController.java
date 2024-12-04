@@ -1,6 +1,5 @@
 package store.seub2hu2.course.controller;
 
-import org.eclipse.tags.shaded.org.apache.xpath.operations.Mod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -52,8 +51,8 @@ public class CourseController {
         Map<String, Object> condition = new HashMap<>();
         condition.put("page", page);
 
-        // 1. 페이지에 맞는 로그인한 사용자의 완주 기록 데이터를 가져온다.
-        ListDto<Records> dto = userCourseService.getAllRecords(condition, loginUser);
+        // 1. 조회 범위에 따라 로그인한 사용자의 완주 기록 데이터를 가져온다.
+        ListDto<Records> dto = userCourseService.getMyAllRecords(condition, loginUser); // loginUser
 
         // 2. 완주 기록 데이터, 페이정 처리 정보를 반환한다.
         return dto;
@@ -121,7 +120,7 @@ public class CourseController {
     public String controlLikeCount(@RequestParam(name = "courseNo") int courseNo,
                                    @AuthenticationPrincipal LoginUser loginUser) {
         // 1. 코스의 좋아요 수를 증가시키거나 감소시킨다.
-        userCourseService.addOrReduceLikeCount(courseNo, loginUser.getNo());
+        userCourseService.addOrReduceLikeCount(courseNo, loginUser);
 
         // 2. detail.jsp를 재요청한다.
         return "redirect:detail?no=" + courseNo;
@@ -146,12 +145,11 @@ public class CourseController {
             condition.put("courseNo", courseNo);
 
             // 5. 해당 코스의 모든 완주 기록을 가져온다.
-            ListDto<Records> dto = userCourseService.getAllRecords(condition, loginUser);
+            ListDto<Records> dto = userCourseService.getAllRecords(condition);
 
             // 6. 해당 코스의 로그인한 사용자의 완주 기록을 가져온다.
             if (loginUser != null) {
-                condition.put("userNo", loginUser.getNo());
-                List<Records> records = userCourseService.getMyRecords(condition);
+                List<Records> records = userCourseService.getMyRecords(condition, loginUser);
                 model.addAttribute("myRecord", records);
             }
 
