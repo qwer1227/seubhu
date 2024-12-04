@@ -52,7 +52,7 @@
 	<div>
 		<div class="col d-flex d-flex justify-content-between">
 			<div>
-				가입가능여부
+				${crew.joined eq 'Y' ? '모집중' : '모집마감'}
 			</div>
 		</div>
 		<div class="title h4 d-flex justify-content-between align-items-center">
@@ -61,7 +61,7 @@
 			</div>
 			<span class="h5">
           <i class="bi bi-eye"></i> ${crew.viewCnt}
-          <i class="bi bi-chat-square-text"></i> 10
+          <i class="bi bi-chat-square-text"></i> ${replyCnt}
         </span>
 		</div>
 		<div class="meta d-flex justify-content-between mb-3">
