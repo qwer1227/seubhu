@@ -72,9 +72,32 @@
                         <img src="/resources/images/course/${course.filename }" class="card-img-top" alt="...">
                     </a>
                     <div class="card-body">
-                        <h5 class="card-title">${course.name }</h5>
+                        <h5 class="card-title">
+                            <%-- 코스를 성공한 경우에만 success 표시 --%>
+                            <c:if test="${course.successWhether.isSuccess == 'Y'}">
+                                <span class="badge text-bg-primary">완주 성공!</span>
+                            </c:if>
+                            ${course.name }
+                        </h5>
                         <a class="text-decoration-none" href="detail?no=${course.no }">
                             <p class="card-text">${course.region.si } ${course.region.gu } ${course.region.dong }</p>
+                            <%-- 도전 등록하지 않은 경우에만 도전 등록 버튼 / 도전 등록한 경우에만 도전 등록 취소 버튼 --%>
+                            <%-- 단, 현재 배지에 맞지 않으면 버튼 표시x -> 해당 코스 도전 불가능 표시 --%>
+                            <c:choose>
+                                <c:when test="${currentUserLevel < course.level}">
+                                    <span class="badge text-bg-primary">아직 도전할 수 없습니다!</span>
+                                </c:when>
+                                <c:otherwise>
+                                    <c:choose>
+                                        <c:when test="${course.challengeWhether.isRegister == 'Y'}">
+                                            <button type="button" class="btn btn-danger">도전 등록 취소</button>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <button type="button" class="btn btn-warning">도전 등록하기</button>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </c:otherwise>
+                            </c:choose>
                         </a>
                     </div>
                     <div class="card-footer bg-transparent border-primary" >
