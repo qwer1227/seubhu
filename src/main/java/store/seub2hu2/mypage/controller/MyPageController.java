@@ -610,4 +610,11 @@ public class MyPageController {
         return "redirect:/mypage/qna";
     }
 
+    // 운동일지 화면
+    @GetMapping("/workout")
+    public String workout(){
+
+        return "mypage/workoutdiary";
+    }
+
 }

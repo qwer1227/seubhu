@@ -1,12 +1,15 @@
 <%@ page import="static store.seub2hu2.lesson.enums.LessonCategory.*" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="/WEB-INF/views/common/tags.jsp" %>
+<%@ page import="java.util.Date" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!doctype html>
 <html lang="ko">
 <head>
     <%@include file="/WEB-INF/views/common/common.jsp" %>
 </head>
 <body>
+
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
 <security:authentication property="principal" var="loginUser"/>
 <div class="container-xxl" id="wrap">
@@ -108,12 +111,13 @@
                         <c:if test="${not empty reservation.status and
                              reservation.status ne '취소' and
                              reservation.status ne '환불'}">
+
                             <form action="/pay/cancel" name="paymentDto" method="POST" style="display: inline;">
                                 <input type="hidden" name="paymentId" value="${reservation.payment.id}">
-                                    <input type="hidden" name="userId" value="${loginUser.id}">
+                                <input type="hidden" name="userId" value="${loginUser.id}">
                                 <input type="hidden" name="lessonNo" value="${reservation.lesson.lessonNo}">
                                 <input type="hidden" name="totalAmount" value="${reservation.lesson.price}">
-                                <button type="submit" id=cancel-btn class="btn btn-sm btn-danger"
+                                <button type="submit" id="cancel-btn" class="btn btn-sm btn-danger"
                                         onclick="confirmCancel()">취소
                                 </button>
                             </form>
