@@ -150,23 +150,23 @@
                             </div>
                             <div class="card-body">
                                 <form action="/admin/qna" method="get" class="row g-3">
-                                    <div class="col-md-4">
-                                        <label for="opt" class="form-label">검색 조건</label>
-                                        <select class="form-select" id="opt" name="opt">
-                                            <option value="title" ${param.opt == 'title' ? 'selected' : ''}>제목</option>
-                                            <option value="writer" ${param.opt == 'writer' ? 'selected' : ''}>작성자</option>
-                                            <option value="status" ${param.opt == 'status' ? 'selected' : ''}>상태</option>
-                                            <option value="category" ${param.opt == 'categoty' ? 'selected' : ''}>카테고리</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label for="keyword" class="form-label">검색 값</label>
-                                        <input type="text" class="form-control" id="keyword" name="keyword"
-                                               value="${param.keyword}">
-                                    </div>
-                                    <div class="col-md-4 align-self-end">
-                                        <button type="submit" class="btn btn-primary w-100">검색</button>
-                                    </div>
+                                        <div class="col-3 md-4">
+                                            <label for="opt" class="form-label">검색 조건</label>
+                                            <select class="form-control col-6" id="opt" name="opt">
+                                                <option value="title" ${param.opt == 'title' ? 'selected' : ''}>제목</option>
+                                                <option value="writer" ${param.opt == 'writer' ? 'selected' : ''}>작성자</option>
+                                                <option value="status" ${param.opt == 'status' ? 'selected' : ''}>상태</option>
+                                                <option value="category" ${param.opt == 'categoty' ? 'selected' : ''}>카테고리</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="keyword" class="form-label">검색 값</label>
+                                            <input type="text" class="form-control" id="keyword" name="keyword"
+                                                   value="${param.keyword}">
+                                        </div>
+                                        <div class="col-md-4 align-self-end">
+                                            <button type="submit" class="btn btn-primary w-10">검색</button>
+                                        </div>
                                 </form>
                             </div>
                         </div>

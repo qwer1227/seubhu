@@ -332,11 +332,15 @@ public class AdminService {
 
         int page = (Integer) condition.get("page");
         int rows = (Integer) condition.get("rows");
+
+        System.out.println("page"+page+", rows: "+rows);
         Pagination pagination = new Pagination(page, totalRows, rows);
         int begin = pagination.getBegin();
         int end = pagination.getEnd();
         condition.put("begin", begin);
         condition.put("end", end);
+
+        System.out.println("begin"+begin+", end: "+end);
 
         List<SettlementDto> settlementDtos = adminMapper.getSettleLists(condition);
 

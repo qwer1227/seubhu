@@ -30,7 +30,7 @@
                          ROW_NUMBER() OVER (ORDER BY P.pay_no desc) as RN
                     </when>
                     <when test="condition.sort == 'price'">
-                         ROW_NUMBER() OVER (ORDER BY P.pay_price asc) as RN
+                         ROW_NUMBER() OVER (ORDER BY P.pay_price desc) as RN
                     </when>
                 </choose>
                  , P.pay_no		as payNo
@@ -42,6 +42,7 @@
                  , P.pay_date	as payDate
                  , P.pay_cancel_date as payCancelDate
                  , P.pay_method as payMethod
+                 , P.pay_status as status
             from
                 PAYMENTS P, USERS U, LESSON_RESERVATIONS R, LESSONS L
             where
@@ -65,7 +66,7 @@
                 <if test="condition.opt != null">
                     <choose>
                         <when test="condition.opt == 'all'">
-                            and P.pay_status = '결제확정' or P.pay_status = '결제완료' or P.pay_status = '취소'
+                            and (P.pay_status = '결제확정' or P.pay_status = '결제완료' or P.pay_status = '취소')
                         </when>
                         <when test="condition.opt == 'ready'">
                             and P.pay_status = '결제확정'

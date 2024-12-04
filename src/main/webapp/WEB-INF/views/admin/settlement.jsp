@@ -136,7 +136,7 @@
                     <th>결제타입</th>
                     <th>결제자</th>
                     <th>결제자ID</th>
-                    <th>품명</th>
+                    <th>레슨명</th>
                     <th>총금액</th>
                     <th>결제방법</th>
                     <th>결제상태</th>
@@ -170,19 +170,19 @@
                   <li class="page-item ${paging.first? 'disabled' : ''}">
                       <a class="page-link"
                       onclick="changePage(${paging.prevPage}, event)"
-                      href="product?page=${paging.prevPage}">이전</a>
+                      href="settlement?page=${paging.prevPage}">이전</a>
                   </li>
                   <c:forEach var="num" begin="${paging.beginPage}" end="${paging.endPage}">
                       <li class="page-item ${paging.page eq num ? 'active' : ''}">
                           <a class="page-link"
                           onclick="changePage(${num}, event)"
-                          href="product?page=${num}">${num}</a>
+                          href="settlement?page=${num}">${num}</a>
                       </li>
                   </c:forEach>
                   <li class="page-item ${paging.last ? 'disabled' : ''}" >
                       <a class="page-link"
                       onclick="changePage(${paging.nextPage}, event)"
-                      href="product?page=${paging.nextPage}">다음</a>
+                      href="settlement?page=${paging.nextPage}">다음</a>
                   </li>
                 </ul>
               </nav>

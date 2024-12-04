@@ -649,7 +649,7 @@ public class AdminController {
     public String settlement(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
                              @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
                              @RequestParam(name = "pType", required = false, defaultValue = "lesson") String pType,
-                             @RequestParam(name = "dayType", required = false, defaultValue = "day") String dayType,
+//                             @RequestParam(name = "dayType", required = false, defaultValue = "day") String dayType,
                              @RequestParam(name = "sort", required = false, defaultValue = "latest") String sort,
                              @RequestParam(name = "opt", required = false, defaultValue = "all") String opt,
                              @RequestParam(name = "keyword", required = false) String keyword,
@@ -659,7 +659,7 @@ public class AdminController {
     condition.put("page", page);
     condition.put("rows", rows);
     condition.put("pType", pType);
-    condition.put("dayType", dayType);
+//    condition.put("dayType", dayType);
     condition.put("sort", sort);
     condition.put("opt", opt);
 
@@ -670,6 +670,7 @@ public class AdminController {
         ListDto<SettlementDto> dto = adminService.getSettleList(condition);
 
         model.addAttribute("dto", dto.getData());
+        model.addAttribute("paging", dto.getPaging());
 
         return "admin/settlement";
     }
