@@ -455,6 +455,15 @@
             }
         }
     }
+    
+    function replyLikeButton(crewNo, replyNo, userNo) {
+      let heart = document.querySelector("#icon-thumbs");
+      if (heart.classList.contains("bi-hand-thumbs-up")) {
+        window.location.href = `update-reply-like?no=\${crewNo}&rno=\${replyNo}&userNo=\${userNo}`;
+      } else {
+        window.location.href = `delete-reply-like?no=\${crewNo}&rno=\${replyNo}&userNo=\${userNo}`;
+      }
+    }
 
     /* 버튼 클릭 시 답글 입력 폼 활성화 */
     function appendComment(replyNo) {

@@ -231,4 +231,23 @@ public class CrewController {
 
         return "redirect:detail?no=" + form.getCrewNo();
     }
+
+
+    @GetMapping("/update-reply-like")
+    public String updateReplyLke(@RequestParam("no") int crewNo
+            , @RequestParam("rno") int replyNo
+            , @AuthenticationPrincipal LoginUser loginUser){
+
+        replyService.updateReplyLike(replyNo, loginUser);
+        return "redirect:detail?no=" + crewNo;
+    }
+
+    @GetMapping("/delete-reply-like")
+    public String updateReplyUnlike(@RequestParam("no") int crewNo
+            , @RequestParam("rno") int replyNo
+            , @AuthenticationPrincipal LoginUser loginUser){
+
+        replyService.deleteReplyLike(replyNo, loginUser);
+        return "redirect:detail?no=" + crewNo;
+    }
 }
