@@ -4,6 +4,87 @@
 <mapper namespace="store.seub2hu2.admin.mapper.AdminMapper">
 
     <!--
+        int getSettleTotalRows(Map<String, Object> condition);
+    -->
+    <select id="getSettleTotalRows" resultType="int">
+        select
+            count(*)
+        from
+            PAYMENTS;
+    </select>
+
+    <!--
+        List<SettlementDto> getSettleLists(Map<String, Object> condition);
+    -->
+    <select id="getSettleLists" resultType="store.seub2hu2.admin.dto.SettlementDto">
+        select
+            *
+        from
+            (
+            select
+                <choose>
+                    <when test="condition.sort == 'latest'">
+                         ROW_NUMBER() OVER (ORDER BY P.pay_no asc) as RN
+                    </when>
+                    <when test="condition.sort == 'oldestDate'">
+                         ROW_NUMBER() OVER (ORDER BY P.pay_no desc) as RN
+                    </when>
+                    <when test="condition.sort == 'price'">
+                         ROW_NUMBER() OVER (ORDER BY P.pay_price desc) as RN
+                    </when>
+                </choose>
+                 , P.pay_no		as payNo
+                 , P.pay_type	as settleType
+                 , U.user_name 	as name
+                 , U.user_id	as id
+                 , L.lesson_title    as title
+                 , P.pay_price	as totalPrice
+                 , P.pay_date	as payDate
+                 , P.pay_cancel_date as payCancelDate
+                 , P.pay_method as payMethod
+                 , P.pay_status as status
+            from
+                PAYMENTS P, USERS U, LESSON_RESERVATIONS R, LESSONS L
+            where
+                P.user_id = U.user_id
+            and
+                P.pay_id = R.lesson_reservation_pay_id
+            and
+                R.lesson_no = L.lesson_no
+            and
+                P.pay_type = '레슨'
+<!--                <if test="condition.dayType != null">-->
+<!--                    <choose>-->
+<!--                        <when test="condition.dayType == 'day'">-->
+<!--                            -->
+<!--                        </when>-->
+<!--                        <when test="condition.dayType == 'month'">-->
+
+<!--                        </when>-->
+<!--                    </choose>-->
+<!--                </if>-->
+                <if test="condition.opt != null">
+                    <choose>
+                        <when test="condition.opt == 'all'">
+                            and (P.pay_status = '결제확정' or P.pay_status = '결제완료' or P.pay_status = '취소')
+                        </when>
+                        <when test="condition.opt == 'ready'">
+                            and P.pay_status = '결제확정'
+                        </when>
+                        <when test="condition.opt == 'notReady'">
+                            and P.pay_status = '결제완료'
+                        </when>
+                        <when test="condition.opt == 'cancel'">
+                            and P.pay_status = '취소'
+                        </when>
+                    </choose>
+                </if>
+            ) as subquery
+        where
+            RN between #{condition.begin} and #{condition.end}
+    </select>
+
+    <!--
         void getChangeIsDeleted(Object sizeNo);
     -->
 

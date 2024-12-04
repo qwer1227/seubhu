@@ -1,5 +1,6 @@
 package store.seub2hu2.mypage.controller;
 
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -11,6 +12,7 @@ import store.seub2hu2.community.vo.Board;
 import store.seub2hu2.mypage.dto.CommentRequest;
 import store.seub2hu2.mypage.dto.CommentResponse;
 import store.seub2hu2.mypage.dto.ImageDeleteRequest;
+import store.seub2hu2.mypage.dto.Workout;
 import store.seub2hu2.mypage.service.FileUploadService;
 import store.seub2hu2.mypage.service.PostService;
 import store.seub2hu2.mypage.vo.Post;
@@ -176,5 +178,15 @@ public class MyPageRestController {
             response.put("message", "서버 오류");
             return ResponseEntity.status(500).body(response);
         }
+    }
+
+    @GetMapping("/workout")
+    public ResponseEntity<Map<String, Object>> workout(@RequestBody Workout workout, @AuthenticationPrincipal  LoginUser loginUser){
+
+        Map<String, Object> response = new HashMap<>();
+
+        response.put("message","성공함");
+
+        return ResponseEntity.ok(response);
     }
 }
