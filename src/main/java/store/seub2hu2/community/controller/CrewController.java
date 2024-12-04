@@ -18,9 +18,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import store.seub2hu2.community.dto.CrewForm;
 import store.seub2hu2.community.dto.ReplyForm;
+import store.seub2hu2.community.dto.ReportForm;
 import store.seub2hu2.community.service.CrewReplyService;
 import store.seub2hu2.community.service.CrewService;
 import store.seub2hu2.community.service.BoardReplyService;
+import store.seub2hu2.community.service.ReportService;
 import store.seub2hu2.community.view.FileDownloadView;
 import store.seub2hu2.community.vo.Crew;
 import store.seub2hu2.community.vo.Reply;
@@ -47,9 +49,10 @@ public class CrewController {
     public FileDownloadView fileDownloadView;
 
     @Autowired
-    private CrewReplyService replyService;
-    @Autowired
     private CrewReplyService crewReplyService;
+
+    @Autowired
+    private ReportService reportService;
 
     @GetMapping("/main")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page
@@ -188,7 +191,7 @@ public class CrewController {
     public String addReply(ReplyForm form
             , @AuthenticationPrincipal LoginUser loginUser) {
 
-        replyService.addNewReply(form, loginUser);
+        crewReplyService.addNewReply(form, loginUser);
         return "redirect:detail?no=" + form.getCrewNo();
     }
 
@@ -197,7 +200,7 @@ public class CrewController {
     public String addComment(ReplyForm form
             , @AuthenticationPrincipal LoginUser loginUser){
 
-        replyService.addNewComment(form, loginUser);
+        crewReplyService.addNewComment(form, loginUser);
         return "redirect:detail?no=" + form.getCrewNo();
     }
 
@@ -214,7 +217,7 @@ public class CrewController {
         form.setContent(replyContent);
         form.setUserNo(loginUser.getNo());
 
-        replyService.updateReply(form);
+        crewReplyService.updateReply(form);
 
         return "redirect:detail?no=" + form.getCrewNo();
     }
@@ -227,18 +230,17 @@ public class CrewController {
         ReplyForm form = new ReplyForm();
         form.setNo(replyNo);
         form.setCrewNo(crewNo);
-        replyService.deleteReply(replyNo);
+        crewReplyService.deleteReply(replyNo);
 
         return "redirect:detail?no=" + form.getCrewNo();
     }
-
 
     @GetMapping("/update-reply-like")
     public String updateReplyLke(@RequestParam("no") int crewNo
             , @RequestParam("rno") int replyNo
             , @AuthenticationPrincipal LoginUser loginUser){
 
-        replyService.updateReplyLike(replyNo, loginUser);
+        crewReplyService.updateReplyLike(replyNo, loginUser);
         return "redirect:detail?no=" + crewNo;
     }
 
@@ -247,7 +249,24 @@ public class CrewController {
             , @RequestParam("rno") int replyNo
             , @AuthenticationPrincipal LoginUser loginUser){
 
-        replyService.deleteReplyLike(replyNo, loginUser);
+        crewReplyService.deleteReplyLike(replyNo, loginUser);
+        return "redirect:detail?no=" + crewNo;
+    }
+
+    @PostMapping("/report-crew")
+    public String reportCrew(ReportForm form
+            , @AuthenticationPrincipal LoginUser loginUser){
+
+        reportService.registerReportToCrew(form, loginUser);
+        return "redirect:detail?no=" + form.getNo();
+    }
+
+    @PostMapping("report-reply")
+    public String reportReply(ReportForm form
+            , @RequestParam("cno") int crewNo
+            , @AuthenticationPrincipal LoginUser loginUser){
+
+        reportService.registerReportToCrew(form, loginUser);
         return "redirect:detail?no=" + crewNo;
     }
 }

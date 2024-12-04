@@ -403,7 +403,7 @@ public class MyPageController {
     public String reportBoard(ReportForm form
             , @AuthenticationPrincipal LoginUser loginUser){
 
-        reportService.registerReport(form, loginUser);
+        reportService.registerReportToBoard(form, loginUser);
         return "redirect:detail?no=" + form.getNo();
     }
 
@@ -412,7 +412,7 @@ public class MyPageController {
             , @RequestParam("bno") int boardNo
             , @AuthenticationPrincipal LoginUser loginUser){
 
-        reportService.registerReport(form, loginUser);
+        reportService.registerReportToBoard(form, loginUser);
         return "redirect:detail?no=" + boardNo;
     }
 
