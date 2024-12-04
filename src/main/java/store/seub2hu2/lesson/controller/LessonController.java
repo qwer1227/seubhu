@@ -53,6 +53,21 @@ public class LessonController {
         return "lesson/lesson";
     }
 
+    @GetMapping("/list")
+    @ResponseBody
+    public List<Lesson> lesson(@RequestParam("start") String start,
+                               @RequestParam("end") String end,
+                               @RequestParam(value = "includeCompleted", required = false, defaultValue = "false") boolean includeCompleted,
+                               @RequestParam(value = "subject", required = false, defaultValue = "전체") String subject) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("start", start);
+        param.put("end", end);
+        param.put("includeCompleted", includeCompleted);
+        List<Lesson> lessons = lessonService.getAllLessons(param, subject);
+
+        return lessons;
+    }
+
     @GetMapping("/detail")
     public String lessonDetail(@RequestParam("lessonNo") Integer lessonNo, Model model) {
         try {
@@ -80,27 +95,11 @@ public class LessonController {
         }
     }
 
-    @GetMapping("/list")
-    @ResponseBody
-    public List<Lesson> lesson(@RequestParam("start") String start,
-                               @RequestParam("end") String end,
-                               @RequestParam(value = "subject", required = false, defaultValue = "전체") String subject) {
-        Map<String, Object> param = new HashMap<>();
-        param.put("start", start);
-        param.put("end", end);
-        log.info("subject = {}", subject);
-        log.info("Start: {}, End: {}, Subject: {}", start, end, subject);
-        List<Lesson> lessons = lessonService.getAllLessons(param, subject);
-
-        return lessons;
-    }
-
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/reservation")
     public String reservation(@AuthenticationPrincipal LoginUser loginUser,
                               @ModelAttribute("condition") ReservationSearchCondition condition,
                               Model model) {
-
 
         LocalDate now = LocalDate.now();
 

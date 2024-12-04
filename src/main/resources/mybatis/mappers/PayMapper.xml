@@ -42,4 +42,17 @@
         FROM PAYMENTS
         WHERE PAY_ID = #{payId}
     </select>
+
+    <update id="updatePayStatus">
+        UPDATE PAYMENTS
+        SET PAY_STATUS = '결제확정'
+        WHERE PAY_ID = (SELECT P.PAY_ID
+                FROM PAYMENTS P INNER JOIN LESSON_RESERVATIONS R INNER JOIN LESSONS L
+                ON P.PAY_ID = R.PAY_ID
+                ON R.LESSON_NO = R.LESSON_NO
+                WHERE P.PAY_STATUS = '결제완료'
+                AND R.LESSON_RESERVATION_STATUS = '예약'
+                AND DATE_FORMATL(LESSON_START_DATE, '%Y/%m/%d')  >= DATE_FORMAT(NOW(), '%Y/%m/%d')
+                )
+    </update>
 </mapper>

@@ -21,4 +21,8 @@ public class PaymentService {
     public String getPaymentTypeById(String id) {
         return payMapper.getPaymentTypeById(id);
     }
+
+    public void completePayment(Payment payment) {
+        payMapper.updatePayStatus(payment);
+    }
 }
