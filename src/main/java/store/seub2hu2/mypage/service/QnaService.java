@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import store.seub2hu2.admin.dto.RequestParamsDto;
+import store.seub2hu2.mypage.dto.AnswerDTO;
 import store.seub2hu2.mypage.dto.QnaCreateRequest;
 import store.seub2hu2.mypage.dto.QnaResponse;
 import store.seub2hu2.mypage.mapper.QnaMapper;
@@ -57,6 +58,8 @@ public class QnaService {
         // 검색 조건에 맞는 전체 데이터 개수를 조회하는 기능
         int totalRows = qnaMapper.getTotalRows(condition);
 
+        System.out.println("totalrows" + totalRows);
+
         // Pagination 객체를 생성한다
         int page = (Integer) condition.get("page");
         int rows = (Integer) condition.get("rows");
@@ -70,8 +73,13 @@ public class QnaService {
         // ProdListDto 타입의 데이터를 담는 ListDto객체를 생성한다
         // 질문 목록 ListDto(QnaReponse), 페이징처리 정보(Pagination)을 담는다
         List<QnaResponse> qnas = qnaMapper.getQnas(condition);
+        System.out.println(qnas);
         ListDto<QnaResponse> dto = new ListDto<>(qnas,pagination);
 
         return dto;
+    }
+
+    public void updateAnswer(AnswerDTO answerDTO){
+        qnaMapper.updateAnswer(answerDTO);
     }
 }

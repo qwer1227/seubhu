@@ -17,8 +17,10 @@ import store.seub2hu2.lesson.dto.LessonUpdateDto;
 import store.seub2hu2.lesson.service.LessonFileService;
 import store.seub2hu2.lesson.service.LessonService;
 import store.seub2hu2.lesson.vo.Lesson;
+import store.seub2hu2.mypage.dto.AnswerDTO;
 import store.seub2hu2.mypage.dto.QnaCreateRequest;
 import store.seub2hu2.mypage.dto.QnaResponse;
+import store.seub2hu2.mypage.enums.QnaStatus;
 import store.seub2hu2.mypage.service.QnaService;
 import store.seub2hu2.product.dto.*;
 import store.seub2hu2.product.service.ProductService;
@@ -648,28 +650,59 @@ public class AdminController {
         return "admin/settlement";
     }
 
-//    @GetMapping("/qna")
-//    public String qna(@ModelAttribute RequestParamsDto dto ,Model model) {
-//
-//        Map<String, Object> condition = new HashMap<>();
-//        condition.put("page", dto.getPage());
-//        condition.put("rows", dto.getRows());
-//        condition.put("sort", dto.getSort());
-//
-//        // 카테고리 필터링 처리
-//        if (StringUtils.hasText(dto.getCategory())){
-//            condition.put("category", dto.getCategory());
-//        }
-//
-//        if (StringUtils.hasText(dto.getKeyword())){
-//            condition.put("opt",dto.getOpt());
-//            condition.put("keyword", dto.getKeyword());
-//        }
-//
-//        ListDto<QnaResponse> qnaDto = qnaService.getQnas(condition);
-//
-//        return "admin/qnalist";
-//    }
+    @GetMapping("/qna")
+    public String qna(@ModelAttribute RequestParamsDto dto ,Model model) {
+
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("page", dto.getPage());
+        condition.put("rows", dto.getRows());
+        condition.put("sort", dto.getSort());
+
+        // 검색 조건이 'status'일 때, keyword 값을 0, 1, 2로 변환
+        if ("status".equals(dto.getOpt()) && StringUtils.hasText(dto.getKeyword())) {
+            String status = dto.getKeyword();
+            condition.put("opt", dto.getOpt());
+            // "대기", "완료", "삭제"를 0, 1, 2로 변환
+            if ("대기".equals(status)) {
+                condition.put("keyword", 0);
+            } else if ("완료".equals(status)) {
+                condition.put("keyword", 1);
+            } else if ("삭제".equals(status)) {
+                condition.put("keyword", 2);
+            }
+        } else {
+            if (StringUtils.hasText(dto.getKeyword())) {
+                condition.put("opt", dto.getOpt());
+                condition.put("keyword", dto.getKeyword());
+            }
+        }
+
+        ListDto<QnaResponse> qnaDto = qnaService.getQnas(condition);
+
+        model.addAttribute("qnaList", qnaDto.getData());
+        model.addAttribute("pagination", qnaDto.getPaging());
+
+        return "admin/qnalist";
+    }
+
+    @GetMapping("/qna/{qnaNo}")
+    public String qnaDetailPage(@PathVariable("qnaNo") int qnaNo, Model model){
+
+        QnaResponse qnaResponse = qnaService.getQnaByQnaNo(qnaNo);
+
+        model.addAttribute("qna",qnaResponse);
+
+        return "admin/answer-form";
+    }
+
+    @PostMapping("/qna/answer")
+    public String qnaAnswerPage(@ModelAttribute AnswerDTO answerDTO){
+
+        qnaService.updateAnswer(answerDTO);
+
+        return "redirect:/admin/qna";
+    }
+
 
     @GetMapping("/community")
     public String community() {
