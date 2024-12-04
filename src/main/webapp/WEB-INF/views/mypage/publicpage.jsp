@@ -105,7 +105,7 @@
                 새 글 작성
             </button>
             <button class="btn btn-outline-primary btn-follow">팔로우</button>
-            <button class="btn btn-outline-secondary btn-message">메시지</button>
+            <button class="btn btn-outline-secondary btn-message"><a href="message/list">메시지</a></button>
             <a href="mypage/private" class="btn btn-outline-dark btn-settings">⚙️</a>
         </div>
     </div>
@@ -125,7 +125,7 @@
                         <!-- 게시글 작성자 -->
                         <p class="text-muted">작성자: ${post.user.name}</p>
                         <!-- 게시글 작성일 -->
-                        <p class="text-muted">${post.postCreatedDate}</p>
+                        <p class="text-muted"><fmt:formatDate value="${post.postCreatedDate}"/></p>
                     </div>
                 </div>
             </div>
@@ -246,9 +246,17 @@
             url: "/mypage/detail/" + postId,  // 서버로 AJAX 요청
             method: "GET",
             success: function(response) {
+                const rawDate = response.postCreatedDate;
+                const date = new Date(rawDate)
+                const formattedDate = new Intl.DateTimeFormat('ko-KR',{
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                }).format(date);
+
                 // 서버에서 받은 게시글 정보로 모달 내용 채우기
                 $("#detailPostContent").text(response.postContent);
-                $("#detailCreatedDate").text(response.postCreatedDate);
+                $("#detailCreatedDate").text(formattedDate);
                 $("#detailPostWriter").text(response.user.name);
 
                 // 서버에서 받은 댓글 데이터를 반복하면서 화면에 추가
