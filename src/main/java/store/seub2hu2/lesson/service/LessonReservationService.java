@@ -152,4 +152,8 @@ public class LessonReservationService {
         log.info("status.label() = {}", status.label());
     }
 
+    public void completeReservation() {
+        lessonReservationMapper.updatePastReservationStatus();
+    }
+
 }

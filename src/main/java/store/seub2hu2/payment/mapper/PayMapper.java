@@ -17,5 +17,5 @@ public interface PayMapper {
     public String getPaymentTypeById(@Param("payId") String payId);
 
     // 결제 상태 변경
-    public void updatePayStatus(@Param("payment") Payment payment);
+    public void updateLessonPayStatus();
 }

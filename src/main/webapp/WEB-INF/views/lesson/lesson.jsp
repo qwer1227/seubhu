@@ -194,13 +194,12 @@
         }
 
         function lessonDetail(lessonNo) {
-            if (!lessonNo) {
-                console.error("Lesson number is missing.");
-                return;
+            if (lessonNo !== undefined && lessonNo !== null && lessonNo !== "") {  // Validate lessonNo
+                console.log("LessonNo:", lessonNo); // Log to ensure lessonNo is being passed as int
+                location.href = ("/lesson/detail?lessonNo=" + lessonNo);
+            } else {
+                console.error("Invalid lessonNo");
             }
-            const url = `/lesson/detail?lessonNo=${lessonNo}`;
-            console.log(`Navigating to: ${url}`);
-            window.location.href = url; // 페이지 이동
         }
 
         // Subject or Completed include filter changes

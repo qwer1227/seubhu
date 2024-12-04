@@ -22,7 +22,7 @@ public class PaymentService {
         return payMapper.getPaymentTypeById(id);
     }
 
-    public void completePayment(Payment payment) {
-        payMapper.updatePayStatus(payment);
+    public void completeLessonPayment() {
+        payMapper.updateLessonPayStatus();
     }
 }
