@@ -180,7 +180,7 @@ public class MyPageRestController {
         }
     }
 
-    @GetMapping("/workout")
+    @GetMapping("/getworkout")
     public ResponseEntity<Map<String, Object>> workout(@RequestBody Workout workout, @AuthenticationPrincipal  LoginUser loginUser){
 
         Map<String, Object> response = new HashMap<>();
