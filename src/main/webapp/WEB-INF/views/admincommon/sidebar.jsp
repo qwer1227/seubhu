@@ -102,11 +102,12 @@
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseFive"
            aria-expanded="true" aria-controls="collapseFive">
             <i class="fas fa-fw fa-cog"></i>
-            <span>재고&정산 관리</span>
+            <span>배송&재고&정산 관리</span>
         </a>
         <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">재고</h6>
+                <h6 class="collapse-header">배송&재고&정산</h6>
+                <a class="collapse-item" href="delivery">배송</a>
                 <a class="collapse-item" href="product-stock?topNo=0">상품 재고 등록하기</a>
                 <a class="collapse-item" href="settlement">정산관리</a>
             </div>

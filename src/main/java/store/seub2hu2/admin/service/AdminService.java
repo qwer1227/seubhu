@@ -14,6 +14,7 @@ import store.seub2hu2.course.vo.Region;
 import store.seub2hu2.lesson.mapper.LessonMapper;
 import store.seub2hu2.lesson.vo.Lesson;
 import store.seub2hu2.lesson.vo.LessonReservation;
+import store.seub2hu2.payment.vo.Payment;
 import store.seub2hu2.product.vo.*;
 import store.seub2hu2.user.mapper.UserMapper;
 import store.seub2hu2.user.vo.User;
@@ -321,6 +322,25 @@ public class AdminService {
     public List<LessonUsersDto> getLessonUser(Integer lessonNo) {
 
         List<LessonUsersDto> dto = adminMapper.getLessonUserByNo(lessonNo);
+
+        return dto;
+    }
+
+    public ListDto<SettlementDto> getSettleList(Map<String, Object> condition) {
+
+        int totalRows = adminMapper.getSettleTotalRows(condition);
+
+        int page = (Integer) condition.get("page");
+        int rows = (Integer) condition.get("rows");
+        Pagination pagination = new Pagination(page, totalRows, rows);
+        int begin = pagination.getBegin();
+        int end = pagination.getEnd();
+        condition.put("begin", begin);
+        condition.put("end", end);
+
+        List<SettlementDto> settlementDtos = adminMapper.getSettleLists(condition);
+
+        ListDto<SettlementDto> dto = new ListDto<>(settlementDtos, pagination);
 
         return dto;
     }
