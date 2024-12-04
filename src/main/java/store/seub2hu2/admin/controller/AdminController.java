@@ -17,6 +17,7 @@ import store.seub2hu2.lesson.dto.LessonUpdateDto;
 import store.seub2hu2.lesson.service.LessonFileService;
 import store.seub2hu2.lesson.service.LessonService;
 import store.seub2hu2.lesson.vo.Lesson;
+import store.seub2hu2.payment.vo.Payment;
 import store.seub2hu2.mypage.dto.AnswerDTO;
 import store.seub2hu2.mypage.dto.QnaCreateRequest;
 import store.seub2hu2.mypage.dto.QnaResponse;
@@ -645,7 +646,31 @@ public class AdminController {
     }
 
     @GetMapping("/settlement")
-    public String settlement() {
+    public String settlement(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                             @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
+                             @RequestParam(name = "pType", required = false, defaultValue = "lesson") String pType,
+//                             @RequestParam(name = "dayType", required = false, defaultValue = "day") String dayType,
+                             @RequestParam(name = "sort", required = false, defaultValue = "latest") String sort,
+                             @RequestParam(name = "opt", required = false, defaultValue = "all") String opt,
+                             @RequestParam(name = "keyword", required = false) String keyword,
+                             Model model) {
+
+    Map<String, Object> condition = new HashMap<>();
+    condition.put("page", page);
+    condition.put("rows", rows);
+    condition.put("pType", pType);
+//    condition.put("dayType", dayType);
+    condition.put("sort", sort);
+    condition.put("opt", opt);
+
+        if (StringUtils.hasText(keyword)) {
+            condition.put("keyword", keyword);
+        }
+
+        ListDto<SettlementDto> dto = adminService.getSettleList(condition);
+
+        model.addAttribute("dto", dto.getData());
+        model.addAttribute("paging", dto.getPaging());
 
         return "admin/settlement";
     }

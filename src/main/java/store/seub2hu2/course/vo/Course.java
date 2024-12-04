@@ -19,6 +19,8 @@ public class Course {
     private int successCnt; // 성공 횟수
     private String filename; // 파일명
     private Region region; // 지역 번호
+    private SuccessWhether successWhether; // 코스 성공 여부
+    private ChallengeWhether challengeWhether; // 코스 도전 등록 여부
 
     public String getOriginalFilename() {
         if(filename == null) {

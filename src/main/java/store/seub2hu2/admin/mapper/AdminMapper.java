@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import store.seub2hu2.admin.dto.ImageUrlDto;
 import store.seub2hu2.admin.dto.LessonUsersDto;
+import store.seub2hu2.admin.dto.SettlementDto;
 import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.course.vo.Region;
 import store.seub2hu2.lesson.vo.Lesson;
@@ -87,6 +88,10 @@ public interface AdminMapper {
     void insertStock(@Param("condition") Map<String, Object> condition);
 
     List<LessonUsersDto> getLessonUserByNo(Integer lessonNo);
+
+    int getSettleTotalRows(Map<String, Object> condition);
+
+    List<SettlementDto> getSettleLists(@Param("condition") Map<String, Object> condition);
 
 
 

@@ -9,7 +9,6 @@ import store.seub2hu2.course.mapper.CourseMapper;
 import store.seub2hu2.course.mapper.UserCourseMapper;
 import store.seub2hu2.course.vo.*;
 import store.seub2hu2.security.user.LoginUser;
-import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.ListDto;
 import store.seub2hu2.util.Pagination;
 
@@ -59,10 +58,10 @@ public class UserCourseService {
      */
     public boolean checkSuccess(int userNo, int courseNo) {
         // 1. 로그인한 사용자가 코스를 성공했는지 확인한다.
-        CourseWhether courseWhether = userCourseMapper.checkSuccess(userNo, courseNo);
+        SuccessWhether successWhether = userCourseMapper.checkSuccess(userNo, courseNo);
 
         // 2. 코스 성공 여부를 반환한다.
-        return courseWhether != null;
+        return successWhether != null;
     }
 
     /**
@@ -105,15 +104,14 @@ public class UserCourseService {
     }
 
     /**
-     * 코스에 해당하는 모든 사용자의 완주 기록을 시간이 낮은 순으로 가져온다.
-     * @param condition 페이지, 코스 번호
-     * @return 완주 기록 목록
+     * 로그인한 사용자의 모든 완주 기록을 가져온다.
+     * @param condition 페이지
+     * @param loginUser 로그인한 사용자 정보
+     * @return 완주 기록 목록, 페이징 처리 정보
      */
-    public ListDto<Records> getAllRecords(Map<String, Object> condition, @AuthenticationPrincipal LoginUser loginUser) {
-        // 1. 로그인한 상태라면, Map 객체에 사용자 번호를 저장한다.
-        if (loginUser != null) {
-            condition.put("userNo", loginUser.getNo());
-        }
+    public ListDto<Records> getMyAllRecords(Map<String, Object> condition, @AuthenticationPrincipal LoginUser loginUser) {
+        // 1. 사용자 번호를 Map 객체에 저장한다.
+        condition.put("userNo", loginUser.getNo());
 
         // 2. 코스에 해당하는 전체 완주 기록의 갯수를 조회한다.
         int totalRows = userCourseMapper.getTotalRows(condition);
@@ -135,15 +133,43 @@ public class UserCourseService {
     }
 
     /**
+     * 코스에 해당하는 모든 완주 기록을 시간이 낮은 순으로 가져온다.
+     * @param condition 페이지, 코스 번호
+     * @return 완주 기록 목록
+     */
+    public ListDto<Records> getAllRecords(Map<String, Object> condition) { //
+        // 1. 코스에 해당하는 전체 완주 기록의 갯수를 조회한다.
+        int totalRows = userCourseMapper.getTotalRows(condition);
+
+        // 2. 페이징 처리 정보를 가져오고, Pagination 객체에 저장한다.
+        int page = (Integer) condition.get("page");
+        Pagination pagination = new Pagination(page, totalRows, 10);
+
+        // 3. 데이터 검색 범위를 조회해서 Map 객체에 저장한다.
+        condition.put("begin", pagination.getBegin());
+        condition.put("end", pagination.getEnd());
+
+        // 4. 조회 범위에 맞는 완주 기록 목록을 가져온다.
+        List<Records> records = userCourseMapper.getRecords(condition);
+
+        // 5. ListDto 객체에 화면에 표시할 데이터(완주 기록 목록, 페이징 처리 정보)를 담고, 반환한다.
+        ListDto<Records> dto = new ListDto<>(records, pagination);
+        return dto;
+    }
+
+    /**
      * 코스에 해당하는 로그인한 사용자의 완주 기록을 시간이 낮은 순으로 가져온다.
      * @param condition 코스 번호, 사용자 번호
      * @return 완주 기록 목록
      */
-    public List<Records> getMyRecords(Map<String, Object> condition) {
-        // 1. 나의 완주 기록 목록을 가져온다.
+    public List<Records> getMyRecords(Map<String, Object> condition, @AuthenticationPrincipal LoginUser loginUser) {
+        // 1. 사용자 번호를 Map 객체에 저장한다.
+        condition.put("userNo", loginUser.getNo());
+
+        // 2. 나의 완주 기록 목록을 가져온다.
         List<Records> records = userCourseMapper.getRecords(condition);
 
-        // 2. 나의 완주 기록 목록을 반환한다.
+        // 3. 나의 완주 기록 목록을 반환한다.
         return records;
     }
 }

@@ -1,6 +1,5 @@
 package store.seub2hu2.course.controller;
 
-import org.eclipse.tags.shaded.org.apache.xpath.operations.Mod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -10,10 +9,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import store.seub2hu2.course.service.CourseService;
 import store.seub2hu2.course.service.UserCourseService;
-import store.seub2hu2.course.vo.Course;
-import store.seub2hu2.course.vo.Records;
-import store.seub2hu2.course.vo.UserBadge;
-import store.seub2hu2.course.vo.UserLevel;
+import store.seub2hu2.course.vo.*;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.util.ListDto;
 
@@ -52,8 +48,8 @@ public class CourseController {
         Map<String, Object> condition = new HashMap<>();
         condition.put("page", page);
 
-        // 1. 페이지에 맞는 로그인한 사용자의 완주 기록 데이터를 가져온다.
-        ListDto<Records> dto = userCourseService.getAllRecords(condition, loginUser);
+        // 1. 조회 범위에 따라 로그인한 사용자의 완주 기록 데이터를 가져온다.
+        ListDto<Records> dto = userCourseService.getMyAllRecords(condition, loginUser); // loginUser
 
         // 2. 완주 기록 데이터, 페이정 처리 정보를 반환한다.
         return dto;
@@ -65,6 +61,7 @@ public class CourseController {
                        @RequestParam(name = "distance", required = false, defaultValue = "10") Double distance,
                        @RequestParam(name = "level", required = false) Integer level,
                        @RequestParam(name = "keyword", required = false) String keyword,
+                       @AuthenticationPrincipal LoginUser loginUser,
                        Model model){
         // 1. 요청 파라미터 정보를 Map 객체에 저장한다.
         Map<String, Object> condition = new HashMap<>();
@@ -81,15 +78,23 @@ public class CourseController {
         if (StringUtils.hasText(keyword)) {
             condition.put("keyword", keyword);
         }
+        if (loginUser != null) {
+            condition.put("userNo", loginUser.getNo());
+
+            // 로그인한 사용자가 현재 도전 가능한 단계(난이도)를 Model 객체에 저장한다.
+            UserLevel userLevel = userCourseService.getUserLevel(loginUser.getNo());
+            int currentUserLevel = userLevel.getLevel();
+            model.addAttribute("currentUserLevel", currentUserLevel);
+        }
 
         // 2. 검색에 해당하는 코스 목록을 가져온다.
         ListDto<Course> dto = courseService.getAllCourses(condition);
 
-        // 3. Model 객체에 코스 목록, 페이징 처리 정보를 저장한다.
+        // 4. Model 객체에 코스 목록, 페이징 처리 정보를 저장한다.
         model.addAttribute("courses", dto.getData());
         model.addAttribute("pagination", dto.getPaging());
 
-        // 4. 뷰 이름을 반환한다.
+        // 5. 뷰 이름을 반환한다.
         return "course/list";
     }
 
@@ -146,12 +151,11 @@ public class CourseController {
             condition.put("courseNo", courseNo);
 
             // 5. 해당 코스의 모든 완주 기록을 가져온다.
-            ListDto<Records> dto = userCourseService.getAllRecords(condition, loginUser);
+            ListDto<Records> dto = userCourseService.getAllRecords(condition);
 
             // 6. 해당 코스의 로그인한 사용자의 완주 기록을 가져온다.
             if (loginUser != null) {
-                condition.put("userNo", loginUser.getNo());
-                List<Records> records = userCourseService.getMyRecords(condition);
+                List<Records> records = userCourseService.getMyRecords(condition, loginUser);
                 model.addAttribute("myRecord", records);
             }
 
