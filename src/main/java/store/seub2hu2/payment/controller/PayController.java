@@ -54,6 +54,7 @@ public class PayController {
     public @ResponseBody ReadyResponse payReady(@RequestBody PaymentDto paymentDto
     , @AuthenticationPrincipal LoginUser loginUser) {
 
+        paymentDto.setUserNo(loginUser.getNo());
         // 카카오 결제 준비하기
         ReadyResponse readyResponse = kakaoPayService.payReady(paymentDto);
         // 세션에 결제 고유번호(tid) 저장
@@ -96,8 +97,20 @@ public class PayController {
         }
 
         if (type.equals("상품")) {
-
             // 결재정보를 저장한다.
+            String orderStr = (String) param.get("orderNo");
+            int orderNo = Integer.parseInt(orderStr);
+            String userId = (String) param.get("userId");
+
+
+            // 카카오 결제 요청하기
+            ApproveResponse approveResponse = kakaoPayService.payApprove(tid, pgToken, orderNo);
+
+            PaymentDto paymentDto = new PaymentDto();
+            paymentDto.setUserId(userId);
+            paymentDto.setPaymentId(tid);
+            paymentDto.setTotalAmount(approveResponse.getAmount().getTotal());
+
         }
 
         return "redirect:/pay/success";

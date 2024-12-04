@@ -2,19 +2,28 @@ package store.seub2hu2.payment.service;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import store.seub2hu2.delivery.mapper.DeliveryMapper;
+import store.seub2hu2.delivery.vo.Delivery;
+import store.seub2hu2.order.mapper.OrderMapper;
 import store.seub2hu2.order.vo.Order;
 import store.seub2hu2.order.vo.OrderItem;
 import store.seub2hu2.payment.dto.PaymentDto;
 import store.seub2hu2.payment.dto.ApproveResponse;
 import store.seub2hu2.payment.dto.CancelResponse;
 import store.seub2hu2.lesson.dto.ReadyResponse;
+import store.seub2hu2.product.vo.Product;
+import store.seub2hu2.user.mapper.UserMapper;
+import store.seub2hu2.user.vo.Addr;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +32,17 @@ import java.util.Map;
 @Service
 public class KakaoPayService {
 
+    // 주문 맵퍼 인터페이스(주문, 주문상품)
+    @Autowired
+    private OrderMapper orderMapper;
+    // 배송 정보
+    @Autowired
+    private DeliveryMapper deliveryMapper;
+    // 주소지
+    @Autowired
+    private UserMapper userMapper;
+
+    
     @Value("${kakaopay.secretKey}")
     String secretKey;
 
@@ -49,17 +69,58 @@ public class KakaoPayService {
 
         // 상품 결제
         if (paymentDto.getType().equals("상품")) {
-
             // 주문정보를 저장한다.
+            Order order = new Order();
+            order.setTotalPrice(paymentDto.getTotalPrice());
+            order.setDeliveryPrice(paymentDto.getDeliveryPrice());
+            order.setDiscountPrice(paymentDto.getDiscountPrice());
+            order.setFinalTotalPrice(paymentDto.getFinalTotalPrice());
+            order.setUserNo(paymentDto.getUserNo());
 
+            orderMapper.insertOrders(order);
+
+            int orderNo = order.getNo();
+
+            // 주문 상품 정보를 저장한다.
+            List<OrderItem> orderItems = paymentDto.getOrderItems();
+
+            for(OrderItem item : orderItems) {
+                item.setOrderNo(orderNo);
+                item.setProdNo(item.getProdNo());
+                item.setSizeNo(item.getSizeNo());
+                item.setPrice(item.getPrice());
+                item.setStock(item.getStock());
+                item.setEachTotalPrice(item.getPrice() * item.getStock());
+            }
+
+            orderMapper.insertOrderItems(orderItems);
+
+            // 배송지
+            Addr addr = new Addr();
+            addr.setName(paymentDto.getRecipientName());
+            addr.setPostcode(paymentDto.getPostcode());
+            addr.setAddress(paymentDto.getAddress());
+            addr.setAddressDetail(paymentDto.getAddressDetail());
+            addr.setUserNo(paymentDto.getUserNo());
+
+            userMapper.insertAddress(addr);
+
+            // 배송상태
+            Delivery delivery = new Delivery();
+            delivery.setMemo(paymentDto.getMemo());
+
+            deliveryMapper.insertDeliveryMemo(delivery);
+            
 
             // 결재준비
             // item_name = paymentDto.getItem[0].getProdName()
             // item_code = 주문번호
             // total_amount = 총결재금액
-
+            parameters.put("item_name", new Product().getName());
+            parameters.put("item_code", String.valueOf(orderNo));
+            parameters.put("total_amount", String.valueOf(paymentDto.getFinalTotalPrice()));
             parameters.put("approval_url", "http://localhost/pay/completed?type=" + paymentDto.getType()
-                    + "&orderNo=" + paymentDto.getLessonNo());
+                    + "&orderNo=" + orderNo);
 
 
 

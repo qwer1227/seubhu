@@ -3,9 +3,9 @@
 <mapper namespace="store.seub2hu2.order.mapper.OrderMapper">
 
     <!--
-        List<OrderItem> insertOrderItems(@Param("orderItem") OrderItem orderItem);
+        List<OrderItem> insertOrderItems(@Param("orderItems") OrderItem orderItem);
     -->
-    <insert id="insertOrderItems" parameterType="store.seub2hu2.order.vo.OrderItem">
+    <insert id="insertOrderItems">
         INSERT INTO ORDER_PRODUCTS (
                                     PROD_NO
                                    , SIZE_NO
@@ -15,30 +15,34 @@
                                    , ORDER_EACH_PRICE
                                 )
                             VALUES
-                                (#{product.no}
-                                , #{size.no}
-                                , #{order.no}
-                                , #{quantity}
-                                , #{price}
-                                , #{eachTotalPrice}
+                            <foreach collection="orderItems" item="item" index="index" separator=",">
+                                (#{item.prodNo}
+                                , #{item.sizeNo}
+                                , #{item.orderNo}
+                                , #{item.stock}
+                                , #{item.price}
+                                , #{item.eachTotalPrice}
                                 )
+                            </foreach>
     </insert>
 
     <!--
         Order insertOrders(@Param("order") Order order);
     -->
-    <insert id="insertOrders" parameterType="store.seub2hu2.order.vo.Order">
+    <insert id="insertOrders">
         INSERT INTO ORDERS (
                             ORDER_PRICE
                             , DEL_PAYMENT
+                            , DIS_PRICE
                             , REAL_PRICE
-                            , PAY_NO
+                            , USER_NO
                             )
                 VALUES (
-                        #{orderPrice}
-                        , #{deliveryPrice}
-                        , #{realPrice}
-                        , #{payment.no}
+                        #{order.totalPrice}
+                        , #{order.deliveryPrice}
+                        , #{order.discountPrice}
+                        , #{order.finalTotalPrice}
+                        , #{order.userNo}
                        )
     </insert>
 

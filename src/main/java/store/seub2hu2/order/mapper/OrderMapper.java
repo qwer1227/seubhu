@@ -14,10 +14,10 @@ import java.util.List;
 public interface OrderMapper {
 
     // 주문 정보 저장
-    Order insertOrders(@Param("order") Order order);
+    void insertOrders(@Param("order") Order order);
 
     // 주문 상품 저장
-    List<OrderItem> insertOrderItems(@Param("orderItem") OrderItem orderItem);
+    void insertOrderItems(@Param("orderItems") List<OrderItem> orderItems);
 
     // 장바구니에서 넘어간 상품들 조회
     List<CartItemDto> getOrderItemBySizeNo(@Param("sizeNoList") List<Integer> sizeNoList);
