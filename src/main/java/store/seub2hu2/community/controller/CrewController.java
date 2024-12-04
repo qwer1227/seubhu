@@ -6,6 +6,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,17 +17,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import store.seub2hu2.community.dto.CrewForm;
+import store.seub2hu2.community.dto.ReplyForm;
+import store.seub2hu2.community.service.CrewReplyService;
 import store.seub2hu2.community.service.CrewService;
+import store.seub2hu2.community.service.BoardReplyService;
 import store.seub2hu2.community.view.FileDownloadView;
-import store.seub2hu2.community.vo.Board;
 import store.seub2hu2.community.vo.Crew;
-import store.seub2hu2.community.vo.Notice;
+import store.seub2hu2.community.vo.Reply;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.util.ListDto;
 
 import java.io.File;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -41,6 +45,11 @@ public class CrewController {
 
     @Autowired
     public FileDownloadView fileDownloadView;
+
+    @Autowired
+    private CrewReplyService replyService;
+    @Autowired
+    private CrewReplyService crewReplyService;
 
     @GetMapping("/main")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page
@@ -72,10 +81,20 @@ public class CrewController {
 
     @GetMapping("/detail")
     public String detail(@RequestParam("no") int crewNo
+                        , @AuthenticationPrincipal LoginUser loginUser
                         , Model model) {
         Crew crew = crewService.getCrewDetail(crewNo);
+        List<Reply> replyList = crewReplyService.getReplies(crewNo);
+        crew.setReply(replyList);
 
         model.addAttribute("crew", crew);
+        model.addAttribute("replies", replyList);
+
+        for (Reply reply : replyList) {
+            int replyResult = crewReplyService.getCheckLike(reply.getNo(), loginUser);
+            model.addAttribute("replyLiked", replyResult);
+        }
+
         return "community/crew/detail";
     }
 
@@ -157,5 +176,59 @@ public class CrewController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + originalFileName)
                 .body(resource);
+    }
+
+    @GetMapping("/login")
+    public String login(){
+        return "redirect:../user/login";
+    }
+
+    @GetMapping("/add-reply")
+    @PreAuthorize("isAuthenticated()")
+    public String addReply(ReplyForm form
+            , @AuthenticationPrincipal LoginUser loginUser) {
+
+        replyService.addNewReply(form, loginUser);
+        return "redirect:detail?no=" + form.getCrewNo();
+    }
+
+    @PostMapping("/add-comment")
+    @PreAuthorize("isAuthenticated()")
+    public String addComment(ReplyForm form
+            , @AuthenticationPrincipal LoginUser loginUser){
+
+        replyService.addNewComment(form, loginUser);
+        return "redirect:detail?no=" + form.getCrewNo();
+    }
+
+    @PostMapping("/modify-reply")
+    @PreAuthorize("isAuthenticated()")
+    public String modifyReply(@RequestParam("replyNo") int replyNo
+            , @RequestParam("crewNo") int crewNo
+            , @RequestParam("content") String replyContent
+            , @AuthenticationPrincipal LoginUser loginUser){
+
+        ReplyForm form = new ReplyForm();
+        form.setNo(replyNo);
+        form.setCrewNo(crewNo);
+        form.setContent(replyContent);
+        form.setUserNo(loginUser.getNo());
+
+        replyService.updateReply(form);
+
+        return "redirect:detail?no=" + form.getCrewNo();
+    }
+
+    @GetMapping("/delete-reply")
+    @PreAuthorize("isAuthenticated()")
+    public String deleteReply(@RequestParam("rno") int replyNo,
+                              @RequestParam("cno") int crewNo){
+
+        ReplyForm form = new ReplyForm();
+        form.setNo(replyNo);
+        form.setCrewNo(crewNo);
+        replyService.deleteReply(replyNo);
+
+        return "redirect:detail?no=" + form.getCrewNo();
     }
 }

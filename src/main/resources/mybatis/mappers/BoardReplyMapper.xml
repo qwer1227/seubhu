@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="store.seub2hu2.community.mapper.ReplyMapper">
+<mapper namespace="store.seub2hu2.community.mapper.BoardReplyMapper">
 
   <update id="updateReply">
         update BOARD_REPLIES
@@ -28,7 +28,6 @@
     , #{reply.content}
     , #{reply.user.no}
     )
-
     <selectKey resultType="int" keyProperty="reply.no" keyColumn="reply_no" order="AFTER">
       SELECT LAST_INSERT_ID()
     </selectKey>
@@ -94,7 +93,6 @@
     update BOARD_REPLIES
     set is_deleted = 'Y'
     where reply_no = #{no}
-
   </update>
 
   <!-- int hasUserLikedReply(@Param("rno") int replyNo, @Param("userNo") int userNo); -->

@@ -4,6 +4,7 @@ import lombok.*;
 import store.seub2hu2.user.vo.User;
 
 import java.util.Date;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,6 +30,7 @@ public class Crew {
     private UploadFile uploadFile;
     private User user;
     private int viewCnt;
+    private List<Reply> reply;
 
     public String getType(){
         return schedule.substring(0,2);

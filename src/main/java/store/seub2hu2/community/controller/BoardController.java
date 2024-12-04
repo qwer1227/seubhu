@@ -1,6 +1,5 @@
 package store.seub2hu2.community.controller;
 
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -20,9 +19,8 @@ import org.springframework.web.servlet.ModelAndView;
 import store.seub2hu2.community.dto.BoardForm;
 import store.seub2hu2.community.dto.ReplyForm;
 import store.seub2hu2.community.dto.ReportForm;
-import store.seub2hu2.community.mapper.BoardScrapMapper;
 import store.seub2hu2.community.service.BoardService;
-import store.seub2hu2.community.service.ReplyService;
+import store.seub2hu2.community.service.BoardReplyService;
 import store.seub2hu2.community.service.ReportService;
 import store.seub2hu2.community.service.ScrapService;
 import store.seub2hu2.community.view.FileDownloadView;
@@ -30,7 +28,6 @@ import store.seub2hu2.community.vo.Board;
 import store.seub2hu2.community.vo.Notice;
 import store.seub2hu2.community.vo.Reply;
 import store.seub2hu2.security.user.LoginUser;
-import store.seub2hu2.user.service.UserService;
 import store.seub2hu2.util.ListDto;
 
 import java.io.File;
@@ -53,7 +50,7 @@ public class BoardController {
     public FileDownloadView fileDownloadView;
 
     @Autowired
-    public ReplyService replyService;
+    public BoardReplyService replyService;
 
     @Autowired
     public ScrapService scrapService;

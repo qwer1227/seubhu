@@ -407,7 +407,7 @@
 
     /* 댓글 제출(/community/add-reply로 데이터 전달) */
     async function submitReply() {
-        let boardNo = document.querySelector("input[name=boardNo]").value;
+        let boardNo = document.querySelector("input[name=No]").value;
         let content = document.querySelector("textarea[name=content]").value;
         let userNo = document.querySelector("input[name=userNo]").value;
 

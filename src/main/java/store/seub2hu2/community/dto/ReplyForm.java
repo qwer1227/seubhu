@@ -12,6 +12,7 @@ import store.seub2hu2.user.vo.User;
 public class ReplyForm {
 
     private int boardNo;
+    private int crewNo;
     private int userNo;
     private int no;
     private int prevNo;

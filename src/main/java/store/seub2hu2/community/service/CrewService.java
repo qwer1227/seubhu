@@ -8,9 +8,11 @@ import org.springframework.web.multipart.MultipartFile;
 import store.seub2hu2.community.dto.CrewForm;
 import store.seub2hu2.community.exception.CommunityException;
 import store.seub2hu2.community.mapper.CrewMapper;
+import store.seub2hu2.community.mapper.CrewReplyMapper;
 import store.seub2hu2.community.mapper.UploadMapper;
 import store.seub2hu2.community.vo.Crew;
 import store.seub2hu2.community.vo.CrewMember;
+import store.seub2hu2.community.vo.Reply;
 import store.seub2hu2.community.vo.UploadFile;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.vo.User;
@@ -40,6 +42,8 @@ public class CrewService {
 
     @Autowired
     private UploadMapper uploadMapper;
+    @Autowired
+    private CrewReplyMapper crewReplyMapper;
 
     public Crew addNewCrew(CrewForm form
             , @AuthenticationPrincipal LoginUser loginUser) {
@@ -136,6 +140,7 @@ public class CrewService {
         Crew crew = crewMapper.getCrewDetailByNo(crewNo);
         UploadFile uploadThumbnail = uploadMapper.getThumbnailByCrewNo(crewNo);
         UploadFile uploadFile = uploadMapper.getFileByCrewNo(crewNo);
+        List<Reply> reply = crewReplyMapper.getRepliesByCrewNo(crewNo);
 
         if (crew == null){
             throw new CommunityException("존재하지 않는 게시글입니다.");
@@ -143,6 +148,7 @@ public class CrewService {
 
         crew.setThumbnail(uploadThumbnail);
         crew.setUploadFile(uploadFile);
+        crew.setReply(reply);
 
         return crew;
     }
