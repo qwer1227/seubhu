@@ -112,7 +112,7 @@
     on c.crew_no = cf.crew_no
     where
       c.crew_no = #{uploadFile.no}
-      and c.crew_thumbnail = cf.file_save_name
+      and cf.file_save_name = c.crew_thumbnail
       and cf.is_deleted = 'N'
   </select>
 
@@ -129,14 +129,14 @@
     on c.crew_no = cf.crew_no
     where
       c.crew_no = #{uploadFile.no}
-      and c.file_name = cf.file_save_name
+      and cf.file_save_name = c.file_name
       and cf.is_deleted = 'N'
   </select>
 
-  <!-- void updateCrewFile(int fileNo); -->
+  <!-- void updateCrewFile(@Param("fileNo") int fileNo); -->
   <update id="updateCrewFile" parameterType="store.seub2hu2.community.vo.UploadFile">
     update CREW_FILES
-    set is_deleted        = #{deleted}
+    set is_deleted        = 'Y'
       , file_updated_date = sysdate()
     where file_no = #{fileNo}
   </update>

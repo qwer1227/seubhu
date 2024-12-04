@@ -13,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class CrewForm {
 
     private int no;
-    private int fileNo;
     private String name;
     private String location;
     private String type;

@@ -1,7 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="/WEB-INF/views/common/tags.jsp" %>
 <script type="text/javascript" src="../resources/static/smartEditor/js/HuskyEZCreator.js" charset="utf-8"></script>
-<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=3af1f449b9175825b32af2e204b65779&libraries=services,clusterer,drawing"></script>
+<script type="text/javascript"
+        src="//dapi.kakao.com/v2/maps/sdk.js?appkey=3af1f449b9175825b32af2e204b65779&libraries=services,clusterer,drawing"></script>
 <!doctype html>
 <html lang="ko">
 <head>
@@ -34,10 +35,11 @@
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
 <div class="container-xxl text-center" id="wrap">
   
-  <h2>크루 모집글 작성</h2>
+  <h2>크루 모집글 수정</h2>
   
   <div class="row p-3">
-    <form method="post" action="register" enctype="multipart/form-data" onkeydown="return event.key !== 'Enter';">
+    <form method="post" action="modify" enctype="multipart/form-data" onkeydown="return event.key !== 'Enter';">
+      <input type="hidden" value="${crew.no}" name="no">
       <table id="inviting-table" style="width: 98%">
         <colgroup>
           <col width="10%">
@@ -51,7 +53,8 @@
           <td><input class="rounded" type="text" name="title" value="${crew.title}" style="width: 448px"></td>
           <th>장소</th>
           <td>
-            <input class="rounded" type="text" id="location" value="${crew.location}" name="location" style="width: 399px">
+            <input class="rounded" type="text" id="location" value="${crew.location}" name="location"
+                   style="width: 399px">
             <button type="button" class="btn btn-outline-dark btn-sm" onclick="searchPlaces(event)">검색</button>
           </td>
         </tr>
@@ -62,9 +65,9 @@
           <c:if test="${not empty crew.thumbnail.saveName}">
           <td rowspan="4">
             </c:if>
-          <c:if test="${empty crew.thumbnail.saveName}">
+            <c:if test="${empty crew.thumbnail.saveName}">
           <td rowspan="3">
-          </c:if>
+            </c:if>
             <div id="map" style="width: 90%; height: 200px;" class="mb-2"></div>
           </td>
         </tr>
@@ -72,25 +75,26 @@
           <th>일시</th>
           <td>
             <select class="rounded" id="schedule-type" name="type">
-              <option value="매월">매월</option>
-              <option value="매주">매주</option>
-              <option value="매일">매일</option>
-              <option value="입력">입력</option>
+              <option value="매월" ${crew.type eq '매월' ? 'selected' : ''}>매월</option>
+              <option value="매주" ${crew.type eq '매주' ? 'selected' : ''}>매주</option>
+              <option value="매일" ${crew.type eq '매일' ? 'selected' : ''}>매일</option>
+              <option value="입력" ${crew.type eq '입력' ? 'selected' : ''}>입력</option>
             </select>
-            <input type="text" class="rounded" id="schedule-detail" name="detail" value="${crew.schedule}" style="width: 390px"
+            <input type="text" class="rounded" id="schedule-detail" name="detail" value="${crew.detail}"
+                   style="width: 390px"
                    placeholder="상세 모임 일시를 작성해주세요.">
           </td>
         </tr>
         <c:if test="${not empty crew.thumbnail.saveName}">
-        <tr>
-          <th>기존 대표 이미지</th>
-          <td>
-          <div class="img-thumbnail">
-            <img src="/resources/images/community/${crew.thumbnail.saveName}" alt="크루 대표 이미지"
-                class="img" style="width: 50px">
-                </div>
-          </td>
-        </tr>
+          <tr>
+            <th>기존 대표 이미지</th>
+            <td>
+              <div class="img-thumbnail">
+                <img src="/resources/images/community/${crew.thumbnail.saveName}" alt="크루 대표 이미지"
+                     class="img" style="width: 50px">
+              </div>
+            </td>
+          </tr>
         </c:if>
         <tr>
           <th>대표 이미지</th>
@@ -106,11 +110,17 @@
             <%--            <%@include file="../write.jsp" %>--%>
           </td>
         </tr>
+        <c:if test="${crew.uploadFile.deleted eq 'N'}">
         <tr>
           <th>기존 첨부파일</th>
           <td colspan="3">
             ${crew.uploadFile.originalName}
+            <button type="button" class="btn btn-outline-dark"
+                    onclick="deleteUploadFile(${crew.no}, ${crew.uploadFile.fileNo})">
+              삭제
+            </button>
         </tr>
+        </c:if>
         <tr>
           <th>첨부파일</th>
           <td colspan="3">
@@ -126,7 +136,7 @@
           </div>
           <div class="col d-flex justify-content-end">
             <button type="button" class="btn btn-outline-primary m-1">보관</button>
-            <button type="submit" class="btn btn-primary m-1">등록</button>
+            <button type="submit" class="btn btn-primary m-1">수정</button>
           </div>
         </div>
       </div>
@@ -136,13 +146,19 @@
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script type="text/javascript">
     function abort() {
-        let result = confirm("작성중이던 글을 임시보관하시겠습니까?");
+        let result = confirm("수정 중이던 글을 취소하시겠습니까?");
         if (result) {
-            window.location.href = "main";
+            window.location.href = "detail?no=${crew.no}";
         }
     }
 
-    var geocoder = new kakao.maps.services.Geocoder();
+    function deleteUploadFile(crewNo, fileNo) {
+        let result = confirm("기존에 등록된 첨부파일을 삭제하시겠습니까?");
+        if (result) {
+            window.location.href = `delete-file?no=\${crewNo}&fileNo=\${fileNo}`;
+        }
+    }
+
     var container = document.getElementById('map'); //지도를 담을 영역의 DOM 레퍼런스
     var options = { //지도를 생성할 때 필요한 기본 옵션
         center: new kakao.maps.LatLng(37.572990, 126.992240), //지도의 중심좌표.
@@ -150,6 +166,32 @@
     };
 
     var map = new kakao.maps.Map(container, options); //지도 생성 및 객체 리턴
+    let loc = document.querySelector("#location").value
+    var ps = new kakao.maps.services.Places();
+    ps.keywordSearch(loc, placesSearchCB);
+
+    function placesSearchCB(data, status, pagination) {
+        if (status === kakao.maps.services.Status.OK) {
+            // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
+            // LatLngBounds 객체에 좌표를 추가합니다
+            var bounds = new kakao.maps.LatLngBounds();
+
+            displayMarker(data[0]);
+            bounds.extend(new kakao.maps.LatLng(data[0].y, data[0].x));
+
+            // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
+            map.setBounds(bounds);
+        }
+    }
+
+    // 지도에 마커를 표시하는 함수입니다
+    function displayMarker(place) {
+        // 마커를 생성하고 지도에 표시합니다
+        var marker = new kakao.maps.Marker({
+            map: map,
+            position: new kakao.maps.LatLng(place.y, place.x)
+        });
+    }
 
     // 지도를 클릭한 위치에 표출할 마커입니다
     var marker = new kakao.maps.Marker({
@@ -158,8 +200,7 @@
     });
     // 지도에 마커를 표시합니다
     marker.setMap(map);
-    
-    
+
     // 지도에 클릭 이벤트를 등록합니다
     // 지도를 클릭하면 마지막 파라미터로 넘어온 함수를 호출합니다
     kakao.maps.event.addListener(map, 'click', function (mouseEvent) {
@@ -168,21 +209,20 @@
         let latlng = mouseEvent.latLng;
         // 마커 위치를 클릭한 위치로 옮깁니다
         marker.setPosition(latlng);
-        
-        searchDetailAddrFromCoords(latlng, function(result, status) {
+
+        searchDetailAddrFromCoords(latlng, function (result, status) {
             if (status === kakao.maps.services.Status.OK) {
-                let detailAddr = !!result[0].road_address ? result[0].road_address.address_name  : '';
-                
+                let detailAddr = !!result[0].road_address ? result[0].road_address.address_name : '';
+
                 document.querySelector("#location").value = detailAddr;
-                document.querySelector("#lat").value = latlng.getLat()
-                document.querySelector("#lng").value = latlng.getLng()
-                
+
             } else {
                 alert("유효한 지역이 아닙니다.");
             }
         });
-        
     });
+
+    var geocoder = new kakao.maps.services.Geocoder();
 
     function searchAddrFromCoords(coords, callback) {
         // 좌표로 행정동 주소 정보를 요청합니다
@@ -194,63 +234,58 @@
         geocoder.coord2Address(coords.getLng(), coords.getLat(), callback);
     }
 
+    // 장소를 입력하고 검색버튼을 클릭했을 때 실행되는 함수
+    function searchPlaces(event) {
+        // 장소 검색 객체를 생성합니다
+        var places = new kakao.maps.services.Places();
 
-  // 장소를 입력하고 검색버튼을 클릭했을 때 실행되는 함수
-  function searchPlaces(event) {
-      // 장소 검색 객체를 생성합니다
-      var places = new kakao.maps.services.Places();
+        // 입력필드에 입력한 장소를 조회한다.
+        let keyword = document.querySelector("#location").value
+        // Places객체의 keywordSearcc()함수를 실행한다.
+        // 매개변수로 장소와 콜백함수를 전달한다.
+        places.keywordSearch(keyword, placesSearchCB);
+    }
 
-      // 입력필드에 입력한 장소를 조회한다.
-      let keyword = document.querySelector("#location").value
-      // Places객체의 keywordSearcc()함수를 실행한다.
-      // 매개변수로 장소와 콜백함수를 전달한다.
-      places.keywordSearch(keyword, placesSearchCB);
-  }
+    // 키워드 검색 완료 시 호출되는 콜백함수 입니다
+    function placesSearchCB(data, status) {
+        if (status === kakao.maps.services.Status.OK) {
+            // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
+            // LatLngBounds 객체에 좌표를 추가합니다
+            var bounds = new kakao.maps.LatLngBounds();
 
-  // 키워드 검색 완료 시 호출되는 콜백함수 입니다
-  function placesSearchCB (data, status) {
-      if (status === kakao.maps.services.Status.OK) {
-          // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
-          // LatLngBounds 객체에 좌표를 추가합니다
-          var bounds = new kakao.maps.LatLngBounds();
+            displayMarker(data[0]);
+            bounds.extend(new kakao.maps.LatLng(data[0].y, data[0].x));
 
-          displayMarker(data[0]);
-          bounds.extend(new kakao.maps.LatLng(data[0].y, data[0].x));
+            // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
+            map.setBounds(bounds);
+        }
+    }
 
-          // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
-          map.setBounds(bounds);
-      }
-  }
+    // 마커를 표시하고, 마커를 클릭했을 때 마커가 표시된 위치의 위경도좌표를 주소 변환해서 입력필드에 표시되게 한다.
+    function displayMarker(place) {
+        let latlng = new kakao.maps.LatLng(place.y, place.x)
 
-  // 마커를 표시하고, 마커를 클릭했을 때 마커가 표시된 위치의 위경도좌표를 주소 변환해서 입력필드에 표시되게 한다.
-  function displayMarker(place) {
-      let latlng = new kakao.maps.LatLng(place.y, place.x)
+        marker.setPosition(latlng);
+        marker.latlng = latlng
 
-      marker.setPosition(latlng);
-      marker.latlng = latlng
+        // 마커를 클릭했을 때 실행할 작업을 지정한다.
+        kakao.maps.event.addListener(marker, 'click', function () {
+            // 클릭한 마커의 위도 경도 좌표를 알아낸다.
+            let latlng = marker.latlng;
 
-      // 마커를 클릭했을 때 실행할 작업을 지정한다.
-      kakao.maps.event.addListener(marker, 'click', function() {
-          // 클릭한 마커의 위도 경도 좌표를 알아낸다.
-          let latlng = marker.latlng;
-          
-          // 위도 경도좌표를 주소로 변환하는 함수를 호출한다.
-          searchDetailAddrFromCoords(latlng, function(result, status) {
-              if (status === kakao.maps.services.Status.OK) {
-                  // 조회된 주소정보를 입력필드에 표시한다.
-                  let detailAddr = !!result[0].road_address ? result[0].road_address.address_name  : '';
-                  document.querySelector("#location").value = detailAddr;
-                  document.querySelector("#lat").value = latlng.getLat()
-                  document.querySelector("#lng").value = latlng.getLng()
-              } else {
-                  alert("유효한 지역이 아닙니다.");
-              }
-          });
-          console.log(marker.latlng)
-      });
-  }
-
-  
+            // 위도 경도좌표를 주소로 변환하는 함수를 호출한다.
+            searchDetailAddrFromCoords(latlng, function (result, status) {
+                if (status === kakao.maps.services.Status.OK) {
+                    // 조회된 주소정보를 입력필드에 표시한다.
+                    let detailAddr = !!result[0].road_address ? result[0].road_address.address_name : '';
+                    document.querySelector("#location").value = detailAddr;
+                } else {
+                    alert("유효한 지역이 아닙니다.");
+                }
+            });
+            console.log(marker.latlng)
+        });
+    }
 </script>
 </body>
 </html>

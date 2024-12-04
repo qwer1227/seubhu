@@ -57,7 +57,6 @@ public class CrewController {
 
     @GetMapping("/detail")
     public String detail(@RequestParam("no") int crewNo
-                        , @AuthenticationPrincipal LoginUser loginUser
                         , Model model) {
         Crew crew = crewService.getCrewDetail(crewNo);
 
@@ -75,12 +74,14 @@ public class CrewController {
     public String register(CrewForm form
             , @AuthenticationPrincipal LoginUser loginUser) {
 
-        crewService.addNewCrew(form, loginUser);
-        return "redirect:main";
+        Crew crew = crewService.addNewCrew(form, loginUser);
+        return "redirect:detail?no=" + crew.getNo();
     }
 
     @GetMapping("/modify")
-    public String modifyForm(@RequestParam("no") int crewNo, Model model) {
+    public String modifyForm(@RequestParam("no") int crewNo
+                            , @AuthenticationPrincipal LoginUser loginUser
+                            , Model model) {
         Crew crew = crewService.getCrewDetail(crewNo);
         model.addAttribute("crew", crew);
 
@@ -92,5 +93,22 @@ public class CrewController {
 
         crewService.updateCrew(form);
         return "redirect:detail?no=" + form.getNo();
+    }
+
+    @GetMapping("/delete")
+    public String delete(@RequestParam("no") int crewNo){
+        CrewForm form = new CrewForm();
+        form.setNo(crewNo);
+        crewService.deleteCrew(crewNo);
+
+        return "redirect:main";
+    }
+
+    @GetMapping("/delete-file")
+    public String deleteFile(@RequestParam("no") int crewNo
+                            , @RequestParam("fileNo") int fileNo){
+
+        crewService.deleteCrewFile(fileNo);
+        return "redirect:modify?no=" + crewNo;
     }
 }

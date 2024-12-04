@@ -169,9 +169,9 @@ public class BoardService {
             FileUtils.saveMultipartFile(multipartFile, saveDirectory, filename);
 
             UploadFile uploadFile = new UploadFile();
+            uploadFile.setNo(savedBoard.getNo());
             uploadFile.setOriginalName(originalFilename);
             uploadFile.setSaveName(filename);
-            uploadFile.setNo(savedBoard.getNo());
             savedBoard.setUploadFile(uploadFile);
 
             uploadMapper.insertBoardFile(uploadFile);

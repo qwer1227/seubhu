@@ -16,7 +16,7 @@ public class CrewMember {
 
     private int crewNo;
     private User user;
-    private boolean reader;
+    private String reader;
     private Date joinDate;
-    private boolean join;
+    private String join;
 }

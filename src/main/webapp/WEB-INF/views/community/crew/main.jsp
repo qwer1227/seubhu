@@ -41,11 +41,11 @@
           <c:choose>
           <c:when test="${empty crew.thumbnail}">
             <img src="/resources/images/community/inviting_default_main.jpg" alt="크루 대표 이미지" class="card-img-top"
-                 style="height: 200px; filter: ${crew.joined ? 'grayscale(0%)' : 'grayscale(100%)'}">
+                 style="height: 200px; filter: ${crew.joined eq 'Y' ? 'grayscale(0%)' : 'grayscale(100%)'}">
           </c:when>
           <c:otherwise>
             <img src="/resources/images/community/${crew.thumbnail.saveName}" alt="크루 대표 이미지" class="card-img-top"
-                   style="height: 200px; filter: ${crew.joined ? 'grayscale(0%)' : 'grayscale(100%)'}">
+                   style="height: 200px; filter: ${crew.joined eq 'Y' ? 'grayscale(0%)' : 'grayscale(100%)'}">
           </c:otherwise>
           </c:choose>
             <div class="card-body text-center">
@@ -68,9 +68,14 @@
     <div class="col d-flex justify-content-center">
     
     </div>
+          <security:authorize access="isAuthenticated()">
+        <security:authentication property="principal" var="loginUser"/>
+        <c:if test="${not empty loginUser and loginUser ne null}">
     <div class="col d-flex justify-content-end">
       <a href="form" type="button" class="btn btn-primary">글쓰기</a>
     </div>
+    </c:if>
+          </security:authorize>
   </div>
   <%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
