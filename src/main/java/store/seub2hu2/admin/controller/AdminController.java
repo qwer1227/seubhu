@@ -17,6 +17,12 @@ import store.seub2hu2.lesson.dto.LessonUpdateDto;
 import store.seub2hu2.lesson.service.LessonFileService;
 import store.seub2hu2.lesson.service.LessonService;
 import store.seub2hu2.lesson.vo.Lesson;
+import store.seub2hu2.payment.vo.Payment;
+import store.seub2hu2.mypage.dto.AnswerDTO;
+import store.seub2hu2.mypage.dto.QnaCreateRequest;
+import store.seub2hu2.mypage.dto.QnaResponse;
+import store.seub2hu2.mypage.enums.QnaStatus;
+import store.seub2hu2.mypage.service.QnaService;
 import store.seub2hu2.product.dto.*;
 import store.seub2hu2.product.service.ProductService;
 import store.seub2hu2.product.vo.*;
@@ -49,6 +55,7 @@ public class AdminController {
     private final LessonFileService lessonFileService;
     private final ProductService productService;
     private final UserService userService;
+    private final QnaService qnaService;
 
     @GetMapping("/home")
     public String home() {
@@ -639,16 +646,88 @@ public class AdminController {
     }
 
     @GetMapping("/settlement")
-    public String settlement() {
+    public String settlement(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                             @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
+                             @RequestParam(name = "pType", required = false, defaultValue = "lesson") String pType,
+//                             @RequestParam(name = "dayType", required = false, defaultValue = "day") String dayType,
+                             @RequestParam(name = "sort", required = false, defaultValue = "latest") String sort,
+                             @RequestParam(name = "opt", required = false, defaultValue = "all") String opt,
+                             @RequestParam(name = "keyword", required = false) String keyword,
+                             Model model) {
+
+    Map<String, Object> condition = new HashMap<>();
+    condition.put("page", page);
+    condition.put("rows", rows);
+    condition.put("pType", pType);
+//    condition.put("dayType", dayType);
+    condition.put("sort", sort);
+    condition.put("opt", opt);
+
+        if (StringUtils.hasText(keyword)) {
+            condition.put("keyword", keyword);
+        }
+
+        ListDto<SettlementDto> dto = adminService.getSettleList(condition);
+
+        model.addAttribute("dto", dto.getData());
+        model.addAttribute("paging", dto.getPaging());
 
         return "admin/settlement";
     }
 
     @GetMapping("/qna")
-    public String qna() {
+    public String qna(@ModelAttribute RequestParamsDto dto ,Model model) {
+
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("page", dto.getPage());
+        condition.put("rows", dto.getRows());
+        condition.put("sort", dto.getSort());
+
+        // 검색 조건이 'status'일 때, keyword 값을 0, 1, 2로 변환
+        if ("status".equals(dto.getOpt()) && StringUtils.hasText(dto.getKeyword())) {
+            String status = dto.getKeyword();
+            condition.put("opt", dto.getOpt());
+            // "대기", "완료", "삭제"를 0, 1, 2로 변환
+            if ("대기".equals(status)) {
+                condition.put("keyword", 0);
+            } else if ("완료".equals(status)) {
+                condition.put("keyword", 1);
+            } else if ("삭제".equals(status)) {
+                condition.put("keyword", 2);
+            }
+        } else {
+            if (StringUtils.hasText(dto.getKeyword())) {
+                condition.put("opt", dto.getOpt());
+                condition.put("keyword", dto.getKeyword());
+            }
+        }
+
+        ListDto<QnaResponse> qnaDto = qnaService.getQnas(condition);
+
+        model.addAttribute("qnaList", qnaDto.getData());
+        model.addAttribute("pagination", qnaDto.getPaging());
 
         return "admin/qnalist";
     }
+
+    @GetMapping("/qna/{qnaNo}")
+    public String qnaDetailPage(@PathVariable("qnaNo") int qnaNo, Model model){
+
+        QnaResponse qnaResponse = qnaService.getQnaByQnaNo(qnaNo);
+
+        model.addAttribute("qna",qnaResponse);
+
+        return "admin/answer-form";
+    }
+
+    @PostMapping("/qna/answer")
+    public String qnaAnswerPage(@ModelAttribute AnswerDTO answerDTO){
+
+        qnaService.updateAnswer(answerDTO);
+
+        return "redirect:/admin/qna";
+    }
+
 
     @GetMapping("/community")
     public String community() {

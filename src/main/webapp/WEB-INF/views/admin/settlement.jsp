@@ -54,22 +54,26 @@
           <div class="col-12">
             <form id="form-search" method="get" action="/admin/settlement">
               <input type="hidden" name="page" />
-              <input type="hidden" name="topNo" value="${topNo}">
-              <input type="hidden" name="catNo" value="${catNo}">
+              <input type="hidden" name="rows" />
               <div class="row g-3">
-                <div class="col-2">
-                  <select class="form-control" name="ptype" onchange="changeRows()">
-                    <option value="" >전체</option>
-                    <option value="" >상품</option>
-                    <option value="" >레슨</option>
+                <div class="col-1">
+                  <select class="form-control" name="pType" onchange="changeRows()">
+                    <option value="product" >상품</option>
+                    <option value="lesson" >레슨</option>
                   </select>
                 </div>
+<%--                <div class="col-1">--%>
+<%--                  <select class="form-control" name="dayType" onchange="changeRows()">--%>
+<%--                    <option value="day" >일별</option>--%>
+<%--                    <option value="month" >월별</option>--%>
+<%--                  </select>--%>
+<%--                </div>--%>
                 <div class="col-3 pt-2">
                   <div class="form-check form-check-inline">
                     <input class="form-check-input"
                            type="radio"
                            name="sort"
-                           value="latestDate"
+                           value="latest"
                            onchange="changeSort()"
                     ${empty param.sort or param.sort eq 'date' ? 'checked' : ''}
                     >
@@ -132,30 +136,24 @@
                     <th>결제타입</th>
                     <th>결제자</th>
                     <th>결제자ID</th>
-                    <th>품명</th>
+                    <th>레슨명</th>
                     <th>총금액</th>
+                    <th>결제방법</th>
                     <th>결제상태</th>
-                    <th>시간</th>
+                    <th>날짜</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <c:forEach var="p" items="${products}">
+                  <c:forEach var="d" items="${dto}">
                     <tr>
-                      <td>${p.no}</td>
-                      <td>${p.brand.name}</td>
-                      <td>${p.category.name}</td>
+                      <td>${d.settleType}</td>
+                      <td>${d.name}</td>
+                      <td>${d.id}</td>
+                      <td>${d.title}</td>
+                      <td><fmt:formatNumber value="${d.totalPrice }"/> 원</td>
+                      <td>${d.payMethod}</td>
+                      <td>${d.status}</td>
                       <td>
-                          <a href="product-detail?no=${p.no}&colorNo=${p.colorNum}">
-                              ${p.name}
-                          </a>
-                      </td>
-                      <td><fmt:formatNumber value="${p.price }"/> 원</td>
-                      <td>${p.color.name}</td>
-                      <td>${p.status}</td>
-                      <td>
-                          <a href="/admin/product-stock-detail?no=${p.no}&colorNo=${p.color.no}">
-                              <button type="button" class="btn btn-success">재고추가</button>
-                          </a>
                       </td>
                     </tr>
                   </c:forEach>
@@ -172,19 +170,19 @@
                   <li class="page-item ${paging.first? 'disabled' : ''}">
                       <a class="page-link"
                       onclick="changePage(${paging.prevPage}, event)"
-                      href="product?page=${paging.prevPage}">이전</a>
+                      href="settlement?page=${paging.prevPage}">이전</a>
                   </li>
                   <c:forEach var="num" begin="${paging.beginPage}" end="${paging.endPage}">
                       <li class="page-item ${paging.page eq num ? 'active' : ''}">
                           <a class="page-link"
                           onclick="changePage(${num}, event)"
-                          href="product?page=${num}">${num}</a>
+                          href="settlement?page=${num}">${num}</a>
                       </li>
                   </c:forEach>
                   <li class="page-item ${paging.last ? 'disabled' : ''}" >
                       <a class="page-link"
                       onclick="changePage(${paging.nextPage}, event)"
-                      href="product?page=${paging.nextPage}">다음</a>
+                      href="settlement?page=${paging.nextPage}">다음</a>
                   </li>
                 </ul>
               </nav>
@@ -204,8 +202,6 @@
 <script>
   const form =document.querySelector("#form-search");
   const pageInput = document.querySelector("input[name=page]");
-
-
 
   function changeSort() {
     pageInput.value = 1;

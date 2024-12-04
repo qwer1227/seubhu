@@ -70,7 +70,7 @@
             <h3><a href="/mypage/qna">문의내역</a></h3>
         </div>
         <div class="item">
-            <h3>운동일지</h3>
+            <h3><a href="/mypage/workout">운동일지</a></h3>
         </div>
         <div class="item">
             <h3>참여크루</h3>

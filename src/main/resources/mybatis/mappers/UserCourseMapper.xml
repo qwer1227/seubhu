@@ -45,19 +45,18 @@
     </select>
 
     <!--
-        User checkSuccess(@Param("userNo") int userNo);
+        SuccessWhether checkSuccess(@Param("userNo") int userNo, @Param("courseNo") int courseNo);
     -->
-    <select id="checkSuccess" resultType="store.seub2hu2.course.vo.CourseWhether">
-        select w.is_register as isRegister
-             , w.is_success as isSuccess
-             , w.course_no as "course.no"
+    <select id="checkSuccess" resultType="store.seub2hu2.course.vo.SuccessWhether">
+        select s.is_success as isSuccess
+             , s.course_no as "course.no"
              , u.user_no as "user.no"
              , u.user_nickname as "user.nickname"
-        from CHALLENGE_WHETHER w inner join USERS u
-        on w.user_no = u.user_no
+        from SUCCESS_WHETHER s inner join USERS u
+        on s.user_no = u.user_no
         where u.user_no = #{userNo}
-        and w.course_no = #{courseNo}
-        and w.is_success = 'Y'
+        and s.course_no = #{courseNo}
+        and s.is_success = 'Y'
     </select>
 
     <!--

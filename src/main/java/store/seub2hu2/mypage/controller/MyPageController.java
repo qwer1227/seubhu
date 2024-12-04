@@ -544,8 +544,6 @@ public class MyPageController {
 
         List<QnaResponse> qnaResponses = qnaService.getQnasByUserNo(loginUser.getNo());
 
-        System.out.println(qnaResponses);
-
         model.addAttribute("qna", qnaResponses);
 
         return "mypage/qna";
@@ -553,7 +551,7 @@ public class MyPageController {
 
     // 문의내역 상세화면으로 간다
     @GetMapping("/qna/detail/{qnaNo}")
-    public String qnaDetail(@PathVariable("qnaNo") int qnaNo, Model model, @AuthenticationPrincipal LoginUser loginUser){
+    public String qnaDetail(@PathVariable("qnaNo") int qnaNo, Model model){
 
         QnaResponse qnaResponse = qnaService.getQnaByQnaNo(qnaNo);
 
@@ -586,7 +584,7 @@ public class MyPageController {
 
         qnaService.deleteQna(qnaNo);
 
-        return "redirect:/mypage/qna";
+        return "redirect:/admin/qna";
     }
 
     // 문의수정 화면
@@ -608,6 +606,13 @@ public class MyPageController {
         qnaService.updateQna(qnaCreateRequest,qnaNo);
 
         return "redirect:/mypage/qna";
+    }
+
+    // 운동일지 화면
+    @GetMapping("/workout")
+    public String workout(){
+
+        return "mypage/workoutdiary";
     }
 
 }
