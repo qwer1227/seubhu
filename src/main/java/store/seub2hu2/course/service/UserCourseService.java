@@ -58,10 +58,10 @@ public class UserCourseService {
      */
     public boolean checkSuccess(int userNo, int courseNo) {
         // 1. 로그인한 사용자가 코스를 성공했는지 확인한다.
-        CourseWhether courseWhether = userCourseMapper.checkSuccess(userNo, courseNo);
+        SuccessWhether successWhether = userCourseMapper.checkSuccess(userNo, courseNo);
 
         // 2. 코스 성공 여부를 반환한다.
-        return courseWhether != null;
+        return successWhether != null;
     }
 
     /**
@@ -81,18 +81,15 @@ public class UserCourseService {
     /**
      * 좋아요 버튼을 클릭하면, 좋아요 수가 수정되고 사용자 정보가 저장 혹은 삭제된다.
      * @param courseNo 코스 번호
-     * @param loginUser 로그인한 사용자 정보
+     * @param userNo 사용자 번호
      */
     @PreAuthorize("isAuthenticated()")
-    public void addOrReduceLikeCount(int courseNo, @AuthenticationPrincipal LoginUser loginUser) {
-        // 1. 사용자 번호를 가져온다.
-        int userNo = loginUser.getNo();
-
-        // 2. 코스의 좋아요 수를 가져온다.
+    public void addOrReduceLikeCount(int courseNo, int userNo) {
+        // 1. 코스의 좋아요 수를 가져온다.
         Course course = courseMapper.getCourseByNo(courseNo);
         CourseLike courseLike = userCourseMapper.getCourseLike(userNo, courseNo);
 
-        // 3. 코스의 좋아요 수를 수정한다.
+        // 2. 코스의 좋아요 수를 수정한다.
         if (courseLike == null) {
             // 좋아요 버튼을 처음 클릭하면, 좋아요 수가 증가하고 클릭한 사용자 정보가 저장된다.
             course.setLikeCnt(course.getLikeCnt() + 1);
@@ -141,21 +138,21 @@ public class UserCourseService {
      * @return 완주 기록 목록
      */
     public ListDto<Records> getAllRecords(Map<String, Object> condition) { //
-        // 2. 코스에 해당하는 전체 완주 기록의 갯수를 조회한다.
+        // 1. 코스에 해당하는 전체 완주 기록의 갯수를 조회한다.
         int totalRows = userCourseMapper.getTotalRows(condition);
 
-        // 3. 페이징 처리 정보를 가져오고, Pagination 객체에 저장한다.
+        // 2. 페이징 처리 정보를 가져오고, Pagination 객체에 저장한다.
         int page = (Integer) condition.get("page");
         Pagination pagination = new Pagination(page, totalRows, 10);
 
-        // 4. 데이터 검색 범위를 조회해서 Map 객체에 저장한다.
+        // 3. 데이터 검색 범위를 조회해서 Map 객체에 저장한다.
         condition.put("begin", pagination.getBegin());
         condition.put("end", pagination.getEnd());
 
-        // 5. 조회 범위에 맞는 완주 기록 목록을 가져온다.
+        // 4. 조회 범위에 맞는 완주 기록 목록을 가져온다.
         List<Records> records = userCourseMapper.getRecords(condition);
 
-        // 6. ListDto 객체에 화면에 표시할 데이터(완주 기록 목록, 페이징 처리 정보)를 담고, 반환한다.
+        // 5. ListDto 객체에 화면에 표시할 데이터(완주 기록 목록, 페이징 처리 정보)를 담고, 반환한다.
         ListDto<Records> dto = new ListDto<>(records, pagination);
         return dto;
     }
