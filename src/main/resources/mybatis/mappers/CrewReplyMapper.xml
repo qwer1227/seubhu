@@ -77,7 +77,7 @@
   </select>
 
   <!-- int getReplyCntByCrewNo(@Param("no") int crewNo); -->
-  <select id="getReplyCntByBoardNo" parameterType="int">
+  <select id="getReplyCntByCrewNo" parameterType="int">
     select
       count(*)
     from

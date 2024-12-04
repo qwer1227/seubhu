@@ -64,6 +64,8 @@
               , c.crew_name       as name
               , c.is_joined       as joined
               , c.crew_thumbnail  as "thumbnail.saveName"
+              , c.crew_view_cnt   as viewCnt
+              , (select count(*) from CREW_REPLIES cr where c.crew_no = cr.crew_no) as replyCnt
           from
             CREWS c
           where c.is_deleted = 'N') as crew

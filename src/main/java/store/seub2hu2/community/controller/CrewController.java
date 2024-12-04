@@ -89,9 +89,11 @@ public class CrewController {
         Crew crew = crewService.getCrewDetail(crewNo);
         List<Reply> replyList = crewReplyService.getReplies(crewNo);
         crew.setReply(replyList);
+        int replyCnt = crewReplyService.getReplyCnt(crewNo);
 
         model.addAttribute("crew", crew);
         model.addAttribute("replies", replyList);
+        model.addAttribute("replyCnt", replyCnt);
 
         for (Reply reply : replyList) {
             int replyResult = crewReplyService.getCheckLike(reply.getNo(), loginUser);

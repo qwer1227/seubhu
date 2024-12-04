@@ -3,7 +3,7 @@
 <!doctype html>
 <html lang="ko">
 <head>
-  <%@include file="/WEB-INF/views/common/common.jsp" %>
+	<%@include file="/WEB-INF/views/common/common.jsp" %>
 </head>
 <style>
     .category-nav a {
@@ -25,58 +25,66 @@
 <body>
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
 <div class="container-xxl text-center" id="wrap">
-  
-  <h2> 습습후후 러닝 크루 </h2>
-  <div class="category-nav d-flex justify-content-center mb-4">
-    <a href="#">모집중</a>
-    <a href="#">마감</a>
-  </div>
-  
-  <div class="row row-cols-1 row-cols-md-3 g-4">
-    <!-- 카드 1 -->
-    <c:forEach var="crew" items="${crews}">
-      <div class="col">
-        <a href="hit?no=${crew.no}" style="text-decoration-line: none">
-          <div class="card">
-          <c:choose>
-          <c:when test="${empty crew.thumbnail}">
-            <img src="/resources/images/community/inviting_default_main.jpg" alt="크루 대표 이미지" class="card-img-top"
-                 style="height: 200px; filter: ${crew.joined eq 'Y' ? 'grayscale(0%)' : 'grayscale(100%)'}">
-          </c:when>
-          <c:otherwise>
-            <img src="/resources/images/community/${crew.thumbnail.saveName}" alt="크루 대표 이미지" class="card-img-top"
-                   style="height: 200px; filter: ${crew.joined eq 'Y' ? 'grayscale(0%)' : 'grayscale(100%)'}">
-          </c:otherwise>
-          </c:choose>
-            <div class="card-body text-center">
-              <h5 class="card-title">${crew.title}</h5>
-              <p class="card-text">${crew.name}</p>
-            </div>
-          </div>
-        </a>
-      </div>
-    </c:forEach>
-  </div>
-  
-  <div class="row p-3 d-flex justify-content-left">
-    <div class="col-4">
-      <input type="text" class="form-control" name="value" value="">
-    </div>
-    <div class="col-1">
-      <button class="btn btn-outline-primary">검색</button>
-    </div>
-    <div class="col d-flex justify-content-center">
-    
-    </div>
-          <security:authorize access="isAuthenticated()">
-        <security:authentication property="principal" var="loginUser"/>
-        <c:if test="${not empty loginUser and loginUser ne null}">
-    <div class="col d-flex justify-content-end">
-      <a href="form" type="button" class="btn btn-primary">글쓰기</a>
-    </div>
-    </c:if>
-          </security:authorize>
-  </div>
-  <%@include file="/WEB-INF/views/common/footer.jsp" %>
+	
+	<h2> 습습후후 러닝 크루 </h2>
+	<div class="category-nav d-flex justify-content-center mb-4">
+		<a href="#">모집중</a>
+		<a href="#">마감</a>
+	</div>
+	
+	<div class="row row-cols-1 row-cols-md-3 g-4">
+		<!-- 카드 1 -->
+		<c:forEach var="crew" items="${crews}">
+			<div class="col">
+				<a href="hit?no=${crew.no}" style="text-decoration-line: none">
+					<div class="card">
+						<c:choose>
+							<c:when test="${empty crew.thumbnail}">
+								<img src="/resources/images/community/inviting_default_main.jpg" alt="크루 대표 이미지" class="card-img-top"
+										 style="height: 200px; filter: ${crew.joined eq 'Y' ? 'grayscale(0%)' : 'grayscale(100%)'}">
+							</c:when>
+							<c:otherwise>
+								<img src="/resources/images/community/${crew.thumbnail.saveName}" alt="크루 대표 이미지" class="card-img-top"
+										 style="height: 200px; filter: ${crew.joined eq 'Y' ? 'grayscale(0%)' : 'grayscale(100%)'}">
+							</c:otherwise>
+						</c:choose>
+						<div class="card-body text-center">
+							<h5 class="card-title">
+									${crew.title}
+								<c:if test="${crew.replyCnt gt 0}">
+									<span class="badge rounded-pill text-bg-danger">${crew.replyCnt}</span>
+								</c:if>
+							</h5>
+							<p class="card-text">
+									${crew.name}
+								| <i class="bi bi-eye"></i> ${crew.viewCnt}
+							</p>
+						</div>
+					</div>
+				</a>
+			</div>
+		</c:forEach>
+	</div>
+	
+	<div class="row p-3 d-flex justify-content-left">
+		<div class="col-4">
+			<input type="text" class="form-control" name="value" value="">
+		</div>
+		<div class="col-1">
+			<button class="btn btn-outline-primary">검색</button>
+		</div>
+		<div class="col d-flex justify-content-center">
+		
+		</div>
+		<security:authorize access="isAuthenticated()">
+			<security:authentication property="principal" var="loginUser"/>
+			<c:if test="${not empty loginUser and loginUser ne null}">
+				<div class="col d-flex justify-content-end">
+					<a href="form" type="button" class="btn btn-primary">글쓰기</a>
+				</div>
+			</c:if>
+		</security:authorize>
+	</div>
+	<%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
 </html>
