@@ -19,33 +19,25 @@
         </div>
         <div class="title h4 d-flex justify-content-between align-items-center">
             <div>
-                아몬드가 죽으면?
+                ${message.title}
             </div>
             <div class="ml-auto">
-                2024-11-27
+                ${message.createdDate}
             </div>
         </div>
         <div class="meta d-flex justify-content-between mb-3">
-            <span>깔깔유머</span>
-            <span><i class="bi bi-eye"></i> 100  <i class="bi bi-hand-thumbs-up"></i> 10</span>
+            <span>${message.senderNickname}</span>
         </div>
 
         <div class="content mb-4">
-            <p>다이아몬드</p>
+            <p>${message.content}</p>
         </div>
 
-        <div class="actions d-flex justify-content-between mb-4">
+        <div class="actions d-flex justify-content-end mb-4">
             <div>
-                <!-- 관리자만 볼 수 있는 버튼 -->
-                <button class="btn btn-warning">수정</button>
                 <button class="btn btn-danger">삭제</button>
-            </div>
-            <div>
-                <button class="btn btn-outline-dark">
-                    <i class="bi bi-hand-thumbs-up"></i>
-                    <i class="bi bi-hand-thumbs-up-fill"></i>
-                </button>
-                <a type="button" href="message-list.jsp" class="btn btn-secondary">목록</a>
+                <a type="button" href="/message/message-send-form" class="btn btn-outline-dark">답장</a>
+                <a type="button" href="/message/message-received-list" class="btn btn-dark">목록</a>
             </div>
         </div>
     </div>

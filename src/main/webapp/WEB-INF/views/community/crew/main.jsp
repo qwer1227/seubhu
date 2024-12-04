@@ -36,22 +36,21 @@
     <!-- 카드 1 -->
     <c:forEach var="crew" items="${crews}">
       <div class="col">
-                <p>번호 : ${crew.thumbnail}</p>
-        <a href="detail" style="text-decoration-line: none">
+        <a href="hit?no=${crew.no}" style="text-decoration-line: none">
           <div class="card">
           <c:choose>
-          <c:when test="${not empty crew.thumbnail}">
+          <c:when test="${empty crew.thumbnail}">
             <img src="/resources/images/community/inviting_default_main.jpg" alt="크루 대표 이미지" class="card-img-top"
-                 style="height: 200px; filter: ${crew.joined ? 'grayscale(0%)' : 'grayscale(100%)'}">
+                 style="height: 200px; filter: ${crew.joined eq 'Y' ? 'grayscale(0%)' : 'grayscale(100%)'}">
           </c:when>
           <c:otherwise>
             <img src="/resources/images/community/${crew.thumbnail.saveName}" alt="크루 대표 이미지" class="card-img-top"
-                   style="height: 200px; filter: ${crew.joined ? 'grayscale(0%)' : 'grayscale(100%)'}">
+                   style="height: 200px; filter: ${crew.joined eq 'Y' ? 'grayscale(0%)' : 'grayscale(100%)'}">
           </c:otherwise>
           </c:choose>
             <div class="card-body text-center">
               <h5 class="card-title">${crew.title}</h5>
-              <p class="card-text">${crew.name} | 지역</p>
+              <p class="card-text">${crew.name}</p>
             </div>
           </div>
         </a>
@@ -69,9 +68,14 @@
     <div class="col d-flex justify-content-center">
     
     </div>
+          <security:authorize access="isAuthenticated()">
+        <security:authentication property="principal" var="loginUser"/>
+        <c:if test="${not empty loginUser and loginUser ne null}">
     <div class="col d-flex justify-content-end">
       <a href="form" type="button" class="btn btn-primary">글쓰기</a>
     </div>
+    </c:if>
+          </security:authorize>
   </div>
   <%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>

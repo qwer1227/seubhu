@@ -2,6 +2,7 @@ package store.seub2hu2.user.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import store.seub2hu2.user.vo.Addr;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.user.vo.Role;
 import store.seub2hu2.user.vo.UserRole;
@@ -14,6 +15,9 @@ public interface UserMapper {
 
     // 신규 사용자 추가
     void insertUser(@Param("user") User user);
+
+    // 신규 주소 데이터 삽입 후 생성된 주소 번호 반환
+    int insertAddr(@Param("addr") Addr addr);
 
     // 사용자 역할 부여
     void insertUserRole(@Param("userRole") UserRole userRole);

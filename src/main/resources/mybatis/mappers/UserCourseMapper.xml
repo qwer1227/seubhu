@@ -125,7 +125,7 @@
               on r.user_no = u.user_no
               <where>
                   <if test="condition.courseNo != null">
-                      course_no = #{condition.courseNo}
+                      c.course_no = #{condition.courseNo}
                   </if>
                   <if test="condition.userNo != null">
                       and r.user_no = #{condition.userNo}

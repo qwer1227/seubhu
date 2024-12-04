@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import store.seub2hu2.user.vo.Addr;
 
 @NoArgsConstructor
 @Getter
@@ -36,6 +37,8 @@ public class UserJoinForm {
     @NotBlank(message = "전화번호는 필수 입력값입니다.")
     private String tel;
 
+    private Addr addr;
+
     private String name;
     private String type;  // 로그인 타입 (일반/소셜 등)
     private String provider;  // 소셜 로그인 제공자 (예: google, facebook 등)
@@ -44,6 +47,5 @@ public class UserJoinForm {
     private boolean privacy;  // 개인정보 수집 및 이용 동의
 
 
-//	@NotEmpty(message = "사용자 유형은 하나 이상 체크해야 합니다.")
 //	private List<String> roles;
 }

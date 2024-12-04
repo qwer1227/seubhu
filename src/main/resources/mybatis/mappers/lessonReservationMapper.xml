@@ -106,6 +106,7 @@
         , L.LESSON_TITLE as "lesson.title"
         , L.LESSON_PRICE as "lesson.price"
         , L.LESSON_SUBJECT as "lesson.subject"
+        , L.LESSON_START_DATE as "lesson.start"
         , L.USER_ID as "user.id"
         , L.lesson_status as "lesson.status"
         , date_format(L.lesson_created_date, '%Y-%m-%d')

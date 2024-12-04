@@ -20,15 +20,17 @@
             <!-- 아이디 찾기 제목 -->
             <div class="border p-2 bg-dark text-white fw-bold mb-3">회원가입 완료</div>
 
-            <!-- 로그인 폼 -->
+            <!-- 회원가입 완료 메시지 -->
             <div class="mb-3">
                 <div class="row">
                     <h6>회원가입이 완료되었습니다.</h6>
                 </div>
             </div>
-            <div class="mt-4 col-2">
-                <a href="/home" class="color-black text-decoration-none fw-bold">메인으로 돌아가기</a>
-                <a href="/login" class="color-black text-decoration-none fw-bold">로그인하러 가기</a>
+
+            <!-- 버튼들: 홈으로, 로그인 -->
+            <div class="mt-4">
+                <a href="/home" class="btn btn-outline-dark me-2">홈으로</a>
+                <a href="/login" class="btn btn-dark">로그인</a>
             </div>
         </div>
     </div>
