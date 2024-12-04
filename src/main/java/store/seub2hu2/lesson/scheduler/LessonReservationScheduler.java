@@ -13,8 +13,8 @@ public class LessonReservationScheduler {
 
 
     // 매일 자정 실행
-//    @Scheduled(cron = "0 0 0 * * ?")
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(cron = "0 0 0 * * ?")
+//    @Scheduled(fixedRate = 5000)
     public void scheduleLessonStatusUpdate() {
         lessonReservationService.completeReservation();
         System.out.println("스케줄러 실행: 지난 레슨 예약 상태 업데이트 완료");

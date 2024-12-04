@@ -12,8 +12,8 @@ public class PaymentScheduler {
     private final PaymentService paymentService;
 
 
-//    @Scheduled(cron = "0 0 0 * * ?")
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(cron = "0 0 0 * * ?")
+//    @Scheduled(fixedRate = 5000)
     public void schedulePaymentStatusUpdate() {
         paymentService.completeLessonPayment();
         System.out.println("스케줄러 실행: 지난 레슨 결제 상태 업데이트 완료");
