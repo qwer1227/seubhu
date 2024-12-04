@@ -1,6 +1,11 @@
 package store.seub2hu2.community.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,14 +14,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 import store.seub2hu2.community.dto.CrewForm;
 import store.seub2hu2.community.service.CrewService;
+import store.seub2hu2.community.view.FileDownloadView;
 import store.seub2hu2.community.vo.Board;
 import store.seub2hu2.community.vo.Crew;
 import store.seub2hu2.community.vo.Notice;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.util.ListDto;
 
+import java.io.File;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,8 +33,14 @@ import java.util.Map;
 @RequestMapping("/community/crew")
 public class CrewController {
 
+    @Value("C:/files/crew")
+    private String saveFileDirectory;
+
     @Autowired
     public CrewService crewService;
+
+    @Autowired
+    public FileDownloadView fileDownloadView;
 
     @GetMapping("/main")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page
@@ -110,5 +125,37 @@ public class CrewController {
 
         crewService.deleteCrewFile(fileNo);
         return "redirect:modify?no=" + crewNo;
+    }
+
+    @GetMapping("/filedown")
+    public ModelAndView download(@RequestParam("no") int crewNo) {
+
+        Crew crew = crewService.getCrewDetail(crewNo);
+
+        ModelAndView mav = new ModelAndView();
+
+        mav.setView(fileDownloadView);
+        mav.addObject("directory", saveFileDirectory);
+        mav.addObject("filename", crew.getUploadFile().getSaveName());
+        mav.addObject("originalFilename", crew.getUploadFile().getOriginalName());
+
+        return mav;
+    }
+
+    @GetMapping("/download")
+    public ResponseEntity<Resource> downloadFile(int crewNo) throws Exception{
+
+        Crew crew = crewService.getCrewDetail(crewNo);
+
+        String fileName = crew.getUploadFile().getSaveName();
+        String originalFileName = crew.getUploadFile().getOriginalName();
+        originalFileName = URLEncoder.encode(originalFileName, "UTF-8");
+
+        File file = new File(new File(saveFileDirectory), fileName);
+        FileSystemResource resource = new FileSystemResource(file);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + originalFileName)
+                .body(resource);
     }
 }
