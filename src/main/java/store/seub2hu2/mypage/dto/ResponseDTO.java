@@ -14,6 +14,7 @@ public class ResponseDTO {
     private ProductImgDTO productImg;
     private OrdersDTO orders;
     private List<ProductDTO> products;
+    private ProductDTO product;
 
 
 }

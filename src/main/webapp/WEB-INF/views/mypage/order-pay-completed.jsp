@@ -38,7 +38,7 @@
                 <tbody>
                 <tr>
                     <th><label>주문 상품</label></th>
-                    <td>나이키 페가수스 41 블랙 260 외 2개</td>
+                    <td>${orderDetail.product.prodName} 블랙 260 외 2개</td>
                 </tr>
                 <tr>
                     <th><label>주문 수량</label></th>
