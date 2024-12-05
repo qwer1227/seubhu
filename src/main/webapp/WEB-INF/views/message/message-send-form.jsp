@@ -49,7 +49,7 @@
                         <label class="form-label" for="receivers" >받는사람</label>
                     </th>
                     <td colspan="3">
-                        <input type="text" id="receivers" name="receivers" placeholder="받는 사람을 콤마(,)로 구분하여 입력해주세요.">
+                        <input type="text" class="form-control" id="receivers" name="receivers" placeholder="받는 사람을 콤마(,)로 구분하여 입력해주세요.">
                     </td>
                 </tr>
 
