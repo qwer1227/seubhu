@@ -162,16 +162,6 @@
                 });
             },
 
-            eventMouseEnter: function(info) {
-                info.el.style.backgroundColor = 'yellow'; // 배경색 변경
-                info.el.style.color = 'red';             // 텍스트 색상 변경
-            },
-
-            eventMouseLeave: function(info) {
-                info.el.style.backgroundColor = info.backgroundColor;      // 원래 색상으로 복구
-                info.el.style.color = '';
-            },
-
         });
 
         // Refresh events based on selected filters
