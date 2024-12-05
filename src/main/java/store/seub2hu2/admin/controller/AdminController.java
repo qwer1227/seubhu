@@ -260,8 +260,6 @@ public class AdminController {
         adminService.getUpdateProduct(product);
 
 
-
-
         return "redirect:/admin/product-detail?no=" + product.getNo() + "&colorNo=" + product.getColorNum();
     }
 
