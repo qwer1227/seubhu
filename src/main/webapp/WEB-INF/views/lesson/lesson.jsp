@@ -57,7 +57,7 @@
                 <span class="p-1">호흡</span>
             </div>
             <div class="m-3 d-flex">
-                <div style="width: 30px; height:30px; border-radius: 5px; background: #A8D5BA"></div>
+                <div style="width: 30px; height:30px; border-radius: 5px; background: #d8f6d4"></div>
                 <span class="p-1">자세</span>
             </div>
             <div class="m-3 d-flex">
@@ -77,6 +77,19 @@
     </div>
 </div>
 
+<div class="modal" id="eventModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="modal-title" class="modal-title"></h5>
+            </div>
+            <div class="modal-body">
+                <p id="modal-subject"></p>
+                <p id="modal-description"></p>
+            </div>
+        </div>
+    </div>
+</div>
 
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script>
@@ -129,8 +142,36 @@
 
             // Handle event clicks
             eventClick: function (info) {
-                lessonDetail(info.event.extendedProps.lessonNo);
+                $('#modal-title').text(info.event.title);
+                $('#modal-subject').text(info.event.extendedProps.subject);
+                $('#modal-description').text(info.event.extendedProps.lessonNo);
+                $('#eventModal').modal('show');
             },
+
+            eventMouseEnter: function(info) {
+                // info 객체로 이벤트 관련 정보를 가져올 수 있음
+                console.log("Event Title:", info.event.title);
+                console.log("Extended Props:", info.event.extendedProps);
+
+                // 예: 툴팁 추가
+                const tooltip = new Tooltip(info.el, {
+                    title: info.event.extendedProps.description || 'No description',
+                    placement: 'top', // 툴팁 위치: top, bottom, left, right
+                    trigger: 'hover',
+                    container: 'body'
+                });
+            },
+
+            eventMouseEnter: function(info) {
+                info.el.style.backgroundColor = 'yellow'; // 배경색 변경
+                info.el.style.color = 'red';             // 텍스트 색상 변경
+            },
+
+            eventMouseLeave: function(info) {
+                info.el.style.backgroundColor = info.backgroundColor;      // 원래 색상으로 복구
+                info.el.style.color = '';
+            },
+
         });
 
         // Refresh events based on selected filters
@@ -158,18 +199,19 @@
                     var formattedEvents = events.map(event => {
                         // 조건별 색상 매핑
                         const colorMap = {
-                            '호흡': '#AEDFF7',
-                            '자세': '#A8D5BA',
-                            '운동': '#D9C8F2'
+                            '호흡': '#d0e8fa',
+                            '자세': '#d8f6d4',
+                            '운동': '#efe1fd'
                         };
 
                         const backgroundColor = colorMap[event.subject] || 'black';
                         const borderColor = backgroundColor; // 테두리 색상도 동일하게 설정
 
                         return {
-                            title: event.title + " / " + event.status,
+                            title: event.title,
                             start: event.start,
                             end: event.end,
+                            description: 'asdasd',
                             allDay: false,
                             textColor: 'black', // 텍스트 색상
                             borderColor: borderColor,
@@ -212,6 +254,13 @@
             console.log("Completed include changed:", $('#completed-include').prop('checked')); // 상태 확인
             calendar.refetchEvents();
         });
+
+        $('#subject, #completed-include').on('change', function () {
+            calendar.refetchEvents(); // 이벤트 다시 불러오기
+        });
+
+
+
         // Initialize the calendar
         calendar.render();
     });

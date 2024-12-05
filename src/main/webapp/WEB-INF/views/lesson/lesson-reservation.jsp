@@ -103,14 +103,14 @@
                         <c:if test="${reservation.status eq '취소'}">
                             <span class="badge bg-danger">취소</span>
                         </c:if>
-                        <c:if test="${reservation.status eq '환불'}">
-                            <span class="badge bg-warning">환불</span>
+                        <c:if test="${reservation.status eq '수강종료'}">
+                            <span class="badge bg-secondary">수강종료</span>
                         </c:if>
                     </td>
                     <td>
                         <c:if test="${not empty reservation.status and
                              reservation.status ne '취소' and
-                             reservation.status ne '환불'}">
+                             reservation.status ne '수강종료'}">
 
                             <form action="/pay/cancel" name="paymentDto" method="POST" style="display: inline;">
                                 <input type="hidden" name="paymentId" value="${reservation.payment.id}">
