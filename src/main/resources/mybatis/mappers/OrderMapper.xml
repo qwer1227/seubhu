@@ -81,6 +81,7 @@
         <association property="payments" resultMap="paymentsResultMap"/>
         <association property="productImg" resultMap="productImgResultMap"/>
         <association property="orders" resultMap="ordersResultMap"/>
+        <association property="product" resultMap="productResultMap"/>
 
         <!-- 여러 상품 정보를 리스트로 매핑 -->
         <collection property="products" ofType="store.seub2hu2.mypage.dto.ProductDTO">
@@ -122,7 +123,15 @@
         <result property="realPrice" column="real_price"/>
     </resultMap>
 
-
+    <resultMap id="productResultMap" type="store.seub2hu2.mypage.dto.ProductDTO">
+        <result property="prodName" column="prod_Name"/>
+        <result property="sizeName" column="prod_size"/>
+        <result property="colorNo" column="color_No"/>
+        <result property="colorName" column="color_Name"/>
+        <result property="prodPrice" column="prod_price"/>
+        <result property="prodImgUrl" column="prod_img_thum"/>
+        <result property="orderQty" column="order_prod_amount"/>
+    </resultMap>
     <!-- ResponseDTO getOrderDetails(@Param("orderNo") int orderNo); -->
 
     <select id="getOrderDetails" resultMap="responseDTOResultMap">
