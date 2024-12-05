@@ -10,7 +10,54 @@
         select
             count(*)
         from
-            PAYMENTS;
+            PAYMENTS P, USERS U, LESSON_RESERVATIONS R, LESSONS L
+        where
+            P.user_id = U.user_id
+          and
+            P.pay_id = R.lesson_reservation_pay_id
+          and
+            R.lesson_no = L.lesson_no
+          and
+            P.pay_type = '레슨'
+        <!-- condition 객체가 null이 아닐 때만 실행 -->
+        <if test="condition.day != null">
+            and (
+            DATE_FORMAT(P.pay_date, '%Y-%m-%d') = #{condition.day}
+            or DATE_FORMAT(P.pay_date, '%Y-%m') = #{condition.day}
+            )
+        </if>
+        <if test="condition.opt != null">
+            <choose>
+                <when test="condition.opt == 'all'">
+
+                </when>
+                <when test="condition.opt == 'ready'">
+                    and P.pay_status = '결제확정'
+                </when>
+                <when test="condition.opt == 'notReady'">
+                    and P.pay_status = '결제완료'
+                </when>
+                <when test="condition.opt == 'cancel'">
+                    and P.pay_status = '취소'
+                </when>
+            </choose>
+        </if>
+        <if test="condition != null and condition.keyword != null">
+            <choose>
+                <when test="condition.keyword == 'all'">
+
+                </when>
+                <when test="condition.keyword == 'payName'">
+                    and U.user_name like CONCAT('%',#{condition.value},'%')
+                </when>
+                <when test="condition.keyword == 'payId'">
+                    and U.user_id like CONCAT('%',#{condition.value},'%')
+                </when>
+                <when test="condition.keyword == 'lessonName'">
+                    and L.lesson_title like CONCAT('%',#{condition.value},'%')
+                </when>
+            </choose>
+        </if>
     </select>
 
     <!--
@@ -22,17 +69,19 @@
         from
             (
             select
+        <if test="condition.sort != null">
                 <choose>
                     <when test="condition.sort == 'latest'">
-                         ROW_NUMBER() OVER (ORDER BY P.pay_no asc) as RN
+                         ROW_NUMBER() OVER (ORDER BY P.pay_no desc) as RN
                     </when>
                     <when test="condition.sort == 'oldestDate'">
-                         ROW_NUMBER() OVER (ORDER BY P.pay_no desc) as RN
+                         ROW_NUMBER() OVER (ORDER BY P.pay_no asc) as RN
                     </when>
                     <when test="condition.sort == 'price'">
                          ROW_NUMBER() OVER (ORDER BY P.pay_price desc) as RN
                     </when>
                 </choose>
+        </if>
                  , P.pay_no		as payNo
                  , P.pay_type	as settleType
                  , U.user_name 	as name
@@ -53,20 +102,16 @@
                 R.lesson_no = L.lesson_no
             and
                 P.pay_type = '레슨'
-<!--                <if test="condition.dayType != null">-->
-<!--                    <choose>-->
-<!--                        <when test="condition.dayType == 'day'">-->
-<!--                            -->
-<!--                        </when>-->
-<!--                        <when test="condition.dayType == 'month'">-->
-
-<!--                        </when>-->
-<!--                    </choose>-->
-<!--                </if>-->
+                <if test="condition.day != null">
+                    and (
+                    DATE_FORMAT(P.pay_date, '%Y-%m-%d') = #{condition.day}
+                    or DATE_FORMAT(P.pay_date, '%Y-%m') = #{condition.day}
+                    )
+                </if>
                 <if test="condition.opt != null">
                     <choose>
                         <when test="condition.opt == 'all'">
-                            and (P.pay_status = '결제확정' or P.pay_status = '결제완료' or P.pay_status = '취소')
+
                         </when>
                         <when test="condition.opt == 'ready'">
                             and P.pay_status = '결제확정'
@@ -76,6 +121,22 @@
                         </when>
                         <when test="condition.opt == 'cancel'">
                             and P.pay_status = '취소'
+                        </when>
+                    </choose>
+                </if>
+                <if test="condition != null and condition.keyword != null">
+                    <choose>
+                        <when test="condition.keyword == 'all'">
+
+                        </when>
+                        <when test="condition.keyword == 'payName'">
+                            and U.user_name like CONCAT('%',#{condition.value},'%')
+                        </when>
+                        <when test="condition.keyword == 'payId'">
+                            and U.user_id like CONCAT('%',#{condition.value},'%')
+                        </when>
+                        <when test="condition.keyword == 'lessonName'">
+                            and L.lesson_title like CONCAT('%',#{condition.value},'%')
                         </when>
                     </choose>
                 </if>
@@ -511,6 +572,21 @@
                 count(*) cnt
             FROM
                 USERS
+            <where>
+                <if test="condition.opt != null">
+                    <choose>
+                        <when test="condition.opt == 'name'">
+                            user_name like CONCAT('%',#{condition.value},'%')
+                        </when>
+                        <when test="condition.opt == 'id'">
+                            user_id like CONCAT('%',#{condition.value},'%')
+                        </when>
+                        <when test="condition.opt == 'email'">
+                            user_email like CONCAT('%',#{condition.value},'%')
+                        </when>
+                    </choose>
+                </if>
+            </where>
         </select>
     <!--
         List<User> getUsers(@Param("condition")Map<String, Object> condition);
