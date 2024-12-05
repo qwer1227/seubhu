@@ -13,7 +13,9 @@ public interface UserCourseMapper {
     UserLevel getUserLevel(@Param("userNo") int userNo); // 로그인한 사용자의 현재 도전 가능한 단계를 가져온다.
 
     int getTotalRows(@Param("condition") Map<String, Object> condition); // 코스에 해당하는 완주 기록의 갯수를 가져온다.
-    List<Records> getRecords(@Param("condition") Map<String, Object> condition); // 조회 범위에 맞는 완주 기록 목록을 가져온다.
+    int getTotalRegisterRows(@Param("condition") Map<String, Object> condition); // 로그인한 사용자가 도전 등록한 코스의 갯수를 가져온다.
+    List<Records> getRecords(@Param("condition") Map<String, Object> condition); // 조회 범위 내에서 완주 기록 목록을 가져온다.
+    List<Course> getCoursesToChallenge(@Param("condition") Map<String, Object> condition); // 조회 범위 내에서 로그인한 사용자가 도전 등록한 코스 목록을 가져온다.
 
     SuccessWhether checkSuccess(@Param("userNo") int userNo, @Param("courseNo") int courseNo); // 로그인한 사용자가 코스를 성공했는지 확인한다.
     ChallengeWhether checkChallenge(@Param("courseNo") int courseNo, @Param("userNo") int userNo); // 로그인한 사용자가 코스 도전 등록을 했는지 확인한다.

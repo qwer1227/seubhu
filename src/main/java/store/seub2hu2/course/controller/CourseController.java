@@ -29,16 +29,29 @@ public class CourseController {
 
     @GetMapping("/my-course")
     public String myCourse(@AuthenticationPrincipal LoginUser loginUser,
+                           @RequestParam(name = "page", required = false, defaultValue = "1") int page,
                            Model model) {
-        // 1. 로그인한 사용자의 코스 관련 정보(현재 배지, 현재 도전 가능한 단계)를 가져오고, Model 객체에 저장한다.
+        // 1. 로그인한 경우 if문을 실행한다.
         if (loginUser != null) {
+            // 로그인한 사용자의 코스 관련 정보(현재 배지, 현재 도전 가능한 단계)를 가져온다.
             List<UserBadge> userBadges = userCourseService.getUserBadge(loginUser.getNo());
             UserLevel userLevel = userCourseService.getUserLevel(loginUser.getNo());
 
+            // 도전 등록한 코스 목록을 가져온다.
+            Map<String, Object> condition = new HashMap<>();
+            condition.put("page", page);
+            condition.put("userNo", loginUser.getNo());
+
+            ListDto<Course> dto = userCourseService.getCoursesToChallenge(condition);
+
+            // 가져온 데이터들을 Model 객체에 저장한다.
             model.addAttribute("userBadges", userBadges);
             model.addAttribute("userLevel", userLevel);
+            model.addAttribute("coursesToChallenge", dto.getData());
+            model.addAttribute("pagination", dto.getPaging());
         }
 
+        // 2. 뷰 이름을 반환한다.
         return "course/my-course";
     }
 
@@ -99,6 +112,7 @@ public class CourseController {
         return "course/list";
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/controlChallenge")
     public String controlChallenge(@RequestParam(name = "courseNo") int courseNo,
                                    @AuthenticationPrincipal LoginUser loginUser) {
@@ -151,6 +165,7 @@ public class CourseController {
         return "redirect:detail?no=" + courseNo;
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/changeChallenge")
     public String changeChallenge(@RequestParam(name = "courseNo") int courseNo,
                                    @AuthenticationPrincipal LoginUser loginUser) {
@@ -195,5 +210,15 @@ public class CourseController {
 
         // 8. 뷰이름을 반환한다.
         return "course/runner-ranking";
+    }
+
+    @GetMapping("/cancelChallenge")
+    public String cancelChallenge(@RequestParam(name = "courseNo") int courseNo,
+                                  @AuthenticationPrincipal LoginUser loginUser) {
+        // 1. 사용자가 코스 도전 등록을 취소한다.
+        userCourseService.changeChallenge(courseNo, loginUser.getNo());
+
+        // 2. list.jsp를 재요청한다.
+        return "redirect:my-course";
     }
 }
