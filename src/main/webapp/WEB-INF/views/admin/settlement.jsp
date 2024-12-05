@@ -132,7 +132,7 @@
                   <select class="form-control" name="keyword">
                     <option value="all">선택안함</option>
                     <option value="payName">결제자</option>
-                    <option value="payId">결제자ID</option>
+                    <option value="payId">결제자 ID</option>
                     <option value="lessonName">레슨명</option>
                   </select>
                 </div>
