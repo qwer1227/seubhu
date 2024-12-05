@@ -1,18 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="store.seub2hu2.community.mapper.BoardReportMapper">
+<mapper namespace="store.seub2hu2.community.mapper.ReportMapper">
 
-  <!-- void insertReport(@Param("report") Report report); -->
-  <insert id="insertReport">
+  <!-- void insertReportToBoard(@Param("report") Report report); -->
+  <insert id="insertReportToBoard">
     insert into BOARD_REPORTS
     (
     report_type
-    <if test="report.type == 'board'">
-      , board_no
-    </if>
-    <if test="report.type == 'reply'">
-      , reply_no
-    </if>
+    , report_no
     , user_no
     , report_reason
     )
@@ -36,8 +31,8 @@
     update BOARD_REPORTS
     set
     (
-        admin_no = #{report.adminNo}
-        , report_resolved_date = sysdate()
+    admin_no = #{report.adminNo}
+    , report_resolved_date = sysdate()
     )
     where report_type = #{report.type}
     <if test="report.type == 'board">
@@ -48,4 +43,26 @@
     </if>
   </update>
 
+  <!-- void insertReportToCrew(@Param("report") Report report); -->
+  <insert id="insertReportToCrew">
+    insert into CREW_REPORTS
+    (
+    report_type
+    , report_no
+    , user_no
+    , report_reason
+    )
+    values
+    (
+    #{report.type}
+    <if test="report.type == 'crew'">
+      , #{report.crewNo}
+    </if>
+    <if test="report.type == 'reply'">
+      , #{report.replyNo}
+    </if>
+    , #{report.user.no}
+    , #{report.reason}
+    )
+  </insert>
 </mapper>

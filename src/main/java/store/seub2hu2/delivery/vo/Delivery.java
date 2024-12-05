@@ -12,8 +12,8 @@ import store.seub2hu2.user.vo.Addr;
 public class Delivery {
 
     private int no; // 배송 번호
-    private String name; // 배송 업체
+    private String company; // 배송 업체
     private String memo; // 배송 메모
-    private Order order; // 주문 객체
-    private Addr addr; // 주소 객체
+    private int orderNo; // 주문 번호
+    private int addrNo; // 주소 번호
 }

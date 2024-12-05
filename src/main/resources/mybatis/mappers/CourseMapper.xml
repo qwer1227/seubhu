@@ -16,10 +16,10 @@
             <result property="dong" column="region_dong"/>
         </association>
         <association property="successWhether" javaType="store.seub2hu2.course.vo.SuccessWhether">
-            <result property="isSuccess" column="success"/>
+            <result property="courseNo" column="success"/>
         </association>
         <association property="challengeWhether" javaType="store.seub2hu2.course.vo.ChallengeWhether">
-            <result property="isRegister" column="challenge"/>
+            <result property="courseNo" column="challenge"/>
         </association>
     </resultMap>
 
@@ -78,11 +78,11 @@
                     , r.region_si
                     , r.region_gu
                     , r.region_dong
-                    , (select 'Y'
+                    , (select '1'
                         from SUCCESS_WHETHER a
                         WHERE a.USER_NO = #{condition.userNo}
                         AND a.COURSE_NO = c.COURSE_NO) success
-                    ,(select 'Y'
+                    ,(select '1'
                         from CHALLENGE_WHETHER a
                         WHERE a.USER_NO = #{condition.userNo}
                         AND a.COURSE_NO = c.COURSE_NO) challenge

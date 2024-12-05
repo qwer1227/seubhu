@@ -63,9 +63,7 @@ public class CourseService {
         // 1. 코스 번호로 코스의 상세 정보를 가져온다.
         Course course = courseMapper.getCourseByNo(courseNo);
 
-        // 2. 없는 코스 번호로 코스 상세 페이지 접속 시, 오류 페이지로 이동한다.
-
-        // 3. 코스의 상세 정보를 반환한다.
+        // 2. 코스의 상세 정보를 반환한다.
         return course;
     }
 }

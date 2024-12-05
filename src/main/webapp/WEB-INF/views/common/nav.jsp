@@ -70,6 +70,7 @@
                     </span>
                 <ul class="navbar-nav">
                     <a class="nav-link" href="/mypage">마이페이지</a>
+                    <a class="nav-link" href="/message/list">쪽지</a>
                     <a class="nav-link " href="/logout">로그아웃</a>
                     </security:authorize>
                     <div style="padding: 0 20px;"></div>

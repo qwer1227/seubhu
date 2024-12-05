@@ -10,7 +10,7 @@ import java.util.Date;
 @Getter
 @Setter
 @ToString
-public class MessageRecieved {
+public class MessageReceived {
     private int messageNo;             // 메시지 번호
     private String title;              // 메시지 제목
     private String senderNickname;          // 보낸 사람의 사용자 번호

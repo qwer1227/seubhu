@@ -21,7 +21,7 @@
 
     <h2>쪽지 작성</h2>
 
-    <form action="/message/send" method="post" enctype="multipart/form-data">
+    <form action="/message/send" method="post" enctype="multipart/form-data" >
         <div class="row p-3">
             <table id="notice-table" style="width: 98%">
                 <colgroup>
@@ -46,11 +46,10 @@
                 <!-- 받는 사람 -->
                 <tr class="form-group">
                     <th>
-                        <label class="form-label" for="receiver">받는사람</label>
+                        <label class="form-label" for="receivers" >받는사람</label>
                     </th>
                     <td colspan="3">
-                        <input type="text" class="form-control" style="width: 100%" id="receiver" name="receiver"
-                               placeholder="받는 사람을 입력해주세요." value="${receiver != null ? receiver : ''}">
+                        <input type="text" id="receivers" name="receivers" placeholder="받는 사람을 콤마(,)로 구분하여 입력해주세요.">
                     </td>
                 </tr>
 

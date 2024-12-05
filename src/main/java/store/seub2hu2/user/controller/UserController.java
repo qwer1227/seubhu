@@ -28,7 +28,7 @@ public class UserController {
     // 회원가입 처리
     @PostMapping("/join")
     public String join(@Valid @ModelAttribute("joinForm") UserJoinForm form, BindingResult errors) {
-        // 유효성 검증을 통과하지 못하면 join-form.jsp로 이동
+        // 유효성 검증 실패 시 다시 가입 폼으로
         if (errors.hasErrors()) {
             return "user/join-form";
         }
@@ -57,12 +57,14 @@ public class UserController {
             return "user/join-form";
         }
 
-        // 중복 검사를 모두 통과한 후 회원가입 처리
+        // 회원가입 처리
         userService.insertUser(form);
 
-
+        // 가입 성공 시 success 페이지로 리다이렉트
         return "user/join-success-form";
     }
+
+
 
     // 로그인 폼 페이지
     @GetMapping("/login")
