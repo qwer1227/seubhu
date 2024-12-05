@@ -47,7 +47,6 @@
     </div>
   </div>
   
-  
   <!-- 게시글 정렬 기능 -->
   <form id="form-search" method="get" action="main">
     <input type="hidden" name="page" value="${param.page != null ? param.page : 1}">

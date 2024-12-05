@@ -42,8 +42,10 @@ public class CrewService {
 
     @Autowired
     private UploadMapper uploadMapper;
+
     @Autowired
     private CrewReplyMapper crewReplyMapper;
+
 
     public Crew addNewCrew(CrewForm form
             , @AuthenticationPrincipal LoginUser loginUser) {
@@ -141,6 +143,7 @@ public class CrewService {
         UploadFile uploadThumbnail = uploadMapper.getThumbnailByCrewNo(crewNo);
         UploadFile uploadFile = uploadMapper.getFileByCrewNo(crewNo);
         List<Reply> reply = crewReplyMapper.getRepliesByCrewNo(crewNo);
+        List<CrewMember> member = crewMapper.getCrewMembers(crewNo);
 
         if (crew == null){
             throw new CommunityException("존재하지 않는 게시글입니다.");
@@ -149,6 +152,7 @@ public class CrewService {
         crew.setThumbnail(uploadThumbnail);
         crew.setUploadFile(uploadFile);
         crew.setReply(reply);
+        crew.setMember(member);
 
         return crew;
     }
@@ -237,5 +241,47 @@ public class CrewService {
 
     public void deleteCrewFile(int fileNo){
         uploadMapper.updateCrewFile(fileNo);
+    }
+
+    public List<CrewMember> getCrewMembers(int crewNo){
+        List<CrewMember> members = crewMapper.getCrewMembers(crewNo);
+
+        return members;
+    }
+
+    public int getEnterMemberCnt(int crewNo){
+        return crewMapper.getCrewMemberCnt(crewNo);
+    }
+
+    public void updateCrewCondition(int crewNo, String condition){
+        crewMapper.updateCrewCondition(crewNo, condition);
+    }
+
+    public void enterCrew(int crewNo
+                        , @AuthenticationPrincipal LoginUser loginUser){
+        CrewMember member = new CrewMember();
+        member.setCrewNo(crewNo);
+        member.setReader("N");
+        member.setJoin("Y");
+        member.setJoinDate(new Date());
+
+        User user = new User();
+        user.setNo(loginUser.getNo());
+        member.setUser(user);
+
+        crewMapper.insertCrewMember(member);
+    }
+
+    public void leaveCrew(int crewNo
+                        , @AuthenticationPrincipal LoginUser loginUser){
+        CrewMember member = new CrewMember();
+        member.setCrewNo(crewNo);
+        member.setJoin("N");
+
+        User user = new User();
+        user.setNo(loginUser.getNo());
+        member.setUser(user);
+
+        crewMapper.updateCrewMember(member);
     }
 }
