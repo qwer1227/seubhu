@@ -25,6 +25,7 @@ import store.seub2hu2.community.service.BoardReplyService;
 import store.seub2hu2.community.service.ReportService;
 import store.seub2hu2.community.view.FileDownloadView;
 import store.seub2hu2.community.vo.Crew;
+import store.seub2hu2.community.vo.CrewMember;
 import store.seub2hu2.community.vo.Reply;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.util.ListDto;
@@ -58,6 +59,7 @@ public class CrewController {
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page
             , @RequestParam(name = "rows", required = false, defaultValue = "15") int rows
             , @RequestParam(name = "category", required = false) String category
+            , @RequestParam(name = "keyword", required = false) String keyword
             , Model model) {
 
         Map<String, Object> condition = new HashMap<>();
@@ -67,6 +69,11 @@ public class CrewController {
         // 카테고리 필터링 처리
         if (StringUtils.hasText(category)) {
             condition.put("category", category);
+        }
+
+        // 검색
+        if (StringUtils.hasText(keyword)) {
+            condition.put("keyword", keyword);
         }
 
         ListDto<Crew> dto = crewService.getCrews(condition);
@@ -87,17 +94,41 @@ public class CrewController {
                         , @AuthenticationPrincipal LoginUser loginUser
                         , Model model) {
         Crew crew = crewService.getCrewDetail(crewNo);
+
         List<Reply> replyList = crewReplyService.getReplies(crewNo);
         crew.setReply(replyList);
         int replyCnt = crewReplyService.getReplyCnt(crewNo);
 
+        List<CrewMember> members = crewService.getCrewMembers(crewNo);
+        crew.setMember(members);
+        int memberCnt = crewService.getEnterMemberCnt(crewNo);
+
         model.addAttribute("crew", crew);
         model.addAttribute("replies", replyList);
         model.addAttribute("replyCnt", replyCnt);
+        model.addAttribute("members", members);
+        model.addAttribute("memberCnt", memberCnt);
 
         for (Reply reply : replyList) {
             int replyResult = crewReplyService.getCheckLike(reply.getNo(), loginUser);
             model.addAttribute("replyLiked", replyResult);
+        }
+
+        if (loginUser != null) {
+            boolean isExists = false;
+            for (CrewMember member : members) {
+                if (member.getUser().getNo()== loginUser.getNo()) {
+                    isExists = true;
+                    break;
+                }
+            }
+            model.addAttribute("isExists", isExists);
+        }
+
+        if (memberCnt < 5){
+            crewService.updateCrewCondition(crewNo, "Y");
+        } else {
+            crewService.updateCrewCondition(crewNo, "N");
         }
 
         return "community/crew/detail";
@@ -269,6 +300,20 @@ public class CrewController {
             , @AuthenticationPrincipal LoginUser loginUser){
 
         reportService.registerReportToCrew(form, loginUser);
+        return "redirect:detail?no=" + crewNo;
+    }
+
+    @GetMapping("/enter-crew")
+    public String enterCrew(@RequestParam("no") int crewNo
+            , @AuthenticationPrincipal LoginUser loginUser){
+        crewService.enterCrew(crewNo, loginUser);
+        return "redirect:detail?no=" + crewNo;
+    }
+
+    @GetMapping("/leave-crew")
+    public String leaveCrew(@RequestParam("no") int crewNo
+            , @AuthenticationPrincipal LoginUser loginUser){
+        crewService.leaveCrew(crewNo, loginUser);
         return "redirect:detail?no=" + crewNo;
     }
 }

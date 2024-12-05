@@ -1,5 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="/WEB-INF/views/common/tags.jsp" %>
+<%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="java.util.Date" %>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -56,10 +58,28 @@
               <input type="hidden" name="page" />
               <input type="hidden" name="rows" />
               <div class="row g-3">
+                <div class="row col-2 align-items-center pr-2 pb-1">
+                  <label for="dateInput" class="col-auto col-form-label">날짜</label>
+                  <div class="col">
+                    <%
+                      // 현재 날짜 가져오기
+                      SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                      String currentDate = sdf.format(new Date()); // 현재 날짜를 "yyyy-MM-dd" 형식으로 변환
+                      request.setAttribute("currentDate", currentDate); // request에 currentDate를 설정
+                    %>
+                    <input
+                      type="date"
+                      name="day"
+                      id="dateInput"
+                      value="${param.day != null ? param.day : currentDate}"
+                      class="form-control form-control-sm rounded-pill border-gray"
+                    />
+                  </div>
+                </div>
                 <div class="col-1">
                   <select class="form-control" name="pType" onchange="changeRows()">
-                    <option value="product" >상품</option>
-                    <option value="lesson" >레슨</option>
+                    <option value="lesson" ${param.pType eq 'lesson' ? 'selected' : ''}>레슨</option>
+                    <option value="product" ${param.pType eq 'product' ? 'selected' : ''}>상품</option>
                   </select>
                 </div>
 <%--                <div class="col-1">--%>
@@ -75,7 +95,7 @@
                            name="sort"
                            value="latest"
                            onchange="changeSort()"
-                    ${empty param.sort or param.sort eq 'date' ? 'checked' : ''}
+                    ${empty param.sort or param.sort eq 'latest' ? 'checked' : ''}
                     >
                     <label class="form-check-label" >최신 순</label>
                   </div>
@@ -85,7 +105,7 @@
                            name="sort"
                            value="oldestDate"
                            onchange="changeSort()"
-                    ${param.sort eq 'date' ? 'checked' : ''}
+                    ${empty param.sort or param.sort eq 'oldestDate' ? 'checked' : ''}
                     >
                     <label class="form-check-label" >오래된 순</label>
                   </div>
@@ -95,12 +115,12 @@
                            name="sort"
                            value="price"
                            onchange="changeSort()"
-                    ${param.sort eq 'price' ? 'checked' : ''}
+                    ${empty param.sort or param.sort eq 'price' ? 'checked' : ''}
                     >
                     <label class="form-check-label" >높은가격 순</label>
                   </div>
                 </div>
-                <div class="col-2">
+                <div class="col-1">
                   <select class="form-control" name="opt">
                     <option value="all" ${param.opt eq 'all' ? 'selected' : ''}>전체</option>
                     <option value="ready" ${param.opt eq 'ready' ? 'selected' : ''}>결제확정</option>
@@ -108,7 +128,15 @@
                     <option value="cancel" ${param.opt eq 'cancel' ? 'selected' : '' }>취소</option>
                   </select>
                 </div>
-                <div class="col-4 mb-2">
+                <div class="col-1">
+                  <select class="form-control" name="keyword">
+                    <option value="all">선택안함</option>
+                    <option value="payName">결제자</option>
+                    <option value="payId">결제자 ID</option>
+                    <option value="lessonName">레슨명</option>
+                  </select>
+                </div>
+                <div class="col-3">
                   <!-- Search -->
                   <%@include file="/WEB-INF/views/admincommon/searchbar.jsp" %>
                   <!-- Search -->
@@ -127,7 +155,8 @@
                   <col width="10%">
                   <col width="*%">
                   <col width="10%">
-                  <col width="10%">
+                  <col width="7%">
+                  <col width="8%">
                   <col width="10%">
                   <col width="10%">
                 </colgroup>
@@ -141,6 +170,7 @@
                     <th>결제방법</th>
                     <th>결제상태</th>
                     <th>날짜</th>
+                    <th>시간</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -154,6 +184,10 @@
                       <td>${d.payMethod}</td>
                       <td>${d.status}</td>
                       <td>
+                      ${d.payDate}
+                      </td>
+                      <td>
+                      ${d.payTime}
                       </td>
                     </tr>
                   </c:forEach>

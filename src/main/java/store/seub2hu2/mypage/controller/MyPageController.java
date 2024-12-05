@@ -535,6 +535,13 @@ public class MyPageController {
         return "mypage/order";
     }
 
+    // 주문 완료 화면
+    @GetMapping("/order-pay-completed")
+    public String showOrderCompletionPage() {
+
+        return "mypage/order-pay-completed";
+    }
+    
     // 레슨예약내역 화면으로 간다
     @GetMapping("/reservation/{userId}")
     public String reservation(@PathVariable("userId") String userId , @AuthenticationPrincipal LoginUser loginUser){

@@ -48,6 +48,16 @@
         VALUES (#{userRole.userNo}, #{userRole.role.no});
     </insert>
 
+    <!--
+        사용자 주소 추가
+        void insertAddress(@Param("addr") Addr addr);
+    -->
+    <insert id="insertAddress">
+        INSERT INTO ADDRESSES (ZIP_CODE, ADDR_1, ADDR_2, ADDR_NAME, USER_NO)
+        VALUES
+            (#{addr.postcode}, #{addr.address}, #{addr.addressDetail}, #{addr.name}, #{addr.userNo})
+    </insert>
+
     <!-- 사용자 번호로 역할 정보 조회: 특정 사용자가 가진 역할을 조회 -->
     <select id="getRolesByUserNo" resultType="store.seub2hu2.user.vo.Role">
         select r.ROLE_NO as no,

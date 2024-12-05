@@ -21,6 +21,10 @@ public class OrderForm {
     private List<Map<String, Integer>> orderItems;
     private List<Integer> sizeNoList; // 사이즈번호(상품번호)
     private List<Integer> stocks; // 수량
+    private int orderProdNo; // 주문상품번호
+    private int orderProdPrice; // 상품의 가격
+    private int orderProdAmount; // 담은 상품 수량
+    private int orderUnitPrice; // 개별 상품 총가격
 
     // 배송지 정보에 대한
     private int addrNo;
@@ -46,11 +50,5 @@ public class OrderForm {
     private int realPrice;// 실금액
     private Date orderCreatedDate; // 주문날짜생성
     private Date orderUpdatedDate; // 주문수정날짜 생성
-    
-    // 주문 상품
-    private int orderProdNo; // 주문상품번호
-    private int orderProdPrice; // 상품의 가격
-    private int orderProdAmount; // 담은 상품 수량
-    private int orderUnitPrice; // 개별 상품 총가격
 
 }

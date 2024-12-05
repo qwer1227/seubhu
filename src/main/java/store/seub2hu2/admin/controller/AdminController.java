@@ -649,10 +649,11 @@ public class AdminController {
     public String settlement(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
                              @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
                              @RequestParam(name = "pType", required = false, defaultValue = "lesson") String pType,
-//                             @RequestParam(name = "dayType", required = false, defaultValue = "day") String dayType,
-                             @RequestParam(name = "sort", required = false, defaultValue = "latest") String sort,
+                             @RequestParam(name = "day", required = false) String day,
+                             @RequestParam(name = "sort", required = false) String sort,
                              @RequestParam(name = "opt", required = false, defaultValue = "all") String opt,
                              @RequestParam(name = "keyword", required = false) String keyword,
+                             @RequestParam(name= "value", required = false) String value,
                              Model model) {
 
     Map<String, Object> condition = new HashMap<>();
@@ -663,8 +664,13 @@ public class AdminController {
     condition.put("sort", sort);
     condition.put("opt", opt);
 
-        if (StringUtils.hasText(keyword)) {
+        if (StringUtils.hasText(day)) {
+            condition.put("day", day);
+        }
+
+        if (StringUtils.hasText(value)) {
             condition.put("keyword", keyword);
+            condition.put("value", value);
         }
 
         ListDto<SettlementDto> dto = adminService.getSettleList(condition);
