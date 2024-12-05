@@ -30,6 +30,7 @@ import store.seub2hu2.mypage.dto.*;
 import store.seub2hu2.mypage.service.CartService;
 import store.seub2hu2.mypage.service.PostService;
 import store.seub2hu2.mypage.service.QnaService;
+import store.seub2hu2.mypage.service.WorkoutService;
 import store.seub2hu2.mypage.vo.Post;
 import store.seub2hu2.order.service.OrderService;
 import store.seub2hu2.security.user.LoginUser;
@@ -65,6 +66,9 @@ public class MyPageController {
 
     @Autowired
     BoardService boardService;
+
+    @Autowired
+    WorkoutService workoutService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;

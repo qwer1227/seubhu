@@ -11,7 +11,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Getter
 @Setter
-public class MessageRecievers {
+public class MessageReceivers {
 
     private int messageRcvNo;
     private int messageNo;

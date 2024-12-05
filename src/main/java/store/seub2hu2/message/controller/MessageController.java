@@ -7,12 +7,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import store.seub2hu2.community.view.FileDownloadView;
 import store.seub2hu2.message.dto.MessageForm;
-import store.seub2hu2.message.dto.MessageRecieved;
+import store.seub2hu2.message.dto.MessageReceived;
 import store.seub2hu2.message.service.MessageService;
 import store.seub2hu2.message.vo.Message;
 import store.seub2hu2.security.user.LoginUser;
@@ -53,7 +51,7 @@ public class MessageController {
         Map<String, Object> condition = buildCondition(page, rows, opt, keyword, userNo);
 
         // 받은 메시지 목록 조회
-        ListDto<MessageRecieved> dto = messageService.getReceivedMessages(condition, opt, keyword);
+        ListDto<MessageReceived> dto = messageService.getReceivedMessages(condition, opt, keyword);
 
         // unread message count 가져오기
         int unreadCount = messageService.getUnreadMessageCount(userNo);
@@ -82,7 +80,7 @@ public class MessageController {
         Map<String, Object> condition = buildCondition(page, rows, opt, keyword, userNo);
 
         // 보낸 메시지 목록 조회
-        ListDto<MessageRecieved> dto = messageService.getSentMessages(condition, opt, keyword);
+        ListDto<MessageReceived> dto = messageService.getSentMessages(condition, opt, keyword);
 
         // 모델에 데이터 추가
         model.addAttribute("messages", dto.getData());
@@ -103,6 +101,7 @@ public class MessageController {
         }
         return condition;
     }
+
 
     // 메시지 상세 조회
     @GetMapping("/detail")
@@ -126,40 +125,13 @@ public class MessageController {
         return "redirect:/message/list";  // 삭제 후 목록 페이지로 이동
     }
 
+    //메세지 보내기
+    @PostMapping("/add")
+    public String addMessage(MessageForm form, @AuthenticationPrincipal LoginUser loginUser) {
+        messageService.sendMessage(form, loginUser.getNo());
 
-
-
-    // 메시지 보내기 폼
-    @GetMapping("/send")
-    public String showSendForm(@AuthenticationPrincipal LoginUser loginUser, Model model) {
-        String sender = loginUser.getNickname() + " <" + loginUser.getId() + ">";
-        String receiver = "";  // 기본값 설정
-
-        model.addAttribute("sender", sender);
-        model.addAttribute("receiver", receiver); // receiver 값 전달
-
-        return "message/message-send-form";  // JSP 경로
+        return "redirect:sent";
     }
-
-    // 메시지 보내기 처리
-    @PostMapping("/send")
-    public String submitMessage(@AuthenticationPrincipal LoginUser loginUser,
-                                @ModelAttribute MessageForm form,
-                                @RequestParam(value = "file", required = false) MultipartFile file,
-                                RedirectAttributes redirectAttributes) {
-        try {
-            form.setSenderUserNo(loginUser.getNo());  // 작성자 사용자 번호 설정
-            messageService.insertMessage(form, file);  // 메시지 저장
-
-            redirectAttributes.addFlashAttribute("success", "쪽지가 성공적으로 등록되었습니다.");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "쪽지 등록에 실패했습니다.");
-            e.printStackTrace();  // 디버깅용 로그
-        }
-        return "redirect:/message/list";  // 목록 페이지로 이동
-    }
-
-
 
     // 파일 다운로드 요청
     @GetMapping("/filedown")
