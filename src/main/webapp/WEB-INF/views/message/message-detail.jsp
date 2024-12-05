@@ -26,7 +26,7 @@
             </div>
         </div>
         <div class="meta d-flex justify-content-between mb-3">
-            <span>${message.senderNickname}</span>
+            <span>보낸사람: ${message.senderNickname}</span>
         </div>
 
         <div class="content mb-4">

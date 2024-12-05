@@ -55,193 +55,180 @@
                 </div>
             </div>
 
-            <!-- 행 수 선택 -->
-            <div>
-                <select class="form-select form-select-sm" name="rows" onchange="changeRows()">
-                    <option value="5" ${param.rows eq 5 ? 'selected' : ''}>5개씩 보기</option>
-                    <option value="10" ${empty param.rows or param.rows eq 10 ? 'selected' : ''}>10개씩 보기</option>
-                    <option value="20" ${param.rows eq 20 ? 'selected' : ''}>20개씩 보기</option>
-                    <option value="30" ${param.rows eq 30 ? 'selected' : ''}>30개씩 보기</option>
-                </select>
-            </div>
+        </div>
+
+        <!-- 행 수 선택 -->
+        <div>
+            <select class="form-select form-select-sm" name="rows" onchange="changeRows()">
+                <option value="5" ${param.rows eq 5 ? 'selected' : ''}>5개씩 보기</option>
+                <option value="10" ${empty param.rows or param.rows eq 10 ? 'selected' : ''}>10개씩 보기</option>
+                <option value="20" ${param.rows eq 20 ? 'selected' : ''}>20개씩 보기</option>
+                <option value="30" ${param.rows eq 30 ? 'selected' : ''}>30개씩 보기</option>
+            </select>
         </div>
     </div>
-
-
-    <div class="row p-3">
-        <table class="table table-hover">
-            <colgroup>
-                <col width="5%">
-                <col width="5%">
-                <col width="10%">
-                <col width="*%">
-                <col width="5%">
-                <col width="5%">
-                <col width="5%">
-                <col width="5%">
-            </colgroup>
-            <thead class="text-center">
-            <tr>
-                <th><input type="checkbox" onclick="toggleSelectAll(this)"></th>  <!-- 일괄 선택 체크박스 -->
-                <th>번호</th>
-                <th>보낸사람</th>
-                <th class="text-start">제목</th>
-                <th>받은날</th>
-                <th>읽음</th>
-                <th>읽은날</th>
-                <th>파일</th>
-            </tr>
-            </thead>
-            <tbody class="text-center">
-            <c:forEach var="message" items="${messages}">
-                <tr>
-                    <td><input type="checkbox" name="messageNo" value="${message.messageNo}"></td> <!-- 개별 체크박스 -->
-                    <td>${message.messageNo}</td>
-                    <td>${message.senderNickname}</td>
-                    <td id="content-title" class="text-start">
-                        <a href="/message/detail?messageNo=${message.messageNo}"
-                           style="text-decoration-line: none; color: black">
-                                ${message.title}
-                        </a>
-                    </td>
-
-                    <td>
-                        <fmt:formatDate value="${message.createdDate}" pattern="yyyy-MM-dd"/>
-                    </td>
-                    <td>${message.readStatus eq 'Y' ? '읽음' : '미읽음'}</td>
-                    <td>
-                        <c:choose>
-                            <c:when test="${message.readStatus eq 'Y'}">
-                                <fmt:formatDate value="${message.readDate}" pattern="yyyy-MM-dd"/>
-                            </c:when>
-                            <c:otherwise>
-                                -
-                            </c:otherwise>
-                        </c:choose>
-                    </td>
-                    <td>
-                        <c:if test="${not empty message.messageFile}">
-                            <i class="bi bi-file-earmark-text"></i> <!-- 파일 첨부 아이콘 -->
-                        </c:if>
-                        <c:if test="${empty message.messageFile}">
-                            <i class="bi bi-file-earmark-x"></i> <!-- 파일 첨부 없음 아이콘 -->
-                        </c:if>
-                    </td>
-                </tr>
-            </c:forEach>
-            </tbody>
-        </table>
-    </div>
-
-    <form id="form-search" action="list" method="get">
-        <div class="row p-3 d-flex justify-content-left">
-            <div class="col-2">
-                <select class="form-select" name="opt">
-                    <option value="title" ${param.opt eq 'title' ? 'selected' : ''}>쪽지 제목</option>
-                    <option value="content" ${param.opt eq 'content' ? 'selected' : ''}>쪽지 내용</option>
-                    <option value="writer" ${param.opt eq 'writer' ? 'selected' : ''}>보낸 이</option>
-                </select>
-            </div>
-
-            <div class="col-2">
-                <input type="text" class="form-control" name="keyword" value="${param.keyword}">
-            </div>
-            <div class="col-1">
-                <button type="submit" class="btn btn-outline-dark">검색</button>
-            </div>
-            <div class="col d-flex justify-content-center">
-            </div>
-
-            <!-- 메시지 작성 버튼 -->
-            <div class="col d-flex justify-content-end">
-                <a href="/message/send" type="button" class="btn btn-dark">쪽지 작성</a>
-            </div>
-        </div>
-
-
-        <!-- 페이징 처리 -->
-        <div class="row mb-3">
-            <div class="col-12">
-                <nav>
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item ${paging.first? 'disabled' : ''}">
-                            <a class="page-link"
-                               onclick="changePage(${paging.prevPage}, event)"
-                               href="list?page=${paging.prevPage}">이전</a>
-                        </li>
-                        <c:forEach var="num" begin="${paging.beginPage}" end="${paging.endPage}">
-                            <li class="page-item ${paging.page eq num ? 'active' : ''}">
-                                <a class="page-link"
-                                   onclick="changePage(${num}, event)"
-                                   href="list?page=${num}">${num}</a>
-                            </li>
-                        </c:forEach>
-                        <li class="page-item ${paging.last ? 'disabled' : ''}">
-                            <a class="page-link"
-                               onclick="changePage(${paging.nextPage}, event)"
-                               href="list?page=${paging.nextPage}">다음</a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-        </div>
-    </form>
 </div>
 
-<script type="text/javascript">
-    const form = document.querySelector("#form-search");
-    const pageInput = document.querySelector("input[name=page]");
 
-    // 페이지 번호 링크를 클릭했을 때 변화
-    function changePage(page, event) {
-        event.preventDefault();
-        pageInput.value = page;
-        form.submit();
+<div class="row p-3">
+    <table class="table table-hover">
+        <colgroup>
+            <col width="5%">
+            <col width="5%">
+            <col width="10%">
+            <col width="*%">
+            <col width="5%">
+            <col width="5%">
+            <col width="5%">
+            <col width="5%">
+        </colgroup>
+        <thead class="text-center">
+        <tr>
+            <th><input type="checkbox" onclick="toggleSelectAll(this)"></th>  <!-- 일괄 선택 체크박스 -->
+            <th>번호</th>
+            <th>보낸사람</th>
+            <th class="text-start">제목</th>
+            <th>받은날</th>
+            <th>읽음</th>
+            <th>읽은날</th>
+            <th>파일</th>
+        </tr>
+        </thead>
+        <tbody class="text-center">
+        <c:forEach var="message" items="${messages}">
+            <tr>
+                <td><input type="checkbox" name="messageNo" value="${message.messageNo}"></td> <!-- 개별 체크박스 -->
+                <td>${message.messageNo}</td>
+                <td>${message.senderNickname}</td>
+                <td id="content-title" class="text-start">
+                    <a href="/message/detail?messageNo=${message.messageNo}"
+                       style="text-decoration-line: none; color: black">
+                            ${message.title}
+                    </a>
+                </td>
+
+                <td>
+                    <fmt:formatDate value="${message.createdDate}" pattern="yyyy-MM-dd"/>
+                </td>
+                <td>${message.readStatus eq 'Y' ? '읽음' : '미읽음'}</td>
+                <td>
+                    <c:choose>
+                        <c:when test="${message.readStatus eq 'Y'}">
+                            <fmt:formatDate value="${message.readDate}" pattern="yyyy-MM-dd"/>
+                        </c:when>
+                        <c:otherwise>
+                            -
+                        </c:otherwise>
+                    </c:choose>
+                </td>
+                <td>
+                    <c:if test="${not empty message.messageFile}">
+                        <i class="bi bi-file-earmark-text"></i> <!-- 파일 첨부 아이콘 -->
+                    </c:if>
+                    <c:if test="${empty message.messageFile}">
+                        <i class="bi bi-file-earmark-x"></i> <!-- 파일 첨부 없음 아이콘 -->
+                    </c:if>
+                </td>
+            </tr>
+        </c:forEach>
+        </tbody>
+    </table>
+</div>
+
+<form id="form-search" action="list" method="get">
+    <div class="row p-3 d-flex justify-content-left">
+        <div class="col-2">
+            <select class="form-select" name="opt">
+                <option value="title" ${param.opt eq 'title' ? 'selected' : ''}>쪽지 제목</option>
+                <option value="content" ${param.opt eq 'content' ? 'selected' : ''}>쪽지 내용</option>
+                <option value="writer" ${param.opt eq 'writer' ? 'selected' : ''}>보낸 이</option>
+            </select>
+        </div>
+
+        <div class="col-2">
+            <input type="text" class="form-control" name="keyword" value="${param.keyword}">
+        </div>
+        <div class="col-1">
+            <button type="submit" class="btn btn-outline-dark">검색</button>
+        </div>
+        <div class="col d-flex justify-content-center">
+        </div>
+
+        <!-- 메시지 작성 버튼 -->
+        <div class="col d-flex justify-content-end">
+            <a href="/message/send" type="button" class="btn btn-dark">쪽지 작성</a>
+        </div>
+    </div>
+
+    <!-- 페이징 처리 -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <nav>
+                <ul class="pagination justify-content-center">
+                    <li class="page-item ${paging.first? 'disabled' : ''}">
+                        <a class="page-link"
+                           onclick="changePage(${paging.prevPage}, event)"
+                           href="list?page=${paging.prevPage}">이전</a>
+                    </li>
+                    <c:forEach var="num" begin="${paging.beginPage}" end="${paging.endPage}">
+                        <li class="page-item ${paging.page eq num ? 'active' : ''}">
+                            <a class="page-link"
+                               onclick="changePage(${num}, event)"
+                               href="list?page=${num}">${num}</a>
+                        </li>
+                    </c:forEach>
+                    <li class="page-item ${paging.last ? 'disabled' : ''}">
+                        <a class="page-link"
+                           onclick="changePage(${paging.nextPage}, event)"
+                           href="list?page=${paging.nextPage}">다음</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    function changeSort() {
+        const sortValue = document.querySelector('input[name="sort"]:checked').value;
+        // URL 쿼리 파라미터로 전달하여 정렬 조건을 적용하도록 함.
+        location.href = location.pathname + '?sort=' + sortValue + '&rows=' + document.querySelector('select[name="rows"]').value;
     }
 
-    // 전체 선택 체크박스 토글
+    function changeRows() {
+        const rowsValue = document.querySelector('select[name="rows"]').value;
+        // URL 쿼리 파라미터로 행 수를 변경.
+        location.href = location.pathname + '?sort=' + document.querySelector('input[name="sort"]:checked').value + '&rows=' + rowsValue;
+    }
+
     function toggleSelectAll(source) {
-        checkboxes = document.getElementsByName('messageNo');
-        for (var i in checkboxes)
-            checkboxes[i].checked = source.checked;
-    }
-
-    // 일괄 삭제
-    function deleteSelectedMessages() {
-        const selectedMessages = [];
-        document.querySelectorAll('input[name="messageNo"]:checked').forEach(checkbox => {
-            selectedMessages.push(checkbox.value);
+        const checkboxes = document.querySelectorAll('input[name="messageNo"]');
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = source.checked;
         });
-
-        if (selectedMessages.length > 0) {
-            alert('삭제할 쪽지 ID: ' + selectedMessages.join(', '));
-        } else {
-            alert('삭제할 쪽지를 선택하세요.');
-        }
     }
 
-    // 일괄 읽음 처리
     function markAllAsRead() {
-        const selectedMessages = [];
-        document.querySelectorAll('input[name="messageNo"]:checked').forEach(checkbox => {
-            selectedMessages.push(checkbox.value);
-        });
-
-        if (selectedMessages.length > 0) {
-            alert('읽음 처리할 쪽지 ID: ' + selectedMessages.join(', '));
-
-            // 정렬 방식 변경
-            function changeSort() {
-                const form = document.querySelector("#form-search");
-                form.submit(); // 폼 제출
-            }
-
-// 페이지당 항목 수 변경
-            function changeRows() {
-                const form = document.querySelector("#form-search");
-                form.submit(); // 폼 제출
-            }
+        const selectedMessages = Array.from(document.querySelectorAll('input[name="messageNo"]:checked')).map(checkbox => checkbox.value);
+        if (selectedMessages.length === 0) {
+            alert("읽음 처리할 메시지를 선택해주세요.");
+            return;
         }
+        // 여기에 일괄 읽음 처리 로직 추가
+        alert("선택한 메시지를 일괄 읽음 처리합니다: " + selectedMessages.join(', '));
+    }
+
+    function deleteSelectedMessages() {
+        const selectedMessages = Array.from(document.querySelectorAll('input[name="messageNo"]:checked')).map(checkbox => checkbox.value);
+        if (selectedMessages.length === 0) {
+            alert("삭제할 메시지를 선택해주세요.");
+            return;
+        }
+        // 여기에 일괄 삭제 처리 로직 추가
+        alert("선택한 메시지를 삭제합니다: " + selectedMessages.join(', '));
     }
 </script>
 </body>

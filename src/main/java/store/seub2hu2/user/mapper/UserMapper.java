@@ -17,7 +17,7 @@ public interface UserMapper {
     void insertUser(@Param("user") User user);
 
     // 신규 주소 데이터 삽입 후 생성된 주소 번호 반환
-    int insertAddr(@Param("addr") Addr addr);
+    void insertAddr(@Param("addr") Addr addr);
 
     // 사용자 역할 부여
     void insertUserRole(@Param("userRole") UserRole userRole);
@@ -51,4 +51,6 @@ public interface UserMapper {
 
     // 사용자 권한 번호로 사용자 조회(사용자 번호, 이름, 아이디)
     List<User> getUsersByRoleNo(@Param("roleNo") int roleNo);
+
+    void updateAddrUserNo(@Param("addrNo") int addrNo, @Param("userNo") int userNo);
 }

@@ -37,10 +37,11 @@
         VALUES (#{addr.zipcode}, #{addr.address}, #{addr.addressDetail}, #{addr.isAddrHome}, #{addr.userNo}, #{addr.name})
 
         <!-- 자동 생성된 ADDR_NO 반환 -->
-        <selectKey resultType="int" keyProperty="no" keyColumn="ADDR_NO" order="AFTER">
+        <selectKey resultType="int" keyProperty="addr.no" keyColumn="ADDR_NO" order="AFTER">
             SELECT LAST_INSERT_ID()
         </selectKey>
     </insert>
+
 
     <!-- 사용자 역할 부여: 사용자와 역할을 USER_GRANTED_ROLES 테이블에 연결 -->
     <insert id="insertUserRole">
@@ -164,38 +165,47 @@
         WHERE USER_ID = #{id} <!-- 사용자 ID로 비밀번호 수정 -->
     </update>
 
+
+    <update id="updateAddrUserNo" >
+        UPDATE USERS
+        SET ADDR_NO = #{addrNo}
+        WHERE USER_NO = #{userNo}
+    </update>
+
     <!-- ID와 이메일로 사용자 조회: 사용자 ID와 이메일로 사용자 확인 -->
     <select id="findUserByIdAndEmail" resultType="store.seub2hu2.user.vo.User">
-        SELECT * FROM USERS WHERE USER_ID = #{id} AND USER_EMAIL = #{email}
+        SELECT *
+        FROM USERS
+        WHERE USER_ID = #{id}
+          AND USER_EMAIL = #{email}
     </select>
 
     <!-- 이메일로 사용자 아이디 조회: 이메일에 해당하는 사용자 아이디 반환 -->
     <select id="findIdByEmail" resultType="store.seub2hu2.user.vo.User">
-        SELECT USER_ID FROM USERS WHERE USER_EMAIL = #{email}
+        SELECT USER_ID
+        FROM USERS
+        WHERE USER_EMAIL = #{email}
     </select>
 
     <!-- 사용자 정보 수정 void updateUser(@Param("user") User user); -->
     <update id="updateUser" parameterType="store.seub2hu2.user.vo.User">
         UPDATE
             USERS
-        SET
-            USER_NAME = #{user.name},
-            PASSWORD = #{user.password},
+        SET USER_NAME     = #{user.name},
+            PASSWORD      = #{user.password},
             USER_NICKNAME = #{user.nickname},
-            USER_TEL = #{user.tel},
-            USER_EMAIL = #{user.email}
-        WHERE
-            USER_NO = #{user.no}
+            USER_TEL      = #{user.tel},
+            USER_EMAIL    = #{user.email}
+        WHERE USER_NO = #{user.no}
     </update>
     <!-- 권한번호로 사용자 조회하기 -->
     <select id="getUsersByRoleNo" resultType="store.seub2hu2.user.vo.User">
-        SELECT R.USER_NO as no
-            , U.USER_NAME as name
-            , U.USER_ID as id
+        SELECT R.USER_NO   as no
+             , U.USER_NAME as name
+             , U.USER_ID   as id
         FROM USER_GRANTED_ROLES R
-            INNER JOIN USERS U
-        ON R.USER_NO = U.USER_NO
-        WHERE
-            R.ROLE_NO = #{roleNo}
+                 INNER JOIN USERS U
+                            ON R.USER_NO = U.USER_NO
+        WHERE R.ROLE_NO = #{roleNo}
     </select>
 </mapper>

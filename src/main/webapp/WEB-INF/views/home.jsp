@@ -65,19 +65,6 @@
 <body>
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
 <main>
-    <!-- 쪽지 버튼 -->
-    <a href="/message/list" class="nav-link">
-        <button type="button" class="btn btn-dark position-relative">
-            쪽지
-            <c:if test="${unreadCount > 0}">
-            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                ${unreadCount > 99 ? '99+' : unreadCount}
-                <span class="visually-hidden">unread messages</span>
-            </span>
-            </c:if>
-        </button>
-    </a>
-
     <!-- 메인 이미지 캐러셀 -->
     <section class="container my-5">
         <div id="main-carousel" class="carousel slide">
