@@ -83,29 +83,29 @@
     </div>
     
     <div class="actions d-flex justify-content-between mb-4">
-      <div>
-        <!-- 로그인 여부를 체크하기 위해 먼저 선언 -->
-        <security:authorize access="isAuthenticated()">
-        <!-- principal 프로퍼티 안의 loginUser 정보를 가져옴 -->
-        <!-- loginUser.no를 가져와서 조건문 실행 -->
-        <c:if test="${loginUser.no == board.user.no}">
-          <button class="btn btn-warning" onclick="updateBoard(${board.no})">수정</button>
-          <button class="btn btn-danger" onclick="deleteBoard(${board.no})">삭제</button>
-        </c:if>
-        <c:if test="${loginUser.no != board.user.no}">
-          <button type="button" class="btn btn-danger" onclick="report('board', ${board.no})">신고</button>
-        </c:if>
-      
-      </div>
-      <div>
-        <button class="btn btn-outline-primary" id="likeCnt"
-                onclick="boardLikeButton(${board.no}, ${loginUser.getNo()})">
-          <i id="icon-heart"
-             class="bi ${boardLiked == '1' ? 'bi-heart-fill' : (boardLiked == '0' ? 'bi-heart' : 'bi-heart')}"></i>
-        </button>
-        </security:authorize>
-        <a type="button" href="main" class="btn btn-secondary">목록</a>
-      </div>
+      <!-- 로그인 여부를 체크하기 위해 먼저 선언 -->
+      <security:authorize access="isAuthenticated()">
+        <div>
+          <!-- principal 프로퍼티 안의 loginUser 정보를 가져옴 -->
+          <!-- loginUser.no를 가져와서 조건문 실행 -->
+          <c:if test="${loginUser.no == board.user.no}">
+            <button class="btn btn-warning" onclick="updateBoard(${board.no})">수정</button>
+            <button class="btn btn-danger" onclick="deleteBoard(${board.no})">삭제</button>
+          </c:if>
+          <c:if test="${loginUser.no != board.user.no}">
+            <button type="button" class="btn btn-danger" onclick="report('board', ${board.no})">신고</button>
+          </c:if>
+        
+        </div>
+        <div>
+          <button class="btn btn-outline-primary" id="likeCnt"
+                  onclick="boardLikeButton(${board.no}, ${loginUser.getNo()})">
+            <i id="icon-heart"
+               class="bi ${boardLiked == '1' ? 'bi-heart-fill' : (boardLiked == '0' ? 'bi-heart' : 'bi-heart')}"></i>
+          </button>
+          <a type="button" href="main" class="btn btn-secondary">목록</a>
+        </div>
+      </security:authorize>
     </div>
     
     <!-- 댓글 작성 -->
@@ -259,63 +259,7 @@
   </div>
   
   <!-- 신고 모달 창 -->
-  <div class="modal" tabindex="-1" id="modal-reporter">
-    <div class="modal-dialog">
-      <div class="modal-content" style="text-align: start">
-        <div class="modal-header">
-          <h5 class="modal-title">신고 사유</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body ">
-          <form method="post">
-            <input type="hidden" name="type" value="">
-            <input type="hidden" name="no" value="">
-            <input type="hidden" name="bno" value="${board.no}">
-            <div class="form-check">
-              <input class="form-check-input" type="radio" value="스팸홍보/도배글입니다." name="reason" checked>
-              <label class="form-check-label">
-                스팸홍보/도배글입니다.
-              </label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="radio" value="불법정보를 포함하고 있습니다." name="reason">
-              <label class="form-check-label">
-                불법정보를 포함하고 있습니다.
-              </label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="radio" value=" 욕설/생명경시/혐오/차별적 표현입니다." name="reason">
-              <label class="form-check-label">
-                욕설/생명경시/혐오/차별적 표현입니다.
-              </label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="radio" value="개인정보 노출 게시물입니다." name="reason">
-              <label class="form-check-label">
-                개인정보 노출 게시물입니다.
-              </label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="radio" value="불쾌한 표현이 있습니다." name="reason">
-              <label class="form-check-label">
-                불쾌한 표현이 있습니다.
-              </label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="radio" value="" name="reason" id="reason-etc">
-              <label class="form-check-label">
-                <input type="text" placeholder="신고사유를 직접 작성해주세요." id="etc">
-              </label>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-          <button type="button" class="btn btn-primary" onclick="reportButton()">신고</button>
-        </div>
-      </div>
-    </div>
-  </div>
+  <%@include file="/WEB-INF/views/community/report-modal.jsp"%>
 
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
@@ -341,6 +285,7 @@
     function report(type, no) {
         document.querySelector(".modal input[name=type]").value = type;
         document.querySelector(".modal input[name=no]").value = no;
+        document.querySelector(".modal input[name=bno]").value = ${board.no};
 
         if (type === 'board') {
             $(".modal form").attr('action', 'report-board');
@@ -407,7 +352,7 @@
 
     /* 댓글 제출(/community/add-reply로 데이터 전달) */
     async function submitReply() {
-        let boardNo = document.querySelector("input[name=boardNo]").value;
+        let boardNo = document.querySelector("input[name=No]").value;
         let content = document.querySelector("textarea[name=content]").value;
         let userNo = document.querySelector("input[name=userNo]").value;
 

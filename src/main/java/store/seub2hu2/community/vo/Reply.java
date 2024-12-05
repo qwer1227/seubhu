@@ -17,6 +17,7 @@ public class Reply {
     private int no;
     private int prevNo;
     private int boardNo;
+    private int crewNo;
     private String content;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date createdDate;

@@ -6,10 +6,13 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import store.seub2hu2.community.dto.CrewForm;
+import store.seub2hu2.community.exception.CommunityException;
 import store.seub2hu2.community.mapper.CrewMapper;
+import store.seub2hu2.community.mapper.CrewReplyMapper;
 import store.seub2hu2.community.mapper.UploadMapper;
 import store.seub2hu2.community.vo.Crew;
 import store.seub2hu2.community.vo.CrewMember;
+import store.seub2hu2.community.vo.Reply;
 import store.seub2hu2.community.vo.UploadFile;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.vo.User;
@@ -26,21 +29,29 @@ import java.util.Map;
 public class CrewService {
 
     @Value("${upload.directory.community}")
-    private String saveDirectory;
+    private String saveImageDirectory;
+
+    @Value("C:/files/crew")
+    private String saveFileDirectory;
 
     @Autowired
     private WebContentFileUtils webContentFileUtils;
+
     @Autowired
     private CrewMapper crewMapper;
+
     @Autowired
     private UploadMapper uploadMapper;
+
+    @Autowired
+    private CrewReplyMapper crewReplyMapper;
+
 
     public Crew addNewCrew(CrewForm form
             , @AuthenticationPrincipal LoginUser loginUser) {
         Crew crew = new Crew();
         crew.setNo(form.getNo());
         crew.setTitle(form.getTitle());
-        crew.setCategory(form.getCategory());
         crew.setName(form.getName());
         crew.setSchedule(form.getSchedule());
         crew.setLocation(form.getLocation());
@@ -53,7 +64,7 @@ public class CrewService {
         if (!image.isEmpty()) {
             String originalImageName = image.getOriginalFilename();
             String ImageName = System.currentTimeMillis() + originalImageName;
-            webContentFileUtils.saveWebContentFile(image, saveDirectory, ImageName);
+            webContentFileUtils.saveWebContentFile(image, saveImageDirectory, ImageName);
 
             UploadFile uploadThumbnail = new UploadFile();
             uploadThumbnail.setOriginalName(originalImageName);
@@ -66,7 +77,7 @@ public class CrewService {
         if (!upfile.isEmpty()) {
             String originalFileName = upfile.getOriginalFilename();
             String filename = System.currentTimeMillis() + originalFileName;
-            FileUtils.saveMultipartFile(upfile, saveDirectory, filename);
+            FileUtils.saveMultipartFile(upfile, saveFileDirectory, filename);
 
             UploadFile uploadFile = new UploadFile();
             uploadFile.setOriginalName(originalFileName);
@@ -77,7 +88,6 @@ public class CrewService {
         crewMapper.insertCrew(crew);
 
         // 썸네일/첨부파일 추가 시, crew_files 테이블에 저장
-
         if (crew.getThumbnail() != null) {
             UploadFile uploadThumbnail = crew.getThumbnail();
             uploadThumbnail.setNo(crew.getNo());
@@ -93,17 +103,20 @@ public class CrewService {
             uploadMapper.insertCrewFile(uploadFile);
         }
 
-        CrewMember member = new CrewMember();
-        member.setCrewNo(crew.getNo());
-        member.setReader(true);
-        member.setJoinDate(new Date());
-        member.setJoin(true);
 
         User user = new User();
         user.setNo(loginUser.getNo());
         user.setNickname(loginUser.getNickname());
-        member.setUser(user);
+        crew.setUser(user);
 
+        // crew_members 테이블에 저장
+        CrewMember member = new CrewMember();
+        member.setCrewNo(crew.getNo());
+        member.setReader("Y");
+        member.setJoinDate(new Date());
+        member.setJoin("Y");
+
+        member.setUser(user);
         crewMapper.insertCrewMember(member);
 
         return crew;
@@ -123,5 +136,152 @@ public class CrewService {
         ListDto<Crew> dto = new ListDto<>(crews, pagination);
 
         return dto;
+    }
+
+    public Crew getCrewDetail(int crewNo){
+        Crew crew = crewMapper.getCrewDetailByNo(crewNo);
+        UploadFile uploadThumbnail = uploadMapper.getThumbnailByCrewNo(crewNo);
+        UploadFile uploadFile = uploadMapper.getFileByCrewNo(crewNo);
+        List<Reply> reply = crewReplyMapper.getRepliesByCrewNo(crewNo);
+        List<CrewMember> member = crewMapper.getCrewMembers(crewNo);
+
+        if (crew == null){
+            throw new CommunityException("존재하지 않는 게시글입니다.");
+        }
+
+        crew.setThumbnail(uploadThumbnail);
+        crew.setUploadFile(uploadFile);
+        crew.setReply(reply);
+        crew.setMember(member);
+
+        return crew;
+    }
+
+    public void updateCrewViewCnt(int crewNo){
+        Crew crew = crewMapper.getCrewDetailByNo(crewNo);
+        crew.setViewCnt(crew.getViewCnt() + 1);
+        crewMapper.updateCrewCnt(crew);
+    }
+
+    public void updateCrew(CrewForm form){
+        Crew savedCrew = crewMapper.getCrewDetailByNo(form.getNo());
+        savedCrew.setNo(form.getNo());
+        savedCrew.setType(form.getType());
+        savedCrew.setTitle(form.getTitle());
+        savedCrew.setLocation(form.getLocation());
+        savedCrew.setDescription(form.getDescription());
+        savedCrew.setSchedule(form.getSchedule());
+
+        savedCrew.setName(form.getName());
+        savedCrew.setDeleted("N");
+
+        MultipartFile image = form.getImage();
+        MultipartFile upfile = form.getUpfile();
+
+        // 기존 썸네일 정보 조회
+        UploadFile prevThumbnail = uploadMapper.getThumbnailByCrewNo(savedCrew.getNo());
+        if (!image.isEmpty()) {
+            // 기존 썸네일이 존재하면 "Y"로 변경 저장
+            if (prevThumbnail != null) {
+                uploadMapper.updateCrewFile(prevThumbnail.getFileNo());
+            }
+
+            // 신규 썸네일 정보를 조회하여 CREW_FILES 테이블에 저장
+            String originalImageName = image.getOriginalFilename();
+            String ImageName = System.currentTimeMillis() + originalImageName;
+            webContentFileUtils.saveWebContentFile(image, saveImageDirectory, ImageName);
+
+            UploadFile uploadThumbnail = new UploadFile();
+            uploadThumbnail.setNo(savedCrew.getNo());
+            uploadThumbnail.setOriginalName(originalImageName);
+            uploadThumbnail.setSaveName(ImageName);
+            savedCrew.setThumbnail(uploadThumbnail);
+
+            uploadMapper.insertCrewFile(uploadThumbnail);
+        }
+
+        // 기존 첨부파일 정보 조회
+        UploadFile prevUploadFile = uploadMapper.getFileByCrewNo(savedCrew.getNo());
+        if (!upfile.isEmpty()) {
+            // 기존 첨부파일이 존재하면 "Y"로 변경 저장
+            if (prevUploadFile != null) {
+                uploadMapper.updateCrewFile(prevUploadFile.getFileNo());
+            }
+            // 신규 첨부파일 정보를 조회하여 CREW_FILES 테이블에 저장
+            String originalFileName = upfile.getOriginalFilename();
+            String filename = System.currentTimeMillis() + originalFileName;
+            FileUtils.saveMultipartFile(upfile, saveFileDirectory, filename);
+
+            UploadFile uploadFile = new UploadFile();
+            uploadFile.setNo(savedCrew.getNo());
+            uploadFile.setOriginalName(originalFileName);
+            uploadFile.setSaveName(filename);
+            savedCrew.setUploadFile(uploadFile);
+
+            uploadMapper.insertCrewFile(uploadFile);
+        }
+
+        if (prevUploadFile != null){
+            UploadFile uploadFile = new UploadFile();
+            uploadFile.setNo(savedCrew.getNo());
+            uploadFile.setOriginalName(prevUploadFile.getOriginalName());
+            uploadFile.setSaveName(prevUploadFile.getSaveName());
+            savedCrew.setUploadFile(uploadFile);
+        }
+
+        crewMapper.updateCrew(savedCrew);
+    }
+
+    public void deleteCrew(int crewNo){
+        Crew savedCrew = crewMapper.getCrewDetailByNo(crewNo);
+        savedCrew.setDeleted("Y");
+
+        crewMapper.updateCrew(savedCrew);
+    }
+
+    public void deleteCrewFile(int fileNo){
+        uploadMapper.updateCrewFile(fileNo);
+    }
+
+    public List<CrewMember> getCrewMembers(int crewNo){
+        List<CrewMember> members = crewMapper.getCrewMembers(crewNo);
+
+        return members;
+    }
+
+    public int getEnterMemberCnt(int crewNo){
+        return crewMapper.getCrewMemberCnt(crewNo);
+    }
+
+    public void updateCrewCondition(int crewNo, String condition){
+        crewMapper.updateCrewCondition(crewNo, condition);
+    }
+
+    public void enterCrew(int crewNo
+                        , @AuthenticationPrincipal LoginUser loginUser){
+        CrewMember member = new CrewMember();
+        member.setCrewNo(crewNo);
+        member.setReader("N");
+        member.setJoin("Y");
+        member.setJoinDate(new Date());
+
+        User user = new User();
+        user.setNo(loginUser.getNo());
+        member.setUser(user);
+
+        crewMapper.insertCrewMember(member);
+    }
+
+    public void leaveCrew(int crewNo
+                        , @AuthenticationPrincipal LoginUser loginUser){
+        CrewMember member = new CrewMember();
+        member.setCrewNo(crewNo);
+        member.setJoin("N");
+
+        User user = new User();
+        user.setNo(loginUser.getNo());
+        member.setUser(user);
+
+        crewMapper.updateCrewMember(member);
     }
 }

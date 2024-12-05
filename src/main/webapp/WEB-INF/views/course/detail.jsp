@@ -35,20 +35,54 @@
                 </tr>
                 </tbody>
             </table>
-            <%-- 좋아요! 버튼을 클릭하면, 좋아요 수가 증가하거나 감소한다. --%>
-            <sec:authorize access="isAuthenticated()">
-                <c:if test="${isLike eq true}">
-                    <a href="controlLikeCount?courseNo=${course.no }" class="btn btn-primary ${isSuccess ? "" : "disabled"}">
-                        <i class="bi bi-hand-thumbs-up">좋아요!</i>
-                    </a>
+
+            <div class="row mt-3 mb-3 justify-content-center">
+                <sec:authorize access="isAuthenticated()">
+                    <%-- 좋아요! 버튼을 클릭하면, 좋아요 수가 증가하거나 감소한다. --%>
+                    <c:if test="${isLike eq true}">
+                        <a href="controlLikeCount?courseNo=${course.no}" class="btn btn-primary ${isSuccess ? "" : "disabled"}" style="width: 100px;">
+                            <i class="bi bi-hand-thumbs-up">좋아요!</i>
+                        </a>
+                    </c:if>
+                    <c:if test="${isLike eq false}">
+                        <a href="controlLikeCount?courseNo=${course.no}" class="btn btn-outline-primary ${isSuccess ? "" : "disabled"}" style="width: 100px;">
+                            <i class="bi bi-hand-thumbs-up">좋아요!</i>
+                        </a>
+                    </c:if>
+                </sec:authorize>
+                <span>좋아요 수 : ${course.likeCnt}개</span>
+            </div>
+
+            <%-- 성공 표시 --%>
+            <div class="row mt-3 mb-3 justify-content-center">
+                <c:if test="${isSuccess == true}">
+                    <span class="badge text-bg-primary" style="width: 80px;">완주 성공!</span>
                 </c:if>
-                <c:if test="${isLike eq false}">
-                    <a href="controlLikeCount?courseNo=${course.no }" class="btn btn-outline-primary ${isSuccess ? "" : "disabled"}">
-                        <i class="bi bi-hand-thumbs-up">좋아요!</i>
-                    </a>
-                </c:if>
-            </sec:authorize>
-            <span>좋아요 수 : ${course.likeCnt}개</span>
+            </div>
+
+            <%-- 도전 가능 여부 표시 --%>
+            <div class="row justify-content-center">
+                <sec:authorize access="isAuthenticated()">
+                    <c:choose>
+                        <%-- 현재 도전 가능한 단계(난이도)가 코스 난이도보다 적으면, 도전 불가능 문구를 표시한다. --%>
+                        <c:when test="${currentUserLevel < course.level}">
+                            <button class="btn btn-danger disabled" style="width: 300px;">아직 도전할 수 없습니다!</button>
+                        </c:when>
+                        <c:otherwise>
+                            <c:choose>
+                                <%-- 사용자가 코스 도전 등록을 했다면 등록 취소 버튼을 표시하고, 클릭하면 코스 등록을 취소한다. --%>
+                                <c:when test="${isChallenge == true}">
+                                    <a href="changeChallenge?courseNo=${course.no}" class="btn btn-danger" style="width: 100px;">등록 취소</a>
+                                </c:when>
+                                <%-- 사용자가 코스 도전 등록을 하지 않았다면 등록하기 버튼을 표시하고, 클릭하면 코스를 등록한다. --%>
+                                <c:otherwise>
+                                    <a href="changeChallenge?courseNo=${course.no}" class="btn btn-warning" style="width: 100px;">등록하기</a>
+                                </c:otherwise>
+                            </c:choose>
+                        </c:otherwise>
+                    </c:choose>
+                </sec:authorize>
+            </div>
         </div>
         <div class="col-1"></div> <%-- 빈칸 --%>
         <div class="col-6">
@@ -79,6 +113,15 @@
             <div class="row mb-3">
                 <div class="col-12" id="box-reviews"></div>
             </div>
+        </div>
+    </div>
+
+    <%-- 코스 리뷰 목록 - 페이징 처리 --%>
+    <div class="row mb-3">
+        <div class="col-12">
+            <nav>
+                <ul class="pagination justify-content-center" id="paging"></ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -143,19 +186,30 @@
     }
 
     // 리뷰 목록이 화면에 표시된다.
-    async function getReviews() {
+    async function getReviews(page, event) {
+        document.querySelector("#box-reviews").innerHTML = "";
+
+        if (event) {
+            event.preventDefault();
+        }
+        // 1. 코스 번호를 가져온다.
         let courseNo = document.querySelector("input[name=courseNo]").value;
 
-        let response = await fetch("/course/reviews/" + courseNo);
+        // 2. 코스에 해당하는 리뷰를 가져오고, javascript 객체로 변환한다.
+        let response = await fetch("/ajax/reviews/" + courseNo + "/" + page);
         let result = await response.json();
 
-        let reviews = result.data;
+        // 3. 리뷰 목록, 페이징 처리 기능을 화면에 표시한다.
+        let reviews = result.data.data;
+        let paging = result.data.paging;
+
         for (let review of reviews) {
             appendReview(review);
         }
+        pagingReviews(paging);
     }
 
-    getReviews();
+    getReviews(1);
 
     // 입력한 코스 리뷰 정보(코스번호, 제목, 내용, 첨부파일)를 컨트롤러에 제출한다.
     async function submitReview() {
@@ -183,7 +237,7 @@
         }
 
         // 4. formData(입력한 코스 리뷰 정보)를 서버에 보낸다.
-        let response = await fetch("/course/addReview", {
+        let response = await fetch("/ajax/addReview", {
             method: "POST",
             body: formData
         });
@@ -235,25 +289,53 @@
         }
     }
 
+    // 페이징 처리 기능을 사용한다.
+    function pagingReviews(paging) {
+        let pages = "";
+
+        pages += `
+            <li class="page-item \${paging.first ? 'disabled' : ''}">
+                <a class="page-link" href="" onclick="getReviews(\${paging.prevPage}, event)">이전</a>
+            </li>
+        `;
+
+        for (let num = paging.beginPage; num <= paging.endPage; num++) {
+            pages += `
+                <li class="page-item">
+                    <a class="page-link \${paging.page == num ? 'active' : ''}"
+                       href="" onclick="getReviews(\${num}, event)">\${num}</a>
+                </li>
+            `;
+        }
+
+        pages += `
+            <li class="page-item \${paging.last ? 'disabled' : ''}">
+                <a class="page-link" href="" onclick="getReviews(\${paging.nextPage}, event)">다음</a>
+            </li>
+        `;
+
+        document.querySelector("#paging").innerHTML = pages;
+    }
+
     // 리뷰를 삭제한다.
     async function removeReview(reviewNo) {
         // 1. 리뷰 번호를 서버에 보낸다.
-        let response = await fetch("/course/deleteReview/" + reviewNo);
+        let response = await fetch("/ajax/deleteReview/" + reviewNo);
 
         // 2. 로그인한 사용자와 리뷰 작성자가 동일한 지 확인 후, 리뷰를 삭제한다.
         let result = await response.json();
         let status = result.status;
+        let message = result.message;
 
         if (response.ok) {
             if (status === 500) {
-                let message = result.message;
-                alert(message);
+                alert(message); // message = "해당 리뷰 작성자만 삭제 가능합니다"
             } else {
                 let div = document.querySelector("#review-" + reviewNo);
                 div.remove();
             }
         } else {
-            alert("로그인한 해당 리뷰 작성자만 삭제 가능합니다.");
+            alert(message); // message = "로그인이 필요한 서비스입니다"
         }
     }
 </script>

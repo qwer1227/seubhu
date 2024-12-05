@@ -1,6 +1,5 @@
 package store.seub2hu2.mypage.controller;
 
-import org.eclipse.tags.shaded.org.apache.xpath.operations.Mod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -15,14 +14,13 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import retrofit2.http.Path;
 import store.seub2hu2.cart.dto.CartItemDto;
 import store.seub2hu2.cart.dto.CartRegisterForm;
 import store.seub2hu2.community.dto.BoardForm;
 import store.seub2hu2.community.dto.ReplyForm;
 import store.seub2hu2.community.dto.ReportForm;
 import store.seub2hu2.community.service.BoardService;
-import store.seub2hu2.community.service.ReplyService;
+import store.seub2hu2.community.service.BoardReplyService;
 import store.seub2hu2.community.service.ReportService;
 import store.seub2hu2.community.service.ScrapService;
 import store.seub2hu2.community.vo.Board;
@@ -32,6 +30,7 @@ import store.seub2hu2.mypage.dto.*;
 import store.seub2hu2.mypage.service.CartService;
 import store.seub2hu2.mypage.service.PostService;
 import store.seub2hu2.mypage.service.QnaService;
+import store.seub2hu2.mypage.service.WorkoutService;
 import store.seub2hu2.mypage.vo.Post;
 import store.seub2hu2.order.service.OrderService;
 import store.seub2hu2.security.user.LoginUser;
@@ -69,10 +68,13 @@ public class MyPageController {
     BoardService boardService;
 
     @Autowired
+    WorkoutService workoutService;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private ReplyService replyService;
+    private BoardReplyService replyService;
 
     @Autowired
     private ScrapService scrapService;
@@ -405,7 +407,7 @@ public class MyPageController {
     public String reportBoard(ReportForm form
             , @AuthenticationPrincipal LoginUser loginUser){
 
-        reportService.registerReport(form, loginUser);
+        reportService.registerReportToBoard(form, loginUser);
         return "redirect:detail?no=" + form.getNo();
     }
 
@@ -414,7 +416,7 @@ public class MyPageController {
             , @RequestParam("bno") int boardNo
             , @AuthenticationPrincipal LoginUser loginUser){
 
-        reportService.registerReport(form, loginUser);
+        reportService.registerReportToBoard(form, loginUser);
         return "redirect:detail?no=" + boardNo;
     }
 
@@ -533,6 +535,13 @@ public class MyPageController {
         return "mypage/order";
     }
 
+    // 주문 완료 화면
+    @GetMapping("/order-pay-completed")
+    public String showOrderCompletionPage() {
+
+        return "mypage/order-pay-completed";
+    }
+    
     // 레슨예약내역 화면으로 간다
     @GetMapping("/reservation/{userId}")
     public String reservation(@PathVariable("userId") String userId , @AuthenticationPrincipal LoginUser loginUser){
@@ -546,8 +555,6 @@ public class MyPageController {
 
         List<QnaResponse> qnaResponses = qnaService.getQnasByUserNo(loginUser.getNo());
 
-        System.out.println(qnaResponses);
-
         model.addAttribute("qna", qnaResponses);
 
         return "mypage/qna";
@@ -555,7 +562,7 @@ public class MyPageController {
 
     // 문의내역 상세화면으로 간다
     @GetMapping("/qna/detail/{qnaNo}")
-    public String qnaDetail(@PathVariable("qnaNo") int qnaNo, Model model, @AuthenticationPrincipal LoginUser loginUser){
+    public String qnaDetail(@PathVariable("qnaNo") int qnaNo, Model model){
 
         QnaResponse qnaResponse = qnaService.getQnaByQnaNo(qnaNo);
 
@@ -588,7 +595,7 @@ public class MyPageController {
 
         qnaService.deleteQna(qnaNo);
 
-        return "redirect:/mypage/qna";
+        return "redirect:/admin/qna";
     }
 
     // 문의수정 화면
@@ -610,6 +617,13 @@ public class MyPageController {
         qnaService.updateQna(qnaCreateRequest,qnaNo);
 
         return "redirect:/mypage/qna";
+    }
+
+    // 운동일지 화면
+    @GetMapping("/workout")
+    public String workout(){
+
+        return "mypage/workoutdiary";
     }
 
 }

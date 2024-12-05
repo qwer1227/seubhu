@@ -22,6 +22,9 @@ public interface UserMapper {
     // 사용자 역할 부여
     void insertUserRole(@Param("userRole") UserRole userRole);
 
+    // 사용자 주소 저장
+    void insertAddress(@Param("addr") Addr addr);
+
     // 사용자 정보 수정
     void updateUser(@Param("user") User user);
 

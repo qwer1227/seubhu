@@ -112,58 +112,58 @@
                         </form>
                     </div>
                 </div>
-                    <div class="row mb-3">
-                        <div class="col-12">
-                            <div class="border-bottom pt-4 pr-4 pl-4 bg-light">
-                                <table class="table">
-                                    <colgroup>
-                                        <col width="10%">
-                                        <col width="7%">
-                                        <col width="15%">
-                                        <col width="*%">
-                                        <col width="10%">
-                                        <col width="10%">
-                                        <col width="10%">
-                                        <col width="10%">
-                                    </colgroup>
-                                    <thead>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="border-bottom pt-4 pr-4 pl-4 bg-light">
+                            <table class="table">
+                                <colgroup>
+                                    <col width="8%">
+                                    <col width="7%">
+                                    <col width="10%">
+                                    <col width="*%">
+                                    <col width="10%">
+                                    <col width="10%">
+                                    <col width="10%">
+                                    <col width="10%">
+                                </colgroup>
+                                <thead>
+                                    <tr>
+                                        <th>상품번호</th>
+                                        <th>브랜드</th>
+                                        <th>카테고리</th>
+                                        <th>상품명</th>
+                                        <th>가격</th>
+                                        <th>대표색상</th>
+                                        <th>상태</th>
+                                        <th>설정</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <c:forEach var="p" items="${products}">
                                         <tr>
-                                            <th>상품번호</th>
-                                            <th>브랜드</th>
-                                            <th>카테고리</th>
-                                            <th>상품명</th>
-                                            <th>가격</th>
-                                            <th>대표색상</th>
-                                            <th>상태</th>
-                                            <th>설정</th>
+                                            <td>${p.no}</td>
+                                            <td>${p.brand.name}</td>
+                                            <td>${p.category.name}</td>
+                                            <td>
+                                                <a href="product-detail?no=${p.no}&colorNo=${p.colorNum}">
+                                                    ${p.name}
+                                                </a>
+                                            </td>
+                                            <td><fmt:formatNumber value="${p.price }"/> 원</td>
+                                            <td>${p.color.name}</td>
+                                            <td>${p.status}</td>
+                                            <td>
+                                                <a href="/admin/product-stock-detail?no=${p.no}&colorNo=${p.color.no}">
+                                                    <button type="button" class="btn btn-success">재고추가</button>
+                                                </a>
+                                            </td>
                                         </tr>
-                                    </thead>
-                                    <tbody>
-                                        <c:forEach var="p" items="${products}">
-                                            <tr>
-                                                <td>${p.no}</td>
-                                                <td>${p.brand.name}</td>
-                                                <td>${p.category.name}</td>
-                                                <td>
-                                                    <a href="product-detail?no=${p.no}&colorNo=${p.colorNum}">
-                                                        ${p.name}
-                                                    </a>
-                                                </td>
-                                                <td><fmt:formatNumber value="${p.price }"/> 원</td>
-                                                <td>${p.color.name}</td>
-                                                <td>${p.status}</td>
-                                                <td>
-                                                    <a href="/admin/product-stock-detail?no=${p.no}&colorNo=${p.color.no}">
-                                                        <button type="button" class="btn btn-success">재고추가</button>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        </c:forEach>
-                                    </tbody>
-                                </table>
-                            </div>
+                                    </c:forEach>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
+                </div>
                     <!-- 페이징 처리 -->
                     <div class="row mb-3">
                         <div class="col-12">
@@ -200,6 +200,7 @@
 <!-- End of Footer -->
 
 <%@include file="/WEB-INF/views/admincommon/common.jsp" %>
+</body>
 <script>
     const form =document.querySelector("#form-search");
     const pageInput = document.querySelector("input[name=page]");
@@ -231,7 +232,6 @@
         form.submit();
     }
 </script>
-</body>
 
 </html>
 

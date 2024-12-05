@@ -12,7 +12,7 @@ import store.seub2hu2.community.exception.CommunityException;
 import store.seub2hu2.community.mapper.BoardMapper;
 import store.seub2hu2.community.mapper.NoticeMapper;
 import store.seub2hu2.community.mapper.UploadMapper;
-import store.seub2hu2.community.mapper.ReplyMapper;
+import store.seub2hu2.community.mapper.BoardReplyMapper;
 import store.seub2hu2.community.vo.Board;
 import store.seub2hu2.community.vo.Notice;
 import store.seub2hu2.community.vo.Reply;
@@ -41,7 +41,7 @@ public class BoardService {
     private UploadMapper uploadMapper;
 
     @Autowired
-    private ReplyMapper replyMapper;
+    private BoardReplyMapper replyMapper;
 
     @Autowired
     private NoticeMapper noticeMapper;
@@ -159,9 +159,6 @@ public class BoardService {
             UploadFile prevFile = uploadMapper.getFileByBoardNo(savedBoard.getNo());
             // 기존 파일 정보가 존재하면 기존 파일 삭제
             if (prevFile != null) {
-
-                System.out.println("!!!!!!!!!!!!!!!!!!!!!!기존 파일 = " + prevFile);
-
                 prevFile.setDeleted("Y");
                 uploadMapper.updateBoardFile(prevFile);
             }
@@ -172,9 +169,9 @@ public class BoardService {
             FileUtils.saveMultipartFile(multipartFile, saveDirectory, filename);
 
             UploadFile uploadFile = new UploadFile();
+            uploadFile.setNo(savedBoard.getNo());
             uploadFile.setOriginalName(originalFilename);
             uploadFile.setSaveName(filename);
-            uploadFile.setNo(savedBoard.getNo());
             savedBoard.setUploadFile(uploadFile);
 
             uploadMapper.insertBoardFile(uploadFile);

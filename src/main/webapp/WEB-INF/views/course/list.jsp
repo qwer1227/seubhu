@@ -72,10 +72,36 @@
                         <img src="/resources/images/course/${course.filename }" class="card-img-top" alt="...">
                     </a>
                     <div class="card-body">
-                        <h5 class="card-title">${course.name }</h5>
+                        <%-- 해당 코스 완주를 성공한 사용자라면, 완주 성공 문구를 표시한다. --%>
+                        <h5 class="card-title">
+                            <c:if test="${course.successWhether.courseNo == '1'}">
+                                <span class="badge text-bg-primary">완주 성공!</span>
+                            </c:if>
+                            <span>${course.name }</span>
+                        </h5>
                         <a class="text-decoration-none" href="detail?no=${course.no }">
                             <p class="card-text">${course.region.si } ${course.region.gu } ${course.region.dong }</p>
                         </a>
+                            <sec:authorize access="isAuthenticated()">
+                                <c:choose>
+                                    <%-- 현재 도전 가능한 단계(난이도)가 코스 난이도보다 적으면, 도전 불가능 문구를 표시한다. --%>
+                                    <c:when test="${currentUserLevel < course.level}">
+                                        <button class="btn btn-danger disabled">아직 도전할 수 없습니다!</button>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <c:choose>
+                                            <%-- 사용자가 코스 도전 등록을 했다면 등록 취소 버튼을 표시하고, 클릭하면 코스 등록을 취소한다. --%>
+                                            <c:when test="${course.challengeWhether.courseNo == '1'}">
+                                                <a href="controlChallenge?courseNo=${course.no}" class="btn btn-danger">등록 취소</a>
+                                            </c:when>
+                                            <%-- 사용자가 코스 도전 등록을 하지 않았다면 등록하기 버튼을 표시하고, 클릭하면 코스를 등록한다. --%>
+                                            <c:otherwise>
+                                                <a href="controlChallenge?courseNo=${course.no}" class="btn btn-warning">등록하기</a>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </c:otherwise>
+                                </c:choose>
+                            </sec:authorize>
                     </div>
                     <div class="card-footer bg-transparent border-primary" >
                         <span class="badge rounded-pill text-bg-dark">난이도 ${course.level }단계</span>

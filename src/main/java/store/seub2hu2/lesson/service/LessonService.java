@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import store.seub2hu2.lesson.dto.LessonRegisterForm;
 import store.seub2hu2.lesson.dto.LessonUpdateDto;
 import store.seub2hu2.lesson.dto.ReservationSearchCondition;
+import store.seub2hu2.lesson.enums.LessonStatus;
 import store.seub2hu2.lesson.mapper.LessonFileMapper;
 import store.seub2hu2.lesson.mapper.LessonMapper;
 import store.seub2hu2.lesson.mapper.LessonReservationMapper;
@@ -86,6 +87,16 @@ public class LessonService {
         map.put("endTime" ,lesson.getEndTime());
 
         return map;
+    }
+
+    public void updatePastLessons() {
+        // 업데이트할 상태를 설정
+        LessonUpdateDto dto = new LessonUpdateDto();
+        dto.setStatus(LessonStatus.CLOSE.label());
+
+        // 매퍼 호출
+        lessonMapper.updatePastLessonStatus(dto);
+        System.out.println("지난 레슨 상태가 업데이트되었습니다.");
     }
 
 }
