@@ -74,7 +74,7 @@
                     <label class="form-label">색상:</label>
                       <select class="form-control" name="colorName">
                         <c:forEach var="c" items="${colors}">
-                          <option value="${c.name}">${c.name}</option>
+                          <option value="${c.name}" ${c.name == param.colorName ? 'selected' : ''}>${c.name}</option>
                         </c:forEach>
                       </select>
                   </div>
@@ -104,7 +104,7 @@
                   </form>
                 </c:if>
                     <!-- sizeMessage가 있을 때만 표시 -->
-                  <c:if test="${empty colorSize}">
+                  <c:if test="${sizeMessage == null && colorSize == null}">
                       <div class="alert alert-danger">
                         <p class="mr-3">${sizeMessage}</p>
                         <a href="register-size?no=${param.no}&colorNo=${param.colorNo}">
@@ -134,6 +134,7 @@
     getSubmitButton.addEventListener("click", function () {
       console.log("GET 요청 실행!");
       // 기본 GET 동작은 유지, 페이지 새로고침 후 서버 응답에 따라 POST 폼 보임.
+
     });
   });
 </script>

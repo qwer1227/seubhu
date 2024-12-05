@@ -536,11 +536,14 @@ public class AdminController {
         List<Color> colorSize = adminService.getStockByColorNum(condition);
 
         if (colorSize == null || colorSize.isEmpty()) {
-            model.addAttribute("colorSize", colorSize);
-            model.addAttribute("sizeMessage", "사이즈 정보가 없습니다.");
-        } else {
             model.addAttribute("colorSize", null);
             model.addAttribute("sizeMessage", "사이즈 정보가 없습니다.");
+            System.out.println("-----------------------------------------------model1:" + model);
+        } else {
+            model.addAttribute("colorSize", colorSize);
+            model.addAttribute("sizeMessage", null);
+
+            System.out.println("-----------------------------------------------model2:" + model);
         }
 
         model.addAttribute("colorSize", colorSize);
