@@ -199,7 +199,7 @@
         // 화면 출력
         $("#total-stock").text(totalStock.toLocaleString())
         $("#delivery-price").text(deliveryPrice.toLocaleString());
-        $("#total-price").text(totalPrice.toLocaleString());
+        $("#total-price").text(totalPrice.toLocaleString() + ' 원');
         $("#final-total-price").text(finalTotalPrice.toLocaleString())
     }
 

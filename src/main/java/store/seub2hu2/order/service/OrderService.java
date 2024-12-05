@@ -25,28 +25,6 @@ public class OrderService {
     @Autowired
     OrderMapper orderMapper;
 
-    public OrderForm createOrder() {
-
-        // 유저 정보
-        User user = new User();
-
-        // 주문 정보
-        OrderForm orderFrom = new OrderForm();
-
-        // 주문
-        Order o = new Order();
-
-        // 주문상품
-        OrderItem orderItem = new OrderItem();
-    
-        // 배송
-        Delivery d = new Delivery();
-
-        // 주소(배송지)
-        Addr addr = new Addr();
-
-        return orderFrom;
-    }
 
     /**
      * 장바구니에서 선택한 주문 상품을 조회한다.
