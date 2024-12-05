@@ -77,7 +77,7 @@
                             <c:if test="${course.successWhether.courseNo == '1'}">
                                 <span class="badge text-bg-primary">완주 성공!</span>
                             </c:if>
-                            ${course.name }
+                            <span>${course.name }</span>
                         </h5>
                         <a class="text-decoration-none" href="detail?no=${course.no }">
                             <p class="card-text">${course.region.si } ${course.region.gu } ${course.region.dong }</p>

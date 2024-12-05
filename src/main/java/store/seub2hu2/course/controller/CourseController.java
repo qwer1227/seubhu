@@ -116,13 +116,21 @@ public class CourseController {
         // 1. 코스의 상세 정보를 가져온다.
         Course course = courseService.getCourseDetail(courseNo);
 
-        // 2. 로그인한 경우, 코스 완주 여부와 좋아요 클릭 여부를 확인한다.
+        // 2. 로그인한 경우 if문을 실행한다.
         if (loginUser != null) {
-            boolean isSuccess = userCourseService.checkSuccess(loginUser.getNo(), courseNo); // 코스 완주 여부
-            boolean isLike = userCourseService.checkLike(loginUser.getNo(), courseNo); // 좋아요 클릭 여부
+            // 코스 완주 여부, 좋아요 클릭 여부를 확인한다.
+            boolean isSuccess = userCourseService.checkSuccess(loginUser.getNo(), courseNo);
+            boolean isLike = userCourseService.checkLike(loginUser.getNo(), courseNo);
 
+            // 현재 도전 가능한 단계, 코스 도전 등록 여부를 가져온다.
+            UserLevel userLevel = userCourseService.getUserLevel(loginUser.getNo());
+            boolean isChallenge = userCourseService.checkChallenge(courseNo, loginUser.getNo());
+
+            // 확인한 데이터들을 Model 객체에 저장한다.
             model.addAttribute("isSuccess", isSuccess);
             model.addAttribute("isLike", isLike);
+            model.addAttribute("currentUserLevel", userLevel.getLevel());
+            model.addAttribute("isChallenge", isChallenge);
         }
 
         // 3. Model 객체에 코스의 상세 정보를 저장한다.
@@ -140,6 +148,16 @@ public class CourseController {
         userCourseService.addOrReduceLikeCount(courseNo, loginUser.getNo());
 
         // 2. detail.jsp를 재요청한다.
+        return "redirect:detail?no=" + courseNo;
+    }
+
+    @GetMapping("/changeChallenge")
+    public String changeChallenge(@RequestParam(name = "courseNo") int courseNo,
+                                   @AuthenticationPrincipal LoginUser loginUser) {
+        // 1. 사용자가 코스 도전 등록 여부를 변환한다.
+        userCourseService.changeChallenge(courseNo, loginUser.getNo());
+
+        // 2. list.jsp를 재요청한다.
         return "redirect:detail?no=" + courseNo;
     }
 
