@@ -1,9 +1,14 @@
 package store.seub2hu2.mypage.enums;
 
+import lombok.*;
+
+@AllArgsConstructor
+@ToString
+@Getter
 public enum QnaStatus {
-    WAITING("대기",0),    // 대기
-    COMPLETED("완료",1),  // 완료
-    DELETED("삭제",2);    // 삭제
+    대기("대기",0),    // 대기
+    완료("완료",1),  // 완료
+    삭제("삭제",2);    // 삭제
 
     private final int code;
     private final String value;

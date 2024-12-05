@@ -116,11 +116,25 @@
         WHERE LESSON_NO = #{dto.lessonNo}
     </update>
 
+    <!-- 레슨 상태 변경 -->
+    <update id="updateLessonStatus">
+        UPDATE LESSONS
+        SET LESSON_STATUS   = #{dto.status}
+        WHERE LESSON_NO = #{dto.lessonNo}
+    </update>
+
+    <update id="updatePastLessonStatus">
+        UPDATE LESSONS
+        SET LESSON_STATUS = #{dto.status}
+        WHERE LESSON_END_DATE &lt; NOW() AND LESSON_STATUS != #{dto.status}
+    </update>
+
     <!-- 레슨 삭제 -->
     <update id="deleteLessonByNo">
         UPDATE LESSONS
         SET LESSON_DELETED = 'Y'
         WHERE LESSON_NO = #{lesson.no}
     </update>
+
 
 </mapper>

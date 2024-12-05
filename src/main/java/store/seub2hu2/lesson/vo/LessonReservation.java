@@ -1,5 +1,6 @@
 package store.seub2hu2.lesson.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import org.apache.ibatis.type.Alias;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -20,8 +21,10 @@ public class LessonReservation {
     private Payment payment;
     private Lesson lesson;
     private String status;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime reservationCreatedDate;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime reservationUpdatedDate;
 

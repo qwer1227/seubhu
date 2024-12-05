@@ -3,9 +3,12 @@ package store.seub2hu2.admin.mapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import store.seub2hu2.admin.dto.ImageUrlDto;
+import store.seub2hu2.admin.dto.LessonUsersDto;
+import store.seub2hu2.admin.dto.SettlementDto;
 import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.course.vo.Region;
 import store.seub2hu2.lesson.vo.Lesson;
+import store.seub2hu2.lesson.vo.LessonReservation;
 import store.seub2hu2.product.vo.*;
 import store.seub2hu2.user.vo.User;
 
@@ -83,6 +86,16 @@ public interface AdminMapper {
     List<Color> getStockByColorNumber(@Param("condition") Map<String, Object> condition);
 
     void insertStock(@Param("condition") Map<String, Object> condition);
+
+    List<LessonUsersDto> getLessonUserByNo(Integer lessonNo);
+
+    int getSettleTotalRows(Map<String, Object> condition);
+
+    List<SettlementDto> getSettleLists(@Param("condition") Map<String, Object> condition);
+
+
+
+
 
     /*
      * 재고

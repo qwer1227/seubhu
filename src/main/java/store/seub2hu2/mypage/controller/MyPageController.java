@@ -1,5 +1,6 @@
 package store.seub2hu2.mypage.controller;
 
+import org.eclipse.tags.shaded.org.apache.xpath.operations.Mod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -14,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import retrofit2.http.Path;
 import store.seub2hu2.cart.dto.CartItemDto;
 import store.seub2hu2.cart.dto.CartRegisterForm;
 import store.seub2hu2.community.dto.BoardForm;
@@ -26,10 +28,7 @@ import store.seub2hu2.community.service.ScrapService;
 import store.seub2hu2.community.vo.Board;
 import store.seub2hu2.community.vo.Reply;
 import store.seub2hu2.lesson.view.FileDownloadView;
-import store.seub2hu2.mypage.dto.OrderResponse;
-import store.seub2hu2.mypage.dto.QnaResponse;
-import store.seub2hu2.mypage.dto.ResponseDTO;
-import store.seub2hu2.mypage.dto.UserInfoReq;
+import store.seub2hu2.mypage.dto.*;
 import store.seub2hu2.mypage.service.CartService;
 import store.seub2hu2.mypage.service.PostService;
 import store.seub2hu2.mypage.service.QnaService;
@@ -561,9 +560,7 @@ public class MyPageController {
 
     // 문의내역 상세화면으로 간다
     @GetMapping("/qna/detail/{qnaNo}")
-    public String qnaDetail(@PathVariable("qnaNo") int qnaNo, Model model, @AuthenticationPrincipal LoginUser loginUser){
-
-        System.out.println(qnaNo);
+    public String qnaDetail(@PathVariable("qnaNo") int qnaNo, Model model){
 
         QnaResponse qnaResponse = qnaService.getQnaByQnaNo(qnaNo);
 
@@ -571,4 +568,60 @@ public class MyPageController {
 
         return "mypage/qnadetail";
     }
+
+    // 문의작성 화면으로 간다
+    @GetMapping("/qna/create")
+    public String getQnaCreate(Model model){
+
+        model.addAttribute("isPosting",true);
+
+        return "mypage/qnaform";
+    }
+
+    // 문의작성 기능 POST
+    @PostMapping("/qna/create")
+    public String postQnaCreate(@ModelAttribute QnaCreateRequest qnaCreateRequest, @AuthenticationPrincipal LoginUser loginUser){
+
+        qnaService.insertQna(qnaCreateRequest,loginUser.getNo());
+
+        return "redirect:/mypage/qna";
+    }
+
+    // 문의삭제 기능 POST
+    @PostMapping("/qna/delete/{qnaNo}")
+    public String postQnaDelete(@PathVariable("qnaNo") int qnaNo){
+
+        qnaService.deleteQna(qnaNo);
+
+        return "redirect:/admin/qna";
+    }
+
+    // 문의수정 화면
+    @GetMapping("/qna/update/{qnaNo}")
+    public String getQnaUpdate(Model model, @PathVariable("qnaNo") int qnaNo){
+
+        QnaResponse qnaResponse = qnaService.getQnaByQnaNo(qnaNo);
+
+        model.addAttribute("qna",qnaResponse);
+        model.addAttribute("isUpdating", true);
+
+        return "mypage/qnaform";
+    }
+
+    // 문의수정 기능
+    @PostMapping("/qna/update/{qnaNo}")
+    public String postQnaUpdate(@PathVariable("qnaNo") int qnaNo, @ModelAttribute QnaCreateRequest qnaCreateRequest){
+
+        qnaService.updateQna(qnaCreateRequest,qnaNo);
+
+        return "redirect:/mypage/qna";
+    }
+
+    // 운동일지 화면
+    @GetMapping("/workout")
+    public String workout(){
+
+        return "mypage/workoutdiary";
+    }
+
 }

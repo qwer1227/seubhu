@@ -1,12 +1,14 @@
 package store.seub2hu2.user.vo;
 
 import lombok.*;
+import org.apache.ibatis.type.Alias;
 
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
 @Getter
+@Alias("Addr")
 public class Addr {
 
     private int no; // 주소 번호

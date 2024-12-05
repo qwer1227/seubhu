@@ -100,19 +100,12 @@
                     <tbody></tbody>
                 </table>
             </div>
+
             <%-- 페이징 처리 --%>
             <div class="row mb-3">
                 <div class="col-12">
                     <nav>
-                        <ul class="pagination justify-content-center">
-                            <li class="page-item">
-                                <button class="btn btn-primary" onclick="prevModalPage()">이전</button> <%-- 이전 페이지를 클릭하면, 1페이지 이전으로 이동 --%>
-                            </li>
-                            <li class="page-item" id="current-paging"></li>
-                            <li class="page-item">
-                                <button class="btn btn-primary" onclick="nextModalPage()">다음</button> <%-- 다음 페이지를 클릭하면, 1페이지 이후로 이동 --%>
-                            </li>
-                        </ul>
+                        <ul class="pagination justify-content-center" id="current-paging"></ul>
                     </nav>
                 </div>
             </div>
@@ -135,19 +128,24 @@
         getFinishRecords(1);
     }
 
-    // 완주 기록 보기 버튼을 클릭하면, 로그인한 사용자의 완주 기록을 확인한다. (Modal창을 열 때마다 항상 1페이지 표시)
-    async function getFinishRecords(page) {
-        // 1. 완주 기록, 페이징 처리 정보 데이터를 가져온다.
+    // 완주 기록 보기 버튼을 클릭하면, 로그인한 사용자의 완주 기록을 확인한다.
+    async function getFinishRecords(page, event) {
+        // 1. 페이지 클릭 시 링크 이동을 방지한다.
+        if (event) {
+            event.preventDefault();
+        }
+
+        // 2. 완주 기록, 페이징 처리 정보 데이터를 가져온다.
         let response = await fetch("/course/finishRecords?page=" + page);
 
-        // 2. 데이터를 javascript 객체로 변환하고, 변수에 저장한다.
+        // 3. 데이터를 javascript 객체로 변환하고, 변수에 저장한다.
         let result = await response.json();
         let records = result.data;
         let paging = result.paging;
-
-        // 3. 완주 기록 목록을 화면에 표시한다.
-        let rows = "";
         let num = paging.begin;
+
+        // 4. 완주 기록 목록을 화면에 표시한다.
+        let rows = "";
 
         for (let record of records) {
             rows += `
@@ -165,25 +163,36 @@
 
         document.querySelector("#finish-records tbody").innerHTML = rows;
 
-        // 4. 페이징 처리 정보를 화면에 표시한다.
+        // 5. 페이징 처리 기능을 화면에 표시한다.
         let pages = "";
+
+        pages += `
+            <li class="page-item \${paging.first ? 'disabled' : ''}">
+                <a class="page-link" href="" onclick="getFinishRecords(\${paging.prevPage}, event)">이전</a>
+            </li>
+        `
+
         for (let num = paging.beginPage; num <= paging.endPage; num++) {
             pages += `
-                <button class="btn btn-outline-dark"
-                        onclick="currentModalPage(\${num})">\${num}</button>
+                <li class="page-item ">
+                    <a class="page-link \${paging.page == num ? 'active' : ''}"
+                        href="" onclick="getFinishRecords(\${num}, event)">\${num}</a>
+                </li>
             `;
         }
 
+        pages += `
+            <li class="page-item \${paging.last ? 'disabled' : ''}">
+                <a class="page-link" href="" onclick="getFinishRecords(\${paging.nextPage}, event)">다음</a>
+            </li>
+        `;
+
         document.querySelector("#current-paging").innerHTML = pages;
 
-        // 5. Modal창을 화면에 표시한다.
+        // 6. Modal창을 화면에 표시한다.
         myModal.show();
     }
 
-    // 페이지 클릭 시, 해당 페이지의 목록을 화면에 표시한다.
-    function currentModalPage(page) {
-        getFinishRecords(page);
-    }
 </script>
 </body>
 </html>

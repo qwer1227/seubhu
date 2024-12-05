@@ -2,6 +2,7 @@ package store.seub2hu2.mypage.dto;
 
 import lombok.*;
 import store.seub2hu2.mypage.enums.QnaStatus;
+import store.seub2hu2.user.vo.User;
 
 import java.util.Date;
 
@@ -25,4 +26,5 @@ public class QnaResponse {
     private int categoryNo;
     private int answerUserNo;
     private QnaCategory qnaCategory;
+    private User user;
 }
