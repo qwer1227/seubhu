@@ -650,7 +650,7 @@ public class AdminController {
                              @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
                              @RequestParam(name = "pType", required = false, defaultValue = "lesson") String pType,
                              @RequestParam(name = "day", required = false) String day,
-                             @RequestParam(name = "sort", required = false) String sort,
+                             @RequestParam(name = "sort", required = false, defaultValue ="latest") String sort,
                              @RequestParam(name = "opt", required = false, defaultValue = "all") String opt,
                              @RequestParam(name = "keyword", required = false) String keyword,
                              @RequestParam(name= "value", required = false) String value,

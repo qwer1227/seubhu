@@ -72,17 +72,17 @@
         <if test="condition.sort != null">
                 <choose>
                     <when test="condition.sort == 'latest'">
-                         ROW_NUMBER() OVER (ORDER BY P.pay_no desc) as RN
+                         ROW_NUMBER() OVER (ORDER BY P.pay_no desc) as RN ,
                     </when>
                     <when test="condition.sort == 'oldestDate'">
-                         ROW_NUMBER() OVER (ORDER BY P.pay_no asc) as RN
+                         ROW_NUMBER() OVER (ORDER BY P.pay_no asc) as RN ,
                     </when>
                     <when test="condition.sort == 'price'">
-                         ROW_NUMBER() OVER (ORDER BY P.pay_price desc) as RN
+                         ROW_NUMBER() OVER (ORDER BY P.pay_price desc) as RN ,
                     </when>
                 </choose>
         </if>
-                 , P.pay_no		as payNo
+                  P.pay_no		as payNo
                  , P.pay_type	as settleType
                  , U.user_name 	as name
                  , U.user_id	as id
@@ -638,7 +638,6 @@
              , L.USER_ID                    as "lesson.lecturer.id"
              , L.LESSON_TITLE               as "lesson.title"
              , L.LESSON_PRICE               as "lesson.price"
-             , L.PARTICIPANT                as "lesson.participant"
              , L.LESSON_STATUS              as "lesson.status"
              , L.LESSON_PLAN                as "lesson.plan"
              , L.LESSON_START_DATE          as "lesson.start"
@@ -647,7 +646,8 @@
              , L.LESSON_PLACE               as "lesson.place"
              , LR.LESSON_RESERVATION_STATUS as "status"
              , */
-               LR.USER_ID                   as "id"
+              L.PARTICIPANT                as "participant"
+             , LR.USER_ID                   as "id"
              , U.USER_NO                    as "no"
              , U.USER_NAME                  as "name"
              , U.USER_NICKNAME              as "nickname"
@@ -678,6 +678,7 @@
                      , U.USER_NAME           as "lecturer.name"
                      , L.LESSON_TITLE        as title
                      , L.LESSON_PRICE        as price
+                     , L.PARTICIPANT         as participant
                      , L.LESSON_STATUS       as status
                      , L.LESSON_CREATED_DATE as createdDate
                      , L.LESSON_PLAN         as plan

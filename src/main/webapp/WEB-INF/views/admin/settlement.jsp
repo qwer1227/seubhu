@@ -105,7 +105,7 @@
                            name="sort"
                            value="oldestDate"
                            onchange="changeSort()"
-                    ${empty param.sort or param.sort eq 'oldestDate' ? 'checked' : ''}
+                    ${param.sort eq 'oldestDate' ? 'checked' : ''}
                     >
                     <label class="form-check-label" >오래된 순</label>
                   </div>
@@ -115,7 +115,7 @@
                            name="sort"
                            value="price"
                            onchange="changeSort()"
-                    ${empty param.sort or param.sort eq 'price' ? 'checked' : ''}
+                    ${param.sort eq 'price' ? 'checked' : ''}
                     >
                     <label class="form-check-label" >높은가격 순</label>
                   </div>

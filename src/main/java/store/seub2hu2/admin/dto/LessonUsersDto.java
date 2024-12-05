@@ -13,6 +13,7 @@ public class LessonUsersDto {
 
     private String id;
     private int no;
+    private int participant;
     private String name;
     private String nickname;
     private String email;
