@@ -51,6 +51,64 @@ public class UserCourseService {
     }
 
     /**
+     * 로그인한 사용자가 도전 등록한 코스 목록을 가져온다.
+     * @param condition 페이지, 사용자 번호
+     * @return 도전 등록한 코스 목록, 페이징 처리 정보
+     */
+    public ListDto<Course> getCoursesToChallenge(Map<String, Object> condition) {
+        // 1. 로그인한 사용자가 도전 등록한 코스의 갯수를 가져온다.
+        int totalRows = userCourseMapper.getTotalRegisterRows(condition);
+
+        // 2. 페이징 처리 정보를 가져오고, Pagination 객체에 저장한다.
+        int page = (Integer) condition.get("page");
+        Pagination pagination = new Pagination(page, totalRows, 5);
+
+        // 3. 데이터 검색 범위를 조회해서 Map에 저장한다.
+        condition.put("begin", pagination.getBegin());
+        condition.put("end", pagination.getEnd());
+
+        // 4. 조회 범위 내에서 로그인한 사용자가 도전 등록한 코스 목록을 모두 가져온다.
+        List<Course> courses = userCourseMapper.getCoursesToChallenge(condition);
+
+        // 5. ListDto 객체에 저장하고 반환한다.
+        ListDto<Course> dto = new ListDto<>(courses, pagination);
+        return dto;
+    }
+
+    /**
+     * 로그인한 사용자의 코스 도전 등록 여부를 가져온다.
+     * @param courseNo 코스 번호
+     * @param userNo 사용자 번호
+     * @return 코스 도전 등록 여부
+     */
+    public boolean checkChallenge(int courseNo, int userNo) {
+        // 1. 코스 도전 등록 여부를 가져온다.
+        ChallengeWhether challengeWhether = userCourseMapper.checkChallenge(courseNo, userNo);
+
+        // 2. 코스 도전 등록 여부를 반환한다.
+        return challengeWhether != null;
+    }
+
+    /**
+     * 로그인한 사용자가 코스 도전 등록 여부를 변환한다.
+     * @param courseNo 코스 번호
+     * @param userNo 사용자 번호
+     */
+    public void changeChallenge(int courseNo, int userNo) {
+        // 1. 코스 도전 등록 여부를 가져온다.
+        ChallengeWhether challengeWhether = userCourseMapper.checkChallenge(courseNo, userNo);
+
+        // 2. 코스 도전 등록 여부를 변환한다.
+        if (challengeWhether == null) {
+            // 등록하기 버튼을 클릭하면, 코스 도전 등록을 한 것으로 변환한다.
+            userCourseMapper.insertChallenger(courseNo, userNo);
+        } else {
+            // 등록 취소 버튼을 클릭하면, 코스 도전 등록을 취소한 것으로 변환한다.
+            userCourseMapper.deleteChallenger(courseNo, userNo);
+        }
+    }
+
+    /**
      * 로그인한 사용자가 코스를 성공했는지 확인한다.
      * @param userNo 사용자 번호
      * @param courseNo 코스 번호
