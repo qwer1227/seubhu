@@ -19,7 +19,8 @@ import store.seub2hu2.payment.dto.PaymentDto;
 import store.seub2hu2.payment.dto.ApproveResponse;
 import store.seub2hu2.payment.dto.CancelResponse;
 import store.seub2hu2.lesson.dto.ReadyResponse;
-import store.seub2hu2.product.vo.Product;
+import store.seub2hu2.product.dto.ProdDetailDto;
+import store.seub2hu2.product.mapper.ProductMapper;
 import store.seub2hu2.user.mapper.UserMapper;
 import store.seub2hu2.user.vo.Addr;
 
@@ -32,6 +33,8 @@ import java.util.Map;
 @Service
 public class KakaoPayService {
 
+    @Autowired
+    private ProductMapper productMapper;
     // 주문 맵퍼 인터페이스(주문, 주문상품)
     @Autowired
     private OrderMapper orderMapper;
@@ -84,6 +87,14 @@ public class KakaoPayService {
             // 주문 상품 정보를 저장한다.
             List<OrderItem> orderItems = paymentDto.getOrderItems();
 
+            // 주문 상품의 이름을 가져오고 싶다.
+            int prodNo = orderItems.get(0).getProdNo();
+            ProdDetailDto prodDetailDto = productMapper.getProductByNo(prodNo);
+            String itemName = prodDetailDto.getName();
+            if (orderItems.size() > 1) {
+                itemName = itemName + " 외 " + (orderItems.size() - 1) + "개" ;
+            }
+
             for(OrderItem item : orderItems) {
                 item.setOrderNo(orderNo);
                 item.setProdNo(item.getProdNo());
@@ -116,7 +127,7 @@ public class KakaoPayService {
             // item_name = paymentDto.getItem[0].getProdName()
             // item_code = 주문번호
             // total_amount = 총결재금액
-            parameters.put("item_name", new Product().getName());
+            parameters.put("item_name", itemName);
             parameters.put("item_code", String.valueOf(orderNo));
             parameters.put("total_amount", String.valueOf(paymentDto.getFinalTotalPrice()));
             parameters.put("approval_url", "http://localhost/pay/completed?type=" + paymentDto.getType()
@@ -143,7 +154,6 @@ public class KakaoPayService {
         // RestTemplate의 postForEntity : POST 요청을 보내고 ResponseEntity로 결과를 반환받는 메소드
         ResponseEntity<ReadyResponse> responseEntity = template.postForEntity(url, requestEntity, ReadyResponse.class);
         log.info("결제준비 응답객체: " + responseEntity.getBody());
-
 
 
         return responseEntity.getBody();

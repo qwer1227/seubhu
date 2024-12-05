@@ -44,6 +44,9 @@
                         , #{order.finalTotalPrice}
                         , #{order.userNo}
                        )
+        <selectKey resultType="int" keyProperty="order.no" keyColumn="order_no" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
     </insert>
 
     <!--

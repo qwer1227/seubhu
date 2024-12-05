@@ -12,6 +12,10 @@ import store.seub2hu2.lesson.enums.ReservationStatus;
 import store.seub2hu2.lesson.service.LessonFileService;
 import store.seub2hu2.lesson.service.LessonService;
 import store.seub2hu2.lesson.vo.LessonReservation;
+import store.seub2hu2.mypage.dto.ResponseDTO;
+import store.seub2hu2.order.mapper.OrderMapper;
+import store.seub2hu2.order.service.OrderService;
+import store.seub2hu2.order.vo.OrderItem;
 import store.seub2hu2.payment.dto.PaymentDto;
 import store.seub2hu2.payment.service.KakaoPayService;
 import store.seub2hu2.lesson.service.LessonReservationService;
@@ -37,6 +41,8 @@ public class PayController {
     private final LessonFileService lessonFileService;
     private final PaymentService paymentService;
 
+    private final OrderService orderService;
+
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/form")
     public String payment(LessonDto lessonDto,
@@ -53,6 +59,8 @@ public class PayController {
     @PostMapping("/ready")
     public @ResponseBody ReadyResponse payReady(@RequestBody PaymentDto paymentDto
     , @AuthenticationPrincipal LoginUser loginUser) {
+
+
 
         paymentDto.setUserNo(loginUser.getNo());
         // 카카오 결제 준비하기
@@ -163,6 +171,11 @@ public class PayController {
 
         if (type.equals("상품")) {
             // 결제 성공 화면에 출력할 상품 정보
+            int orderNo = 1001;
+            ResponseDTO responseDTO = orderService.getOrderDetails(orderNo);
+            model.addAttribute("orderDetail", responseDTO);
+
+            return "/mypage/order-pay-completed";
         }
 
         return "lesson/lesson-pay-completed";
