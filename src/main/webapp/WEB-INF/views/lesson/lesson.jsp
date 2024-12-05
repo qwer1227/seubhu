@@ -140,26 +140,8 @@
                 refreshEvents(info, successCallback, failureCallback);
             },
 
-            // Handle event clicks
             eventClick: function (info) {
-                $('#modal-title').text(info.event.title);
-                $('#modal-subject').text(info.event.extendedProps.subject);
-                $('#modal-description').text(info.event.extendedProps.lessonNo);
-                $('#eventModal').modal('show');
-            },
-
-            eventMouseEnter: function(info) {
-                // info 객체로 이벤트 관련 정보를 가져올 수 있음
-                console.log("Event Title:", info.event.title);
-                console.log("Extended Props:", info.event.extendedProps);
-
-                // 예: 툴팁 추가
-                const tooltip = new Tooltip(info.el, {
-                    title: info.event.extendedProps.description || 'No description',
-                    placement: 'top', // 툴팁 위치: top, bottom, left, right
-                    trigger: 'hover',
-                    container: 'body'
-                });
+                lessonDetail(info.event.extendedProps.lessonNo);
             },
 
         });
