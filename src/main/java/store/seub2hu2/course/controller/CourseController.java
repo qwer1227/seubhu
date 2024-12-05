@@ -1,5 +1,6 @@
 package store.seub2hu2.course.controller;
 
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -96,6 +97,16 @@ public class CourseController {
 
         // 5. 뷰 이름을 반환한다.
         return "course/list";
+    }
+
+    @GetMapping("/controlChallenge")
+    public String controlChallenge(@RequestParam(name = "courseNo") int courseNo,
+                                   @AuthenticationPrincipal LoginUser loginUser) {
+        // 1. 사용자가 코스 도전 등록 여부를 변환한다.
+        userCourseService.changeChallenge(courseNo, loginUser.getNo());
+
+        // 2. list.jsp를 재요청한다.
+        return "redirect:list";
     }
 
     @GetMapping("/detail")

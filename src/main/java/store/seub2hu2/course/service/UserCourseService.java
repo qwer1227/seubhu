@@ -51,6 +51,25 @@ public class UserCourseService {
     }
 
     /**
+     * 로그인한 사용자가 코스 도전 등록 여부를 변환한다.
+     * @param courseNo 코스 번호
+     * @param userNo 사용자 번호
+     */
+    public void changeChallenge(int courseNo, int userNo) {
+        // 코스 도전 등록 여부를 가져온다.
+        ChallengeWhether challengeWhether = userCourseMapper.checkChallenge(courseNo, userNo);
+
+        // 코스 도전 등록 여부를 변환한다.
+        if (challengeWhether == null) {
+            // 등록하기 버튼을 클릭하면, 코스 도전 등록을 한 것으로 변환한다.
+            userCourseMapper.insertChallenger(courseNo, userNo);
+        } else {
+            // 등록 취소 버튼을 클릭하면, 코스 도전 등록을 취소한 것으로 변환한다.
+            userCourseMapper.deleteChallenger(courseNo, userNo);
+        }
+    }
+
+    /**
      * 로그인한 사용자가 코스를 성공했는지 확인한다.
      * @param userNo 사용자 번호
      * @param courseNo 코스 번호

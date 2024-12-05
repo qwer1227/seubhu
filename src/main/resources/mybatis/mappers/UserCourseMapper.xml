@@ -41,22 +41,31 @@
                 and user_no = #{condition.userNo}
             </if>
         </where>
-
     </select>
 
     <!--
         SuccessWhether checkSuccess(@Param("userNo") int userNo, @Param("courseNo") int courseNo);
     -->
     <select id="checkSuccess" resultType="store.seub2hu2.course.vo.SuccessWhether">
-        select s.is_success as isSuccess
-             , s.course_no as "course.no"
+        select s.course_no as "courseNo"
              , u.user_no as "user.no"
              , u.user_nickname as "user.nickname"
-        from SUCCESS_WHETHER s inner join USERS u
+        from SUCCESS_WHETHER s
+        inner join USERS u
         on s.user_no = u.user_no
         where u.user_no = #{userNo}
-        and s.course_no = #{courseNo}
-        and s.is_success = 'Y'
+        and s.course_no = #{courseNo};
+    </select>
+
+    <!--
+        ChallengeWhether checkChallenge(@Param("courseNo") int courseNo, @Param("userNo") int userNo);
+    -->
+    <select id="checkChallenge" resultType="store.seub2hu2.course.vo.ChallengeWhether">
+        select course_no as courseNo
+             , user_no as "user.no"
+        from CHALLENGE_WHETHER
+        where course_no = #{courseNo}
+        and user_no = #{userNo}
     </select>
 
     <!--
@@ -69,6 +78,27 @@
         where course_no = #{courseNo}
         and user_no = #{userNo}
     </select>
+
+    <!--
+        void insertChallenger(@Param("courseNo") int courseNo, @Param("userNo") int userNo);
+    -->
+    <insert id="insertChallenger">
+        insert into CHALLENGE_WHETHER
+            (course_no
+            , user_no)
+        values
+            (#{courseNo}
+            , #{userNo})
+    </insert>
+
+    <!--
+        void deleteChallenger(@Param("courseNo") int courseNo, @Param("userNo") int userNo);
+    -->
+    <delete id="deleteChallenger">
+        delete from CHALLENGE_WHETHER
+        where course_no = #{courseNo}
+        and user_no = #{userNo}
+    </delete>
 
     <!--
         void updateLikeCount(@Param("courseNo") int courseNo);
