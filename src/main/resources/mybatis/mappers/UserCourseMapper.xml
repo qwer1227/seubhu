@@ -67,11 +67,12 @@
     <select id="getCoursesToChallenge" resultType="store.seub2hu2.course.vo.Course">
         select *
         from (
-                 select row_number() over (order by c.course_no) rn
+                 select row_number() over (order by w.challenge_no desc) as rn
                       , c.course_no as no
                       , c.course_name as name
                       , c.course_distance as distance
                       , c.course_level as level
+                      , w.challenge_no
                       , w.user_no as "user.no"
                       , r.region_si as "region.si"
                       , r.region_gu as "region.gu"

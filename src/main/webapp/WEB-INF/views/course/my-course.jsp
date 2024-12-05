@@ -72,6 +72,7 @@
                     <table class="table">
                         <thead>
                         <tr class="table-info">
+                            <th scope="col">번호</th>
                             <th scope="col">이름</th>
                             <th scope="col">지역</th>
                             <th scope="col">거리</th>
@@ -80,8 +81,9 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <c:forEach var="courseToChallenge" items="${coursesToChallenge}">
+                        <c:forEach var="courseToChallenge" items="${coursesToChallenge}" varStatus="loop">
                             <tr>
+                                <td><span>${loop.count}</span></td>
                                 <td><span>${courseToChallenge.name}</span></td>
                                 <td><span>${courseToChallenge.region.si} ${courseToChallenge.region.gu} ${courseToChallenge.region.dong}</span></td>
                                 <td><span>${courseToChallenge.distance}KM</span></td>
