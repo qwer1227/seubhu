@@ -99,6 +99,23 @@
            , #{uploadFile.saveName})
   </insert>
 
+  <!-- UploadFile getThumbnailByCrewNo(int crewNo); -->
+  <select id="getThumbnailByCrewNo" parameterType="int" resultType="store.seub2hu2.community.vo.UploadFile">
+    select c.crew_no as no
+        , cf.file_no            as fileNo
+        , cf.file_original_name as originalName
+        , cf.file_save_name     as saveName
+        , cf.is_deleted         as deleted
+        , cf.file_created_date  as createdDate
+    from
+      CREWS c join CREW_FILES cf
+    on c.crew_no = cf.crew_no
+    where
+      c.crew_no = #{uploadFile.no}
+      and cf.file_save_name = c.crew_thumbnail
+      and cf.is_deleted = 'N'
+  </select>
+
   <!-- UploadFile getFileByCrewNo(int crewNo); -->
   <select id="getFileByCrewNo" parameterType="int" resultType="store.seub2hu2.community.vo.UploadFile">
     select c.crew_no as no
@@ -112,11 +129,16 @@
     on c.crew_no = cf.crew_no
     where
       c.crew_no = #{uploadFile.no}
-      and c.file_name = cf.file_save_name
+      and cf.file_save_name = c.file_name
       and cf.is_deleted = 'N'
   </select>
 
-  <!-- void updateCrewFile(UploadFile uploadFile); -->
-
+  <!-- void updateCrewFile(@Param("fileNo") int fileNo); -->
+  <update id="updateCrewFile" parameterType="store.seub2hu2.community.vo.UploadFile">
+    update CREW_FILES
+    set is_deleted        = 'Y'
+      , file_updated_date = sysdate()
+    where file_no = #{fileNo}
+  </update>
 
 </mapper>

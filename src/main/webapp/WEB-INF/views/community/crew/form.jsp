@@ -34,21 +34,19 @@
         <tbody>
         <tr>
           <th>모집글 제목</th>
-          <td><input class="rounded" type="text" name="title" value="" style="width: 448px"></td>
-          <th></th>
-          <td rowspan="5">
-            <div id="map" style="width: 98%; height: 230px" class="mb-2"></div>
+          <td><input class="rounded" type="text" name="title" value="" style="width: 83%"></td>
+          <th>장소</th>
+          <td>
+            <input class="rounded" type="text" id="location" name="location" style="width: 70%">
+            <button type="button" class="btn btn-outline-dark btn-sm" onclick="searchPlaces(event)">검색</button>
           </td>
         </tr>
         <tr>
           <th>크루 이름</th>
-          <td><input class="rounded" type="text" name="name" value="" style="width: 448px"></td>
-        </tr>
-        <tr>
-          <th>장소</th>
-          <td>
-            <input class="rounded" type="text" id="location" name="location" style="width: 399px">
-            <button type="button" class="btn btn-outline-dark btn-sm" onclick="searchPlaces(event)">검색</button>
+          <td><input class="rounded" type="text" name="name" value="" style="width: 83%"></td>
+          <th></th>
+          <td rowspan="3">
+            <div id="map" style="width: 90%; height: 200px" class="mb-2"></div>
           </td>
         </tr>
         <tr>
@@ -60,14 +58,14 @@
               <option value="매일">매일</option>
               <option value="번개">입력</option>
             </select>
-            <input type="text" class="rounded" id="schedule-detail" name="detail" value="" style="width: 390px"
+            <input type="text" class="rounded" id="schedule-detail" name="detail" value="" style="width: 70%"
                    placeholder="상세 모임 일시를 작성해주세요.">
           </td>
         </tr>
         <tr>
           <th>대표 이미지</th>
           <td>
-            <input type="file" class="form-control" name="image" style="width: 450px"/>
+            <input type="file" class="form-control" name="image" style="width: 84%"/>
           </td>
         </tr>
         <tr>
@@ -141,14 +139,11 @@
                 let detailAddr = !!result[0].road_address ? result[0].road_address.address_name  : '';
                 
                 document.querySelector("#location").value = detailAddr;
-                document.querySelector("#lat").value = latlng.getLat()
-                document.querySelector("#lng").value = latlng.getLng()
                 
             } else {
                 alert("유효한 지역이 아닙니다.");
             }
         });
-        
     });
 
     function searchAddrFromCoords(coords, callback) {
@@ -207,8 +202,6 @@
                   // 조회된 주소정보를 입력필드에 표시한다.
                   let detailAddr = !!result[0].road_address ? result[0].road_address.address_name  : '';
                   document.querySelector("#location").value = detailAddr;
-                  document.querySelector("#lat").value = latlng.getLat()
-                  document.querySelector("#lng").value = latlng.getLng()
               } else {
                   alert("유효한 지역이 아닙니다.");
               }
@@ -216,8 +209,6 @@
           console.log(marker.latlng)
       });
   }
-
-  
 </script>
 </body>
 </html>

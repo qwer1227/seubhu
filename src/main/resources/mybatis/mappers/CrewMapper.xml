@@ -11,7 +11,9 @@
     , crew_title
     , crew_name
     , crew_description
-    , crew_thumbnail
+    <if test="crew.thumbnail != null">
+        , crew_thumbnail
+    </if>
     , crew_updated_date
     <if test="crew.uploadFile != null">
       , file_name
@@ -24,7 +26,9 @@
     , #{crew.title}
     , #{crew.name}
     , #{crew.description}
-    , #{crew.thumbnail.saveName}
+    <if test="crew.thumbnail != null">
+      , #{crew.thumbnail.saveName}
+    </if>
     , null
     <if test="crew.uploadFile != null">
       , #{crew.uploadFile.saveName}
@@ -77,28 +81,32 @@
   <!-- Crew getCrewDetailByNo(@Param("no") int crewNo); -->
   <select id="getCrewDetailByNo" resultType="store.seub2hu2.community.vo.Crew">
     select c.crew_no            as no
-    , c.crew_title             as title
-    , c.crew_schedule          as schedule
-    , c.crew_location          as location
-    , c.crew_name              as name
-    , c.crew_description       as description
-    , c.crew_created_date      as createdDate
-    ,case
-        when c.file_name is not null then (select f.file_original_name
-                                           from CREW_FILES f
-                                           where f.crew_no = c.crew_no
-                                           and f.file_save_name = c.file_name)
-       else null
-    end as "uploadFile.originalName"
-    , c.is_joined              as joined
-    , c.crew_view_cnt          as viewCnt
-    , u.user_nickname          as "user.nickname"
+     , c.crew_title             as title
+     , c.crew_schedule          as schedule
+     , c.crew_location          as location
+     , c.crew_name              as name
+     , c.crew_description       as description
+     , c.crew_created_date      as createdDate
+     , coalesce ((select cf.file_original_name
+                 from CREW_FILES cf
+                 where cf.crew_no = c.crew_no
+                   and cf.file_save_name = c.file_name
+                   and cf.is_deleted = 'N'), null) as "uploadFile.originalName"
+     , coalesce ((select f.file_save_name
+                 from CREW_FILES f
+                 where f.crew_no = c.crew_no
+                   and f.file_save_name = c.crew_thumbnail
+                   and f.is_deleted = 'N'), null) as "thumbnail.saveName"
+     , c.is_joined              as joined
+     , c.crew_view_cnt          as viewCnt
+     , u.user_no                as "user.no"
+     , u.user_nickname          as "user.nickname"
     from CREWS c join CREW_MEMBERS cm
     on c.crew_no = cm.crew_no
-    join USERS u
-    on cm.user_no = u.user_no
+      join USERS u
+      on cm.user_no = u.user_no
     where
-        c.crew_no = #{no}
+      c.crew_no = #{no}
   </select>
 
   <!-- void updateCrewCnt(@Param("crew") Crew crew); -->
@@ -107,4 +115,27 @@
     set crew_view_cnt = #{crew.viewCnt}
     where crew_no = #{crew.no}
   </update>
+
+  <!-- void updateCrew(@Param("crew") Crew crew); -->
+  <update id="updateCrew">
+    update CREWS
+    set crew_title = #{crew.title}
+        , crew_description = #{crew.description}
+        , crew_schedule = #{crew.schedule}
+        , crew_location = #{crew.location}
+        , crew_name = #{crew.name}
+        , crew_thumbnail = #{crew.thumbnail.saveName}
+        , crew_updated_date = sysdate()
+      <if test="crew.uploadFile != null">
+        , file_name = #{crew.uploadFile.saveName}
+      </if>
+        , is_deleted = #{crew.deleted}
+    where
+        crew_no = #{crew.no}
+
+  </update>
+
+  <!-- int getCrewMemberCnt(@Param("member") CrewMember member); -->
+
+
 </mapper>
