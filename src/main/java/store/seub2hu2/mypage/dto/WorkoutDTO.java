@@ -9,7 +9,7 @@ import java.util.Date;
 @ToString
 @Getter
 @Setter
-public class Workout {
+public class WorkoutDTO {
     private int workNo;
     private String workTitle;
     private String workContent;
