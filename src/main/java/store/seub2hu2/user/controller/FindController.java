@@ -11,6 +11,9 @@ import store.seub2hu2.user.exception.DataNotFoundException;
 import store.seub2hu2.user.service.MailService;
 import store.seub2hu2.user.service.UserService;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Controller
 @RequiredArgsConstructor
 public class FindController {
@@ -25,22 +28,23 @@ public class FindController {
 
     // 이메일로 아이디 찾기 처리
     @PostMapping("/find-id")
-    public String findId(@RequestParam("email") String email, Model model) {
-        try {
-            // 이메일로 사용자 확인 후 아이디 발급
-            String userId = mailService.findIdByEmail(email);
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> findId(@RequestBody Map<String, String> requestBody) {
+        String email = requestBody.get("email"); // 요청 본문에서 이메일을 추출
 
-            if (userId != null) {
-                model.addAttribute("message", "아이디는: " + userId);
-            } else {
-                model.addAttribute("message", "이메일과 일치하는 아이디가 없습니다.");
-            }
-        } catch (Exception e) {
-            model.addAttribute("message", "아이디 찾기 실패: " + e.getMessage());
+        Map<String, Object> response = new HashMap<>();
+
+        if ("test@example.com".equals(email)) {
+            response.put("success", true);
+            response.put("userId", "user123");
+        } else {
+            response.put("success", false);
+            response.put("error", "등록된 이메일이 없습니다.");
         }
 
-        return "user/find-id";  // 결과 메시지와 함께 다시 폼 렌더링
+        return ResponseEntity.ok(response);
     }
+
 
 
     // 비밀번호 찾기 폼

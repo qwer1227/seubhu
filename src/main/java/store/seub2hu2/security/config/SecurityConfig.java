@@ -3,6 +3,8 @@ package store.seub2hu2.security.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -33,6 +35,15 @@ public class SecurityConfig {
 
     @Autowired
     private CustomOAuth2UserService customOAuth2UserService;
+
+    @Autowired
+    private AuthenticationConfiguration authenticationConfiguration;
+
+    // AuthenticationManager 빈 등록
+    @Bean
+    public AuthenticationManager authenticationManager() throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
 
     // 스마트 에디터 적용 코드
     @Bean
