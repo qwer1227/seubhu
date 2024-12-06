@@ -115,12 +115,13 @@ public class CourseController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/controlChallenge")
     public String controlChallenge(@RequestParam(name = "courseNo") int courseNo,
+                                   @RequestParam(name = "page") int page,
                                    @AuthenticationPrincipal LoginUser loginUser) {
         // 1. 사용자가 코스 도전 등록 여부를 변환한다.
         userCourseService.changeChallenge(courseNo, loginUser.getNo());
 
         // 2. list.jsp를 재요청한다.
-        return "redirect:list";
+        return "redirect:list?page=" + page;
     }
 
     @GetMapping("/detail")
@@ -172,10 +173,11 @@ public class CourseController {
         // 1. 사용자가 코스 도전 등록 여부를 변환한다.
         userCourseService.changeChallenge(courseNo, loginUser.getNo());
 
-        // 2. list.jsp를 재요청한다.
+        // 2. detail.jsp를 재요청한다.
         return "redirect:detail?no=" + courseNo;
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/cancelChallenge")
     public String cancelChallenge(@RequestParam(name = "courseNo") int courseNo,
                                   @RequestParam(name = "page") int page,
