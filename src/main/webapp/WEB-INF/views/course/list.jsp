@@ -59,8 +59,14 @@
                     </div>
                 </div>
             </form>
-
         </div>
+    </div>
+
+    <%-- 안내 문구 --%>
+    <div class="card row row-cols-1 row-cols-md-1 g-4 mt-3 mb-3">
+        <h5>* <strong style="background-color: orange">등록하기</strong>를 클릭하여 <strong style="color: red">도전할 코스 목록</strong>에 추가하면,
+            <strong style="color: red">나의 코스 기록</strong>에서 코스를 확인하실 수 있습니다!</h5>
+        <h5>* <strong style="color: red">이전 난이도 코스 3개</strong>를 완주하면, 다음 난이도의 코스에 도전하실 수 있습니다! (ex 1단계 3개 클리어 시, 2단계 도전 가능)</h5>
     </div>
 
     <%-- 코스 목록 --%>
@@ -69,14 +75,19 @@
             <div class="col-3">
                 <div class="card h-100">
                     <a class="text-decoration-none" href="detail?no=${course.no }">
-                        <img src="/resources/images/course/${course.filename }" class="card-img-top" alt="...">
+                        <div class="main_image" style="position: relative;">
+                            <img src="/resources/images/course/${course.filename }" class="card-img-top" alt="...">
+                            <c:if test="${course.successWhether.courseNo == '1'}">
+                                <span class="badge bg-primary main_image_text"
+                                      style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 20px;">
+                                    완주 성공!
+                                </span>
+                            </c:if>
+                        </div>
                     </a>
                     <div class="card-body">
                         <%-- 해당 코스 완주를 성공한 사용자라면, 완주 성공 문구를 표시한다. --%>
                         <h5 class="card-title">
-                            <c:if test="${course.successWhether.courseNo == '1'}">
-                                <span class="badge text-bg-primary">완주 성공!</span>
-                            </c:if>
                             <span>${course.name }</span>
                         </h5>
                         <a class="text-decoration-none" href="detail?no=${course.no }">
@@ -92,11 +103,13 @@
                                         <c:choose>
                                             <%-- 사용자가 코스 도전 등록을 했다면 등록 취소 버튼을 표시하고, 클릭하면 코스 등록을 취소한다. --%>
                                             <c:when test="${course.challengeWhether.courseNo == '1'}">
-                                                <a href="controlChallenge?courseNo=${course.no}" class="btn btn-danger">등록 취소</a>
+                                                <a href="controlChallenge?courseNo=${course.no}&page=${pagination.page}"
+                                                   class="btn btn-danger" onclick="cancelChallenge(event)">등록 취소</a>
                                             </c:when>
                                             <%-- 사용자가 코스 도전 등록을 하지 않았다면 등록하기 버튼을 표시하고, 클릭하면 코스를 등록한다. --%>
                                             <c:otherwise>
-                                                <a href="controlChallenge?courseNo=${course.no}" class="btn btn-warning">등록하기</a>
+                                                <a href="controlChallenge?courseNo=${course.no}&page=${pagination.page}"
+                                                   class="btn btn-warning" onclick="registerChallenge(event)">등록하기</a>
                                             </c:otherwise>
                                         </c:choose>
                                     </c:otherwise>
@@ -162,6 +175,24 @@
 
         pageInput.value = page;
         form.submit();
+    }
+
+    // 등록하기 버튼을 클릭하면, 확인창을 표시한다.
+    function registerChallenge(event) {
+        if (confirm("도전할 코스 목록에 추가하시겠습니까?")) {
+            alert("도전할 코스 목록에 추가되었습니다!");
+        } else {
+            event.preventDefault();
+        }
+    }
+
+    // 등록 취소 버튼을 클릭하면, 확인창을 표시한다.
+    function cancelChallenge(event) {
+        if (confirm("도전할 코스 목록에서 제외하시겠습니까?")) {
+            alert("도전할 코스 목록에서 제외되었습니다!");
+        } else {
+            event.preventDefault();
+        }
     }
 </script>
 </body>
