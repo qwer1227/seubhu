@@ -646,6 +646,12 @@ public class AdminController {
         return "admin/productlist";
     }
 
+    @GetMapping("/delivery")
+    public String delivery(){
+
+        return "admin/delivery";
+    }
+
     @GetMapping("/settlement")
     public String settlement(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
                              @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
