@@ -3,17 +3,20 @@ package store.seub2hu2.message.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.util.StringUtils;
 import store.seub2hu2.message.dto.MessageForm;
-import store.seub2hu2.message.dto.MessageRecieved;
+import store.seub2hu2.message.dto.MessageReceived;
 import store.seub2hu2.message.mapper.MessageFileMapper;
 import store.seub2hu2.message.mapper.MessageMapper;
 import store.seub2hu2.message.vo.Message;
-import store.seub2hu2.message.vo.MessageFile;
+import store.seub2hu2.user.mapper.UserMapper;
+import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.ListDto;
 import store.seub2hu2.util.Pagination;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,103 +27,94 @@ public class MessageService {
     private MessageMapper messageMapper;
 
     @Autowired
+    private UserMapper userMapper;
+
+    @Autowired
     private MessageFileMapper messageFileMapper;
 
     @Value("C:/Users/jhta/Desktop/MessageFiles")
     private String saveDirectory;
 
-    public void insertMessage(MessageForm form, MultipartFile file) throws Exception {
-        // 1. 메시지 객체 생성
+    // 메시지 전송
+    public void sendMessage(MessageForm form, int userNo) {
         Message message = new Message();
-        message.setUserNo(form.getSenderUserNo()); // senderId 대신 senderUserNo 사용
+        message.setUserNo(userNo);
         message.setTitle(form.getTitle());
-        message.setContent(form.getContent());
+        message.setContent(form.getContent()); // MessageForm의 내용 추가
+        messageMapper.insertMessage(message);
 
-        // 2. 메시지 저장
-        messageMapper.insertMessage(message); // 저장 후 messageNo 자동 생성됨
+        // 수신자 처리
+        String[] nicknames = form.getReceivers().split(",");
+        for (String nickname : nicknames) {
+            User user = userMapper.getUserByNickname(nickname.trim());
+            if (user != null) {
+                messageMapper.insertMessageReceiver(message.getMessageNo(), user.getNo());
+            } else {
+                throw new IllegalArgumentException("수신자 '" + nickname.trim() + "'은(는) 존재하지 않습니다.");
+            }
+        }
 
-        // 3. 파일 처리 (기존 코드와 동일)
-        if (file != null && !file.isEmpty()) {
-            String originalFilename = file.getOriginalFilename();
-            String savedFilename = System.currentTimeMillis() + "_" + originalFilename;
-
-            // 파일 저장
-            File saveFile = new File(saveDirectory, savedFilename);
-            file.transferTo(saveFile);
-
-            // 파일 정보 DB 저장
-            MessageFile messageFile = new MessageFile();
-            messageFile.setMessageNo(message.getMessageNo()); // 저장된 메시지 번호 연결
-            messageFile.setOriginalName(originalFilename);
-            messageFile.setSavedName(savedFilename);
-            messageFileMapper.insertMessageFile(messageFile);
+        // 첨부파일 저장 (파일 업로드 로직)
+        if (form.getFile() != null && !form.getFile().isEmpty()) {
+            File file = new File(saveDirectory + "/" + form.getFile().getOriginalFilename());
+            try {
+                form.getFile().transferTo(file);
+            } catch (IOException e) {
+                throw new RuntimeException("파일 저장 중 오류가 발생했습니다.", e);
+            }
         }
     }
 
-    // 메시지 목록 조회 (받은 메시지 / 보낸 메시지)
-    public ListDto<MessageRecieved> getMessageList(Map<String, Object> condition, boolean isReceived) {
-        // 페이지네이션 계산
-        int page = (Integer) condition.getOrDefault("page", 1);
-        int rows = (Integer) condition.getOrDefault("rows", 10);
-        Pagination pagination = new Pagination(page, getTotalRows(condition), rows);
-
-        // 페이지네이션 정보 추가
-        condition.put("offset", pagination.getOffset());
-        condition.put("rows", pagination.getRowsPerPage());
-
-        // 받은 메시지 또는 보낸 메시지 조회
-        List<MessageRecieved> messages;
-        if (isReceived) {
-            messages = messageMapper.getReceivedMessages(condition);
-        } else {
-            messages = messageMapper.getSentMessages(condition);
-        }
-
-        // 반환할 결과 생성
-        return new ListDto<>(messages, pagination);
-    }
-
-    // 받은 메시지 목록 조회
-    public ListDto<MessageRecieved> getReceivedMessages(Map<String, Object> condition, String opt, String keyword) {
+    // 메시지 목록 조회
+    public ListDto<MessageReceived> getReceivedMessages(int page, int rows, String opt, String keyword, int userNo) {
+        Map<String, Object> condition = buildCondition(page, rows, opt, keyword, userNo);
         return getMessageList(condition, true); // 받은 메시지 조회
     }
 
-    // 보낸 메시지 목록 조회
-    public ListDto<MessageRecieved> getSentMessages(Map<String, Object> condition, String opt, String keyword) {
+    public ListDto<MessageReceived> getSentMessages(int page, int rows, String opt, String keyword, int userNo) {
+        Map<String, Object> condition = buildCondition(page, rows, opt, keyword, userNo);
         return getMessageList(condition, false); // 보낸 메시지 조회
     }
 
-    // 메시지 총 개수 조회
-    private int getTotalRows(Map<String, Object> condition) {
-        return messageMapper.getTotalRows(condition); // 총 메시지 개수 조회
+    // 메시지 리스트 조회
+    private ListDto<MessageReceived> getMessageList(Map<String, Object> condition, boolean isReceived) {
+        int page = (Integer) condition.getOrDefault("page", 1);
+        int rows = (Integer) condition.getOrDefault("rows", 10);
+        Pagination pagination = new Pagination(page, getTotalRows(condition), rows);
+        condition.put("offset", pagination.getOffset());
+        condition.put("rows", pagination.getRowsPerPage());
+
+        List<MessageReceived> messages = isReceived
+                ? messageMapper.getReceivedMessages(condition)
+                : messageMapper.getSentMessages(condition);
+
+        return new ListDto<>(messages, pagination);
     }
 
-    public int getUnreadMessageCount(int userNo) {
-        // 사용자의 unread 메시지 갯수를 반환하는 로직
-        return messageMapper.countUnreadMessages(userNo);
+    // 조건 생성 메서드 (Search 조건)
+    private Map<String, Object> buildCondition(int page, int rows, String opt, String keyword, int userNo) {
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("userNo", userNo);
+        if (StringUtils.hasText(opt)) condition.put("opt", opt);
+        if (StringUtils.hasText(keyword)) condition.put("keyword", keyword);
+        condition.put("page", page);
+        condition.put("rows", rows);
+        return condition;
     }
 
-    public void deleteMessage(int messageNo) {
-        Message savedMessage = messageMapper.getMessageDetailByNo(messageNo);
-        if (savedMessage != null) {
-            savedMessage.setDeleted("Y"); // 삭제 상태 변경
-            messageMapper.updateMessage(savedMessage); // Message 객체로 수정
-        }
-    }
-
-
-
-
+    // 메시지 상세 조회
     public Message getMessageDetail(int messageNo) {
-        // 메시지 번호로 상세 정보 조회
-        Message message = messageMapper.getMessageDetailByNo(messageNo);
+        return messageMapper.getMessageDetailByNo(messageNo);
+    }
 
-        if (message == null) {
-            throw new IllegalArgumentException("메시지를 찾을 수 없습니다. messageNo: " + messageNo);
-        }
+    // 메시지 삭제 서비스
+    public void deleteMessages(int messageNo) {
+        messageMapper.updateMessageDeleted(messageNo);  // 메시지 삭제 상태를 'Y'로 변경
 
-        return message;
     }
 
 
+    private int getTotalRows(Map<String, Object> condition) {
+        return messageMapper.getTotalRows(condition);
+    }
 }

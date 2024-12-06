@@ -22,6 +22,7 @@ public class Report {
     private int adminNo;
     private int boardNo;
     private int replyNo;
+    private int crewNo;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date createdDate;
     @JsonFormat(pattern = "yyyy-MM-dd")

@@ -50,35 +50,43 @@ public class UserService {
      *
      * @param form 사용자 가입 정보를 담고 있는 UserJoinForm 객체
      */
+    @Transactional // 트랜잭션 적용
     public void insertUser(UserJoinForm form) {
-        // 사용자 중복 체크 및 예외 처리
-            User savedUser = userMapper.getUserById(form.getId());
-            if (savedUser != null) {
-                throw new AlreadyUsedIdException(form.getId());
-            }
-
-        // User 객체로 변환
-        User user = new User();
-        BeanUtils.copyProperties(form, user);
-
-        // 주소 데이터가 있는 경우 먼저 주소 저장
-        if (form.getAddr() != null) {
-            Addr addr = form.getAddr();
-            addr.setUserNo(user.getNo()); // USER_NO 설정
-            int addrNo = userMapper.insertAddr(addr); // 주소 저장
-            user.getAddr().setNo(addrNo); // 사용자에 ADDR_NO 설정
+        // 사용자 중복 체크
+        if (userMapper.getUserById(form.getId()) != null) {
+            throw new AlreadyUsedIdException(form.getId());
         }
 
-        // 비밀번호 암호화
-        String encodedPassword = passwordEncoder.encode(user.getPassword());
-        user.setPassword(encodedPassword);
+        // User 객체 생성 및 설정
+        User user = new User();
+        BeanUtils.copyProperties(form, user); // UserJoinForm의 데이터를 User로 복사
+        user.setPassword(passwordEncoder.encode(user.getPassword())); // 비밀번호 암호화
 
-        // 사용자 정보를 테이블에 저장
-        userMapper.insertUser(user);
+        // 사용자 등록
+        userMapper.insertUser(user); // DB에 삽입된 후 user.no가 자동 생성됨
+
+        // Addr 객체 생성 및 설정
+        Addr addr = new Addr();
+        if (form.getPostcode() == null || form.getPostcode().isEmpty()) {
+            throw new IllegalArgumentException("우편번호는 필수 입력 항목입니다.");
+        }
+        addr.setPostcode(form.getPostcode());             // 우편번호
+        addr.setAddress(form.getAddress());             // 기본 주소
+        addr.setAddressDetail(form.getAddressDetail() != null ? form.getAddressDetail() : ""); // 상세 주소
+        addr.setIsAddrHome("Y");                         // 회원가입 시 기본 배송지로 설정
+        addr.setName(form.getName());                    // 사용자 이름 설정
+        addr.setUserNo(user.getNo());                    // 생성된 사용자 번호로 설정
+
+        // 주소 등록
+        userMapper.insertAddr(addr);
+
+        // 사용자의 주소번호를 새로 등록한 주소의 번호로 없데이트 한다.
+        userMapper.updateAddrUserNo(addr.getNo(), user.getNo());
 
         // 기본 사용자 역할 부여
         addUserRole(user.getNo(), "ROLE_USER");
     }
+
 
 
     /**

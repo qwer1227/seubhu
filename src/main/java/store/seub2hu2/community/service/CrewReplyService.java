@@ -1,11 +1,11 @@
 package store.seub2hu2.community.service;
 
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import store.seub2hu2.community.dto.ReplyForm;
-import store.seub2hu2.community.mapper.ReplyMapper;
+import store.seub2hu2.community.mapper.BoardReplyMapper;
+import store.seub2hu2.community.mapper.CrewReplyMapper;
 import store.seub2hu2.community.vo.Reply;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.vo.User;
@@ -13,15 +13,15 @@ import store.seub2hu2.user.vo.User;
 import java.util.List;
 
 @Service
-public class ReplyService {
+public class CrewReplyService {
 
     @Autowired
-    private ReplyMapper replyMapper;
+    private CrewReplyMapper crewReplyMapper;
 
     public void addNewReply(ReplyForm form
             , @AuthenticationPrincipal LoginUser loginUser) {
         Reply reply = new Reply();
-        reply.setBoardNo(form.getBoardNo());
+        reply.setCrewNo(form.getCrewNo());
         reply.setContent(form.getContent());
         reply.setDeleted("N");
 
@@ -29,18 +29,18 @@ public class ReplyService {
         user.setNo(loginUser.getNo());
         reply.setUser(user);
 
-        replyMapper.insertReply(reply);
+        crewReplyMapper.insertReply(reply);
 
         reply.setPrevNo(reply.getNo());
         reply.setDeleted(reply.getDeleted());
         reply.setUpdatedDate(null);
-        replyMapper.updateReply(reply);
+        crewReplyMapper.updateReply(reply);
     }
 
     public void addNewComment(ReplyForm form
             , @AuthenticationPrincipal LoginUser loginUser) {
         Reply reply = new Reply();
-        reply.setBoardNo(form.getBoardNo());
+        reply.setCrewNo(form.getCrewNo());
         reply.setContent(form.getContent());
         reply.setDeleted("N");
 
@@ -48,54 +48,51 @@ public class ReplyService {
         user.setNo(loginUser.getNo());
         reply.setUser(user);
 
-        replyMapper.insertReply(reply);
+        crewReplyMapper.insertReply(reply);
 
         reply.setPrevNo(form.getPrevNo());
         reply.setDeleted(reply.getDeleted());
         reply.setUpdatedDate(null);
-        replyMapper.updateReply(reply);
+        crewReplyMapper.updateReply(reply);
     }
 
-    public List<Reply> getReplies(int boardNo) {
-        List<Reply> replyList = replyMapper.getRepliesByBoardNo(boardNo);
+    public List<Reply> getReplies(int crewNo) {
+        List<Reply> replyList = crewReplyMapper.getRepliesByCrewNo(crewNo);
 
         return replyList;
     }
 
-    public int getReplyCnt(int boardNo) {
-        return replyMapper.getReplyCntByBoardNo(boardNo);
+    public int getReplyCnt(int crewNo) {
+        return crewReplyMapper.getReplyCntByCrewNo(crewNo);
     }
 
     public void deleteReply(int replyNo) {
-        Reply reply = replyMapper.getReplyByReplyNo(replyNo);
-        reply.setBoardNo(reply.getBoardNo());
-        replyMapper.deleteReplyByNo(replyNo);
+        Reply reply = crewReplyMapper.getReplyByReplyNo(replyNo);
+        reply.setCrewNo(reply.getCrewNo());
+        crewReplyMapper.deleteReplyByNo(replyNo);
     }
 
     public void updateReply(ReplyForm form) {
-        Reply reply = replyMapper.getReplyByReplyNo(form.getNo());
+        Reply reply = crewReplyMapper.getReplyByReplyNo(form.getNo());
         reply.setContent(form.getContent());
 
-        replyMapper.updateReply(reply);
+        crewReplyMapper.updateReply(reply);
     }
 
     public int getCheckLike(int replyNo
                             , @AuthenticationPrincipal LoginUser loginUser) {
 
-        System.out.println("getCheckLike replyNo:" + replyNo);
-        System.out.println("getCheckLike loginUser:" + loginUser.getNo());
-
-        return replyMapper.hasUserLikedReply(replyNo, loginUser.getNo());
+        return crewReplyMapper.hasUserLikedReply(replyNo, loginUser.getNo());
     }
 
     public void updateReplyLike(int replyNo
             , @AuthenticationPrincipal LoginUser loginUser) {
 
-        replyMapper.insertReplyLike(replyNo, loginUser.getNo());
+        crewReplyMapper.insertReplyLike(replyNo, loginUser.getNo());
     }
 
     public void deleteReplyLike(int replyNo
             , @AuthenticationPrincipal LoginUser loginUser) {
-        replyMapper.deleteReplyLike(replyNo, loginUser.getNo());
+        crewReplyMapper.deleteReplyLike(replyNo, loginUser.getNo());
     }
 }

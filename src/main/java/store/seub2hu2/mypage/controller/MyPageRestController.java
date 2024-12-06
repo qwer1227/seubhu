@@ -1,26 +1,21 @@
 package store.seub2hu2.mypage.controller;
 
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import store.seub2hu2.community.service.BoardService;
-import store.seub2hu2.community.vo.Board;
 import store.seub2hu2.mypage.dto.CommentRequest;
-import store.seub2hu2.mypage.dto.CommentResponse;
 import store.seub2hu2.mypage.dto.ImageDeleteRequest;
-import store.seub2hu2.mypage.dto.Workout;
+import store.seub2hu2.mypage.dto.WorkoutDTO;
 import store.seub2hu2.mypage.service.FileUploadService;
 import store.seub2hu2.mypage.service.PostService;
+import store.seub2hu2.mypage.service.WorkoutService;
 import store.seub2hu2.mypage.vo.Post;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.service.UserService;
-import store.seub2hu2.util.ListDto;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +37,8 @@ public class MyPageRestController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private WorkoutService workoutService;
 
     @PostMapping("/public/insert")
     public ResponseEntity<Map<String, Object>> insertPost(@RequestParam("content") String postContent,
@@ -181,12 +178,7 @@ public class MyPageRestController {
     }
 
     @GetMapping("/getworkout")
-    public ResponseEntity<Map<String, Object>> workout(@RequestBody Workout workout, @AuthenticationPrincipal  LoginUser loginUser){
-
-        Map<String, Object> response = new HashMap<>();
-
-        response.put("message","성공함");
-
-        return ResponseEntity.ok(response);
+    public List<WorkoutDTO> workout(@AuthenticationPrincipal  LoginUser loginUser){
+        return workoutService.getWorkoutByUserNo(loginUser.getNo());
     }
 }

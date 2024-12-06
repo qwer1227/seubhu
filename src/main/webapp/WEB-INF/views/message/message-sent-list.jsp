@@ -17,7 +17,7 @@
 <div class="container-xxl text-center my-4">
     <div class="row p-3 justify-content-center">
         <div class="col mb-3">
-            <h2>받은 쪽지함</h2>
+            <h2>보낸 쪽지함</h2>
         </div>
     </div>
 
@@ -84,9 +84,9 @@
             <tr>
                 <th><input type="checkbox" onclick="toggleSelectAll(this)"></th>  <!-- 일괄 선택 체크박스 -->
                 <th>번호</th>
-                <th>보낸사람</th>
+                <th>받은사람</th>
                 <th class="text-start">제목</th>
-                <th>받은날</th>
+                <th>보낸날</th>
                 <th>읽음</th>
                 <th>읽은날</th>
                 <th>파일</th>
