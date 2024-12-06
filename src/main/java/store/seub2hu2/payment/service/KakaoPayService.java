@@ -115,10 +115,14 @@ public class KakaoPayService {
 
             userMapper.insertAddress(addr);
 
+            int addrNo = addr.getNo();
+
             // 배송상태
             Delivery delivery = new Delivery();
+            delivery.setOrderNo(orderNo);
+            delivery.setAddrNo(addrNo);
             delivery.setMemo(paymentDto.getMemo());
-
+            delivery.setDeliPhoneNumber(paymentDto.getPhoneNumber());
             deliveryMapper.insertDeliveryMemo(delivery);
             
 
@@ -131,8 +135,6 @@ public class KakaoPayService {
             parameters.put("total_amount", String.valueOf(paymentDto.getFinalTotalPrice()));
             parameters.put("approval_url", "http://localhost/pay/completed?type=" + paymentDto.getType()
                     + "&orderNo=" + orderNo);
-
-
 
         }
 

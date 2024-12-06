@@ -38,11 +38,11 @@
                 <tbody>
                 <tr>
                     <th><label>주문 상품</label></th>
-                    <td>${orderDetail.product.prodName} 블랙 260 외 2개</td>
+                    <td>${orderDetail.product.prodName} ${orderDetail.product.colorName} ${orderDetail.product.sizeName} 외 </td>
                 </tr>
                 <tr>
                     <th><label>주문 수량</label></th>
-                    <td>5개</td>
+                    <td>${orderDetail.product.orderQty} 개</td>
                 </tr>
                 </tbody>
             </table>
@@ -59,19 +59,19 @@
                 <tbody>
                 <tr>
                     <th><label>받으시는 분</label></th>
-                    <td>홍길동</td>
+                    <td>${orderDetail.addrDto.addrName}</td>
                 </tr>
                 <tr>
                     <th><label>우편번호</label></th>
-                    <td>07776</td>
+                    <td>${orderDetail.addrDto.postcode}</td>
                 </tr>
                 <tr>
                     <th><label>배송지</label></th>
-                    <td>서울시 영등포구 여의대로 6길 17 A동 1202호</td>
+                    <td>${orderDetail.addrDto.addr} ${orderDetail.addrDto.addrDetail}</td>
                 </tr>
                 <tr>
                     <th><label>휴대폰 번호</label></th>
-                    <td>010-1234-5678</td>
+                    <td>${orderDetail.deliveryDto.deliPhoneNumber}</td>
                 </tr>
                 </tbody>
             </table>
@@ -88,11 +88,11 @@
                 <tbody>
                 <tr>
                     <th><label>결제 수단</label></th>
-                    <td>카카오페이</td>
+                    <td>${orderDetail.payments.payMethod}</td>
                 </tr>
                 <tr>
                     <th><label>결제 금액</label></th>
-                    <td>169,000</td>
+                    <td><fmt:formatNumber>${orderDetail.orders.realPrice}</fmt:formatNumber> 원</td>
                 </tr>
                 </tbody>
             </table>
@@ -109,7 +109,15 @@
                 <tbody>
                 <tr>
                     <th><label>배송 상태</label></th>
-                    <td>상품 준비중</td>
+                    <td>${orderDetail.deliveryDto.deliStatus}</td>
+                </tr>
+                <tr>
+                    <th><label>배송 업체</label></th>
+                    <td>${orderDetail.deliveryDto.deliCom}</td>
+                </tr>
+                <tr>
+                    <th><label>배송 메모</label></th>
+                    <td>${orderDetail.deliveryDto.deliMemo}</td>
                 </tr>
                 </tbody>
             </table>

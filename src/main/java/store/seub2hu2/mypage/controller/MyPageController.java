@@ -536,11 +536,15 @@ public class MyPageController {
     }
 
     // 주문 완료 화면
-    @GetMapping("/order-pay-completed")
-    public String showOrderCompletionPage() {
-
-        return "mypage/order-pay-completed";
-    }
+//    @GetMapping("/order-pay-completed")
+//    public String showOrderCompletionPage(Model model) {
+//
+//        int orderNo = 1001;
+//        ResponseDTO responseDTO = orderService.getOrderDetails(orderNo);
+//        model.addAttribute("orderDetail", responseDTO);
+//
+//        return "mypage/order-pay-completed";
+//    }
     
     // 레슨예약내역 화면으로 간다
     @GetMapping("/reservation/{userId}")

@@ -12,16 +12,20 @@ import store.seub2hu2.lesson.enums.ReservationStatus;
 import store.seub2hu2.lesson.service.LessonFileService;
 import store.seub2hu2.lesson.service.LessonService;
 import store.seub2hu2.lesson.vo.LessonReservation;
+import store.seub2hu2.mypage.dto.PaymentsDTO;
 import store.seub2hu2.mypage.dto.ResponseDTO;
 import store.seub2hu2.order.mapper.OrderMapper;
 import store.seub2hu2.order.service.OrderService;
+import store.seub2hu2.order.vo.Order;
 import store.seub2hu2.order.vo.OrderItem;
 import store.seub2hu2.payment.dto.PaymentDto;
+import store.seub2hu2.payment.mapper.PayMapper;
 import store.seub2hu2.payment.service.KakaoPayService;
 import store.seub2hu2.lesson.service.LessonReservationService;
 import store.seub2hu2.payment.dto.ApproveResponse;
 import store.seub2hu2.payment.dto.CancelResponse;
 import store.seub2hu2.payment.service.PaymentService;
+import store.seub2hu2.payment.vo.Payment;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.util.SessionUtils;
 
@@ -42,6 +46,8 @@ public class PayController {
     private final PaymentService paymentService;
 
     private final OrderService orderService;
+    private final PayMapper payMapper;
+    private final OrderMapper orderMapper;
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/form")
@@ -77,6 +83,7 @@ public class PayController {
     public String payCompleted(@RequestParam("pg_token") String pgToken
                                , @AuthenticationPrincipal LoginUser loginUser
             , @RequestParam  Map<String, Object> param
+            , @AuthenticationPrincipal LoginUser loginUser
             , Model model) {
 
         String tid = sessionUtils.getAttribute("tid");
@@ -109,7 +116,7 @@ public class PayController {
             // 결재정보를 저장한다.
             String orderStr = (String) param.get("orderNo");
             int orderNo = Integer.parseInt(orderStr);
-            String userId = (String) param.get("userId");
+            String userId = loginUser.getId();
 
 
             // 카카오 결제 요청하기
@@ -118,7 +125,24 @@ public class PayController {
             PaymentDto paymentDto = new PaymentDto();
             paymentDto.setUserId(userId);
             paymentDto.setPaymentId(tid);
-            paymentDto.setTotalAmount(approveResponse.getAmount().getTotal());
+
+            Payment payment = new Payment();
+            payment.setId(paymentDto.getPaymentId());
+            payment.setUserId(paymentDto.getUserId());
+            payment.setStatus("결제완료");
+            payment.setType("상품");
+            payment.setMethod("카카오페이");
+            payment.setAmount(1);
+            payment.setPrice(approveResponse.getAmount().getTotal());
+            payMapper.insertPay(payment);
+
+            int payNo = payment.getNo();
+
+            // order pay 번호 update
+            orderService.updateOrderPayNo(orderNo, payNo);
+
+
+            return "redirect:/pay/success?no="+ orderNo;
 
         }
 
@@ -153,9 +177,11 @@ public class PayController {
 
     // 결제 성공 화면
     @GetMapping("/success")
-    public String success(Model model) {
+    public String success(@RequestParam(name ="no", required = false, defaultValue = "0") int orderNo, Model model) {
         String tid= sessionUtils.getAttribute("tid");
         String type = paymentService.getPaymentTypeById(tid);
+        System.out.println("------------------------- tid: " + tid);
+        System.out.println("------------------------- 타입: " + type);
 
         if (type.equals("레슨")) {
             LessonReservation lessonReservation = lessonReservationService.getLessonReservationByPayId(tid);
@@ -171,12 +197,11 @@ public class PayController {
         }
 
         if (type.equals("상품")) {
-            // 결제 성공 화면에 출력할 상품 정보
-            int orderNo = 1001;
-            ResponseDTO responseDTO = orderService.getOrderDetails(orderNo);
-            model.addAttribute("orderDetail", responseDTO);
+            System.out.println("------------------------- orderNo = " + orderNo);
+            //ResponseDTO responseDTO = orderService.getOrderDetails(orderNo);
+            //model.addAttribute("orderDetail", responseDTO);
 
-            return "/mypage/order-pay-completed";
+            return "mypage/order-pay-completed";
         }
 
         return "lesson/lesson-pay-completed";

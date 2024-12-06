@@ -10,7 +10,8 @@
                                 DELI_MEMO
                                 , ORDER_NO
                                 , ADDR_NO
+                                , DELI_PHONENUMBER
                                 )
-        VALUES (#{delivery.memo}, #{delivery.orderNo}, #{delivery.addrNo})
+        VALUES (#{delivery.memo}, #{delivery.orderNo}, #{delivery.addrNo}, #{delivery.deliPhoneNumber})
     </insert>
 </mapper>

@@ -33,15 +33,16 @@
     </insert>
 
     <insert id="insertAddr">
-        INSERT INTO ADDRESSES (ZIP_CODE, ADDR_1, ADDR_2, ISADDR_HOME, USER_NO, ADDR_NAME)
-        VALUES (#{addr.postcode}, #{addr.address}, #{addr.addressDetail}, #{addr.isAddrHome}, #{addr.userNo}, #{addr.name})
+        INSERT INTO ADDRESSES
+            (ZIP_CODE, ADDR_1, ADDR_2, ISADDR_HOME, USER_NO, ADDR_NAME)
+        VALUES
+            (#{addr.postcode}, #{addr.address}, #{addr.addressDetail}, #{addr.isAddrHome}, #{addr.userNo}, #{addr.name})
 
         <!-- 자동 생성된 ADDR_NO 반환 -->
         <selectKey resultType="int" keyProperty="addr.no" keyColumn="ADDR_NO" order="AFTER">
             SELECT LAST_INSERT_ID()
         </selectKey>
     </insert>
-
 
     <!-- 사용자 역할 부여: 사용자와 역할을 USER_GRANTED_ROLES 테이블에 연결 -->
     <insert id="insertUserRole">
@@ -63,6 +64,9 @@
         INSERT INTO ADDRESSES (ZIP_CODE, ADDR_1, ADDR_2, ADDR_NAME, USER_NO)
         VALUES
             (#{addr.postcode}, #{addr.address}, #{addr.addressDetail}, #{addr.name}, #{addr.userNo})
+        <selectKey resultType="int" keyProperty="addr.no" keyColumn="ADDR_NO" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
     </insert>
 
     <!-- 사용자 번호로 역할 정보 조회: 특정 사용자가 가진 역할을 조회 -->
@@ -213,21 +217,24 @@
     <update id="updateUser" parameterType="store.seub2hu2.user.vo.User">
         UPDATE
             USERS
-        SET USER_NAME     = #{user.name},
-            PASSWORD      = #{user.password},
+        SET
+            USER_NAME = #{user.name},
+            PASSWORD = #{user.password},
             USER_NICKNAME = #{user.nickname},
-            USER_TEL      = #{user.tel},
-            USER_EMAIL    = #{user.email}
-        WHERE USER_NO = #{user.no}
+            USER_TEL = #{user.tel},
+            USER_EMAIL = #{user.email}
+        WHERE
+            USER_NO = #{user.no}
     </update>
     <!-- 권한번호로 사용자 조회하기 -->
     <select id="getUsersByRoleNo" resultType="store.seub2hu2.user.vo.User">
-        SELECT R.USER_NO   as no
-             , U.USER_NAME as name
-             , U.USER_ID   as id
+        SELECT R.USER_NO as no
+            , U.USER_NAME as name
+            , U.USER_ID as id
         FROM USER_GRANTED_ROLES R
-                 INNER JOIN USERS U
-                            ON R.USER_NO = U.USER_NO
-        WHERE R.ROLE_NO = #{roleNo}
+            INNER JOIN USERS U
+        ON R.USER_NO = U.USER_NO
+        WHERE
+            R.ROLE_NO = #{roleNo}
     </select>
 </mapper>
