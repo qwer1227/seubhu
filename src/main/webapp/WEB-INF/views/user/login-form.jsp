@@ -7,9 +7,11 @@
         a:link {
             text-decoration: none;
         }
+
         a:active {
             text-decoration: none;
         }
+
         .btn-social {
             width: 100%;
             font-weight: bold;
@@ -18,10 +20,15 @@
             justify-content: center;
             margin-bottom: 10px;
         }
+
         .btn-social img {
             width: 100%;
         }
-        .login-form { max-width: 400px; margin: auto; }
+
+        .login-form {
+            max-width: 400px;
+            margin: auto;
+        }
     </style>
     <%@include file="/WEB-INF/views/common/common.jsp" %>
     <title>로그인 폼</title>
@@ -40,7 +47,7 @@
         <div class="border p-2 bg-dark text-white fw-bold mb-3">로그인</div>
 
         <!-- 로그인 폼 -->
-        <form method="post" action="login">
+        <form name="loginForm" method="post" action="login" onsubmit="return validateForm()">
             <div class="mb-3">
                 <input type="text" class="form-control" placeholder="아이디" name="id">
             </div>
@@ -88,5 +95,27 @@
     <%@include file="/WEB-INF/views/common/footer.jsp" %>
 </footer>
 
-    </body>
+<!-- 유효성 검사 스크립트 추가 -->
+<script>
+    function validateForm() {
+        var id = document.forms["loginForm"]["id"].value;
+        var password = document.forms["loginForm"]["password"].value;
+
+        // 아이디 유효성 검사
+        if (id === "") {
+            alert("아이디를 입력해 주세요.");
+            return false;
+        }
+
+        // 비밀번호 유효성 검사
+        if (password === "") {
+            alert("비밀번호를 입력해 주세요.");
+            return false;
+        }
+
+        return true;  // 모든 검사를 통과하면 폼 제출
+    }
+</script>
+
+</body>
 </html>

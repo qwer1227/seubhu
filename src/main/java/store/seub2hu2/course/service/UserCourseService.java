@@ -12,6 +12,7 @@ import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.util.ListDto;
 import store.seub2hu2.util.Pagination;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -215,19 +216,23 @@ public class UserCourseService {
         return dto;
     }
 
-    /**
-     * 코스에 해당하는 로그인한 사용자의 완주 기록을 시간이 낮은 순으로 가져온다.
-     * @param condition 코스 번호, 사용자 번호
-     * @return 완주 기록 목록
-     */
-    public List<Records> getMyRecords(Map<String, Object> condition, @AuthenticationPrincipal LoginUser loginUser) {
-        // 1. 사용자 번호를 Map 객체에 저장한다.
-        condition.put("userNo", loginUser.getNo());
+    public ListDto<Records> getMyRecords(Map<String, Object> condition) {
+        // 코스에 해당하는 나의 전체 완주 기록의 갯수를 가져온다.
+        int totalRows = userCourseMapper.getTotalRows(condition);
 
-        // 2. 나의 완주 기록 목록을 가져온다.
-        List<Records> records = userCourseMapper.getRecords(condition);
+        // 페이징 처리 정보를 가져오고, Pagination 객체에 저장한다.
+        int page = (Integer) condition.get("page");
+        Pagination pagination = new Pagination(page, totalRows, 5);
 
-        // 3. 나의 완주 기록 목록을 반환한다.
-        return records;
+        // 데이터 검색 범위를 조회해서 Map 객체에 저장한다.
+        condition.put("myBegin", pagination.getBegin());
+        condition.put("myEnd", pagination.getEnd());
+
+        // 조회 범위 내에서 나의 완주 기록 목록만 가져온다.
+        List<Records> records = userCourseMapper.getMyRecords(condition);
+
+        // ListDto 객체에 화면에 표시할 데이터(완주 기록 목록, 페이징 처리 정보)를 담고, 반환한다.
+        ListDto<Records> dto = new ListDto<>(records, pagination);
+        return dto;
     }
 }

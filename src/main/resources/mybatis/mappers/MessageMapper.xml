@@ -15,7 +15,19 @@
         WHERE MESSAGE_NO = #{messageNo}
     </update>
 
+    <update id="updateMessageDeleted" parameterType="int">
+        UPDATE MESSAGES
+        SET MESSAGE_DELETE = 'Y', MESSAGE_UPDATED_DATE = NOW()
+        WHERE MESSAGE_NO = #{messageNo}
+    </update>
 
+
+    <update id="markMessageAsRead" parameterType="map">
+        UPDATE MESSAGE_RECEIVERS
+        SET MESSAGE_READ_DATE = NOW()
+        WHERE MESSAGE_NO = #{messageNo}
+          AND USER_NO = #{userNo}
+    </update>
 
 
     <!-- 조건에 맞는 메시지 수 조회 -->
@@ -57,16 +69,8 @@
         VALUES (#{messageNo}, #{userNo})
     </insert>
 
-    <update id="markMessageAsRead" parameterType="map">
-        UPDATE MESSAGE_RECEIVERS
-        SET MESSAGE_READ_DATE = NOW()
-        WHERE MESSAGE_NO = #{messageNo}
-          AND USER_NO = #{userNo}
-    </update>
-
-
     <!-- 받은 메시지 조회 -->
-    <select id="getReceivedMessages" parameterType="map" resultType="store.seub2hu2.message.dto.MessageReceived">
+    <select id="getReceivedMessages"  resultType="store.seub2hu2.message.dto.MessageReceived">
         SELECT m.MESSAGE_NO           AS messageNo,
                m.USER_NO              AS userNo,
                m.MESSAGE_TITLE        AS title,
@@ -79,7 +83,7 @@
         FROM MESSAGES m
                  JOIN MESSAGE_RECEIVERS r ON m.MESSAGE_NO = r.MESSAGE_NO
                  JOIN USERS u ON m.USER_NO = u.USER_NO -- 발신자 정보 조회
-        WHERE r.USER_NO = #{userNo}
+        WHERE r.USER_NO = #{condition.userNo}
           AND m.MESSAGE_DELETE = 'N'
         ORDER BY m.MESSAGE_CREATED_DATE DESC LIMIT 10
         OFFSET 0;
@@ -88,7 +92,7 @@
 
 
     <!-- 보낸 메시지 조회 -->
-        <select id="getSentMessages" parameterType="map" resultType="store.seub2hu2.message.dto.MessageReceived">
+        <select id="getSentMessages"  resultType="store.seub2hu2.message.dto.MessageReceived">
             SELECT MESSAGE_NO AS messageNo,
                    USER_NO AS userNo,
                    MESSAGE_TITLE AS title,
@@ -97,7 +101,7 @@
                    MESSAGE_UPDATED_DATE AS updatedDate,
                    MESSAGE_DELETE AS deleted
             FROM MESSAGES
-            WHERE USER_NO = #{userNo}
+            WHERE USER_NO = #{condition.userNo}
               AND MESSAGE_DELETE = 'N'
             ORDER BY MESSAGE_CREATED_DATE DESC
                 LIMIT 10 OFFSET 0;
