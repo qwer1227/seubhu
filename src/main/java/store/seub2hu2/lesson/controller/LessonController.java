@@ -50,7 +50,12 @@ public class LessonController {
     @GetMapping(value = {"/", "lessons", ""})
     public String lessonList() {
 
-        return "lesson/lesson";
+        return "lesson/lesson-home";
+    }
+
+    @GetMapping("/schedule")
+    public String home() {
+        return "lesson/lesson-schedule";
     }
 
     @GetMapping("/list")

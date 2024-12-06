@@ -75,6 +75,8 @@ public class LessonService {
     public void updateLesson(LessonUpdateDto dto) {
         lessonMapper.updateLesson(dto);
 
+        log.info("dto.getThumbnail(): {}" , dto.getThumbnail());
+
         lessonFileService.updateLessonImages(getMostLatelyLessonNo(), dto.getThumbnail(), dto.getMainImage());
     }
 
