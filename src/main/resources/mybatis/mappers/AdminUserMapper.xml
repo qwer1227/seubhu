@@ -65,7 +65,22 @@
     -->
     <select id="getSettleLists" resultType="store.seub2hu2.admin.dto.SettlementDto">
         select
-            *
+            *,
+        (
+        select SUM(P2.pay_price)
+        from PAYMENTS P2, USERS U2, LESSON_RESERVATIONS R2, LESSONS L2
+        where P2.user_id = U2.user_id
+        and P2.pay_id = R2.lesson_reservation_pay_id
+        and R2.lesson_no = L2.lesson_no
+        and P2.pay_type = '레슨'
+        and P2.PAY_STATUS = '결제확정'
+            <if test="condition.day != null">
+                and (
+                DATE_FORMAT(P2.pay_date, '%Y-%m-%d') = #{condition.day}
+                or DATE_FORMAT(P2.pay_date, '%Y-%m') = #{condition.day}
+                )
+            </if>
+        ) as totalPrice
         from
             (
             select
@@ -87,7 +102,7 @@
                  , U.user_name 	as name
                  , U.user_id	as id
                  , L.lesson_title    as title
-                 , P.pay_price	as totalPrice
+                 , P.pay_price	as price
                  , P.pay_date	as payDate
                  , P.pay_cancel_date as payCancelDate
                  , P.pay_method as payMethod
@@ -593,7 +608,7 @@
     -->
     <select id="getUsers" resultType="store.seub2hu2.user.vo.User">
         select
-            *
+            *,
         from (
             select
              user_no               as no

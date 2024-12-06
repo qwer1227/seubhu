@@ -17,11 +17,8 @@ import store.seub2hu2.lesson.dto.LessonUpdateDto;
 import store.seub2hu2.lesson.service.LessonFileService;
 import store.seub2hu2.lesson.service.LessonService;
 import store.seub2hu2.lesson.vo.Lesson;
-import store.seub2hu2.payment.vo.Payment;
 import store.seub2hu2.mypage.dto.AnswerDTO;
-import store.seub2hu2.mypage.dto.QnaCreateRequest;
 import store.seub2hu2.mypage.dto.QnaResponse;
-import store.seub2hu2.mypage.enums.QnaStatus;
 import store.seub2hu2.mypage.service.QnaService;
 import store.seub2hu2.product.dto.*;
 import store.seub2hu2.product.service.ProductService;
@@ -535,6 +532,8 @@ public class AdminController {
 
         List<Color> colorSize = adminService.getStockByColorNum(condition);
 
+        System.out.println("--------------------colorSize:" + colorSize);
+
         if (colorSize == null || colorSize.isEmpty()) {
             model.addAttribute("colorSize", null);
             model.addAttribute("sizeMessage", "사이즈 정보가 없습니다.");
@@ -646,10 +645,18 @@ public class AdminController {
         return "admin/productlist";
     }
 
-    @GetMapping("/delivery")
-    public String delivery(){
+    @GetMapping("/order")
+    public String order(){
 
-        return "admin/delivery";
+
+
+        return "admin/order";
+    }
+
+    @GetMapping("/chart")
+    public String chart() {
+
+        return "admin/chart";
     }
 
     @GetMapping("/settlement")
@@ -682,6 +689,13 @@ public class AdminController {
 
         ListDto<SettlementDto> dto = adminService.getSettleList(condition);
 
+        int totalPriceSum = dto.getData().stream()
+                .mapToInt(SettlementDto::getTotalPrice)
+                .distinct()   // 중복된 값 제거 (한 번만 합산)
+                .limit(1)     // 첫 번째 값만 선택
+                .sum();
+
+        model.addAttribute("totalPriceSum", totalPriceSum);
         model.addAttribute("dto", dto.getData());
         model.addAttribute("paging", dto.getPaging());
 
