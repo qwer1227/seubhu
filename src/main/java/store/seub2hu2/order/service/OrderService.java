@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import store.seub2hu2.cart.dto.CartItemDto;
 import store.seub2hu2.delivery.vo.Delivery;
 import store.seub2hu2.mypage.dto.OrderResponse;
+import store.seub2hu2.mypage.dto.OrdersDTO;
 import store.seub2hu2.mypage.dto.ResponseDTO;
 import store.seub2hu2.order.dto.OrderForm;
 import store.seub2hu2.order.mapper.OrderMapper;
@@ -56,5 +57,13 @@ public class OrderService {
     public ResponseDTO getOrderDetails(int orderNo){
         System.out.println("테스트"+orderMapper.getOrderDetails(orderNo));
         return orderMapper.getOrderDetails(orderNo);
+    }
+
+    public int updateOrderPayNo(int orderNo, int payNo){
+        OrdersDTO ordersDTO = new OrdersDTO();
+        ordersDTO.setOrderNo(orderNo);
+        ordersDTO.setPayNo(payNo);
+
+        return orderMapper.updateOrder(ordersDTO);
     }
 }

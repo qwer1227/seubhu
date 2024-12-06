@@ -50,6 +50,16 @@
     </insert>
 
     <!--
+        int updateOrder(@Param("order") OrdersDTO order);
+    -->
+    <update id="updateOrder">
+        UPDATE ORDERS
+        SET
+            PAY_NO = #{order.payNo}
+        WHERE ORDER_NO = #{order.orderNo}
+    </update>
+
+    <!--
         List<CartItemDto> getOrderItemBySizeNo(@Param("sizeNoList") List<Integer> sizeNoList);
     -->
     <select id="getOrderItemBySizeNo" resultType="store.seub2hu2.cart.dto.CartItemDto">
@@ -76,12 +86,14 @@
     </select>
 
     <resultMap id="responseDTOResultMap" type="store.seub2hu2.mypage.dto.ResponseDTO">
-
+        <id property="no" column="pay_no" />
         <!-- 먼저 association 태그로 객체 관계를 매핑 -->
         <association property="payments" resultMap="paymentsResultMap"/>
         <association property="productImg" resultMap="productImgResultMap"/>
         <association property="orders" resultMap="ordersResultMap"/>
         <association property="product" resultMap="productResultMap"/>
+        <association property="addrDto" resultMap="addrResultMap"/>
+        <association property="deliveryDto" resultMap="deliveryResultMap"/>
 
         <!-- 여러 상품 정보를 리스트로 매핑 -->
         <collection property="products" ofType="store.seub2hu2.mypage.dto.ProductDTO">
@@ -96,7 +108,7 @@
     </resultMap>
 
     <resultMap id="paymentsResultMap" type="store.seub2hu2.mypage.dto.PaymentsDTO">
-        <result property="payNo" column="pay_no"/>
+        <id property="payNo" column="pay_no"/>
         <result property="payId" column="pay_id"/>
         <result property="payMethod" column="pay_method"/>
         <result property="payAmount" column="pay_amount"/>
@@ -111,7 +123,8 @@
     </resultMap>
 
     <resultMap id="ordersResultMap" type="store.seub2hu2.mypage.dto.OrdersDTO">
-        <result property="orderNo" column="order_no"/>
+        <id property="orderNo" column="order_no"/>
+        <result property="payNo" column="pay_no"/>
         <result property="orderDate" column="order_date"/>
         <result property="orderStatus" column="order_status"/>
         <result property="orderPrice" column="order_price"/>
@@ -132,6 +145,23 @@
         <result property="prodImgUrl" column="prod_img_thum"/>
         <result property="orderQty" column="order_prod_amount"/>
     </resultMap>
+    
+    <resultMap id="addrResultMap" type="store.seub2hu2.mypage.dto.AddrDto">
+        <result property="addrNo" column="ADDR_NO"/>
+        <result property="addrName" column="ADDR_NAME"/>
+        <result property="postcode" column="ZIP_CODE"/>
+        <result property="addr" column="ADDR_1"/>
+        <result property="addrDetail" column="ADDR_2"/>
+    </resultMap>
+
+    <resultMap id="deliveryResultMap" type="store.seub2hu2.mypage.dto.DeliveryDto">
+        <result property="deliNo" column="DELI_NO"/>
+        <result property="deliCom" column="DELI_COM"/>
+        <result property="deliStatus" column="DELI_STATUS"/>
+        <result property="deliMemo" column="DELI_MEMO"/>
+        <result property="deliPhoneNumber" column="DELI_PHONENUMBER"/>
+    </resultMap>
+
     <!-- ResponseDTO getOrderDetails(@Param("orderNo") int orderNo); -->
 
     <select id="getOrderDetails" resultMap="responseDTOResultMap">
@@ -159,7 +189,16 @@
         pi.prod_img_thum,
         u.user_name,
         u.user_tel,
-        d.addr_no
+        d.addr_no,
+        d.deli_no,
+        d.deli_com,
+        d.deli_status,
+        d.deli_memo,
+        d.deli_phonenumber,
+        a.addr_name,
+        a.zip_code,
+        a.addr_1,
+        a.addr_2
         FROM
         PAYMENTS p
         JOIN ORDERS o ON p.pay_no = o.pay_no                <!-- 결제와 주문 연결 -->
@@ -170,6 +209,7 @@
         LEFT JOIN PROD_IMGS pi_img ON pc.color_no = pi_img.color_no  <!-- 상품 색상과 상품 이미지 연결 -->
         LEFT JOIN USERS u ON o.user_no = u.user_no
         LEFT JOIN DELIVERIES d ON o.order_no = d.order_no
+        LEFT JOIN ADDRESSES a ON a.addr_no = d.addr_no
         WHERE
         o.order_no = #{orderNo}
     </select>
