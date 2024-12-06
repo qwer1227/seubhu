@@ -84,11 +84,16 @@
                         <c:forEach var="courseToChallenge" items="${coursesToChallenge}" varStatus="loop">
                             <tr>
                                 <td><span>${pagination.begin + loop.index}</span></td>
-                                <td><span>${courseToChallenge.name}</span></td>
+                                <td><a href="detail?no=${courseToChallenge.no}"><span>${courseToChallenge.name}</span></a></td>
                                 <td><span>${courseToChallenge.region.si} ${courseToChallenge.region.gu} ${courseToChallenge.region.dong}</span></td>
                                 <td><span>${courseToChallenge.distance}KM</span></td>
                                 <td><span>${courseToChallenge.level}단계</span></td>
-                                <td><span><a href="cancelChallenge?courseNo=${courseToChallenge.no}&page=${pagination.page}" class="btn btn-danger">등록 취소</a></span></td>
+                                <td>
+                                    <span>
+                                        <a href="cancelChallenge?courseNo=${courseToChallenge.no}&page=${pagination.page}"
+                                         class="btn btn-danger" onclick="cancelChallenge(event)">삭제</a>
+                                    </span>
+                                </td>
                             </tr>
                         </c:forEach>
                         </tbody>
@@ -191,6 +196,15 @@
         form.submit();
     }
 
+    // 등록 취소 버튼을 클릭하면, 확인창이 표시된다.
+    function cancelChallenge(event) {
+        if (confirm("도전할 코스 목록에서 제외하시겠습니까?")) {
+            alert("도전할 코스 목록에서 제외되었습니다!");
+        } else {
+            event.preventDefault();
+        }
+    }
+
     // 완주 기록 보기 Modal창을 가져온다.
     let myModal = new bootstrap.Modal('#modal-finish-records');
 
@@ -222,7 +236,7 @@
             rows += `
                 <tr>
                     <th><span>\${num}</span></th>
-                    <td><span>\${record.course.name}</span></td>
+                    <td><a href="detail?no=\${record.course.no}"><span>\${record.course.name}</span></a></td>
                     <td><span>\${record.course.distance}KM</span></td>
                     <td><span>\${record.course.level}단계</span></td>
                     <td><span>\${record.finishedDate}</span></td>
