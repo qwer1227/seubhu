@@ -176,6 +176,17 @@ public class CourseController {
         return "redirect:detail?no=" + courseNo;
     }
 
+    @GetMapping("/cancelChallenge")
+    public String cancelChallenge(@RequestParam(name = "courseNo") int courseNo,
+                                  @RequestParam(name = "page") int page,
+                                  @AuthenticationPrincipal LoginUser loginUser) {
+        // 1. 사용자가 코스 도전 등록을 취소한다.
+        userCourseService.changeChallenge(courseNo, loginUser.getNo());
+
+        // 2. list.jsp를 재요청한다.
+        return "redirect:my-course?page=" + page;
+    }
+
     @GetMapping("/runner-ranking")
     public String runnerRanking(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
                                 @RequestParam(name = "courseNo", required = false) Integer courseNo,
@@ -199,7 +210,8 @@ public class CourseController {
 
             // 6. 해당 코스의 로그인한 사용자의 완주 기록을 가져온다.
             if (loginUser != null) {
-                List<Records> records = userCourseService.getMyRecords(condition, loginUser);
+                condition.put("userNo", loginUser.getNo());
+                List<Records> records = userCourseService.getMyRecords(condition);
                 model.addAttribute("myRecord", records);
             }
 
@@ -210,15 +222,5 @@ public class CourseController {
 
         // 8. 뷰이름을 반환한다.
         return "course/runner-ranking";
-    }
-
-    @GetMapping("/cancelChallenge")
-    public String cancelChallenge(@RequestParam(name = "courseNo") int courseNo,
-                                  @AuthenticationPrincipal LoginUser loginUser) {
-        // 1. 사용자가 코스 도전 등록을 취소한다.
-        userCourseService.changeChallenge(courseNo, loginUser.getNo());
-
-        // 2. list.jsp를 재요청한다.
-        return "redirect:my-course";
     }
 }

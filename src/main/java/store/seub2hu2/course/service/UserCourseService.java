@@ -220,14 +220,11 @@ public class UserCourseService {
      * @param condition 코스 번호, 사용자 번호
      * @return 완주 기록 목록
      */
-    public List<Records> getMyRecords(Map<String, Object> condition, @AuthenticationPrincipal LoginUser loginUser) {
-        // 1. 사용자 번호를 Map 객체에 저장한다.
-        condition.put("userNo", loginUser.getNo());
-
-        // 2. 나의 완주 기록 목록을 가져온다.
+    public List<Records> getMyRecords(Map<String, Object> condition) {
+        // 1. 나의 완주 기록 목록을 가져온다.
         List<Records> records = userCourseMapper.getRecords(condition);
 
-        // 3. 나의 완주 기록 목록을 반환한다.
+        // 2. 나의 완주 기록 목록을 반환한다.
         return records;
     }
 }

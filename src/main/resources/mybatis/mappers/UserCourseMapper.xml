@@ -33,8 +33,14 @@
     <select id="getRecords" resultType="store.seub2hu2.course.vo.Records">
         select *
         from (
-                select dense_rank() over (order by r.finished_time) as no
-                        , row_number() over (order by r.finished_time) as rn
+                select
+                        <if test="condition.courseNo != null">
+                            dense_rank() over (order by r.finished_time) as no
+                            , row_number() over (order by r.finished_time) as rn
+                        </if>
+                        <if test="condition.courseNo == null">
+                            row_number() over (order by r.finished_no desc) as rn
+                        </if>
                         , c.course_no
                         , c.course_name as "course.name"
                         , c.course_distance as "course.distance"

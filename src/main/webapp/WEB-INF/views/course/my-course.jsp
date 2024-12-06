@@ -83,12 +83,12 @@
                         <tbody>
                         <c:forEach var="courseToChallenge" items="${coursesToChallenge}" varStatus="loop">
                             <tr>
-                                <td><span>${loop.count}</span></td>
+                                <td><span>${pagination.begin + loop.index}</span></td>
                                 <td><span>${courseToChallenge.name}</span></td>
                                 <td><span>${courseToChallenge.region.si} ${courseToChallenge.region.gu} ${courseToChallenge.region.dong}</span></td>
                                 <td><span>${courseToChallenge.distance}KM</span></td>
                                 <td><span>${courseToChallenge.level}단계</span></td>
-                                <td><span><a href="cancelChallenge?courseNo=${courseToChallenge.no}" class="btn btn-danger">등록 취소</a></span></td>
+                                <td><span><a href="cancelChallenge?courseNo=${courseToChallenge.no}&page=${pagination.page}" class="btn btn-danger">등록 취소</a></span></td>
                             </tr>
                         </c:forEach>
                         </tbody>
