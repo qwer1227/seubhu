@@ -5,9 +5,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import store.seub2hu2.community.view.FileDownloadView;
 import store.seub2hu2.message.dto.MessageForm;
 import store.seub2hu2.message.dto.MessageReceived;
@@ -16,9 +19,6 @@ import store.seub2hu2.message.vo.Message;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.util.ListDto;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Controller
 @RequestMapping("/message")
 public class MessageController {
@@ -26,14 +26,11 @@ public class MessageController {
     @Value("C:/Users/jhta/Desktop/MessageFiles")
     private String saveDirectory;
 
-    private final MessageService messageService;
-    private final FileDownloadView fileDownloadView;
+    @Autowired
+    private MessageService messageService;
 
     @Autowired
-    public MessageController(MessageService messageService, FileDownloadView fileDownloadView) {
-        this.messageService = messageService;
-        this.fileDownloadView = fileDownloadView;
-    }
+    private FileDownloadView fileDownloadView;
 
     // 받은 메시지 목록 조회
     @GetMapping("/list")
@@ -47,17 +44,10 @@ public class MessageController {
     ) {
         int userNo = loginUser.getNo();  // 로그인된 사용자 번호
 
-        // 검색 조건 및 페이지 설정
-        Map<String, Object> condition = buildCondition(page, rows, opt, keyword, userNo);
-
         // 받은 메시지 목록 조회
-        ListDto<MessageReceived> dto = messageService.getReceivedMessages(condition, opt, keyword);
-
-        // unread message count 가져오기
-        int unreadCount = messageService.getUnreadMessageCount(userNo);
+        ListDto<MessageReceived> dto = messageService.getReceivedMessages(page, rows, opt, keyword, userNo);
 
         // 모델에 데이터 추가
-        model.addAttribute("unreadCount", unreadCount);
         model.addAttribute("messages", dto.getData());
         model.addAttribute("paging", dto.getPaging());
 
@@ -76,11 +66,8 @@ public class MessageController {
     ) {
         int userNo = loginUser.getNo();  // 로그인된 사용자 번호
 
-        // 검색 조건 및 페이지 설정
-        Map<String, Object> condition = buildCondition(page, rows, opt, keyword, userNo);
-
         // 보낸 메시지 목록 조회
-        ListDto<MessageReceived> dto = messageService.getSentMessages(condition, opt, keyword);
+        ListDto<MessageReceived> dto = messageService.getSentMessages(page, rows, opt, keyword, userNo);
 
         // 모델에 데이터 추가
         model.addAttribute("messages", dto.getData());
@@ -88,20 +75,6 @@ public class MessageController {
 
         return "message/message-sent-list";
     }
-
-    // 공통 조건 설정 메소드
-    private Map<String, Object> buildCondition(int page, int rows, String opt, String keyword, int userNo) {
-        Map<String, Object> condition = new HashMap<>();
-        condition.put("page", page);
-        condition.put("rows", rows);
-        condition.put("userNo", userNo);
-        if (StringUtils.hasText(keyword)) {
-            condition.put("opt", opt);
-            condition.put("keyword", keyword);
-        }
-        return condition;
-    }
-
 
     // 메시지 상세 조회
     @GetMapping("/detail")
@@ -118,20 +91,44 @@ public class MessageController {
         return "message/message-detail";  // JSP 경로
     }
 
-    // 메시지 삭제
-    @GetMapping("/delete")
-    public String delete(@RequestParam("messageNo") int messageNo) {
-        messageService.deleteMessage(messageNo);
-        return "redirect:/message/list";  // 삭제 후 목록 페이지로 이동
+    // 쪽지 작성 폼 화면 반환
+    @GetMapping("/add")
+    public String showAddMessageForm(Model model, @AuthenticationPrincipal LoginUser loginUser) {
+        // 작성자 닉네임 설정
+        String senderNickname = loginUser.getNickname(); // LoginUser 객체에서 닉네임 가져오기
+
+        // Model에 데이터 추가
+        model.addAttribute("sender", senderNickname); // JSP에서 ${sender}로 사용 가능
+
+        // 초기 MessageForm 객체 추가 (필요 시)
+        model.addAttribute("messageForm", new MessageForm());
+
+        return "message/message-send-form"; // JSP 파일 경로
     }
 
     //메세지 보내기
     @PostMapping("/add")
     public String addMessage(MessageForm form, @AuthenticationPrincipal LoginUser loginUser) {
         messageService.sendMessage(form, loginUser.getNo());
-
-        return "redirect:sent";
+        return "redirect:/message/list"; // 메시지 보내기 후 받은 메시지 목록으로 리다이렉트
     }
+
+
+    // 메시지 삭제
+    @PostMapping("/delete")
+    public String deleteMessage(
+            @RequestParam("messageNo") int messageNo,
+            @AuthenticationPrincipal LoginUser loginUser,
+            RedirectAttributes redirectAttributes) {
+        try {
+            messageService.deleteMessages(messageNo);
+            redirectAttributes.addFlashAttribute("message", "메시지가 삭제되었습니다.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "메시지 삭제에 실패했습니다.");
+        }
+        return "redirect:/message/list";  // 메시지 목록 페이지로 리다이렉트
+    }
+
 
     // 파일 다운로드 요청
     @GetMapping("/filedown")
