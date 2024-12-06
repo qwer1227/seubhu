@@ -94,6 +94,8 @@
         var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
             eventLimit: true,
+            slotEventOverlap: false,
+            slotDuration: '00:10:00',
             headerToolbar: {
                 left: 'prev,next,today',
                 center: 'title',
