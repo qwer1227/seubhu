@@ -138,6 +138,14 @@ public class CrewService {
         return dto;
     }
 
+    // 가입 가능한 조회수 높은 크루 목록 반환
+    public ListDto<Crew> getCrewsTop(Map<String, Object> condition) {
+        List<Crew> crews = crewMapper.getCrewsTopFive(condition);
+        ListDto<Crew> dto = new ListDto<>(crews);
+
+        return dto;
+    }
+
     public Crew getCrewDetail(int crewNo){
         Crew crew = crewMapper.getCrewDetailByNo(crewNo);
         UploadFile uploadThumbnail = uploadMapper.getThumbnailByCrewNo(crewNo);

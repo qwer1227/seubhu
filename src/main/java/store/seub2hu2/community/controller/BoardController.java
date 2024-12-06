@@ -19,12 +19,10 @@ import org.springframework.web.servlet.ModelAndView;
 import store.seub2hu2.community.dto.BoardForm;
 import store.seub2hu2.community.dto.ReplyForm;
 import store.seub2hu2.community.dto.ReportForm;
-import store.seub2hu2.community.service.BoardService;
-import store.seub2hu2.community.service.BoardReplyService;
-import store.seub2hu2.community.service.ReportService;
-import store.seub2hu2.community.service.ScrapService;
+import store.seub2hu2.community.service.*;
 import store.seub2hu2.community.view.FileDownloadView;
 import store.seub2hu2.community.vo.Board;
+import store.seub2hu2.community.vo.Crew;
 import store.seub2hu2.community.vo.Notice;
 import store.seub2hu2.community.vo.Reply;
 import store.seub2hu2.security.user.LoginUser;
@@ -37,7 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller("communityController")
-@RequestMapping("/community")
+@RequestMapping("/community/board")
 public class BoardController {
 
     @Value("${upload.directory.community}")
@@ -58,10 +56,8 @@ public class BoardController {
     @Autowired
     public ReportService reportService;
 
-    @GetMapping("write")
-    public String write(){
-        return "community/write";
-    }
+    @Autowired
+    private CrewService crewService;
 
     @GetMapping("/main")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page
@@ -90,12 +86,14 @@ public class BoardController {
 
         ListDto<Board> bDto = boardService.getBoards(condition);
         ListDto<Notice> nDto = boardService.getNoticesTop(condition);
+        ListDto<Crew> cDto = crewService.getCrewsTop(condition);
 
         model.addAttribute("boards", bDto.getData());
         model.addAttribute("paging", bDto.getPaging());
         model.addAttribute("notices", nDto.getData());
+        model.addAttribute("crews", cDto.getData());
 
-        return "community/main";
+        return "community/board/main";
     }
 
 
@@ -125,7 +123,7 @@ public class BoardController {
         model.addAttribute("replies", replyList);
         model.addAttribute("replyCnt", replyCnt);
 
-        return "community/detail";
+        return "community/board/detail";
     }
 
     @GetMapping("/hit")
@@ -136,7 +134,7 @@ public class BoardController {
 
     @GetMapping("/form")
     public String form() {
-        return "community/form";
+        return "community/board/form";
     }
 
     @PostMapping("/register")
@@ -154,7 +152,7 @@ public class BoardController {
         Board board = boardService.getBoardDetail(boardNo);
         model.addAttribute("board", board);
 
-        return "community/modify";
+        return "community/board/modify";
     }
 
     @PostMapping("/modify")
