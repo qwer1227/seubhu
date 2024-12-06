@@ -44,9 +44,6 @@
             text-align: left;
             white-space: nowrap;
         }
-
-
-
     </style>
 </head>
 <body>

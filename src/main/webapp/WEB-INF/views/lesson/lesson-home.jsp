@@ -33,13 +33,6 @@
         <h1>습습후후 러닝 클래스</h1>
         <p class="lead">호흡, 자세, 운동 - 더 나은 달리기를 위한 완벽 가이드!</p>
     </header>
-    <div class="bg-success text-white text-center py-2 mt-3 mb-3">
-        <a href="/lesson/schedule"
-           class="btn btn-light fw-bold py-3"
-           style="width: 100%; border-radius: 0;">
-            수강 일정 보기
-        </a>
-    </div>
     <section class="image-container">
         <div class="container">
             <h2 class="text-center text-success mb-4">우리의 러닝 클래스</h2>
@@ -97,13 +90,6 @@
             </div>
         </div>
     </section>
-    <div class="bg-success text-white text-center py-2 mt-3">
-        <a href="/lesson/schedule"
-           class="btn btn-light fw-bold py-3"
-           style="width: 100%; border-radius: 0;">
-            수강 일정 보기
-        </a>
-    </div>
 
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
