@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller("communityController")
-@RequestMapping("/community")
+@RequestMapping("/community/board")
 public class BoardController {
 
     @Value("${upload.directory.community}")
@@ -58,11 +58,6 @@ public class BoardController {
 
     @Autowired
     private CrewService crewService;
-
-    @GetMapping("write")
-    public String write(){
-        return "community/write";
-    }
 
     @GetMapping("/main")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page
@@ -98,7 +93,7 @@ public class BoardController {
         model.addAttribute("notices", nDto.getData());
         model.addAttribute("crews", cDto.getData());
 
-        return "community/main";
+        return "community/board/main";
     }
 
 
@@ -128,7 +123,7 @@ public class BoardController {
         model.addAttribute("replies", replyList);
         model.addAttribute("replyCnt", replyCnt);
 
-        return "community/detail";
+        return "community/board/detail";
     }
 
     @GetMapping("/hit")
@@ -139,7 +134,7 @@ public class BoardController {
 
     @GetMapping("/form")
     public String form() {
-        return "community/form";
+        return "community/board/form";
     }
 
     @PostMapping("/register")
@@ -157,7 +152,7 @@ public class BoardController {
         Board board = boardService.getBoardDetail(boardNo);
         model.addAttribute("board", board);
 
-        return "community/modify";
+        return "community/board/modify";
     }
 
     @PostMapping("/modify")
