@@ -626,4 +626,11 @@ public class MyPageController {
         return "mypage/workoutdiary";
     }
 
+    // 참여크루 화면
+    @GetMapping("/participatingcrew")
+    public String crew(){
+
+        return "mypage/participatingcrew";
+    }
+
 }

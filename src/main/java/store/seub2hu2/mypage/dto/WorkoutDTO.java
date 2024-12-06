@@ -11,8 +11,8 @@ import java.util.Date;
 @Setter
 public class WorkoutDTO {
     private int workNo;
-    private String workTitle;
-    private String workContent;
-    private Date workDate;
+    private String title;
+    private String description;
+    private Date startDate;
     private int userNo;
 }
