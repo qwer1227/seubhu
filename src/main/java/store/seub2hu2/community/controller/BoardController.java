@@ -19,12 +19,10 @@ import org.springframework.web.servlet.ModelAndView;
 import store.seub2hu2.community.dto.BoardForm;
 import store.seub2hu2.community.dto.ReplyForm;
 import store.seub2hu2.community.dto.ReportForm;
-import store.seub2hu2.community.service.BoardService;
-import store.seub2hu2.community.service.BoardReplyService;
-import store.seub2hu2.community.service.ReportService;
-import store.seub2hu2.community.service.ScrapService;
+import store.seub2hu2.community.service.*;
 import store.seub2hu2.community.view.FileDownloadView;
 import store.seub2hu2.community.vo.Board;
+import store.seub2hu2.community.vo.Crew;
 import store.seub2hu2.community.vo.Notice;
 import store.seub2hu2.community.vo.Reply;
 import store.seub2hu2.security.user.LoginUser;
@@ -58,6 +56,9 @@ public class BoardController {
     @Autowired
     public ReportService reportService;
 
+    @Autowired
+    private CrewService crewService;
+
     @GetMapping("write")
     public String write(){
         return "community/write";
@@ -90,10 +91,12 @@ public class BoardController {
 
         ListDto<Board> bDto = boardService.getBoards(condition);
         ListDto<Notice> nDto = boardService.getNoticesTop(condition);
+        ListDto<Crew> cDto = crewService.getCrewsTop(condition);
 
         model.addAttribute("boards", bDto.getData());
         model.addAttribute("paging", bDto.getPaging());
         model.addAttribute("notices", nDto.getData());
+        model.addAttribute("crews", cDto.getData());
 
         return "community/main";
     }

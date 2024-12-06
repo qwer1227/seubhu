@@ -21,19 +21,20 @@
   </div>
   
   <div class="row">
-    <div class="col-6 border" style="margin: 15px; background-color: #f2f2f2">
+    <div class="col-4 border" style="margin: 15px; background-color: #f2f2f2">
       <table>
         <tbody>
         <tr>
           <td>
-            <div style="text-align: start" class="mt-2 mb-2">
+            <div style="text-align: start" class="pt-2 pb-2">
               <a href="/community/notice/main" style="text-decoration-line: none; color: black; font-weight: bold">
                 [ 공지사항 ]
               </a>
             </div>
             <ul style="text-align: start">
               <c:forEach var="notice" items="${notices}">
-                <li><a href="/community/notice/hit?no=${notice.no}" style="text-decoration-line: none">${notice.title}</a></li>
+                <li><a href="/community/notice/hit?no=${notice.no}"
+                       style="text-decoration-line: none">${notice.title}</a></li>
               </c:forEach>
             </ul>
           </td>
@@ -42,6 +43,33 @@
       </table>
     </div>
     
+    <div class="col-4" style="margin: 15px; border: 1px solid black">
+      <table>
+        <tbody>
+        <tr>
+          <td>
+            <div style="text-align: start" class="pt-2 pb-2">
+              <a href="/community/crew/main" style="text-decoration-line: none; color: black; font-weight: bold">
+                [ 크루모임 ]
+              </a>
+            </div>
+            <ul style="text-align: start">
+              <c:forEach var="crew" items="${crews}">
+                <li>
+                  <a href="/community/crew/hit?no=${crew.no}" style="text-decoration-line: none">
+                      ${crew.title} (${crew.memberCnt}/5)
+                    <c:if test="${crew.memberCnt == 4}">
+                    
+                    </c:if>
+                  </a>
+                </li>
+              </c:forEach>
+            </ul>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
     <div class="col" style="margin: 15px; border: 1px solid black">
       광고 올 자리
     </div>
