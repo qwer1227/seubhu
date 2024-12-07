@@ -2,17 +2,17 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <%@include file="/WEB-INF/views/common/common.jsp" %>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404 - 잘못된 요청</title>
+    <title>500 - 내부 서버 오류</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-<%@include file="/WEB-INF/views/common/nav.jsp" %>
 <div class="container-xxl text-center align-content-center" id="wrap">
     <div class="row">
-        <h1 class="text-primary">404</h1>
-        <p class="">요청하신 페이지를 찾을 수 없습니다.</p>
-        <p class="text-muted">입력한 주소를 확인하시거나, 아래 버튼을 클릭해 홈으로 돌아가주세요.</p>
+        <h1 class="text-primary">500</h1>
+        <p class="">서버에 문제가 발생했습니다.</p>
+        <p class="text-muted">잠시 후 다시 시도하시거나, 문제가 지속될 경우 관리자에게 문의하세요.</p>
     </div>
     <div class="row justify-content-center">
         <div class="col">
@@ -20,6 +20,5 @@
         </div>
     </div>
 </div>
-<%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
 </html>
