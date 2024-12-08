@@ -12,6 +12,7 @@ import store.seub2hu2.lesson.enums.ReservationStatus;
 import store.seub2hu2.lesson.service.LessonFileService;
 import store.seub2hu2.lesson.service.LessonService;
 import store.seub2hu2.lesson.vo.LessonReservation;
+import store.seub2hu2.mypage.dto.OrderResultDto;
 import store.seub2hu2.mypage.dto.PaymentsDTO;
 import store.seub2hu2.mypage.dto.ResponseDTO;
 import store.seub2hu2.order.mapper.OrderMapper;
@@ -116,6 +117,8 @@ public class PayController {
             // 결재정보를 저장한다.
             String orderStr = (String) param.get("orderNo");
             int orderNo = Integer.parseInt(orderStr);
+            String orderProdStr = (String) param.get("orderProdNo");
+            int orderProdNo = Integer.parseInt(orderProdStr);
             String userId = loginUser.getId();
 
 
@@ -197,9 +200,8 @@ public class PayController {
         }
 
         if (type.equals("상품")) {
-            System.out.println("------------------------- orderNo = " + orderNo);
-            //ResponseDTO responseDTO = orderService.getOrderDetails(orderNo);
-            //model.addAttribute("orderDetail", responseDTO);
+            OrderResultDto orderResultDto = orderService.getOrderResult(orderNo);
+            model.addAttribute("orderDetail", orderResultDto);
 
             return "mypage/order-pay-completed";
         }
