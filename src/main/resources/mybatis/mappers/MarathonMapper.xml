@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="store.seub2hu2.community.mapper.MarathonMapper">
+
+  <!-- void insertMarathon(@Param("marathon") Marathon marathon); -->
+  <insert id="insertMarathon">
+    insert into MARATHONS
+    (
+     marathon_title
+      , marathon_content
+      , marathon_thumbnail
+      , marathon_date
+      , apply_start_date
+      , apply_end_date
+      , marathon_url
+      , marathon_place
+    )
+    values (
+            #{marathon.title}
+            , #{marathon.content}
+            , #{marathon.thumbnail}
+            , #{marathon.marathonDate}
+            , #{marathon.startDate}
+            , #{marathon.endDate}
+            , #{marathon.url}
+            , #{marathon.place}
+           )
+    <selectKey resultType="int" keyProperty="marathon.no" keyColumn="marathon_no" order="AFTER">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+  </insert>
+
+  <!-- void insertMarathonOrgan(@Param("organ") MarathonOrgan organ); -->
+  <insert id="insertMarathonOrgan">
+    insert into ORGANS
+    (
+     marathon_no
+    , organ_name
+    , organ_role
+    )
+    values
+        (
+         #{organ.marathoNo}
+        , #{organ.organName}
+          <if test="marathon.organRole == 'host'">
+            , '주최'
+          </if>
+          <if test="marathon.organRole == 'organizer'">
+            , '주관'
+          </if>
+        )
+  </insert>
+
+  <!-- List<Marathon> getMarathons(@Param("condition") Map<String, Object> condition); -->
+  <select id="getMarathons" resultType="store.seub2hu2.community.vo.Crew">
+    select *
+    from
+      (
+        select row_number() over(order by marathon_created_date desc) rn
+        , marathon_no as no
+        , marathon_title as title
+        , marathon_date as marathonDate
+        , marathon_thumbnail as thumbnail
+        from MARATHONS
+        where is_deleted = 'N'
+  ) as marathon
+    where rn between #{condition.begin} and #{condition.end}
+    order by rn
+  </select>
+
+  <!-- List<Marathon> getMarathonTopFive(@Param("condition") Map<String, Object> condition); -->
+
+
+  <!-- int getTotalMarathons(@Param("condition") Map<String, Object> condition); -->
+  <select id="getTotalMarathons" resultType="int">
+    select count(*)
+    from MARATHONS
+    where is_deleted = 'N'
+  </select>
+
+  <!-- Marathon getMarathonDetailByNo(@Param("no") int marathonNo); -->
+
+
+</mapper>
