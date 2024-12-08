@@ -28,23 +28,26 @@
   
   <h2> 마라톤 정보 </h2>
   <div class="category-nav d-flex justify-content-center mb-4">
-    <a href="#">진행 중</a>
-    <a href="#">마감</a>
+    <a href="#">전체</a>
+    <a href="#">진행중</a>
+    <a href="#">종료</a>
   </div>
   
   <div class="row row-cols-1 row-cols-md-3 g-4">
     <!-- 카드 1 -->
+    <c:forEach var="marathon" items="${marathons}">
     <div class="col">
       <a href="detail" style="text-decoration-line: none">
       <div class="card">
-        <img src="image2.jpg" style="height: 200px" class="card-img-top" alt="마라톤 이미지">
+        <img src="${marathon.thumbnail}" style="height: 200px" class="card-img-top" alt="마라톤 이미지">
         <div class="card-body text-center">
-          <h5 class="card-title">마라톤</h5>
-          <p class="card-text">마라톤에 대한 정보와 공지사항을 확인할 수 있습니다.</p>
+          <h5 class="card-title">${marathon.title}</h5>
+          <p class="card-text">${marathon.date}</p>
         </div>
       </div>
       </a>
     </div>
+    </c:forEach>
   </div>
   
   <div class="row p-3 d-flex justify-content-left">
