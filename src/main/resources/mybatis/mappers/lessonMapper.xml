@@ -45,6 +45,12 @@
         <if test="subject != null and subject != '전체'">
             AND LESSON_SUBJECT = #{subject}
         </if>
+        <if test="param.includeCompleted">
+            AND (LESSON_STATUS = '모집중' OR LESSON_STATUS ='마감')
+        </if>
+        <if test="!param.includeCompleted">
+            AND LESSON_STATUS = '모집중'
+        </if>
     </select>
 
 
@@ -58,18 +64,19 @@
              , L.lesson_status       as status
              , L.lesson_created_date as createdDate
              , L.LESSON_START_DATE   as start
-             , L.LESSON_END_DATE     as end
+             , L.LESSON_END_DATE as end
              , L.PARTICIPANT         as participant
              , L.lesson_plan         as plan
              , L.LESSON_SUBJECT      as subject
              , L.LESSON_PLACE        as place
              , U.USER_NAME as 'lecturer.name'
         from LESSONS L
-                 INNER JOIN USERS U
-                            ON
-                                L.USER_ID = U.USER_ID
+            INNER JOIN USERS U
+        ON
+            L.USER_ID = U.USER_ID
         WHERE LESSON_NO = #{no}
-        FOR UPDATE
+            FOR
+        UPDATE
     </select>
 
     <!-- 레슨 추가하기 -->
@@ -112,21 +119,22 @@
     <!-- 레슨 수강생 수 수정 -->
     <update id="updateLessonParticipant">
         UPDATE LESSONS
-        SET PARTICIPANT    = #{dto.participant}
+        SET PARTICIPANT = #{dto.participant}
         WHERE LESSON_NO = #{dto.lessonNo}
     </update>
 
     <!-- 레슨 상태 변경 -->
     <update id="updateLessonStatus">
         UPDATE LESSONS
-        SET LESSON_STATUS   = #{dto.status}
+        SET LESSON_STATUS = #{dto.status}
         WHERE LESSON_NO = #{dto.lessonNo}
     </update>
 
     <update id="updatePastLessonStatus">
         UPDATE LESSONS
         SET LESSON_STATUS = #{dto.status}
-        WHERE LESSON_END_DATE &lt; NOW() AND LESSON_STATUS != #{dto.status}
+        WHERE LESSON_END_DATE &lt; NOW()
+          AND LESSON_STATUS != #{dto.status}
     </update>
 
     <!-- 레슨 삭제 -->

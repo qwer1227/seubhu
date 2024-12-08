@@ -28,7 +28,7 @@
                             <h5 class="modal-title" id="resultModalLabel">결과</h5>
                         </div>
                         <div class="modal-body">
-                            가입하신 아이디는 <b>${userId}</b>입니다.
+                            가입하신 아이디는 <b>${data.userId}</b>입니다.
                         </div>
                         <div class="modal-footer">
                             <a href="/user/find-id" class="btn btn-secondary">돌아가기</a>

@@ -30,4 +30,8 @@ public interface LessonReservationMapper {
 
     // 예약 상태 변경
     public void updateReservationStatus (@Param("paymentId") String paymentId,  @Param("status") String status);
+
+    // 지난 레슨 상태 변경
+    public void updatePastReservationStatus();
+
 }

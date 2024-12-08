@@ -88,6 +88,10 @@ public class CrewController {
     public String form() {
         return "community/crew/form";
     }
+    @GetMapping("/example")
+    public String ex() {
+        return "community/crew/example";
+    }
 
     @GetMapping("/detail")
     public String detail(@RequestParam("no") int crewNo

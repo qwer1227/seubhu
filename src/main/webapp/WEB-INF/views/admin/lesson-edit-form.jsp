@@ -81,7 +81,7 @@
                                         <label for="status">상태</label>
                                         <select name="status" class="form-control" id="status">
                                             <option ${lesson.status == '모집중' ? 'selected' : ''}>모집중</option>
-                                            <option ${lesson.status == '완료' ? 'selected' : ''}>완료</option>
+                                            <option ${lesson.status == '마감' ? 'selected' : ''}>마감</option>
                                             <option ${lesson.status == '취소' ? 'selected' : ''}>취소</option>
                                         </select>
                                     </div>

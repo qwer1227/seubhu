@@ -84,6 +84,23 @@
     order by rn
   </select>
 
+  <!-- List<Crew> getCrewsTopFive(@Param("condition") Map<String, Object> condition); -->
+  <select id="getCrewsTopFive" resultType="store.seub2hu2.community.vo.Crew">
+    select *
+    from (select row_number() over(order by c.crew_view_cnt desc) rn
+                    , c.crew_no as no
+                    , c.crew_title as title
+                    , c.crew_name as name
+                    , (select count(*)
+                            from CREW_MEMBERS cm
+                            where cm.is_join = 'Y'
+                                and cm.crew_no = c.crew_no
+                                ) as memberCnt
+          from CREWS c
+          where c.is_deleted = 'N'
+            and c.is_entered = 'Y') crew limit 5
+    </select>
+
   <!-- List<CrewMember> getCrewMembers(@Param("no") int crewNo);); -->
   <select id="getCrewMembers" resultType="store.seub2hu2.community.vo.CrewMember" parameterType="int">
     select cm.crew_no        as crewNo

@@ -28,9 +28,9 @@
         }
 
         .fc-event {
-            overflow: hidden;  /* 넘치는 텍스트 숨기기 */
-            text-overflow: ellipsis;  /* 넘치는 텍스트에 '...' 표시 */
-            white-space: nowrap;  /* 텍스트가 줄 바꿈 없이 한 줄로 표시 */
+            overflow: hidden; /* 넘치는 텍스트 숨기기 */
+            text-overflow: ellipsis; /* 넘치는 텍스트에 '...' 표시 */
+            white-space: nowrap; /* 텍스트가 줄 바꿈 없이 한 줄로 표시 */
         }
 
     </style>
@@ -57,7 +57,7 @@
                 <span class="p-1">호흡</span>
             </div>
             <div class="m-3 d-flex">
-                <div style="width: 30px; height:30px; border-radius: 5px; background: #A8D5BA"></div>
+                <div style="width: 30px; height:30px; border-radius: 5px; background: #d8f6d4"></div>
                 <span class="p-1">자세</span>
             </div>
             <div class="m-3 d-flex">
@@ -66,11 +66,30 @@
             </div>
         </div>
     </div>
+    <div class="row">
+        <div class="col mb-3 form-check">
+            <input type="checkbox" id="completed-include">
+            <label for="completed-include">마감 포함</label>
+        </div>
+    </div>
     <div class="row mb-3">
         <div id='calendar'></div>
     </div>
 </div>
 
+<div class="modal" id="eventModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="modal-title" class="modal-title"></h5>
+            </div>
+            <div class="modal-body">
+                <p id="modal-subject"></p>
+                <p id="modal-description"></p>
+            </div>
+        </div>
+    </div>
+</div>
 
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script>
@@ -121,28 +140,30 @@
                 refreshEvents(info, successCallback, failureCallback);
             },
 
-            // Handle event clicks
             eventClick: function (info) {
                 lessonDetail(info.event.extendedProps.lessonNo);
             },
+
         });
 
-
+        // Refresh events based on selected filters
         function refreshEvents(info, successCallback, failureCallback) {
             let start = moment(info.start).format("YYYY-MM-DD");
             let end = moment(info.end).format("YYYY-MM-DD");
             let subject = $('#subject').val(); // 선택된 과정 필터 값
+            const includeCompleted = $('#completed-include').prop('checked');
 
             let param = {
                 start: start,
                 end: end,
-                subject: subject // subject 값을 추가
+                subject: subject, // subject 값을 추가
+                includeCompleted: includeCompleted
             };
 
             $.ajax({
                 type: 'get',
                 url: '/lesson/list',  // Server API endpoint
-                data: param,         // param 객체를 data로 전달
+                data: param,          // param 객체를 data로 전달
                 dataType: 'json'
             })
                 .done(function (events) {
@@ -150,28 +171,19 @@
                     var formattedEvents = events.map(event => {
                         // 조건별 색상 매핑
                         const colorMap = {
-                            '호흡': 'green',
-                            '자세': 'blue',
-                            '운동': 'orange'
+                            '호흡': '#d0e8fa',
+                            '자세': '#d8f6d4',
+                            '운동': '#efe1fd'
                         };
-                        var backgroundColor = 'black'
-                        console.log(event.subject)
-                        if (event.subject == '호흡') {
-                            backgroundColor = '#AEDFF7';
-                        }
-                        if (event.subject == '자세') {
-                            backgroundColor = '#A8D5BA';
-                        }
-                        if (event.subject == '운동') {
-                            backgroundColor = '#D9C8F2';
-                        }
+
+                        const backgroundColor = colorMap[event.subject] || 'black';
                         const borderColor = backgroundColor; // 테두리 색상도 동일하게 설정
 
                         return {
-
-                            title: event.title + " / "+ event.status ,
+                            title: event.title,
                             start: event.start,
                             end: event.end,
+                            description: 'asdasd',
                             allDay: false,
                             textColor: 'black', // 텍스트 색상
                             borderColor: borderColor,
@@ -195,7 +207,6 @@
                 });
         }
 
-
         function lessonDetail(lessonNo) {
             if (lessonNo !== undefined && lessonNo !== null && lessonNo !== "") {  // Validate lessonNo
                 console.log("LessonNo:", lessonNo); // Log to ensure lessonNo is being passed as int
@@ -205,14 +216,27 @@
             }
         }
 
-        calendar.render();
-
-
+        // Subject or Completed include filter changes
         $(document).on('change', '#subject', function () {
             console.log("Subject changed:", $('#subject').val());
             calendar.refetchEvents();
         });
+
+        $(document).on('change', '#completed-include', function () {
+            console.log("Completed include changed:", $('#completed-include').prop('checked')); // 상태 확인
+            calendar.refetchEvents();
+        });
+
+        $('#subject, #completed-include').on('change', function () {
+            calendar.refetchEvents(); // 이벤트 다시 불러오기
+        });
+
+
+
+        // Initialize the calendar
+        calendar.render();
     });
+
 </script>
 </body>
 </html>

@@ -18,10 +18,12 @@
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
 <div class="container-xxl text-center" id="wrap">
   
-  <h2> 커뮤니티 글 작성 </h2>
+  <h2> 커뮤니티 글 수정 </h2>
   
   <div class="row p-3 m-3">
-    <form:form id="form-register" action="register" method="post" enctype="multipart/form-data">
+    <form id="form-register" action="modify" method="post" enctype="multipart/form-data">
+      <input type="hidden" name="no" value="${board.no}">
+      <input type="hidden" name="fileNo" id="fileNo" value="${board.uploadFile.no}">
       <table id="community-table" style="width: 98%">
         <colgroup>
           <col width="10%">
@@ -50,7 +52,8 @@
           </th>
           <td colspan="3">
             <input type="text" class="form-control" style="width: 100%" id="title" name="title"
-                   placeholder="제목을 입력해주세요." value="">
+                   placeholder="제목을 입력해주세요." value="${board.title}">
+          
           </td>
         </tr>
         <tr class="form-group">
@@ -58,11 +61,27 @@
             <label class="form-label" for="content">글내용</label>
           </th>
           <td colspan="3">
-            <textarea style="width: 100%" class="form-control" rows="10" id="content" name="content"
-                      placeholder="내용을 입력해주세요."></textarea>
-            <%@include file="write.jsp" %>
+            <textarea style="width: 100%" class="form-control" rows="10" id="content"
+                      name="content">${board.content}</textarea>
+            
+<%--            <!-- <%@include file="write.jsp" %> -->--%>
           </td>
         </tr>
+        <c:if test="${not empty board.uploadFile}">
+          <c:if test="${board.uploadFile.deleted eq 'N'}">
+          <tr class="form-group">
+            <th>
+              <label class="form-label">기존파일명</label>
+            </th>
+            <td colspan="3" style="text-align: start">
+                ${board.uploadFile.originalName}
+              <button type="button" class="btn btn-outline-dark" onclick="deleteUploadFile(${board.no}, ${board.uploadFile.no})">
+                삭제
+              </button>
+            </td>
+          </tr>
+          </c:if>
+        </c:if>
         <tr class="form-group">
           <th>
             <label class="form-label">첨부파일</label>
@@ -79,28 +98,27 @@
             <button type="button" class="btn btn-secondary m-1" onclick="abort()">취소</button>
           </div>
           <div class="col d-flex justify-content-end">
-            <button type="button" class="btn btn-outline-primary m-1" onclick="keepContent()">보관</button>
-            <button type="submit" class="btn btn-primary m-1" onclick="submitContent()">등록</button>
+            <button type="submit" class="btn btn-primary m-1">수정</button>
           </div>
         </div>
       </div>
-    </form:form>
+    </form>
   </div>
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script type="text/javascript">
     function abort() {
-        alert("작성중이던 글을 임시보관하시겠습니까?");
-
-        location.href = "main";
+        let result = confirm("수정 중이던 글을 취소하시겠습니까?");
+        if (result) {
+            window.location.href = "detail?no=${board.no}";
+        }
     }
 
-    function keepContent() {
-        location.href = 'main';
-    }
-
-    function submitContent(){
-
+    function deleteUploadFile(boardNo, fileNo) {
+        let result = confirm("기존에 등록된 첨부파일을 삭제하시겠습니까?");
+        if (result) {
+            window.location.href = `delete-file?no=\${boardNo}&fileNo=\${fileNo}`;
+        }
     }
 </script>
 </body>

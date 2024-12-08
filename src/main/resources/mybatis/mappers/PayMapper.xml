@@ -33,7 +33,8 @@
          , PAY_PRICE as price
          , REFUND as refund
         FROM PAYMENTS;
-        WHERE PAY_ID = #{payId}
+        WHERE PAY_ID =
+        #{payId}
     </select>
 
     <!-- public String getPaymentTypeById(@Param("id") String id); -->
@@ -42,4 +43,16 @@
         FROM PAYMENTS
         WHERE PAY_ID = #{payId}
     </select>
+
+    <update id="updateLessonPayStatus">
+        UPDATE PAYMENTS P
+            INNER JOIN LESSON_RESERVATIONS R
+        ON P.PAY_ID = R.LESSON_RESERVATION_PAY_ID
+            INNER JOIN LESSONS L
+            ON R.LESSON_NO = L.LESSON_NO
+            SET P.PAY_STATUS = '결제확정'
+        WHERE P.PAY_STATUS = '결제완료'
+          AND R.LESSON_RESERVATION_STATUS = '예약'
+          AND L.LESSON_START_DATE &lt;= NOW();
+    </update>
 </mapper>

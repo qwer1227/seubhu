@@ -2,6 +2,11 @@ package store.seub2hu2.user.service;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,11 +14,10 @@ import store.seub2hu2.mypage.dto.UserInfoReq;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.dto.UserJoinForm;
 import store.seub2hu2.user.exception.AlreadyUsedIdException;
-import store.seub2hu2.user.exception.InvalidCredentialsException;
+import store.seub2hu2.user.mapper.UserMapper;
 import store.seub2hu2.user.vo.Addr;
 import store.seub2hu2.user.vo.Role;
 import store.seub2hu2.user.vo.User;
-import store.seub2hu2.user.mapper.UserMapper;
 import store.seub2hu2.user.vo.UserRole;
 
 import java.util.List;
@@ -21,6 +25,9 @@ import java.util.List;
 @Service
 @Transactional
 public class UserService {
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
     @Autowired
     private PasswordEncoder passwordEncoder; // PasswordEncoder bean 등록
@@ -42,7 +49,6 @@ public class UserService {
     public boolean isEmailExists(String email) {
         return userMapper.getUserByEmail(email) != null;
     }
-
 
 
     /**
@@ -88,7 +94,6 @@ public class UserService {
     }
 
 
-
     /**
      * 사용자번호, 권한이름을 전달받아서 권한을 추가하는 서비스
      *
@@ -106,7 +111,7 @@ public class UserService {
         userMapper.insertUserRole(userRole);
     }
 
-    public boolean verifyPassword(String password, LoginUser loginUser){
+    public boolean verifyPassword(String password, LoginUser loginUser) {
 
         // 로그인한 사용자 정보 가져오기
         User user = userMapper.getUserById(loginUser.getId());
@@ -120,11 +125,10 @@ public class UserService {
     }
 
     /**
-     *
      * @param userInfoReq 사용자가 입력한 내용
      * @return 참 여부
      */
-    public int updateUser(UserInfoReq userInfoReq, LoginUser loginUser){
+    public int updateUser(UserInfoReq userInfoReq, LoginUser loginUser) {
 
         // userId를 사용해 유저 정보를 조회
         User user = userMapper.getUserById(loginUser.getId());
@@ -141,12 +145,12 @@ public class UserService {
         user.setEmail(userInfoReq.getEmail());
 
         // 이전비밀번호 중복입력검증
-        if(userInfoReq.getPassword().equals(user.getPassword())){
+        if (userInfoReq.getPassword().equals(user.getPassword())) {
             return 1;
         }
 
         // 비밀번호확인 검증
-        if(!userInfoReq.getPassword().equals(userInfoReq.getConfirmPassword())){
+        if (!userInfoReq.getPassword().equals(userInfoReq.getConfirmPassword())) {
             return 2;
         }
 
@@ -156,12 +160,13 @@ public class UserService {
         return 0;
     }
 
-    public User findbyUserNo(String userId){
+    public User findbyUserNo(String userId) {
         return userMapper.getUserById(userId);
     }
 
     /**
      * 권한 번호로 해당 권한을 가진 사용자 목록을 조회하는 서비스
+     *
      * @param roleNo 권한번호
      * @return 조회된 사용자 목록 반환
      */
@@ -170,22 +175,20 @@ public class UserService {
         return findUsers;
     }
 
-    public User login(String id, String password) throws InvalidCredentialsException {
-        // 아이디로 사용자 조회
-        User user = userMapper.getUserById(id);
 
-        if (user == null) {
-            // 사용자가 없으면 예외 발생
-            throw new InvalidCredentialsException("User not found.");
-        }
+    public LoginUser authenticateUser(String id, String password) throws AuthenticationException {
+        // 인증을 시도하고, 인증에 성공하면 인증된 사용자 정보를 반환
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(id, password)
+        );
 
-        // 비밀번호 확인 (입력된 비밀번호와 DB에 저장된 비밀번호를 비교)
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            // 비밀번호가 일치하지 않으면 예외 발생
-            throw new InvalidCredentialsException("Invalid password.");
-        }
+        // 인증 성공 시, 인증 정보를 SecurityContext에 저장
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // 로그인 성공 시, 사용자 객체 반환
-        return user;
+        return (LoginUser) authentication.getPrincipal();
+    }
+
+    public List<User> searchUsersByNickname(String nickname) {
+        return userMapper.findUsersByNickname(nickname);
     }
 }

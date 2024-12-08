@@ -74,7 +74,7 @@
                     <label class="form-label">색상:</label>
                       <select class="form-control" name="colorName">
                         <c:forEach var="c" items="${colors}">
-                          <option value="${c.name}">${c.name}</option>
+                          <option value="${c.name}" ${c.name == param.colorName ? 'selected' : ''}>${c.name}</option>
                         </c:forEach>
                       </select>
                   </div>
@@ -130,11 +130,26 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    const getSubmitButton = document.getElementById("getSubmitButton");
-    getSubmitButton.addEventListener("click", function () {
-      console.log("GET 요청 실행!");
-      // 기본 GET 동작은 유지, 페이지 새로고침 후 서버 응답에 따라 POST 폼 보임.
-    });
+    const colorNameSelect = document.querySelector("select[name='colorName']");
+    const selectedColor = "${param.colorName}";
+    const sizeMessage = "${sizeMessage}";
+
+    // 처음 렌더링 시 오류 메시지가 출력되지 않도록 제어
+    if (selectedColor === "" || sizeMessage === "") {
+      const alertElement = document.querySelector(".alert-danger");
+      if (alertElement) {
+        alertElement.style.display = "none"; // 숨김 처리
+      }
+    }
+
+    // 선택된 색상이 있으면 드롭다운에서 선택
+    if (selectedColor) {
+      Array.from(colorNameSelect.options).forEach(option => {
+        if (option.value === selectedColor) {
+          option.selected = true;
+        }
+      });
+    }
   });
 </script>
 </body>

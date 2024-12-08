@@ -130,7 +130,7 @@
                     <td>${l.title}</td>
                     <td>${l.lecturer.name}</td>
                     <td>${l.price}</td>
-                    <td>4/5
+                    <td>${l.participant}/5
                       <button class="btn btn-outline btn-success btn-sm "
                               onclick="previewUser(${l.lessonNo})">회원보기</button>
                     </td>
@@ -215,8 +215,15 @@
 
     let rows = "";
 
-    for (let rev of data) {
-      rows +=`
+    if (data.length === 0) {
+      rows = `
+      <tr>
+        <td colspan="5" class="text-center">등록된 회원이 없습니다.</td>
+      </tr>
+    `;
+    } else {
+      for (let rev of data) {
+        rows += `
         <tr>
             <td><span>\${rev.id}</span></td>
             <td><span>\${rev.name}</span></td>
@@ -225,6 +232,7 @@
             <td><span>\${rev.tel}</span></td>
           </tr>
       `;
+      }
     }
     document.querySelector("#table-rev tbody").innerHTML = rows;
 

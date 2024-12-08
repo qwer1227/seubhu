@@ -33,6 +33,7 @@ public interface LessonMapper {
     // 레슨 상태 변경
     public void updateLessonStatus(@Param("dto") LessonUpdateDto dto);
 
+    // 이미 지난 기간의 레슨 상태 변경, 스케줄러 사용
     public void updatePastLessonStatus(@Param("dto") LessonUpdateDto dto);
 
 }

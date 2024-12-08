@@ -159,4 +159,15 @@
         SET LESSON_RESERVATION_STATUS = #{status}
         WHERE LESSON_RESERVATION_PAY_ID = #{paymentId}
     </update>
+
+    <update id="updatePastReservationStatus">
+        UPDATE LESSON_RESERVATIONS R
+            INNER JOIN PAYMENTS P
+        ON P.PAY_ID = R.LESSON_RESERVATION_PAY_ID
+            INNER JOIN LESSONS L
+            ON R.LESSON_NO = L.LESSON_NO
+            SET R.LESSON_RESERVATION_STATUS = '수강종료'
+        WHERE R.LESSON_RESERVATION_STATUS = '예약'
+          AND L.LESSON_START_DATE &lt;= NOW();
+    </update>
 </mapper>

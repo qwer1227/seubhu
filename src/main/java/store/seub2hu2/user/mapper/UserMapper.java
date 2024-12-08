@@ -56,4 +56,6 @@ public interface UserMapper {
     List<User> getUsersByRoleNo(@Param("roleNo") int roleNo);
 
     void updateAddrUserNo(@Param("addrNo") int addrNo, @Param("userNo") int userNo);
+
+    List<User> findUsersByNickname(@Param("nickname") String nickname);
 }

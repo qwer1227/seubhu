@@ -97,6 +97,12 @@
 
 <!-- 유효성 검사 스크립트 추가 -->
 <script>
+    // errorMessage가 존재하면 alert로 출력
+    <c:if test="${not empty errorMessage}">
+    // ${errorMessage}의 값이 있을 경우 자바스크립트에서 출력
+    alert('<c:out value="${errorMessage}" />');
+    </c:if>
+
     function validateForm() {
         var id = document.forms["loginForm"]["id"].value;
         var password = document.forms["loginForm"]["password"].value;
