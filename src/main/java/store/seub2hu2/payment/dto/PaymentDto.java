@@ -23,7 +23,8 @@ public class PaymentDto {
     private String method;      // 결제 방식
     // 상품 파트
     // 주문상품정보
-    private List<OrderItem> orderItems; // 주문상품
+    private List<OrderItem> orderItems; // 주문상품들
+    private OrderItem orderItem; // 주문상품
     // 배송지 정보
     private String recipientName; // 받는 사람
     private String postcode; // 우편번호

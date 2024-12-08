@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import store.seub2hu2.delivery.mapper.DeliveryMapper;
 import store.seub2hu2.delivery.vo.Delivery;
+import store.seub2hu2.mypage.dto.OrderResultItemDto;
 import store.seub2hu2.order.mapper.OrderMapper;
 import store.seub2hu2.order.vo.Order;
 import store.seub2hu2.order.vo.OrderItem;
@@ -96,6 +97,7 @@ public class KakaoPayService {
             }
 
             for(OrderItem item : orderItems) {
+                item.setNo(item.getNo());
                 item.setOrderNo(orderNo);
                 item.setProdNo(item.getProdNo());
                 item.setSizeNo(item.getSizeNo());
@@ -105,6 +107,8 @@ public class KakaoPayService {
             }
 
             orderMapper.insertOrderItems(orderItems);
+
+
 
             // 배송지
             Addr addr = new Addr();

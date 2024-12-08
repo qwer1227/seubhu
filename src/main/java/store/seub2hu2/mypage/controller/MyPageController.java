@@ -506,9 +506,6 @@ public class MyPageController {
     @GetMapping("/orderhistorydetail/{orderNo}")
     public String orderHistoryDetail(@PathVariable("orderNo") int orderNo, Model model, @AuthenticationPrincipal LoginUser loginUser) {
 
-        ResponseDTO responseDTO = orderService.getOrderDetails(orderNo);
-        model.addAttribute("orderDetail", responseDTO);
-
 
         return "mypage/orderhistorydetail";
     }
