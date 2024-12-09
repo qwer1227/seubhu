@@ -12,9 +12,12 @@ import store.seub2hu2.community.dto.MarathonForm;
 import store.seub2hu2.community.service.MarathonService;
 import store.seub2hu2.community.vo.Crew;
 import store.seub2hu2.community.vo.Marathon;
+import store.seub2hu2.community.vo.MarathonOrgan;
 import store.seub2hu2.util.ListDto;
 
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -49,12 +52,33 @@ public class MarathonController {
 
         model.addAttribute("marathons", dto.getData());
         model.addAttribute("paging", dto.getPaging());
+        model.addAttribute("now", new Date());
 
         return "community/marathon/main";
     }
 
+    @GetMapping("/hit")
+    public String hit(@RequestParam("no") int marathonNo){
+        marathonService.updateMarathonViewCnt(marathonNo);
+        return "redirect:detail?no=" + marathonNo;
+    }
+
     @GetMapping("/detail")
-    public String detail() {
+    public String detail(@RequestParam("no") int marathonNo, Model model) {
+
+        Marathon marathon = marathonService.getMarathonDetail(marathonNo);
+        model.addAttribute("marathon", marathon);
+
+        List<MarathonOrgan> organs = marathonService.getOrgans(marathonNo);
+        model.addAttribute("organs", organs);
+
+        // url 클릭 시, 해당 url 홈페이지로 이동
+        String url = marathon.getUrl();
+        if (!url.startsWith("http")) {
+            url = "https://www." + url;
+        }
+        model.addAttribute("marathonUrl", url);
+
         return "community/marathon/detail";
     }
 
@@ -65,7 +89,7 @@ public class MarathonController {
 
     @PostMapping("/register")
     public String register(MarathonForm form) {
-        Marathon marathon = marathonService.addNewMarathon(form);
+        marathonService.addNewMarathon(form);
         return "community/marathon/main";
     }
 }

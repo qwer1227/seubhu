@@ -21,6 +21,20 @@
         background-color: #0064FF;
         color: white;
     }
+
+    .overlay-text {
+        position: absolute; /* 부모 기준으로 절대 위치 설정 */
+        top: 40%; /* 컨테이너의 세로 중심 */
+        left: 50%; /* 컨테이너의 가로 중심 */
+        transform: translate(-50%, -50%); /* 정확히 중앙으로 이동 */
+        color: white; /* 텍스트 색상 */
+        font-size: 1.5rem; /* 텍스트 크기 */
+        font-weight: bold; /* 텍스트 굵기 */
+        text-align: center; /* 텍스트 가운데 정렬 */
+        background-color: rgba(0, 0, 0, 0.5); /* 텍스트 배경 반투명 설정 */
+        padding: 10px; /* 텍스트 주변 여백 추가 */
+        border-radius: 5px; /* 배경의 모서리 둥글게 처리 (선택 사항) */
+    }
 </style>
 <body>
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
@@ -36,17 +50,21 @@
   <div class="row row-cols-1 row-cols-md-3 g-4">
     <!-- 카드 1 -->
     <c:forEach var="marathon" items="${marathons}">
-    <div class="col">
-      <a href="detail" style="text-decoration-line: none">
-      <div class="card">
-        <img src="${marathon.thumbnail}" style="height: 200px" class="card-img-top" alt="마라톤 이미지">
-        <div class="card-body text-center">
-          <h5 class="card-title">${marathon.title}</h5>
-          <p class="card-text">${marathon.date}</p>
-        </div>
+      <div class="col">
+        <a href="hit?no=${marathon.no}" style="text-decoration-line: none">
+          <div class="card">
+            <img src="${marathon.thumbnail}" class="card-img-top" alt="마라톤 이미지"
+                style="height: 200px; filter: ${crew.entered eq 'Y' ? 'grayscale(0%)' : 'grayscale(100%)'};">
+            <c:if test="${marathon.marathonDate.time < now.time}">
+              <div class="overlay-text ">종료</div>
+            </c:if>
+            <div class="card-body text-center">
+              <h5 class="card-title">${marathon.title}</h5>
+              <p class="card-text"><fmt:formatDate value="${marathon.marathonDate}" pattern="yyyy-MM-dd"/></p>
+            </div>
+          </div>
+        </a>
       </div>
-      </a>
-    </div>
     </c:forEach>
   </div>
   
