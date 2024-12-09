@@ -241,16 +241,24 @@
 
     // 코스 리뷰 수정 Modal창을 연다.
     async function openModifyReviewFormModal(reviewNo) {
-        // 1. 코스 리뷰 작성자와 동일한 사용자가 아니라면, 경고 메시지를 출력한다.
-        let response = await fetch("/ajax/check-reviewer-same/" + reviewNo);
+        // 코스 리뷰를 가져온다.
+        let response = await fetch("/ajax/review/" + reviewNo);
         let result = await response.json();
+        let status = result.status;
+        let message = result.message;
 
-        if (result.data === "different") {
-            alert("리뷰 작성자만 수정 가능합니다.");
+        // 코스 리뷰 작성자와 동일한 사용자가 아니라면, 경고 메시지를 출력한다.
+        if (response.ok) {
+            if (status === 500) {
+                alert(message); // message = "해당 리뷰 작성자만 수정 가능합니다."
+                return;
+            }
+        } else {
+            alert(message); // message = "로그인이 필요한 서비스입니다"
             return;
         }
 
-        // 2. 코스 리뷰 수정 Modal창을 화면에 표시한다.
+        // 코스 리뷰 수정 Modal창을 화면에 표시한다.
         modifyReviewFormModal.show();
     }
 
@@ -388,13 +396,6 @@
     }
 
     // 리뷰를 수정한다.
-    async function modifyReview(reviewNo) {
-        // 1. 리뷰 번호를 서버에 보낸다.
-        let response = await fetch("/ajax/modifyReview/" + reviewNo);
-
-        // 2. 리뷰를 수정한다.
-
-    }
 
     // 리뷰를 삭제한다.
     async function removeReview(reviewNo) {
