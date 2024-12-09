@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="/WEB-INF/views/common/tags.jsp" %>
+<c:set var="s3" value="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com" />
 <!DOCTYPE html>
 <html lang="en">
 
@@ -108,7 +109,7 @@
             <div class="col mb-3">
                 <div class="card h-100">
                     <a class="text-decoration-none" href="course-detail?no=${course.no }">
-                        <img src="/resources/images/course/${course.filename }" class="card-img-top" alt="...">
+                        <img src="${s3}/resources/images/course/${course.filename }" class="card-img-top" alt="...">
                     </a>
                     <div class="card-body">
                         <h5 class="card-title">${course.name }</h5>

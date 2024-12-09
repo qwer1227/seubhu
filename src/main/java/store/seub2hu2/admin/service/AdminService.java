@@ -21,6 +21,7 @@ import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.FileUtils;
 import store.seub2hu2.util.ListDto;
 import store.seub2hu2.util.Pagination;
+import store.seub2hu2.util.S3Service;
 
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +45,13 @@ public class AdminService {
 //
 //    private final ProductMapper productMapper;
 //
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucketName;
+
+    @Autowired
+    private S3Service s3Service;
+
     @Autowired
     private LessonMapper lessonMapper;
 
@@ -295,7 +303,9 @@ public class AdminService {
                 String originalFilename = multipartFile.getOriginalFilename();
                 String filename = System.currentTimeMillis() + originalFilename;
 
-                FileUtils.saveMultipartFile(multipartFile, saveDirectory, filename);
+
+                //FileUtils.saveMultipartFile(multipartFile, saveDirectory, filename);
+                s3Service.uploadFile(multipartFile, bucketName, saveDirectory, filename);
 
                 course.setFilename(filename);
             }
@@ -320,7 +330,8 @@ public class AdminService {
                 String originalFilename = multipartFile.getOriginalFilename();
                 String filename = System.currentTimeMillis() + originalFilename;
 
-                FileUtils.saveMultipartFile(multipartFile, saveDirectory, filename);
+                //FileUtils.saveMultipartFile(multipartFile, saveDirectory, filename);
+                s3Service.uploadFile(multipartFile, bucketName, saveDirectory, filename);
 
                 course.setFilename(filename);
             }
@@ -367,7 +378,8 @@ public class AdminService {
                 String originalFilename = multipartFile.getOriginalFilename();
                 String filename = System.currentTimeMillis() + originalFilename;
 
-                FileUtils.saveMultipartFile(multipartFile, saveDirectory, filename);
+                //FileUtils.saveMultipartFile(multipartFile, saveDirectory, filename);
+                s3Service.uploadFile(multipartFile, bucketName, saveDirectory, filename);
 
                 course.setFilename(filename);
             }
@@ -393,7 +405,8 @@ public class AdminService {
                 String originalFilename = multipartFile.getOriginalFilename();
                 String filename = System.currentTimeMillis() + originalFilename;
 
-                FileUtils.saveMultipartFile(multipartFile, saveDirectory, filename);
+                //FileUtils.saveMultipartFile(multipartFile, saveDirectory, filename);
+                s3Service.uploadFile(multipartFile, bucketName, saveDirectory, filename);
 
                 course.setFilename(filename);
             }
