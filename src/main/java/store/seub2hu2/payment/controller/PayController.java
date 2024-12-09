@@ -86,7 +86,6 @@ public class PayController {
     public String payCompleted(@RequestParam("pg_token") String pgToken
                                , @AuthenticationPrincipal LoginUser loginUser
             , @RequestParam  Map<String, Object> param
-            , @AuthenticationPrincipal LoginUser loginUser
             , Model model) {
 
         String tid = sessionUtils.getAttribute("tid");

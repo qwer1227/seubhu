@@ -14,16 +14,15 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import store.seub2hu2.admin.dto.RequestParamsDto;
 import store.seub2hu2.cart.dto.CartItemDto;
 import store.seub2hu2.cart.dto.CartRegisterForm;
 import store.seub2hu2.community.dto.BoardForm;
 import store.seub2hu2.community.dto.ReplyForm;
 import store.seub2hu2.community.dto.ReportForm;
-import store.seub2hu2.community.service.BoardService;
-import store.seub2hu2.community.service.BoardReplyService;
-import store.seub2hu2.community.service.ReportService;
-import store.seub2hu2.community.service.ScrapService;
+import store.seub2hu2.community.service.*;
 import store.seub2hu2.community.vo.Board;
+import store.seub2hu2.community.vo.Crew;
 import store.seub2hu2.community.vo.Reply;
 import store.seub2hu2.lesson.view.FileDownloadView;
 import store.seub2hu2.mypage.dto.*;
@@ -87,6 +86,8 @@ public class MyPageController {
 
     @Autowired
     private FileDownloadView fileDownloadView;
+    @Autowired
+    private CrewService crewService;
 
     // URL localhost/mypage 입력 시 유저의 No를 활용해 그 유저의 페이지를 보여줌
     @GetMapping("")
@@ -552,11 +553,14 @@ public class MyPageController {
 
     // 문의내역 화면으로 간다
     @GetMapping("/qna")
-    public String qna(Model model, @AuthenticationPrincipal LoginUser loginUser){
+    public String qna(Model model, @AuthenticationPrincipal LoginUser loginUser, RequestParamsDto requestParamsDto){
 
-        List<QnaResponse> qnaResponses = qnaService.getQnasByUserNo(loginUser.getNo());
+        ListDto<QnaResponse> qnaDto = qnaService.getQnas2(requestParamsDto);
 
-        model.addAttribute("qna", qnaResponses);
+        //todo opt와 keyword를 활용해서 검색하는 부분이 이상함
+        
+        model.addAttribute("qna", qnaDto.getData());
+        model.addAttribute("pagination", qnaDto.getPaging());
 
         return "mypage/qna";
     }
@@ -596,7 +600,7 @@ public class MyPageController {
 
         qnaService.deleteQna(qnaNo);
 
-        return "redirect:/admin/qna";
+        return "redirect:/mypage/qna";
     }
 
     // 문의수정 화면
@@ -629,7 +633,10 @@ public class MyPageController {
 
     // 참여크루 화면
     @GetMapping("/participatingcrew")
-    public String crew(){
+    public String crew(Model model, @AuthenticationPrincipal LoginUser loginUser){
+
+        List<Crew> crews = crewService.getCrewByUserNo(loginUser.getNo());
+        model.addAttribute("crews", crews);
 
         return "mypage/participatingcrew";
     }

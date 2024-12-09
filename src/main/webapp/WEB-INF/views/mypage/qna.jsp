@@ -99,6 +99,71 @@
             display: block;
             width: fit-content;
         }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 10px;
+        }
+
+        .btn-pagination {
+            background-color: #f0f0f0;
+            color: #333;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-pagination.active {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .btn-pagination:hover {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .search-form {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-select {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+        }
+
+        .search-input {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            width: 200px;
+            font-size: 14px;
+        }
+
+        .btn-search {
+            padding: 8px 15px;
+            background-color: #3498db;
+            color: white;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-search:hover {
+            background-color: #2980b9;
+        }
+
     </style>
 </head>
 <body>
@@ -109,12 +174,33 @@
     <div class="inquiry-header">
         <h2>문의 내역</h2>
         <div class="category-tabs">
-            <a href="?category=all" class="category-tab active">전체</a>
-            <a href="?category=rent" class="category-tab">대여</a>
-            <a href="?category=order" class="category-tab">주문</a>
-            <a href="?category=lesson" class="category-tab">레슨</a>
-            <a href="?category=suggestion" class="category-tab">건의</a>
+            <a href=/mypage/qna class="category-tab">전체</a>
+            <a href="?category=대여&opt=${param.opt}&keyword=${param.keyword}&page=1"
+               class="category-tab ${param.category == '대여' ? 'active' : ''}">대여</a>
+            <a href="?category=주문&opt=${param.opt}&keyword=${param.keyword}&page=1"
+               class="category-tab ${param.category == '주문' ? 'active' : ''}">주문</a>
+            <a href="?category=레슨&opt=${param.opt}&keyword=${param.keyword}&page=1"
+               class="category-tab ${param.category == '레슨' ? 'active' : ''}">레슨</a>
+            <a href="?category=건의&opt=${param.opt}&keyword=${param.keyword}&page=1"
+               class="category-tab ${param.category == '건의' ? 'active' : ''}">건의</a>
         </div>
+    </div>
+
+    <!-- 검색 폼 -->
+    <div class="search-form">
+        <form action="/mypage/qna" method="get">
+            <input type="hidden" name="category" value="${param.category}">
+
+            <div>
+                <select name="opt" class="search-select">
+                    <option value="title" ${param.opt == 'title' ? 'selected' : ''}>제목</option>
+                    <option value="content" ${param.opt == 'content' ? 'selected' : ''}>내용</option>
+                </select>
+                <input type="text" name="keyword" class="search-input" placeholder="검색어를 입력하세요"
+                       value="${param.keyword}">
+                <button type="submit" class="btn-search">검색</button>
+            </div>
+        </form>
     </div>
 
     <!-- Inquiry List -->
@@ -128,16 +214,71 @@
                 <p>${qna.qnaContent}</p>
                 <c:choose>
                     <c:when test="${qna.qnaUpdatedDate != null}">
-                        <p><small><fmt:formatDate value="${qna.qnaUpdatedDate}" pattern="yyyy-MM-dd" timeZone="Asia/Seoul" /></small></p>
+                        <p><small><fmt:formatDate value="${qna.qnaUpdatedDate}" pattern="yyyy-MM-dd"
+                                                  timeZone="Asia/Seoul"/></small></p>
                     </c:when>
                     <c:otherwise>
-                        <p><small><fmt:formatDate value="${qna.qnaCreatedDate}" pattern="yyyy-MM-dd" timeZone="Asia/Seoul" /></small></p>
+                        <p><small><fmt:formatDate value="${qna.qnaCreatedDate}" pattern="yyyy-MM-dd"
+                                                  timeZone="Asia/Seoul"/></small></p>
                     </c:otherwise>
                 </c:choose>
                 <br>
                 <a href="qna/detail/${qna.qnaNo}" class="btn-detail">상세보기</a>
             </div>
         </c:forEach>
+
+        <!-- Pagination -->
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+
+                <!-- "이전" 버튼 -->
+                <c:if test="${pagination.first}">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                </c:if>
+                <c:if test="${!pagination.first}">
+                    <li class="page-item">
+                        <a class="page-link"
+                           href="?page=${pagination.prevPage}&opt=${param.opt}&keyword=${param.keyword}"
+                           aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                </c:if>
+
+                <!-- 페이지 번호 -->
+                <c:forEach var="pageNum" begin="${pagination.beginPage}" end="${pagination.endPage}">
+                    <li class="page-item ${pageNum == pagination.page ? 'active' : ''}">
+                        <a class="page-link"
+                           href="?page=${pageNum}&opt=${param.opt}&keyword=${param.keyword}">
+                                ${pageNum}
+                        </a>
+                    </li>
+                </c:forEach>
+
+                <!-- "다음" 버튼 -->
+                <c:if test="${pagination.last}">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </c:if>
+                <c:if test="${!pagination.last}">
+                    <li class="page-item">
+                        <a class="page-link"
+                           href="?page=${pagination.nextPage}&opt=${param.opt}&keyword=${param.keyword}"
+                           aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </c:if>
+
+            </ul>
+        </nav>
     </div>
 
     <!-- 문의 작성 버튼 -->

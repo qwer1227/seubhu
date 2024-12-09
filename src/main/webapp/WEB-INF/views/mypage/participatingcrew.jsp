@@ -48,24 +48,27 @@
         참여크루
     </div>
 
+    <c:forEach var="c" items="${crews}">
     <div class="crew-container row align-items-center">
         <!-- 왼쪽 이미지 -->
         <div class="col-md-3 text-center">
-            <img src="your-image-url.jpg" alt="크루 이미지" class="crew-image">
+            <img src="images/community/${c.uploadFile.saveName}" alt="크루 이미지" class="crew-image">
         </div>
         <!-- 오른쪽 정보 -->
         <div class="col-md-9">
             <div class="d-flex justify-content-between mb-3">
-                <h5 class="fw-bold">크루명</h5>
-                <span>인원수</span>
+                <h5 class="fw-bold">${c.name}</h5>
+                <span>${c.memberCnt}</span>
             </div>
             <div class="d-flex justify-content-between align-items-center">
-                <p class="mb-0">크루 소개 글</p>
+                <p class="mb-0">${c.description}</p>
                 <!-- 삭제 버튼 추가 -->
                 <button class="delete-btn" onclick="deleteCrew()">삭제</button>
             </div>
         </div>
     </div>
+    </c:forEach>
+
 </div>
 
 <%@include file="/WEB-INF/views/common/footer.jsp" %>

@@ -204,4 +204,29 @@
       and crew_no = #{no}
   </select>
 
+  <!-- List<Crew> getCrewByUserNo(@Param("userNo") int userNo); -->
+
+  <select id="getCrewByUserNo" resultType="store.seub2hu2.community.vo.Crew">
+    select
+      c.crew_name as name
+    , c.crew_description as description
+    , cf.file_save_name as saveName
+    , count(cm.user_no) as memberCnt
+    from
+      CREWS c
+        JOIN CREW_MEMBERS cm
+            ON cm.crew_no = c.crew_no
+        JOIN CREW_FILES cf
+            ON cf.crew_no = c.crew_no
+    where
+      cm.user_no = #{userNo}
+    and
+      cm.is_join = 'Y'
+    and
+      c.is_deleted = 'N'
+    and
+      cf.is_deleted = 'N'
+
+  </select>
+
 </mapper>
