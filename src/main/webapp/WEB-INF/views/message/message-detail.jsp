@@ -45,7 +45,7 @@
                 <a type="button" href="/message/add?receiver=${message.senderNickname}" class="btn btn-outline-dark">답장</a>
 
                 <!-- 목록 버튼 -->
-                <a type="button" href="/message/message-received-list" class="btn btn-dark">목록</a>
+                <a type="button" href="/message/list" class="btn btn-dark">목록</a>
             </div>
         </div>
 

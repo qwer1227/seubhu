@@ -2,15 +2,16 @@ package store.seub2hu2.message.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import store.seub2hu2.community.view.FileDownloadView;
 import store.seub2hu2.message.dto.MessageForm;
 import store.seub2hu2.message.dto.MessageReceived;
@@ -18,6 +19,12 @@ import store.seub2hu2.message.service.MessageService;
 import store.seub2hu2.message.vo.Message;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.util.ListDto;
+
+import java.io.File;
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/message")
@@ -37,19 +44,32 @@ public class MessageController {
     public String receivedList(
             @RequestParam(name = "page", required = false, defaultValue = "1") int page,
             @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
+            @RequestParam(name = "sort", required = false, defaultValue = "date") String sort,
             @RequestParam(name = "opt", required = false) String opt,
             @RequestParam(name = "keyword", required = false) String keyword,
             @AuthenticationPrincipal LoginUser loginUser,
-            Model model
-    ) {
-        int userNo = loginUser.getNo();  // 로그인된 사용자 번호
+            Model model) {
+
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("page", page);
+        condition.put("rows", rows);
+        condition.put("sort", sort);
+        condition.put("userNo", loginUser.getNo());  // 로그인된 사용자 번호
+
+
+        if (StringUtils.hasText(keyword)) {
+            condition.put("opt", opt);
+            condition.put("keyword", keyword);
+        }
 
         // 받은 메시지 목록 조회
-        ListDto<MessageReceived> dto = messageService.getReceivedMessages(page, rows, opt, keyword, userNo);
+        ListDto<MessageReceived> dto = messageService.getReceivedMessages(condition);
 
         // 모델에 데이터 추가
         model.addAttribute("messages", dto.getData());
         model.addAttribute("paging", dto.getPaging());
+        model.addAttribute("condition", condition); // 검색 조건도 모델에 포함 (필요 시 사용)
+
 
         return "message/message-received-list";
     }
@@ -59,22 +79,36 @@ public class MessageController {
     public String sentList(
             @RequestParam(name = "page", required = false, defaultValue = "1") int page,
             @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
+            @RequestParam(name = "sort", required = false, defaultValue = "desc") String sort, // 기본값 변경
             @RequestParam(name = "opt", required = false) String opt,
             @RequestParam(name = "keyword", required = false) String keyword,
             @AuthenticationPrincipal LoginUser loginUser,
-            Model model
-    ) {
-        int userNo = loginUser.getNo();  // 로그인된 사용자 번호
+            Model model) {
 
-        // 보낸 메시지 목록 조회
-        ListDto<MessageReceived> dto = messageService.getSentMessages(page, rows, opt, keyword, userNo);
+        // 검색 조건 수집
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("page", page);
+        condition.put("rows", rows);
+        condition.put("sort", sort);
+        condition.put("userNo", loginUser.getNo()); // 로그인된 사용자 번호
+
+        // 검색 조건 추가 (유효성 검증 포함)
+        if (StringUtils.hasText(keyword)) {
+                condition.put("opt", opt);
+                condition.put("keyword", keyword);
+        }
+
+        // 메시지 목록 조회
+        ListDto<MessageReceived> dto = messageService.getSentMessages(condition);
 
         // 모델에 데이터 추가
         model.addAttribute("messages", dto.getData());
         model.addAttribute("paging", dto.getPaging());
+        model.addAttribute("condition", condition); // 검색 조건도 모델에 포함 (필요 시 사용)
 
         return "message/message-sent-list";
     }
+
 
     // 메시지 상세 조회
     @GetMapping("/detail")
@@ -114,28 +148,63 @@ public class MessageController {
     }
 
 
-    // 메시지 삭제
+    // 개별 삭제
     @PostMapping("/delete")
-    public String deleteMessage(
-            @RequestParam("messageNo") int messageNo,
-            @AuthenticationPrincipal LoginUser loginUser,
-            RedirectAttributes redirectAttributes) {
-        try {
-            messageService.deleteMessages(messageNo);
-            redirectAttributes.addFlashAttribute("message", "메시지가 삭제되었습니다.");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "메시지 삭제에 실패했습니다.");
-        }
-        return "redirect:/message/list";  // 메시지 목록 페이지로 리다이렉트
+    public String deleteMessage(@RequestParam("messageNo") int messageNo) {
+        messageService.deleteMessage(messageNo);
+        return "redirect:/message/sent";
     }
 
+    // 일괄 삭제
+    @PostMapping("/deleteMultiple")
+    public String deleteMessages(@RequestParam("messageNos") List<Integer> messageNos) {
+        messageService.deleteMessages(messageNos);
+        return "redirect:/message/sent";
+    }
+
+    @PostMapping("/markAsRead")
+    public String markAsRead(@RequestParam("messageNo") int messageNo) {
+        messageService.markAsRead(messageNo);
+        return "redirect:/message/list";
+    }
+
+    @PostMapping("/markMultipleAsRead")
+    public String markMultipleAsRead(@RequestParam("messageNos") List<Integer> messageNos) {
+        messageService.markMultipleAsRead(messageNos);
+        return "redirect:/message/list";
+    }
 
     // 파일 다운로드 요청
+    // 요청 URL : comm/filedown?no=xxx
     @GetMapping("/filedown")
-    public ModelAndView downloadFile(@RequestParam("messageNo") int messageNo) {
-        ModelAndView mav = new ModelAndView(fileDownloadView);
-        // 파일 경로 설정 및 ModelAndView에 데이터 전달
-        mav.addObject("messageNo", messageNo);
+    public ModelAndView download(@RequestParam("no") int messageNo) {
+
+        Message message = messageService.getMessageDetail(messageNo);
+
+        ModelAndView mav = new ModelAndView();
+
+        mav.setView(fileDownloadView);
+        mav.addObject("directory", saveDirectory);
+        mav.addObject("filename", message.getMessageFile().getSavedName());
+        mav.addObject("originalFilename", message.getMessageFile().getOriginalName());
+
         return mav;
+    }
+
+    @GetMapping("/download")
+    public ResponseEntity<Resource> downloadFile(int messageNo) throws Exception{
+
+        Message message = messageService.getMessageDetail(messageNo);
+
+        String fileName = message.getMessageFile().getSavedName();
+        String originalFileName = message.getMessageFile().getOriginalName();
+        originalFileName = URLEncoder.encode(originalFileName, "UTF-8");
+
+        File file = new File(new File(saveDirectory), fileName);
+        FileSystemResource resource = new FileSystemResource(file);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + originalFileName)
+                .body(resource);
     }
 }
