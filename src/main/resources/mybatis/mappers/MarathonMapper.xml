@@ -40,23 +40,23 @@
     )
     values
         (
-         #{organ.marathoNo}
+         #{organ.marathonNo}
         , #{organ.organName}
-          <if test="marathon.organRole == 'host'">
+          <if test="organ.organRole == 'host'">
             , '주최'
           </if>
-          <if test="marathon.organRole == 'organizer'">
+          <if test="organ.organRole == 'organizer'">
             , '주관'
           </if>
         )
   </insert>
 
   <!-- List<Marathon> getMarathons(@Param("condition") Map<String, Object> condition); -->
-  <select id="getMarathons" resultType="store.seub2hu2.community.vo.Crew">
+  <select id="getMarathons" resultType="store.seub2hu2.community.vo.Marathon">
     select *
     from
       (
-        select row_number() over(order by marathon_created_date desc) rn
+        select row_number() over(order by marathon_date desc) rn
         , marathon_no as no
         , marathon_title as title
         , marathon_date as marathonDate
@@ -79,6 +79,38 @@
   </select>
 
   <!-- Marathon getMarathonDetailByNo(@Param("no") int marathonNo); -->
+  <select id="getMarathonDetailByNo" parameterType="int">
+    select
+        m.marathon_no as no
+    , m.marathon_thumbnail as thumbnail
+    , m.marathon_title as title
+    , m.marathon_content as content
+    , m.marathon_date as marathonDate
+    , m.apply_start_date as startDate
+    , m.apply_end_date as endDate
+    , m.marathon_url as url
+    , m.marathon_place as place
+    , m.marathon_created_date as createdDate
+    , m.marathon_view_cnt as viewCnt
+    from MARATHONS m
+    where m.is_deleted = 'N'
+        and m.marathon_no = #{no}
+  </select>
 
+  <!-- List<MarathonOrgan> getMarathonOrganDetailByNo(@Param("no") int marathonNo); -->
+  <select id="getMarathonOrganDetailByNo" parameterType="int" resultType="store.seub2hu2.community.vo.MarathonOrgan">
+    select
+        marathon_no as marathonNo
+    , organ_name as organName
+    , organ_role as organRole
+    from ORGANS
+    where marathon_no = #{no}
+  </select>
 
+  <!-- void updateMarathonCnt(@Param("marathon") Marathon marathon); -->
+  <update id="updateMarathonCnt">
+    update MARATHONS
+    set marathon_view_cnt = #{marathon.viewCnt}
+    where marathon_no = #{marathon.no}
+  </update>
 </mapper>

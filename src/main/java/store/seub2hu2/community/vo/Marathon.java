@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,8 +25,10 @@ public class Marathon {
     private String place;
     private String deleted;
     private UploadFile uploadFile;
-    private String organName;
-    private String organRole;
+    private List<MarathonOrgan> organ;
+    private Date createdDate;
+    private Date updatedDate;
+    private int viewCnt;
 
     public String getOriginalFileName() {
         if(uploadFile.getSaveName() == null){
