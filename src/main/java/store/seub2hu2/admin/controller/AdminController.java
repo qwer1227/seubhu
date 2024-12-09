@@ -156,6 +156,13 @@ public class AdminController {
         return "admin/lessonlist";
     }
 
+    @GetMapping("/course-edit-form")
+    public String courseEditForm() {
+
+
+        return "admin/course-edit-form";
+    }
+
     @GetMapping("/course-register-form")
     public String courseRegisterForm() {
         return "admin/course-register-form";
@@ -173,15 +180,23 @@ public class AdminController {
     /*코스 목록*/
     @GetMapping("/course")
     public String course(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
-                       @RequestParam(name = "distance", required = false) Double distance,
-                       @RequestParam(name = "level", required = false) Integer level,
-                       @RequestParam(name = "keyword", required = false) String keyword,
+                         @RequestParam(name = "sort", required = false) String sort,
+                         @RequestParam(name = "distance", required = false, defaultValue = "10") Double distance,
+                         @RequestParam(name = "level", required = false) Integer level,
+                         @RequestParam(name = "keyword", required = false) String keyword,
                        Model model){
         // 1. 요청 파라미터 정보를 Map 객체에 담는다.
         Map<String, Object> condition = new HashMap<>();
         condition.put("page", page);
-        condition.put("distance", distance);
-        condition.put("level", level);
+        if (StringUtils.hasText(sort)) {
+            condition.put("sort", sort);
+        }
+        if (distance != null) {
+            condition.put("distance", distance);
+        }
+        if (level != null) {
+            condition.put("level", level);
+        }
         if (StringUtils.hasText(keyword)) {
             condition.put("keyword", keyword);
         }
@@ -190,7 +205,7 @@ public class AdminController {
 
         // 3. Model 객체에 화면에 표시할 데이터를 저장해서 보낸다.
         model.addAttribute("courses", dto.getData());
-        model.addAttribute("pagination", dto.getPaging());
+        model.addAttribute("paging", dto.getPaging());
 
         return "admin/courselist";
     }
