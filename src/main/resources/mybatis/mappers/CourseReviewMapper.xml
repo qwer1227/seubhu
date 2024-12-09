@@ -28,6 +28,23 @@
     </select>
 
     <!--
+        Review getReviewByNo(@Param("no") int no);
+    -->
+    <select id="getReviewByNo" resultMap="ReviewResultMap">
+        select r.review_no
+             , r.review_title
+             , r.review_content
+             , r.review_like_cnt
+             , r.review_created_date
+             , r.course_no
+             , u.user_no
+             , u.user_nickname
+        from COURSE_REVIEWS r inner join USERS u
+                                         on r.user_no = u.user_no
+        where review_no = #{no}
+    </select>
+
+    <!--
         List<Review> getReviewsByNo(@Param("no") int no);
     -->
     <select id="getReviewsByNo" resultMap="ReviewResultMap">
@@ -61,23 +78,6 @@
         from COURSE_REVIEWS r left join COURSE_REVIEW_IMGS i
         on r.review_no = i.review_no
         where r.review_no = #{no}
-    </select>
-
-    <!--
-        Review getReviewByNo(@Param("no") int no);
-    -->
-    <select id="getReviewByNo" resultMap="ReviewResultMap">
-        select r.review_no
-             , r.review_title
-             , r.review_content
-             , r.review_like_cnt
-             , r.review_created_date
-             , r.course_no
-             , u.user_no
-             , u.user_nickname
-        from COURSE_REVIEWS r inner join USERS u
-        on r.user_no = u.user_no
-        where review_no = #{no}
     </select>
 
     <!--

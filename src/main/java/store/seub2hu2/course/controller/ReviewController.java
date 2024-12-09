@@ -27,6 +27,23 @@ public class ReviewController {
     @Autowired
     private UserCourseService userCourseService;
 
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/review/{reviewNo}")
+    public ResponseEntity<RestResponseDto<Review>> checkSameReviewer(@PathVariable("reviewNo") int reviewNo
+                                                                    , @AuthenticationPrincipal LoginUser loginUser) {
+        // 1. 리뷰를 가져온다.
+        Review review = reviewService.getReview(reviewNo);
+
+        // 2. 리뷰 작성자와 리뷰 수정하는 자가 동일한지 확인한다.
+        if (review.getUser().getNo() != loginUser.getNo()) {
+            CourseReviewException courseReviewException = new CourseReviewException("해당 리뷰 작성자만 수정 가능합니다.");
+            return ResponseEntity.ok(RestResponseDto.fail(courseReviewException.getMessage()));
+        }
+
+        // 3. 응답 데이터를 반환한다.
+        return ResponseEntity.ok(RestResponseDto.success(review));
+    }
+
     @GetMapping("/reviews/{no}/{page}")
     public ResponseEntity<RestResponseDto<ListDto<Review>>> reviews(@PathVariable("no") int courseNo,
                                                                     @PathVariable("page") int page) {
@@ -53,16 +70,6 @@ public class ReviewController {
         return review;
     }
 
-//    @PostMapping("/modifyReview/{no}")
-//    @ResponseBody
-//    public Review modifyReview(@AuthenticationPrincipal LoginUser loginUser) {
-//        // 1. 수정할 리뷰 정보를 테이블에 반영한다.
-//
-//
-//        // 2. 수정한 리뷰 정보를 반환한다.
-//        return null;
-//    }
-
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/deleteReview/{no}")
     public ResponseEntity<RestResponseDto<String>> deleteReview(@PathVariable("no") int reviewNo,
@@ -84,17 +91,6 @@ public class ReviewController {
         // 1. 로그인한 사용자가 코스를 성공했는지 확인한다.
         boolean isSuccess = userCourseService.checkSuccess(loginUser.getNo(), courseNo);
         String data = isSuccess ? "success" : "fail";
-
-        // 2. 응답 데이터를 반환한다.
-        return ResponseEntity.ok(RestResponseDto.success(data));
-    }
-
-    @GetMapping("/check-reviewer-same/{reviewNo}")
-    public ResponseEntity<RestResponseDto<String>> checkSameReviewer(@PathVariable("reviewNo") int reviewNo
-                                                                    , @AuthenticationPrincipal LoginUser loginUser) {
-        // 1. 로그인한 사용자가 리뷰 작성자와 동일한지 확인한다.
-        boolean isSameReview = reviewService.checkSameReviewer(reviewNo, loginUser.getNo());
-        String data = isSameReview ? "same" : "different";
 
         // 2. 응답 데이터를 반환한다.
         return ResponseEntity.ok(RestResponseDto.success(data));

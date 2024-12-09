@@ -2,6 +2,7 @@ package store.seub2hu2.course.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,20 +39,20 @@ public class ReviewService {
     private AdminMapper adminMapper;
 
     /**
-     * 로그인한 사용자가 리뷰 작성자와 동일한지 확인한다.
-     * @param reviewNo
-     * @return
+     * 리뷰 번호로 리뷰를 가져온다.
+     * @param reviewNo 리뷰 번호
+     * @return 리뷰
      */
-    public boolean checkSameReviewer(int reviewNo, int userNo) {
-        // 리뷰를 가져온다.
+    public Review getReview(int reviewNo) {
+        // 1. 리뷰 번호로 리뷰를 가져온다.
         Review review = reviewMapper.getReviewByNo(reviewNo);
 
-        // 리뷰 작성자와 로그인한 사용자가 동일한지 확인하고, 동일 여부를 반환한다.
-        if (review.getUser().getNo() == userNo) {
-            return true;
-        } else {
-            return false;
-        }
+        // 2. 리뷰 이미지를 가져온다.
+        List<ReviewImage> reviewImages = reviewMapper.getReviewImagesByNo(reviewNo);
+        review.setReviewImage(reviewImages);
+
+        // 3. 리뷰를 반환한다.
+        return review;
     }
 
     /**
