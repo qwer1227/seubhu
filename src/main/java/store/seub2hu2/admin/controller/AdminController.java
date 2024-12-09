@@ -36,7 +36,9 @@ import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.ListDto;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -47,10 +49,7 @@ import java.util.*;
 @Slf4j
 public class AdminController {
 
-
-
     private final CourseService courseService;
-
     private final AdminService adminService;
     private final LessonService lessonService;
     private final LessonFileService lessonFileService;
@@ -522,7 +521,6 @@ public class AdminController {
                                      @RequestParam("colorNo") int colorNo,
                                      Model model) {
 
-
         ProdDetailDto prodDetailDto = productService.getProductByNo(no);
         model.addAttribute("prodDetailDto", prodDetailDto);
 
@@ -697,9 +695,22 @@ public class AdminController {
     }
 
     @GetMapping("/chart")
-    public String chart() {
+//    @ResponseBody
+    public Map<String, Object> chart(@RequestParam(name = "day", required = false) String day,
 
-        return "admin/chart";
+                        Model model) {
+
+        if (day == null || day.isEmpty()) {
+            // 현재 날짜로 기본 설정
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            day = sdf.format(new Date());
+        }
+
+        Map<String, Object> conditions = adminService.getTotalSubject(day);
+
+        model.addAttribute("conditions", conditions);
+
+        return conditions;
     }
 
     @GetMapping("/settlement")

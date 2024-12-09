@@ -97,6 +97,12 @@ public interface AdminMapper {
 
     void updateCourse(@Param("course") Course course);
 
+    int getTotalBreath(@Param("day")String day);
+
+    int getTotalAction(@Param("day")String day);
+
+    int getTotalExercise(@Param("day")String day);
+
 
 
 

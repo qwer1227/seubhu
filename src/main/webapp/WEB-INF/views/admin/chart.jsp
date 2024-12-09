@@ -170,5 +170,8 @@
 <%@include file="/WEB-INF/views/admincommon/common.jsp" %>
 
 </body>
+<script>
+
+</script>
 </html>
 

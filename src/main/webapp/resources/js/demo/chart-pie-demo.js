@@ -2,6 +2,8 @@
 Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
 Chart.defaults.global.defaultFontColor = '#858796';
 
+
+
 // Pie Chart Example
 var ctx = document.getElementById("myPieChart");
 var myPieChart = new Chart(ctx, {
@@ -36,7 +38,7 @@ var myPieChart = new Chart(ctx, {
 });
 
 var ctx = document.getElementById("myPieChart2");
-var myPieChart = new Chart(ctx, {
+var myPieChart2 = new Chart(ctx, {
   type: 'doughnut',
   data: {
     labels: ["런닝화", "런닝복", "런닝용품"],
@@ -68,7 +70,7 @@ var myPieChart = new Chart(ctx, {
 });
 
 var ctx = document.getElementById("myPieChart3");
-var myPieChart = new Chart(ctx, {
+var myPieChart3 = new Chart(ctx, {
   type: 'doughnut',
   data: {
     labels: ["런닝화", "런닝복", "런닝용품"],
