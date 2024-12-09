@@ -4,12 +4,17 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import store.seub2hu2.product.dto.*;
 import store.seub2hu2.product.vo.Product;
+import store.seub2hu2.product.vo.Size;
 
 import java.util.List;
 import java.util.Map;
 
 @Mapper
 public interface ProductMapper {
+
+    void updateAmount(@Param("size") Size size);
+
+    Size getSizeAmount(@Param("sizeNo") int sizeNo);
 
     // 옵션에 따른 데이터 전체 개수를 조회하기
     int getTotalRows(@Param("condition")Map<String, Object> condition);

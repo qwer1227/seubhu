@@ -27,9 +27,11 @@ import store.seub2hu2.payment.dto.ApproveResponse;
 import store.seub2hu2.payment.dto.CancelResponse;
 import store.seub2hu2.payment.service.PaymentService;
 import store.seub2hu2.payment.vo.Payment;
+import store.seub2hu2.product.dto.ProdDetailDto;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.util.SessionUtils;
 
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -117,8 +119,6 @@ public class PayController {
             // 결재정보를 저장한다.
             String orderStr = (String) param.get("orderNo");
             int orderNo = Integer.parseInt(orderStr);
-            String orderProdStr = (String) param.get("orderProdNo");
-            int orderProdNo = Integer.parseInt(orderProdStr);
             String userId = loginUser.getId();
 
 
@@ -201,6 +201,7 @@ public class PayController {
 
         if (type.equals("상품")) {
             OrderResultDto orderResultDto = orderService.getOrderResult(orderNo);
+
             model.addAttribute("orderDetail", orderResultDto);
 
             return "mypage/order-pay-completed";

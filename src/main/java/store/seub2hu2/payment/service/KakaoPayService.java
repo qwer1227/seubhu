@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import store.seub2hu2.delivery.mapper.DeliveryMapper;
 import store.seub2hu2.delivery.vo.Delivery;
+import store.seub2hu2.mypage.dto.OrderResultDto;
 import store.seub2hu2.mypage.dto.OrderResultItemDto;
 import store.seub2hu2.order.mapper.OrderMapper;
 import store.seub2hu2.order.vo.Order;
@@ -20,8 +21,10 @@ import store.seub2hu2.payment.dto.PaymentDto;
 import store.seub2hu2.payment.dto.ApproveResponse;
 import store.seub2hu2.payment.dto.CancelResponse;
 import store.seub2hu2.lesson.dto.ReadyResponse;
+import store.seub2hu2.product.dto.ProdAmountDto;
 import store.seub2hu2.product.dto.ProdDetailDto;
 import store.seub2hu2.product.mapper.ProductMapper;
+import store.seub2hu2.product.vo.Size;
 import store.seub2hu2.user.mapper.UserMapper;
 import store.seub2hu2.user.vo.Addr;
 
@@ -103,10 +106,15 @@ public class KakaoPayService {
                 item.setPrice(item.getPrice());
                 item.setStock(item.getStock());
                 item.setEachTotalPrice(item.getPrice() * item.getStock());
+
+                // 주문 상품에 대한 재고를 감소한다.
+                Size size = productMapper.getSizeAmount(item.getSizeNo());
+                size.setAmount(size.getAmount() - item.getStock());
+
+                productMapper.updateAmount(size);
             }
 
             orderMapper.insertOrderItems(orderItems);
-
 
 
             // 배송지

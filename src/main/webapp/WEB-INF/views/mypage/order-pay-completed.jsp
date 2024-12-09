@@ -20,7 +20,7 @@
             <h1>주문이 완료되었습니다.</h1>
         </div>
         <div>
-            <h3>주문 번호: 20241205-0080000</h3>
+            <h3>주문 번호: ${orderDetail.orderId}</h3>
         </div>
     </div>
     <div class="row mb-3">
@@ -36,14 +36,16 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <th><label>주문 상품</label></th>
-                    <td>${orderDetail.product.prodName} ${orderDetail.product.colorName} ${orderDetail.product.sizeName} 외 </td>
-                </tr>
-                <tr>
-                    <th><label>주문 수량</label></th>
-                    <td>${orderDetail.product.orderQty} 개</td>
-                </tr>
+                <c:forEach var="item" items="${orderDetail.items}">
+                    <tr>
+                        <th><label>주문 상품</label></th>
+                        <td>${item.prodName}[${item.prodColor}/${item.prodSize}] ${item.orderProdAmount} 개  </td>
+                    </tr>
+                </c:forEach>
+                    <tr id="totalQuantity">
+                        <th><label>총 주문 수량</label></th>
+                        <td id="qty">개</td>
+                    </tr>
                 </tbody>
             </table>
             <table class="table align-middle mt-2 md-2">
@@ -59,19 +61,19 @@
                 <tbody>
                 <tr>
                     <th><label>받으시는 분</label></th>
-                    <td>${orderDetail.addrDto.addrName}</td>
+                    <td>${orderDetail.addrName}</td>
                 </tr>
                 <tr>
                     <th><label>우편번호</label></th>
-                    <td>${orderDetail.addrDto.postcode}</td>
+                    <td>${orderDetail.postcode}</td>
                 </tr>
                 <tr>
                     <th><label>배송지</label></th>
-                    <td>${orderDetail.addrDto.addr} ${orderDetail.addrDto.addrDetail}</td>
+                    <td>${orderDetail.addr} ${orderDetail.addrDetail}</td>
                 </tr>
                 <tr>
                     <th><label>휴대폰 번호</label></th>
-                    <td>${orderDetail.deliveryDto.deliPhoneNumber}</td>
+                    <td>${orderDetail.delPhoneNumber}</td>
                 </tr>
                 </tbody>
             </table>
@@ -88,11 +90,11 @@
                 <tbody>
                 <tr>
                     <th><label>결제 수단</label></th>
-                    <td>${orderDetail.payments.payMethod}</td>
+                    <td>${orderDetail.payMethod}</td>
                 </tr>
                 <tr>
                     <th><label>결제 금액</label></th>
-                    <td><fmt:formatNumber>${orderDetail.orders.realPrice}</fmt:formatNumber> 원</td>
+                    <td><fmt:formatNumber>${orderDetail.realPrice}</fmt:formatNumber> 원</td>
                 </tr>
                 </tbody>
             </table>
@@ -109,21 +111,41 @@
                 <tbody>
                 <tr>
                     <th><label>배송 상태</label></th>
-                    <td>${orderDetail.deliveryDto.deliStatus}</td>
+                    <td>${orderDetail.delStatus}</td>
                 </tr>
                 <tr>
                     <th><label>배송 업체</label></th>
-                    <td>${orderDetail.deliveryDto.deliCom}</td>
+                    <td>${orderDetail.delCom}</td>
                 </tr>
                 <tr>
                     <th><label>배송 메모</label></th>
-                    <td>${orderDetail.deliveryDto.deliMemo}</td>
+                    <td>${orderDetail.delMemo}</td>
                 </tr>
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function() {
+        let totalQuantity = 0; // 총 수량을 저장할 변수
+
+        // 각 주문 항목에 대해 수량을 가져와 합산
+        $("tbody tr").each(function() {
+            // 주문 상품의 수량 부분이 포함된 <td> 텍스트를 가져옴
+            let orderProdAmountText = $(this).find("td").text().trim();
+            let orderProdAmount = orderProdAmountText.match(/(\d+)\s*개/); // "개"와 함께 숫자 추출
+
+            // 수량이 있는 경우만 처리
+            if (orderProdAmount) {
+                totalQuantity += parseInt(orderProdAmount[1]); // 숫자로 변환 후 합산
+            }
+        });
+
+        // 계산된 총 수량을 #qty에 표시
+        $("#qty").text(totalQuantity + " 개");
+    });
+</script>
 
 
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
