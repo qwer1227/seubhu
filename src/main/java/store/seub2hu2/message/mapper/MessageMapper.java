@@ -29,10 +29,10 @@ public interface MessageMapper {
     // 보낸 메시지 목록 조회
     List<MessageReceived> getSentMessages(@Param("condition") Map<String, Object> condition);
 
+    Message getMessageDetailByNo(@Param("messageNo") int messageNo);
+
     // unread 메시지 개수 조회
     int countUnreadMessages(@Param("userNo") int userNo);
-
-    Message getMessageDetailByNo(@Param("messageNo") int messageNo);
 
     // 단일 메시지 삭제
     void deleteMessage(@Param("messageNo") int messageNo);

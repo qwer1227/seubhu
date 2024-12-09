@@ -1,5 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="/WEB-INF/views/common/tags.jsp" %>
+<script type="text/javascript"
+        src="//dapi.kakao.com/v2/maps/sdk.js?appkey=3af1f449b9175825b32af2e204b65779&libraries=services,clusterer,drawing"></script>
+
 <!doctype html>
 <html lang="ko">
 <head>
@@ -9,8 +12,16 @@
     #marathon-table th {
         text-align: center;
     }
-    #marathon-table tr{
-        height: 50px;
+
+    #marathon-table tr {
+        height: 40px;
+    }
+    
+    #marathon-content{
+        margin-left: 10px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        padding-left: 50px;
     }
 </style>
 <body>
@@ -19,57 +30,133 @@
   
   <h2> 마라톤 정보 상세페이지 </h2>
   
-  <div class="row p-3 m-3">
-    <table id="marathon-table" class="text-start">
-      <colgroup>
-        <col width="10%">
-        <col width="40%">
-        <col width="10%">
-        <col width="40%">
-      </colgroup>
-      <tbody>
-      <tr>
-        <th colspan="4" style="text-align: start" class="fs-4">마라톤 이름</th>
-      </tr>
-      <tr>
-        <th>일시</th>
-        <td>2024.11.09</td>
-        <th>접수기간</th>
-        <td>2024.07.10 ~ 2024.10.18</td>
-      </tr>
-      <tr>
-        <th>장소</th>
-        <td colspan="3">전남 순천시 팔마로 333 (연향동, 순천팔마종합경기장) 순천팔마종합운동장 외 주로코스</td>
-      </tr>
-      <tr>
-        <th>홈페이지</th>
-        <td>http://sc-marathon.kr/</td>
-        <th>참가비</th>
-        <td>15,000원</td>
-      </tr>
-      <tr>
-        <th colspan="4">
-          <textarea disabled style="width: 100%">마라톤 디테일</textarea>
-        </th>
-      </tr>
-      <tr>
-        <th>다운로드</th>
-        <td colspan="3">
-          <input type="file" class="form-control" name="download"/>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-  </div>
-  
-  <div style="text-align: end">
-    <button class="btn btn-outline-dark">
-      <i class="bi bi-hand-thumbs-up"></i>
-      <i class="bi bi-hand-thumbs-up-fill"></i>
-    </button>
-    <a type="button" href="main" class="btn btn-secondary">목록</a>
+  <input type="hidden" id="place" value="${marathon.place}">
+  <div>
+    <div class="col d-flex justify-content-left">
+      <div>
+        <a href="main" style="text-decoration-line: none">마라톤 정보</a>
+      </div>
+    </div>
+    <div class="title h4 d-flex justify-content-between align-items-center">
+      <div>
+        ${marathon.title}
+      </div>
+      <span><i class="bi bi-eye"></i> ${marathon.viewCnt}</span>
+    </div>
+    <div class="meta d-flex justify-content-between">
+      <fmt:formatDate value="${marathon.createdDate}" pattern="yyyy.MM.dd hh:mm:ss"/>
+      
+      <%--        <c:if test="${not empty marathon.uploadFile.originalName}">--%>
+      <%--          <div class="content mb-4" id="fileDown" style="text-align: end">--%>
+      <%--            <a href="filedown?no=${marathon.no}" class="btn btn-outline-primary btn-sm">첨부파일 다운로드</a>--%>
+      <%--            <span id="hover-box">${marathon.uploadFile.originalName}</span>--%>
+      <%--          </div>--%>
+      <%--        </c:if>--%>
+    </div>
+    
+    <div class="row mt-1">
+      <table id="marathon-table" class="text-start">
+        <colgroup>
+          <col width="10%">
+          <col width="40%">
+          <col width="10%">
+          <col width="40%">
+        </colgroup>
+        <tbody>
+        <tr>
+          <th>일시</th>
+          <td><fmt:formatDate value="${marathon.marathonDate}" pattern="yyyy년 MM월 dd일"/></td>
+          <th>접수기간</th>
+          <td><fmt:formatDate value="${marathon.startDate}" pattern="yyyy년 MM월 dd일"/> ~ <fmt:formatDate
+              value="${marathon.endDate}" pattern="yyyy년 MM월 dd일"/></td>
+        </tr>
+        <tr>
+          <th>주최</th>
+          <td></td>
+          <th>주관</th>
+          <td></td>
+        </tr>
+        <tr>
+          <th>홈페이지</th>
+          <td><a href="https://${marathon.url}" target="_blank">${marathon.url}</a></td>
+        </tr>
+        <tr>
+          <th>장소</th>
+          <td colspan="3">${marathon.place}</td>
+        </tr>
+        </tbody>
+      </table>
+      <div class="content mt-3">
+        <div>
+          <img src="${marathon.thumbnail}" style="height: 350px">
+        </div>
+        <div id="marathon-content">
+          <textarea id="content" class="form-control bg-white border-0" readonly="readonly"
+                    style="resize: none; overflow: hidden; user-select: none;">${marathon.content}</textarea>
+        </div>
+        <div class=" d-flex justify-content-center">
+        <div class="col-6 mb-2" id="map" style="height: 250px; width: 500px"></div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="actions d-flex justify-content-between mb-4">
+      <!-- 로그인 여부를 체크하기 위해 먼저 선언 -->
+      <security:authorize access="isAuthenticated()">
+        <div>
+          <!-- principal 프로퍼티 안의 loginUser 정보를 가져옴 -->
+          <!-- loginUser.no를 가져와서 조건문 실행 -->
+            <button class="btn btn-warning" onclick="updateCrew()">수정</button>
+            <button class="btn btn-danger" onclick="deleteCrew()">삭제</button>
+        </div>
+      </security:authorize>
+      <div>
+        <a type="button" href="main" class="btn btn-secondary">목록</a>
+      </div>
+    </div>
   </div>
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
+<script>
+    let content = document.getElementById("content");
+    if (content) {
+        content.style.height = 'auto'
+        content.style.height = content.scrollHeight + 'px';
+    }
+
+    var container = document.getElementById('map'); //지도를 담을 영역의 DOM 레퍼런스
+    var options = { //지도를 생성할 때 필요한 기본 옵션
+        center: new kakao.maps.LatLng(37.572990, 126.992240), //지도의 중심좌표.
+        level: 3 //지도의 레벨(확대, 축소 정도)
+    };
+
+    var map = new kakao.maps.Map(container, options); //지도 생성 및 객체 리턴
+    let loc = document.querySelector("#place").value
+    var ps = new kakao.maps.services.Places();
+    ps.keywordSearch(loc, placesSearchCB);
+
+    function placesSearchCB(data, status) {
+        if (status === kakao.maps.services.Status.OK) {
+            // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
+            // LatLngBounds 객체에 좌표를 추가합니다
+            var bounds = new kakao.maps.LatLngBounds();
+
+            displayMarker(data[0]);
+            bounds.extend(new kakao.maps.LatLng(data[0].y, data[0].x));
+
+            // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
+            map.setBounds(bounds);
+        }
+    }
+
+    // 지도에 마커를 표시하는 함수입니다
+    function displayMarker(place) {
+        // 마커를 생성하고 지도에 표시합니다
+        var marker = new kakao.maps.Marker({
+            map: map,
+            position: new kakao.maps.LatLng(place.y, place.x)
+        });
+    }
+</script>
 </html>

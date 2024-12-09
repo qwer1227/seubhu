@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import store.seub2hu2.course.vo.UserLevel;
 import store.seub2hu2.mypage.dto.UserInfoReq;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.dto.UserJoinForm;
@@ -91,6 +92,12 @@ public class UserService {
 
         // 기본 사용자 역할 부여
         addUserRole(user.getNo(), "ROLE_USER");
+
+        // 기본 사용자 레벨 부여
+        UserLevel userLevel = new UserLevel();
+        userLevel.setUserNo(user.getNo());  // 등록된 사용자 번호
+        userLevel.setLevel(1);             // 기본 레벨 설정 (예: 1)
+        userMapper.insertUserLevel(userLevel);  // 사용자 레벨 등록
     }
 
 
