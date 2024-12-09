@@ -2,6 +2,7 @@ package store.seub2hu2.mypage.dto;
 
 import lombok.*;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class OrderResultDto {
 
    // 주문 관련
     private int orderNo; // 주문 번호
+    private String orderId; // 주문 아이디
     private Date orderDate; // 주문 날짜
     private String orderStatus; //주문 상태
     private int orderPrice; // 상품 가격들
@@ -44,10 +46,42 @@ public class OrderResultDto {
     private int addrNo; // 배송주소 번호
     private int userNo; // 유저 번호
     private String addrName; // 받는 사람 이름
+    private String postcode; // 우편 번호
     private String addr; // 주소1
     private String addrDetail; // 주소 상세
     private String isHome; // 자기 집 유무
 
     // 주문상품
     private List<OrderResultItemDto> items; // 주문 상품들
+
+    public String getOrderDescription() {
+        OrderResultItemDto orderResultItemDto = items.get(0);
+
+        if (items.size() > 1) {
+            return orderResultItemDto.getProdName() + " 외 " + (items.size() - 1) + "개";
+        } else {
+            return orderResultItemDto.getProdName();
+        }
+    }
+
+    public int getTotalItemAmount() {
+        int total = 0;
+
+        for (OrderResultItemDto orderResultItemDto : items) {
+            total += orderResultItemDto.getOrderProdAmount();
+        }
+
+        return total;
+    }
+
+    // 주문 아이디 생성
+    public String generateOrderId() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+        String datePart = sdf.format(payDate);
+        int sequence = 0;
+        sequence += sequence;
+
+        return "ORD-" +datePart + "-" + String.format("%03d", sequence);
+    }
+
 }

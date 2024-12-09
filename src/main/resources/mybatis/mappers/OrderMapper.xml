@@ -244,6 +244,7 @@
     -->
 
     <resultMap id="orderResultMap" type="store.seub2hu2.mypage.dto.OrderResultDto">
+        <id property="orderNo" column="ORDER_NO" />
         <!-- 결제 관련 -->
         <result property="payNo" column="PAY_NO"/>
         <result property="payId" column="PAY_ID"/>
@@ -257,8 +258,8 @@
         <result property="refund" column="REFUND"/>
 
         <!-- 주문 관련 -->
-        <result property="orderNo" column="ORDER_NO"/>
         <result property="orderDate" column="ORDER_DATE"/>
+        <result property="orderId" column="ORDER_NUMBER"/>
         <result property="orderStatus" column="ORDER_STATUS"/>
         <result property="orderPrice" column="ORDER_PRICE"/>
         <result property="delPayment" column="DEL_PAYMENT"/>
@@ -276,6 +277,7 @@
         <result property="addrNo" column="ADDR_NO"/>
         <result property="userNo" column="USER_NO"/>
         <result property="addrName" column="ADDR_NAME"/>
+        <result property="postcode" column="ZIP_CODE"/>
         <result property="addr" column="ADDR_1"/>
         <result property="addrDetail" column="ADDR_2"/>
         <result property="isHome" column="IS_HOME"/>
@@ -304,6 +306,7 @@
         ,PA.PAY_PRICE
         ,PA.PAY_TYPE
         ,O.ORDER_NO
+        ,O.ORDER_NUMBER
         ,O.ORDER_DATE
         ,O.ORDER_STATUS
         ,O.ORDER_PRICE
@@ -326,6 +329,7 @@
         ,D.DELI_NO
         ,D.DELI_COM
         ,D.DELI_STATUS
+        ,D.DELI_MEMO
         ,D.DELI_PHONENUMBER
         ,AD.ADDR_NO
         ,AD.ADDR_NAME
@@ -347,10 +351,7 @@
         ON D.ORDER_NO = O.ORDER_NO
         JOIN ADDRESSES AD
         ON AD.ADDR_NO = D.ADDR_NO
-        WHERE OP.ORDER_PROD_NO IN
-        <foreach collection="">
-            #{orderNo}
-        </foreach>
+        WHERE O.ORDER_NO = #{orderNo}
     </select>
 
 </mapper>

@@ -11,7 +11,7 @@ public class OrderResultItemDto {
 
     private int orderProdNo; // 주문 상품 번호
     private int prodNo; // 상품 번호
-    private String prodName;
+    private String prodName; // 상품 이름
     private int colorNo; // 색상 번호
     private String prodColor; // 색상 이름
     private int sizeNo; // 사이즈 번호
