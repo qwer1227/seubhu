@@ -37,10 +37,23 @@
                         <label for="customRange2" class="form-label text-start">추천순</label>
                         <input type="checkbox"  class="form-check" name="sort" value="like" ${param.sort eq 'like' ? 'checked' : ''}>
                     </div>
-                    <div class="col-3">
-                        <label for="customRange2" class="form-label">거리(0~10KM)</label>
+                    <div class="col-4">
+                        <label id="slider" for="customRange2" class="form-label">거리</label>
                         <input type="range" class="form-range" min="0" max="10" id="customRange2" name="distance"
                                value="${empty param.distance ? '10' : param.distance}">
+                        <div class="row">
+                            <div class="col">0</div>
+                            <div class="col">1</div>
+                            <div class="col">2</div>
+                            <div class="col">3</div>
+                            <div class="col">4</div>
+                            <div class="col">5</div>
+                            <div class="col">6</div>
+                            <div class="col">7</div>
+                            <div class="col">8</div>
+                            <div class="col">9</div>
+                            <div class="col">10</div>
+                        </div>
                     </div>
                     <div class="col-1">
                         난이도
@@ -59,8 +72,14 @@
                     </div>
                 </div>
             </form>
-
         </div>
+    </div>
+
+    <%-- 안내 문구 --%>
+    <div class="card row row-cols-1 row-cols-md-1 g-4 mt-3 mb-3">
+        <h5>* <strong style="background-color: orange">등록하기</strong>를 클릭하여 <strong style="color: red">도전할 코스 목록</strong>에 추가하면,
+            <strong style="color: red">나의 코스 기록</strong>에서 코스를 확인하실 수 있습니다!</h5>
+        <h5>* <strong style="color: red">이전 난이도 코스 3개</strong>를 완주하면, 다음 난이도의 코스에 도전하실 수 있습니다! (ex 1단계 3개 클리어 시, 2단계 도전 가능)</h5>
     </div>
 
     <%-- 코스 목록 --%>
@@ -69,36 +88,46 @@
             <div class="col-3">
                 <div class="card h-100">
                     <a class="text-decoration-none" href="detail?no=${course.no }">
-                        <img src="/resources/images/course/${course.filename }" class="card-img-top" alt="...">
+                        <div class="main_image" style="position: relative;">
+                            <img src="/resources/images/course/${course.filename }" class="card-img-top" alt="...">
+                            <c:if test="${course.successWhether.courseNo == '1'}">
+                                <span class="badge bg-primary main_image_text"
+                                      style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 20px;">
+                                    완주 성공!
+                                </span>
+                            </c:if>
+                        </div>
                     </a>
                     <div class="card-body">
+                        <%-- 해당 코스 완주를 성공한 사용자라면, 완주 성공 문구를 표시한다. --%>
                         <h5 class="card-title">
-                            <%-- 코스를 성공한 경우에만 success 표시 --%>
-                            <c:if test="${course.successWhether.isSuccess == 'Y'}">
-                                <span class="badge text-bg-primary">완주 성공!</span>
-                            </c:if>
-                            ${course.name }
+                            <span>${course.name }</span>
                         </h5>
                         <a class="text-decoration-none" href="detail?no=${course.no }">
                             <p class="card-text">${course.region.si } ${course.region.gu } ${course.region.dong }</p>
-                            <%-- 도전 등록하지 않은 경우에만 도전 등록 버튼 / 도전 등록한 경우에만 도전 등록 취소 버튼 --%>
-                            <%-- 단, 현재 배지에 맞지 않으면 버튼 표시x -> 해당 코스 도전 불가능 표시 --%>
-                            <c:choose>
-                                <c:when test="${currentUserLevel < course.level}">
-                                    <span class="badge text-bg-primary">아직 도전할 수 없습니다!</span>
-                                </c:when>
-                                <c:otherwise>
-                                    <c:choose>
-                                        <c:when test="${course.challengeWhether.isRegister == 'Y'}">
-                                            <button type="button" class="btn btn-danger">도전 등록 취소</button>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <button type="button" class="btn btn-warning">도전 등록하기</button>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </c:otherwise>
-                            </c:choose>
                         </a>
+                            <sec:authorize access="isAuthenticated()">
+                                <c:choose>
+                                    <%-- 현재 도전 가능한 단계(난이도)가 코스 난이도보다 적으면, 도전 불가능 문구를 표시한다. --%>
+                                    <c:when test="${currentUserLevel < course.level}">
+                                        <button class="btn btn-danger disabled">아직 도전할 수 없습니다!</button>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <c:choose>
+                                            <%-- 사용자가 코스 도전 등록을 했다면 등록 취소 버튼을 표시하고, 클릭하면 코스 등록을 취소한다. --%>
+                                            <c:when test="${course.challengeWhether.courseNo == '1'}">
+                                                <a href="controlChallenge?courseNo=${course.no}&page=${pagination.page}"
+                                                   class="btn btn-danger" onclick="cancelChallenge(event)">등록 취소</a>
+                                            </c:when>
+                                            <%-- 사용자가 코스 도전 등록을 하지 않았다면 등록하기 버튼을 표시하고, 클릭하면 코스를 등록한다. --%>
+                                            <c:otherwise>
+                                                <a href="controlChallenge?courseNo=${course.no}&page=${pagination.page}"
+                                                   class="btn btn-warning" onclick="registerChallenge(event)">등록하기</a>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </c:otherwise>
+                                </c:choose>
+                            </sec:authorize>
                     </div>
                     <div class="card-footer bg-transparent border-primary" >
                         <span class="badge rounded-pill text-bg-dark">난이도 ${course.level }단계</span>
@@ -159,6 +188,24 @@
 
         pageInput.value = page;
         form.submit();
+    }
+
+    // 등록하기 버튼을 클릭하면, 확인창을 표시한다.
+    function registerChallenge(event) {
+        if (confirm("도전할 코스 목록에 추가하시겠습니까?")) {
+            alert("도전할 코스 목록에 추가되었습니다!");
+        } else {
+            event.preventDefault();
+        }
+    }
+
+    // 등록 취소 버튼을 클릭하면, 확인창을 표시한다.
+    function cancelChallenge(event) {
+        if (confirm("도전할 코스 목록에서 제외하시겠습니까?")) {
+            alert("도전할 코스 목록에서 제외되었습니다!");
+        } else {
+            event.preventDefault();
+        }
     }
 </script>
 </body>

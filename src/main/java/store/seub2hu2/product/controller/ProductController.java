@@ -63,6 +63,7 @@ public class ProductController {
         model.addAttribute("products", dto.getData());
         model.addAttribute("paging", dto.getPaging());
 
+        System.out.println("--------------------------------------------products:" + dto.getData());
         return "product/list";
     }
 

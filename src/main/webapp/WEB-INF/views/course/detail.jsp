@@ -35,20 +35,56 @@
                 </tr>
                 </tbody>
             </table>
-            <%-- 좋아요! 버튼을 클릭하면, 좋아요 수가 증가하거나 감소한다. --%>
-            <sec:authorize access="isAuthenticated()">
-                <c:if test="${isLike eq true}">
-                    <a href="controlLikeCount?courseNo=${course.no }" class="btn btn-primary ${isSuccess ? "" : "disabled"}">
-                        <i class="bi bi-hand-thumbs-up">좋아요!</i>
-                    </a>
+
+            <div class="row mt-3 mb-3 justify-content-center">
+                <sec:authorize access="isAuthenticated()">
+                    <%-- 좋아요! 버튼을 클릭하면, 좋아요 수가 증가하거나 감소한다. --%>
+                    <c:if test="${isLike eq true}">
+                        <a href="controlLikeCount?courseNo=${course.no}" class="btn btn-primary ${isSuccess ? "" : "disabled"}" style="width: 100px;">
+                            <i class="bi bi-hand-thumbs-up">좋아요!</i>
+                        </a>
+                    </c:if>
+                    <c:if test="${isLike eq false}">
+                        <a href="controlLikeCount?courseNo=${course.no}" class="btn btn-outline-primary ${isSuccess ? "" : "disabled"}" style="width: 100px;">
+                            <i class="bi bi-hand-thumbs-up">좋아요!</i>
+                        </a>
+                    </c:if>
+                </sec:authorize>
+                <span>좋아요 수 : ${course.likeCnt}개</span>
+            </div>
+
+            <%-- 성공 표시 --%>
+            <div class="row mt-3 mb-3 justify-content-center">
+                <c:if test="${isSuccess == true}">
+                    <span class="badge text-bg-primary" style="width: 100px; font-size: 20px;">완주 성공!</span>
                 </c:if>
-                <c:if test="${isLike eq false}">
-                    <a href="controlLikeCount?courseNo=${course.no }" class="btn btn-outline-primary ${isSuccess ? "" : "disabled"}">
-                        <i class="bi bi-hand-thumbs-up">좋아요!</i>
-                    </a>
-                </c:if>
-            </sec:authorize>
-            <span>좋아요 수 : ${course.likeCnt}개</span>
+            </div>
+
+            <%-- 도전 가능 여부 표시 --%>
+            <div class="row justify-content-center">
+                <sec:authorize access="isAuthenticated()">
+                    <c:choose>
+                        <%-- 현재 도전 가능한 단계(난이도)가 코스 난이도보다 적으면, 도전 불가능 문구를 표시한다. --%>
+                        <c:when test="${currentUserLevel < course.level}">
+                            <button class="btn btn-danger disabled" style="width: 200px;">아직 도전할 수 없습니다!</button>
+                        </c:when>
+                        <c:otherwise>
+                            <c:choose>
+                                <%-- 사용자가 코스 도전 등록을 했다면 등록 취소 버튼을 표시하고, 클릭하면 코스 등록을 취소한다. --%>
+                                <c:when test="${isChallenge == true}">
+                                    <a href="changeChallenge?courseNo=${course.no}" class="btn btn-danger"
+                                       style="width: 100px;" onclick="cancelChallenge(event)">등록 취소</a>
+                                </c:when>
+                                <%-- 사용자가 코스 도전 등록을 하지 않았다면 등록하기 버튼을 표시하고, 클릭하면 코스를 등록한다. --%>
+                                <c:otherwise>
+                                    <a href="changeChallenge?courseNo=${course.no}" class="btn btn-warning"
+                                       style="width: 100px;" onclick="registerChallenge(event)">등록하기</a>
+                                </c:otherwise>
+                            </c:choose>
+                        </c:otherwise>
+                    </c:choose>
+                </sec:authorize>
+            </div>
         </div>
         <div class="col-1"></div> <%-- 빈칸 --%>
         <div class="col-6">
@@ -71,7 +107,7 @@
             <div class="text-end">
                  <sec:authorize access="isAuthenticated()">
                      <sec:authentication property="principal" var="loginUser" />
-                     <button class="btn btn-primary" onclick="openReviewFormModal(${loginUser.no})">리뷰 작성</button>
+                     <button class="btn btn-primary" onclick="openAddReviewFormModal()">리뷰 작성</button>
                  </sec:authorize>
             </div>
         </div>
@@ -93,7 +129,7 @@
 </div>
 
 <%-- 코스 리뷰 등록 Modal창 --%>
-<div class="modal fade" id="modal-review-form" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modal-add-review-form" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -118,9 +154,6 @@
                         <input type="file" class="form-control" name="upfile" multiple="multiple"/>
                         <strong style="color:red;">＊ 컨트롤(Ctrl)을 누른 채로 사진 여러 개 클릭</strong>
                     </div>
-                    <div class="form-group">
-                        <strong style="color:red;">＊ 리뷰 수정이 불가하니 신중히 작성바랍니다!</strong>
-                    </div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -131,15 +164,71 @@
     </div>
 </div>
 
+<%-- 코스 리뷰 수정 Modal창 --%>
+<div class="modal fade" id="modal-modify-review-form" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">코스 리뷰 수정하기</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <%-- 리뷰 내용을 수정한다. --%>
+            <%-- 요청 파라미터 정보 : courseNo, title, content, upfile --%>
+            <div class="modal-body">
+                <form method="post" action="/modifyReview" enctype="multipart/form-data">
+                    <input type="hidden" name="courseNoToFix" value="${course.no }" />
+                    <div class="form-group">
+                        <label class="form-label">제목</label>
+                        <input type="text" class="form-control" name="titleToFix"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">내용</label>
+                        <textarea rows="4" class="form-control" name="contentToFix"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">코스 사진 업로드</label>
+                        <input type="file" id="images-toFix" class="form-control" name="upfileToFix" multiple="multiple"/>
+                        <strong style="color:red;">＊ 컨트롤(Ctrl)을 누른 채로 사진 여러 개 클릭</strong>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                <button type="submit" class="btn btn-primary" onclick="submitReview()">수정</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script type="text/javascript">
-    const reviewFormModal = new bootstrap.Modal('#modal-review-form')
+    // 등록하기 버튼을 클릭하면, 확인창을 표시한다.
+    function registerChallenge(event) {
+        if (confirm("도전할 코스 목록에 추가하시겠습니까?")) {
+            alert("도전할 코스 목록에 추가되었습니다!");
+        } else {
+            event.preventDefault();
+        }
+    }
+
+    // 등록 취소 버튼을 클릭하면, 확인창을 표시한다.
+    function cancelChallenge(event) {
+        if (confirm("도전할 코스 목록에서 제외하시겠습니까?")) {
+            alert("도전할 코스 목록에서 제외되었습니다!");
+        } else {
+            event.preventDefault();
+        }
+    }
+
+    // Modal창을 정의한다.
+    const addReviewFormModal = new bootstrap.Modal('#modal-add-review-form');
+    const modifyReviewFormModal = new bootstrap.Modal('#modal-modify-review-form');
 
     // 코스 리뷰 등록 Modal창을 연다.
-    async function openReviewFormModal(userNo) {
+    async function openAddReviewFormModal() {
         // 1. 코스 완주를 성공한 사용자가 아니라면, 경고 메시지를 출력한다.
         let courseNo = document.querySelector("input[name=courseNo]").value;
-        let response = await fetch("/course/check-success/" + userNo + "/" + courseNo);
+        let response = await fetch("/ajax/check-success/" + courseNo);
         let result = await response.json();
 
         if (result.data === "fail") {
@@ -148,7 +237,40 @@
         }
 
         // 2. 코스 리뷰 등록 Modal창을 화면에 표시한다.
-        reviewFormModal.show();
+        addReviewFormModal.show();
+    }
+
+    // 코스 리뷰 수정 Modal창을 연다.
+    async function openModifyReviewFormModal(reviewNo) {
+        // 코스 리뷰를 가져온다.
+        let response = await fetch("/ajax/review/" + reviewNo);
+        let result = await response.json();
+        let status = result.status;
+        let message = result.message;
+        let data = result.data;
+
+        // 코스 리뷰 작성자와 동일한 사용자가 아니라면, 경고 메시지를 출력한다.
+        if (response.ok) {
+            if (status === 500) {
+                alert(message); // message = "해당 리뷰 작성자만 수정 가능합니다."
+                return;
+            }
+        } else {
+            alert(message); // message = "로그인이 필요한 서비스입니다"
+            return;
+        }
+
+        // 코스 리뷰 수정 Modal창에 가져온 코스 리뷰 정보(수정 전 리뷰)를 저장한다.
+        document.querySelector("input[name=titleToFix]").value = data.title;
+        document.querySelector("textarea[name=contentToFix]").value = data.content;
+
+        // for (let i of data.reviewImage) {
+        //     let image = document.querySelector("#images-toFix").value
+        //     image = i.name;
+        // }
+
+        // 코스 리뷰 수정 Modal창을 화면에 표시한다.
+        modifyReviewFormModal.show();
     }
 
     // 리뷰 목록이 화면에 표시된다.
@@ -213,7 +335,7 @@
             let review = await response.json();
             appendReview(review);
 
-            reviewFormModal.hide();
+            addReviewFormModal.hide();
         }
     }
 
@@ -225,7 +347,7 @@
 	            <div class="card-header">
 	                <span>\${review.title}</span>
 	                <span class="float-end">
-	                    <small>\${review.user.nickname}</small>
+	                    <small><strong style="color: blue;">\${review.user.nickname}</strong></small>
 	                    <small>\${review.createdDate}</small>
 	                </span>
 	            </div>
@@ -234,6 +356,7 @@
 	                <div id="box-images-\${review.no}"></div>
 	            </div>
 	            <div class="card-footer text-end">
+                    <button class="btn btn-success btn-sm" onclick="openModifyReviewFormModal(\${review.no})">수정</button>
 	                <button class="btn btn-danger btn-sm" onclick="removeReview(\${review.no})">삭제</button>
 	            </div>
 	        </div>
@@ -282,6 +405,8 @@
 
         document.querySelector("#paging").innerHTML = pages;
     }
+
+    // 리뷰를 수정한다.
 
     // 리뷰를 삭제한다.
     async function removeReview(reviewNo) {

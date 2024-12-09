@@ -69,7 +69,7 @@
             initialView: 'dayGridMonth',
             selectable: true,
             editable: true,
-            events: [], // 초기 이벤트 데이터, 서버에서 받아오도록 설정 가능
+            events: '/mypage/getworkout',
             dateClick: function (info) {
                 openModal(info.dateStr);
             },
@@ -103,13 +103,37 @@
                 if (event) {
                     event.setProp('title', title);
                     event.setExtendedProp('description', description);
-                } else {
-                    calendar.addEvent({
+
+                // 수정 요청
+                $.ajax({
+                    url: '/api/events/' + event.id, // 이벤트 ID를 통해 수정
+                    type: 'PUT',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        title: title,
+                        description: description
+                    }),
+                    success: function () {
+                        calendar.refetchEvents(); // 서버 데이터 재로드
+                    }
+                });
+            } else {
+                // 새로운 이벤트 추가
+                $.ajax({
+                    url: '/api/events',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
                         title: title,
                         start: date,
                         description: description
-                    });
-                }
+                    }),
+                    success: function () {
+                        calendar.refetchEvents(); // 서버 데이터 재로드
+                    }
+                });
+            }
+
                 myModal.hide();
             });
 

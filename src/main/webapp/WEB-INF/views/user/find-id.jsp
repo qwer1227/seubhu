@@ -49,6 +49,7 @@
                 </div>
                 <div class="modal-body" id="modalBody">
                     <!--결과 메시지 표시 부분-->
+                    가입하신 아이디는 <b>${userId}</b>입니다.
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>

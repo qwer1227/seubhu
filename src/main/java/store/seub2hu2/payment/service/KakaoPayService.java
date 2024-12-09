@@ -70,8 +70,7 @@ public class KakaoPayService {
             parameters.put("total_amount", String.valueOf(paymentDto.getTotalAmount()));
 
             parameters.put("approval_url", "http://localhost/pay/completed?type=" + paymentDto.getType()
-                    + "&lessonNo=" + paymentDto.getLessonNo()
-                    + "&userId=" + paymentDto.getUserId());
+                    + "&lessonNo=" + paymentDto.getLessonNo());
         }
 
         // 상품 결제

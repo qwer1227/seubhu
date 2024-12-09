@@ -3,6 +3,7 @@ package store.seub2hu2.admin.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -11,17 +12,16 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import store.seub2hu2.admin.dto.*;
 import store.seub2hu2.admin.service.AdminService;
 import store.seub2hu2.course.service.CourseService;
+import store.seub2hu2.course.service.UserCourseService;
 import store.seub2hu2.course.vo.Course;
+import store.seub2hu2.course.vo.UserLevel;
 import store.seub2hu2.lesson.dto.LessonRegisterForm;
 import store.seub2hu2.lesson.dto.LessonUpdateDto;
 import store.seub2hu2.lesson.service.LessonFileService;
 import store.seub2hu2.lesson.service.LessonService;
 import store.seub2hu2.lesson.vo.Lesson;
-import store.seub2hu2.payment.vo.Payment;
 import store.seub2hu2.mypage.dto.AnswerDTO;
-import store.seub2hu2.mypage.dto.QnaCreateRequest;
 import store.seub2hu2.mypage.dto.QnaResponse;
-import store.seub2hu2.mypage.enums.QnaStatus;
 import store.seub2hu2.mypage.service.QnaService;
 import store.seub2hu2.product.dto.*;
 import store.seub2hu2.product.service.ProductService;
@@ -30,6 +30,7 @@ import store.seub2hu2.product.vo.Category;
 import store.seub2hu2.product.vo.Color;
 import store.seub2hu2.product.vo.Image;
 import store.seub2hu2.product.vo.Product;
+import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.service.UserService;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.ListDto;
@@ -56,6 +57,7 @@ public class AdminController {
     private final ProductService productService;
     private final UserService userService;
     private final QnaService qnaService;
+    private final UserCourseService userCourseService;
 
     @GetMapping("/home")
     public String home() {
@@ -159,6 +161,24 @@ public class AdminController {
         return "admin/lessonlist";
     }
 
+    @GetMapping("/course-edit-form")
+    public String getCourseEditForm(@RequestParam("no") int courseNo, Model model) {
+
+        Course course = adminService.getCourseByNo(courseNo);
+
+        model.addAttribute("course", course);
+
+        return "admin/course-edit-form";
+    }
+
+    @PostMapping("/course-edit-form")
+    public String courseEditForm(@RequestParam("no") int courseNo,CourseRegisterForm form) {
+
+        adminService.getUpdateCourse(form);
+
+        return "redirect:/admin/course-detail?no=" + courseNo;
+    }
+
     @GetMapping("/course-register-form")
     public String courseRegisterForm() {
         return "admin/course-register-form";
@@ -173,18 +193,38 @@ public class AdminController {
         return "redirect:/admin/course";
     }
 
+    @GetMapping("/course-detail")
+    public String courseDetail(@RequestParam(name = "no") int courseNo,
+                               Model model) {
+        // 1. 코스의 상세 정보를 가져온다.
+        Course course = courseService.getCourseDetail(courseNo);
+
+        // 3. Model 객체에 코스의 상세 정보를 저장한다.
+        model.addAttribute("course", course);
+
+        return "admin/course-admin-detail";
+    }
+
     /*코스 목록*/
     @GetMapping("/course")
     public String course(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
-                       @RequestParam(name = "distance", required = false) Double distance,
-                       @RequestParam(name = "level", required = false) Integer level,
-                       @RequestParam(name = "keyword", required = false) String keyword,
+                         @RequestParam(name = "sort", required = false) String sort,
+                         @RequestParam(name = "distance", required = false, defaultValue = "10") Double distance,
+                         @RequestParam(name = "level", required = false) Integer level,
+                         @RequestParam(name = "keyword", required = false) String keyword,
                        Model model){
         // 1. 요청 파라미터 정보를 Map 객체에 담는다.
         Map<String, Object> condition = new HashMap<>();
         condition.put("page", page);
-        condition.put("distance", distance);
-        condition.put("level", level);
+        if (StringUtils.hasText(sort)) {
+            condition.put("sort", sort);
+        }
+        if (distance != null) {
+            condition.put("distance", distance);
+        }
+        if (level != null) {
+            condition.put("level", level);
+        }
         if (StringUtils.hasText(keyword)) {
             condition.put("keyword", keyword);
         }
@@ -193,7 +233,7 @@ public class AdminController {
 
         // 3. Model 객체에 화면에 표시할 데이터를 저장해서 보낸다.
         model.addAttribute("courses", dto.getData());
-        model.addAttribute("pagination", dto.getPaging());
+        model.addAttribute("paging", dto.getPaging());
 
         return "admin/courselist";
     }
@@ -258,8 +298,6 @@ public class AdminController {
                                     Model model) {
 
         adminService.getUpdateProduct(product);
-
-
 
 
         return "redirect:/admin/product-detail?no=" + product.getNo() + "&colorNo=" + product.getColorNum();
@@ -537,12 +575,17 @@ public class AdminController {
 
         List<Color> colorSize = adminService.getStockByColorNum(condition);
 
+        System.out.println("--------------------colorSize:" + colorSize);
+
         if (colorSize == null || colorSize.isEmpty()) {
-            model.addAttribute("colorSize", colorSize);
-            model.addAttribute("sizeMessage", "사이즈 정보가 없습니다.");
-        } else {
             model.addAttribute("colorSize", null);
             model.addAttribute("sizeMessage", "사이즈 정보가 없습니다.");
+            System.out.println("-----------------------------------------------model1:" + model);
+        } else {
+            model.addAttribute("colorSize", colorSize);
+            model.addAttribute("sizeMessage", null);
+
+            System.out.println("-----------------------------------------------model2:" + model);
         }
 
         model.addAttribute("colorSize", colorSize);
@@ -645,14 +688,29 @@ public class AdminController {
         return "admin/productlist";
     }
 
+    @GetMapping("/order")
+    public String order(){
+
+
+
+        return "admin/order";
+    }
+
+    @GetMapping("/chart")
+    public String chart() {
+
+        return "admin/chart";
+    }
+
     @GetMapping("/settlement")
     public String settlement(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
                              @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
                              @RequestParam(name = "pType", required = false, defaultValue = "lesson") String pType,
-//                             @RequestParam(name = "dayType", required = false, defaultValue = "day") String dayType,
-                             @RequestParam(name = "sort", required = false, defaultValue = "latest") String sort,
+                             @RequestParam(name = "day", required = false) String day,
+                             @RequestParam(name = "sort", required = false, defaultValue ="latest") String sort,
                              @RequestParam(name = "opt", required = false, defaultValue = "all") String opt,
                              @RequestParam(name = "keyword", required = false) String keyword,
+                             @RequestParam(name= "value", required = false) String value,
                              Model model) {
 
     Map<String, Object> condition = new HashMap<>();
@@ -663,12 +721,24 @@ public class AdminController {
     condition.put("sort", sort);
     condition.put("opt", opt);
 
-        if (StringUtils.hasText(keyword)) {
+        if (StringUtils.hasText(day)) {
+            condition.put("day", day);
+        }
+
+        if (StringUtils.hasText(value)) {
             condition.put("keyword", keyword);
+            condition.put("value", value);
         }
 
         ListDto<SettlementDto> dto = adminService.getSettleList(condition);
 
+        int totalPriceSum = dto.getData().stream()
+                .mapToInt(SettlementDto::getTotalPrice)
+                .distinct()   // 중복된 값 제거 (한 번만 합산)
+                .limit(1)     // 첫 번째 값만 선택
+                .sum();
+
+        model.addAttribute("totalPriceSum", totalPriceSum);
         model.addAttribute("dto", dto.getData());
         model.addAttribute("paging", dto.getPaging());
 

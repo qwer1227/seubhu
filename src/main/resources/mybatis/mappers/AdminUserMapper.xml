@@ -10,7 +10,54 @@
         select
             count(*)
         from
-            PAYMENTS;
+            PAYMENTS P, USERS U, LESSON_RESERVATIONS R, LESSONS L
+        where
+            P.user_id = U.user_id
+          and
+            P.pay_id = R.lesson_reservation_pay_id
+          and
+            R.lesson_no = L.lesson_no
+          and
+            P.pay_type = '레슨'
+        <!-- condition 객체가 null이 아닐 때만 실행 -->
+        <if test="condition.day != null">
+            and (
+            DATE_FORMAT(P.pay_date, '%Y-%m-%d') = #{condition.day}
+            or DATE_FORMAT(P.pay_date, '%Y-%m') = #{condition.day}
+            )
+        </if>
+        <if test="condition.opt != null">
+            <choose>
+                <when test="condition.opt == 'all'">
+
+                </when>
+                <when test="condition.opt == 'ready'">
+                    and P.pay_status = '결제확정'
+                </when>
+                <when test="condition.opt == 'notReady'">
+                    and P.pay_status = '결제완료'
+                </when>
+                <when test="condition.opt == 'cancel'">
+                    and P.pay_status = '취소'
+                </when>
+            </choose>
+        </if>
+        <if test="condition != null and condition.keyword != null">
+            <choose>
+                <when test="condition.keyword == 'all'">
+
+                </when>
+                <when test="condition.keyword == 'payName'">
+                    and U.user_name like CONCAT('%',#{condition.value},'%')
+                </when>
+                <when test="condition.keyword == 'payId'">
+                    and U.user_id like CONCAT('%',#{condition.value},'%')
+                </when>
+                <when test="condition.keyword == 'lessonName'">
+                    and L.lesson_title like CONCAT('%',#{condition.value},'%')
+                </when>
+            </choose>
+        </if>
     </select>
 
     <!--
@@ -18,27 +65,44 @@
     -->
     <select id="getSettleLists" resultType="store.seub2hu2.admin.dto.SettlementDto">
         select
-            *
+            *,
+        (
+        select SUM(P2.pay_price)
+        from PAYMENTS P2, USERS U2, LESSON_RESERVATIONS R2, LESSONS L2
+        where P2.user_id = U2.user_id
+        and P2.pay_id = R2.lesson_reservation_pay_id
+        and R2.lesson_no = L2.lesson_no
+        and P2.pay_type = '레슨'
+        and P2.PAY_STATUS = '결제확정'
+            <if test="condition.day != null">
+                and (
+                DATE_FORMAT(P2.pay_date, '%Y-%m-%d') = #{condition.day}
+                or DATE_FORMAT(P2.pay_date, '%Y-%m') = #{condition.day}
+                )
+            </if>
+        ) as totalPrice
         from
             (
             select
+        <if test="condition.sort != null">
                 <choose>
                     <when test="condition.sort == 'latest'">
-                         ROW_NUMBER() OVER (ORDER BY P.pay_no asc) as RN
+                         ROW_NUMBER() OVER (ORDER BY P.pay_no desc) as RN ,
                     </when>
                     <when test="condition.sort == 'oldestDate'">
-                         ROW_NUMBER() OVER (ORDER BY P.pay_no desc) as RN
+                         ROW_NUMBER() OVER (ORDER BY P.pay_no asc) as RN ,
                     </when>
                     <when test="condition.sort == 'price'">
-                         ROW_NUMBER() OVER (ORDER BY P.pay_price desc) as RN
+                         ROW_NUMBER() OVER (ORDER BY P.pay_price desc) as RN ,
                     </when>
                 </choose>
-                 , P.pay_no		as payNo
+        </if>
+                  P.pay_no		as payNo
                  , P.pay_type	as settleType
                  , U.user_name 	as name
                  , U.user_id	as id
                  , L.lesson_title    as title
-                 , P.pay_price	as totalPrice
+                 , P.pay_price	as price
                  , P.pay_date	as payDate
                  , P.pay_cancel_date as payCancelDate
                  , P.pay_method as payMethod
@@ -53,20 +117,16 @@
                 R.lesson_no = L.lesson_no
             and
                 P.pay_type = '레슨'
-<!--                <if test="condition.dayType != null">-->
-<!--                    <choose>-->
-<!--                        <when test="condition.dayType == 'day'">-->
-<!--                            -->
-<!--                        </when>-->
-<!--                        <when test="condition.dayType == 'month'">-->
-
-<!--                        </when>-->
-<!--                    </choose>-->
-<!--                </if>-->
+                <if test="condition.day != null">
+                    and (
+                    DATE_FORMAT(P.pay_date, '%Y-%m-%d') = #{condition.day}
+                    or DATE_FORMAT(P.pay_date, '%Y-%m') = #{condition.day}
+                    )
+                </if>
                 <if test="condition.opt != null">
                     <choose>
                         <when test="condition.opt == 'all'">
-                            and (P.pay_status = '결제확정' or P.pay_status = '결제완료' or P.pay_status = '취소')
+
                         </when>
                         <when test="condition.opt == 'ready'">
                             and P.pay_status = '결제확정'
@@ -76,6 +136,22 @@
                         </when>
                         <when test="condition.opt == 'cancel'">
                             and P.pay_status = '취소'
+                        </when>
+                    </choose>
+                </if>
+                <if test="condition != null and condition.keyword != null">
+                    <choose>
+                        <when test="condition.keyword == 'all'">
+
+                        </when>
+                        <when test="condition.keyword == 'payName'">
+                            and U.user_name like CONCAT('%',#{condition.value},'%')
+                        </when>
+                        <when test="condition.keyword == 'payId'">
+                            and U.user_id like CONCAT('%',#{condition.value},'%')
+                        </when>
+                        <when test="condition.keyword == 'lessonName'">
+                            and L.lesson_title like CONCAT('%',#{condition.value},'%')
                         </when>
                     </choose>
                 </if>
@@ -396,6 +472,49 @@
             , #{condition.thumbnail}
             )
     </insert>
+
+    <!--
+        void updateCourse(@Param("course") Course course);
+    -->
+    <update id="updateCourse">
+        update COURSES
+        set
+          course_no = #{course.no}
+        , course_name = #{course.name}
+        , course_time = #{course.time}
+        , course_distance = #{course.distance}
+        , course_level = #{course.level}
+        <if test="course.filename != null">
+            , course_filename =  #{course.filename}
+        </if>
+        ,region_no = #{course.region.no}
+        where
+            course_no = #{course.no}
+    </update>
+
+    <!--
+            Course getCourseByNos(int courseNo);
+    -->
+    <select id="getCourseByNos" resultType="store.seub2hu2.course.vo.Course">
+        select
+            C.course_no             as no
+             , C.course_name        as name
+             , C.course_time        as time
+             , C.course_distance    as distance
+             , C.course_level       as level
+             , C.course_filename    as filename
+             , R.region_no          as "region.no"
+             , R.region_si          as "region.si"
+             , R.region_gu          as "region.gu"
+             , R.region_dong        as "region.dong"
+        from
+            COURSES C, COURSE_REGION R
+        where
+            C.REGION_NO = R.REGION_NO
+          and
+            C.course_no = #{courseNo}
+    </select>
+
     <!--
         List<Region> getRegions(@Param("region") Region region);
     -->
@@ -451,10 +570,8 @@
             , R.region_gu as gu
             , R.region_dong as dong
         from
-            COURSES C, COURSE_REGION R
+            COURSE_REGION R
         where
-            C.REGION_NO = R.REGION_NO
-          and
             R.REGION_SI = #{region.si}
           and
             R.REGION_GU = #{region.gu}
@@ -511,13 +628,28 @@
                 count(*) cnt
             FROM
                 USERS
+            <where>
+                <if test="condition.opt != null">
+                    <choose>
+                        <when test="condition.opt == 'name'">
+                            user_name like CONCAT('%',#{condition.value},'%')
+                        </when>
+                        <when test="condition.opt == 'id'">
+                            user_id like CONCAT('%',#{condition.value},'%')
+                        </when>
+                        <when test="condition.opt == 'email'">
+                            user_email like CONCAT('%',#{condition.value},'%')
+                        </when>
+                    </choose>
+                </if>
+            </where>
         </select>
     <!--
         List<User> getUsers(@Param("condition")Map<String, Object> condition);
     -->
     <select id="getUsers" resultType="store.seub2hu2.user.vo.User">
         select
-            *
+            *,
         from (
             select
              user_no               as no
@@ -562,7 +694,6 @@
              , L.USER_ID                    as "lesson.lecturer.id"
              , L.LESSON_TITLE               as "lesson.title"
              , L.LESSON_PRICE               as "lesson.price"
-             , L.PARTICIPANT                as "lesson.participant"
              , L.LESSON_STATUS              as "lesson.status"
              , L.LESSON_PLAN                as "lesson.plan"
              , L.LESSON_START_DATE          as "lesson.start"
@@ -571,7 +702,8 @@
              , L.LESSON_PLACE               as "lesson.place"
              , LR.LESSON_RESERVATION_STATUS as "status"
              , */
-               LR.USER_ID                   as "id"
+              L.PARTICIPANT                as "participant"
+             , LR.USER_ID                   as "id"
              , U.USER_NO                    as "no"
              , U.USER_NAME                  as "name"
              , U.USER_NICKNAME              as "nickname"
@@ -602,6 +734,7 @@
                      , U.USER_NAME           as "lecturer.name"
                      , L.LESSON_TITLE        as title
                      , L.LESSON_PRICE        as price
+                     , L.PARTICIPANT         as participant
                      , L.LESSON_STATUS       as status
                      , L.LESSON_CREATED_DATE as createdDate
                      , L.LESSON_PLAN         as plan

@@ -1,0 +1,14 @@
+package store.seub2hu2.community.mapper;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import store.seub2hu2.community.vo.Report;
+
+@Mapper
+public interface ReportMapper {
+
+    void insertReportToBoard(@Param("report") Report report);
+    void updateDisableBoard(@Param("report") Report report);
+
+    void insertReportToCrew(@Param("report") Report report);
+}

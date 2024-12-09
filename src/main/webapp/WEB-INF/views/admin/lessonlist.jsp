@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="/WEB-INF/views/common/tags.jsp" %>
-
+<%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="java.util.Date" %>
 <!DOCTYPE html>
 <html lang="ko">
 
@@ -56,24 +57,33 @@
         <form id="form-search" method="get" action="/admin/lesson">
           <input type="hidden" name="page"/>
           <div class="row g-3 d-flex">
-            <div class="row col-3 pt-4">
-                <div class="col mb-4 pt-2">
-                  <span>날짜</span>
+
+              <div class="row col-3 pt-3 align-items-center">
+                <label for="dateInput" class="col-auto col-form-label">날짜</label>
+                <div class="col">
+                  <%
+                    // 현재 날짜 가져오기
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    String currentDate = sdf.format(new Date()); // 현재 날짜를 "yyyy-MM-dd" 형식으로 변환
+                  %>
+                  <input
+                          type="date"
+                          name="day"
+                          id="dateInput"
+                          value="<%= currentDate %>"
+                          class="form-control form-control-sm rounded-pill border-gray"
+                  />
                 </div>
-                <div class="row col-9 mb-4 pt-1">
-                  <div class="col">
-                    <input type="date" name="day" id="dateInput" value="${param.day}"/>
-                  </div>
-                </div>
-            </div>
-            <div class="col-2 mb-2 pt-2">
+              </div>
+
+            <div class="col-2">
               <select class="form-control" name="opt">
                 <option value="name">강사명</option>
                 <option value="lessonname">레슨명</option>
                 <option value="course">과목</option>
               </select>
             </div>
-            <div class="col-4 mb-2 pt-2">
+            <div class="col-4">
               <!-- Search -->
               <%@include file="/WEB-INF/views/admincommon/searchbar.jsp" %>
 
@@ -120,7 +130,7 @@
                     <td>${l.title}</td>
                     <td>${l.lecturer.name}</td>
                     <td>${l.price}</td>
-                    <td>4/5
+                    <td>${l.participant}/5
                       <button class="btn btn-outline btn-success btn-sm "
                               onclick="previewUser(${l.lessonNo})">회원보기</button>
                     </td>
@@ -205,8 +215,15 @@
 
     let rows = "";
 
-    for (let rev of data) {
-      rows +=`
+    if (data.length === 0) {
+      rows = `
+      <tr>
+        <td colspan="5" class="text-center">등록된 회원이 없습니다.</td>
+      </tr>
+    `;
+    } else {
+      for (let rev of data) {
+        rows += `
         <tr>
             <td><span>\${rev.id}</span></td>
             <td><span>\${rev.name}</span></td>
@@ -215,6 +232,7 @@
             <td><span>\${rev.tel}</span></td>
           </tr>
       `;
+      }
     }
     document.querySelector("#table-rev tbody").innerHTML = rows;
 

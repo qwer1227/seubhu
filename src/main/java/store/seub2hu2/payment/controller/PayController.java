@@ -84,6 +84,7 @@ public class PayController {
 
     @GetMapping("/completed")
     public String payCompleted(@RequestParam("pg_token") String pgToken
+                               , @AuthenticationPrincipal LoginUser loginUser
             , @RequestParam  Map<String, Object> param
             , @AuthenticationPrincipal LoginUser loginUser
             , Model model) {
@@ -98,14 +99,14 @@ public class PayController {
         if (type.equals("레슨")) {
             String lessonNoStr = (String) param.get("lessonNo");
             int lessonNo = Integer.parseInt(lessonNoStr);
-            String userId = (String) param.get("userId");
+
 
 
             // 카카오 결제 요청하기
             ApproveResponse approveResponse = kakaoPayService.payApprove(tid, pgToken, lessonNo);
 
             PaymentDto paymentDto = new PaymentDto();
-            paymentDto.setUserId(userId);
+            paymentDto.setUserId(loginUser.getId());
             paymentDto.setPaymentId(tid);
             paymentDto.setTotalAmount(approveResponse.getAmount().getTotal());
             paymentDto.setLessonNo(lessonNo);

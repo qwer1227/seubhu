@@ -1,10 +1,12 @@
 package store.seub2hu2.lesson.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum LessonStatus {
     RECRUITMENT("모집중", 1),
     CLOSE("마감", 2),
-    END("종료", 3),
-    CANCEL("취소", 4);
+    CANCEL("취소", 3);
 
     private final String label;
     private final int value;

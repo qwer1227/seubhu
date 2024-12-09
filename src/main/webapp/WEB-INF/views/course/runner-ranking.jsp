@@ -63,8 +63,8 @@
                 <c:when test="${not empty loginUser}">
                     <c:choose>
                         <%-- 나의 코스 완주 기록이 존재하면, 나의 코스 완주 기록을 화면에 표시한다. --%>
-                        <c:when test="${not empty myRecord}">
-                            <c:forEach var="record" items="${myRecord}">
+                        <c:when test="${not empty myRecords}">
+                            <c:forEach var="record" items="${myRecords}">
                                 <tr>
                                     <th scope="row">${record.no}</th>
                                     <td>${record.user.nickname}</td>
@@ -91,8 +91,36 @@
         </tbody>
     </table>
 
-    <%-- 사용자 순위 목록 (10개씩 표시) --%>
-    <%-- 해당 코스에 대한 기록이 없다면, 기록이 없다고 표시한다. --%>
+    <!-- 나의 순위 - 페이징 내비게이션 -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <nav>
+                <ul class="pagination justify-content-center">
+                    <li class="page-item ${myPaging.first ? 'disabled' : '' }">
+                        <a class="page-link"
+                           onclick="changeMyRankPage(${myPaging.prevPage}, event)"
+                           href="list?page=${myPaging.prevPage}">이전</a>
+                    </li>
+
+                    <c:forEach var="num" begin="${myPaging.beginPage }" end="${myPaging.endPage }">
+                        <li class="page-item ${myPaging.page eq num ? 'active' : '' }">
+                            <a class="page-link"
+                               onclick="changeMyRankPage(${num }, event)"
+                               href="list?page=${num }">${num }</a>
+                        </li>
+                    </c:forEach>
+
+                    <li class="page-item ${myPaging.last ? 'disabled' : '' }">
+                        <a class="page-link"
+                           onclick="changeMyRankPage(${myPaging.nextPage}, event)"
+                           href="list?page=${myPaging.nextPage}">다음</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <%-- 모든 사용자의 현재 코스 완주 기록 및 순위 --%>
     <table class="table mt-5">
         <thead>
             <tr class="table-info">
@@ -122,34 +150,34 @@
             </c:choose>
         </tbody>
     </table>
-</div>
 
-<!-- 페이징 내비게이션 -->
-<div class="row mb-3">
-    <div class="col-12">
-        <nav>
-            <ul class="pagination justify-content-center">
-                <li class="page-item ${pagination.first ? 'disabled' : '' }">
-                    <a class="page-link"
-                       onclick="changePage(${pagination.prevPage}, event)"
-                       href="list?page=${pagination.prevPage}">이전</a>
-                </li>
-
-                <c:forEach var="num" begin="${pagination.beginPage }" end="${pagination.endPage }">
-                    <li class="page-item ${pagination.page eq num ? 'active' : '' }">
+    <!-- 모든 사용자의 순위 - 페이징 내비게이션 -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <nav>
+                <ul class="pagination justify-content-center">
+                    <li class="page-item ${allPaging.first ? 'disabled' : '' }">
                         <a class="page-link"
-                           onclick="changePage(${num }, event)"
-                           href="list?page=${num }">${num }</a>
+                           onclick="changeAllRankPage(${allPaging.prevPage}, event)"
+                           href="list?page=${allPaging.prevPage}">이전</a>
                     </li>
-                </c:forEach>
 
-                <li class="page-item ${pagination.last ? 'disabled' : '' }">
-                    <a class="page-link"
-                       onclick="changePage(${pagination.nextPage}, event)"
-                       href="list?page=${pagination.nextPage}">다음</a>
-                </li>
-            </ul>
-        </nav>
+                    <c:forEach var="num" begin="${allPaging.beginPage }" end="${allPaging.endPage }">
+                        <li class="page-item ${allPaging.page eq num ? 'active' : '' }">
+                            <a class="page-link"
+                               onclick="changeAllRankPage(${num }, event)"
+                               href="list?page=${num }">${num }</a>
+                        </li>
+                    </c:forEach>
+
+                    <li class="page-item ${allPaging.last ? 'disabled' : '' }">
+                        <a class="page-link"
+                           onclick="changeAllRankPage(${allPaging.nextPage}, event)"
+                           href="list?page=${allPaging.nextPage}">다음</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
     </div>
 </div>
 
@@ -159,17 +187,25 @@
     let form = document.querySelector("#form-select");
     let pageInput = document.querySelector("input[name=page]");
 
-    // 페이지 번호를 클릭했을 때, 요청 파라미터 정보를 제출한다.
-    function changePage(page, event) {
+    // 코스를 선택할 때마다 1페이지를 요청한다.
+    function changeCourse() {
+        pageInput.value = 1;
+        form.submit();
+    }
+
+    // 나의 순위 목록의 페이지 번호를 클릭했을 때, 요청 파라미터 정보를 제출한다.
+    function changeMyRankPage(page, event) {
         event.preventDefault();
 
         pageInput.value = page;
         form.submit();
     }
 
-    // 코스를 선택할 때마다 1페이지를 요청한다.
-    function changeCourse() {
-        pageInput.value = 1;
+    // 모든 사용자의 순위 목록의 페이지 번호를 클릭했을 때, 요청 파라미터 정보를 제출한다.
+    function changeAllRankPage(page, event) {
+        event.preventDefault();
+
+        pageInput.value = page;
         form.submit();
     }
 </script>

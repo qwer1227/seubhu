@@ -20,7 +20,7 @@
     <div class="row mb-3 d-flex justify-content-center">
         <div class="col-4">
             <c:if test="${not empty images['THUMBNAIL']}">
-                <img src="${pageContext.request.contextPath}/resources/images/lesson/${images['THUMBNAIL']}"
+                <img src="${s3}/resources/images/lesson/${images['THUMBNAIL']}"
                      alt="Thumbnail" id="Thumbnail" style="width: 100%; height: 300px;"/>
             </c:if>
         </div>
@@ -73,11 +73,9 @@
     <div class="row text-end mb-3">
         <div class="col-2"></div>
         <div class="col border-bottom border-dark border-2 pb-3">
-            <c:set var="now" value="<%= new java.util.Date() %>" />
+            <c:set var="now" value="<%= new java.util.Date() %>"/>
             <fmt:formatDate value="${now}" pattern="yyyy-MM-dd" var="formattedNow"/>
-            <c:out value="${formattedNow}"></c:out>
             <form name="lessonDto" method="get" action="/pay/form" id="hidden-form">
-            <c:out value="${lesson.startDate}"></c:out>
                 <input type="hidden" name="lessonNo" value="${lesson.lessonNo}">
                 <input type="hidden" name="title" value="${lesson.title}">
                 <input type="hidden" name="price" value="${lesson.price}">
@@ -87,14 +85,16 @@
                 <input type="hidden" name="subject" value="${lesson.subject}">
                 <input type="hidden" name="place" value="${lesson.place}">
                 <input type="hidden" name="participant" value="${lesson.participant}">
-                <security:authorize access="isAuthenticated()">
-                    <security:authentication property="principal" var="loginUser"/>
-                    <input type="hidden" name="userId" value="${loginUser.id}">
-                    <!-- 수강신청 버튼을 JavaScript로 제어 -->
-                    <button type="submit" class="btn btn-primary" id="reservation-btn">수강신청</button>
-                </security:authorize>
-                <c:if test="${empty loginUser}">
-                    <button type="button" id="non-login" class="btn btn-primary">수강신청</button>
+                <c:if test='${lesson.status ne "마감" or "완료" or "취소"}'>
+                    <security:authorize access="isAuthenticated()">
+                        <security:authentication property="principal" var="loginUser"/>
+                        <input type="hidden" name="userId" value="${loginUser.id}">
+                        <!-- 수강신청 버튼을 JavaScript로 제어 -->
+                        <button type="submit" class="btn btn-primary" id="reservation-btn">수강신청</button>
+                    </security:authorize>
+                    <c:if test="${empty loginUser}">
+                        <button type="button" id="non-login" class="btn btn-primary">수강신청</button>
+                    </c:if>
                 </c:if>
             </form>
         </div>
@@ -113,7 +113,7 @@
             </p>
             <p>
                 <c:if test="${not empty images.MAIN_IMAGE}">
-                    <img src="${pageContext.request.contextPath}/resources/images/lesson/${images['MAIN_IMAGE']}"
+                    <img src="${s3}/resources/images/lesson/${images['MAIN_IMAGE']}"
                          alt="Main Image"/>
                 </c:if>
             </p>
@@ -134,19 +134,7 @@
         }
     });
 
-    // 레슨 시작 날짜를 JavaScript로 가져오기
-    var lessonStartDate = "${lesson.start}"; // ex: '2024-12-03 14:30'
-    // 현재 날짜를 가져오기
-    var currentDate = "${formattedNow}"; // ex: '2024-12-03 14:00'
 
-    // 문자열을 Date 객체로 변환
-    var lessonDate = new Date(lessonStartDate.replace(" ", "T"));
-    var currentDateObj = new Date(currentDate.replace(" ", "T"));
-
-    // 날짜 비교
-    if (lessonDate <= currentDateObj) {
-        document.getElementById("reservation-btn").style.display = "none";
-    }
 </script>
 </body>
 </html>

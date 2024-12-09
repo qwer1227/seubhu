@@ -12,7 +12,7 @@ import store.seub2hu2.community.exception.CommunityException;
 import store.seub2hu2.community.mapper.BoardMapper;
 import store.seub2hu2.community.mapper.NoticeMapper;
 import store.seub2hu2.community.mapper.UploadMapper;
-import store.seub2hu2.community.mapper.ReplyMapper;
+import store.seub2hu2.community.mapper.BoardReplyMapper;
 import store.seub2hu2.community.vo.Board;
 import store.seub2hu2.community.vo.Notice;
 import store.seub2hu2.community.vo.Reply;
@@ -41,7 +41,7 @@ public class BoardService {
     private UploadMapper uploadMapper;
 
     @Autowired
-    private ReplyMapper replyMapper;
+    private BoardReplyMapper replyMapper;
 
     @Autowired
     private NoticeMapper noticeMapper;

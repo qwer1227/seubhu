@@ -1,5 +1,6 @@
 package store.seub2hu2.course.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import store.seub2hu2.user.vo.User;
 
@@ -17,7 +18,9 @@ public class Review {
     private String title; // 리뷰 제목
     private String content; // 리뷰 내용
     private int likeCnt; // 좋아요 수
+    @JsonFormat(pattern = "yyyy년 MM월 dd일")
     private Date createdDate; // 작성날짜
+    @JsonFormat(pattern = "yyyy년 MM월 dd일")
     private Date updatedDate; // 수정날짜
     private String isDeleted; // 삭제여부
     private User user; // 회원번호

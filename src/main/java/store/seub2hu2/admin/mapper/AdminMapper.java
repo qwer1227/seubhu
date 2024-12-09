@@ -89,9 +89,15 @@ public interface AdminMapper {
 
     List<LessonUsersDto> getLessonUserByNo(Integer lessonNo);
 
-    int getSettleTotalRows(Map<String, Object> condition);
+    int getSettleTotalRows(@Param("condition") Map<String, Object> condition);
 
     List<SettlementDto> getSettleLists(@Param("condition") Map<String, Object> condition);
+
+    Course getCourseByNos(int courseNo);
+
+    void updateCourse(@Param("course") Course course);
+
+
 
 
 
