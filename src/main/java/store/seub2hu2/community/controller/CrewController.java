@@ -1,5 +1,12 @@
 package store.seub2hu2.community.controller;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -31,6 +38,9 @@ import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.util.ListDto;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
@@ -315,5 +325,10 @@ public class CrewController {
             , @AuthenticationPrincipal LoginUser loginUser){
         crewService.leaveCrew(crewNo, loginUser);
         return "redirect:detail?no=" + crewNo;
+    }
+
+    @GetMapping("/example")
+    public String ex() {
+        return "community/crew/example";
     }
 }

@@ -53,7 +53,7 @@
                 <div class="divider" style="border-left: 1px solid #0e0d0d; margin: 0 7px;"></div>
                 <a class="nav-link " href="/lesson">레슨</a>
                 <div class="divider" style="border-left: 1px solid #0e0d0d; margin: 0 7px;"></div>
-                <a class="nav-link " href="/community/main">커뮤</a>
+                <a class="nav-link " href="/community/board/main">커뮤</a>
                 <div class="divider" style="border-left: 1px solid #0e0d0d; margin: 0 7px;"></div>
                 <security:authorize access="hasAuthority('ROLE_ADMIN')">
                 <a class="nav-link" href="/admin/home">관리자 홈</a>
@@ -70,6 +70,7 @@
                     </span>
                 <ul class="navbar-nav">
                     <a class="nav-link" href="/mypage">마이페이지</a>
+                    <a class="nav-link" href="/message/list">쪽지</a>
                     <a class="nav-link " href="/logout">로그아웃</a>
                     </security:authorize>
                     <div style="padding: 0 20px;"></div>

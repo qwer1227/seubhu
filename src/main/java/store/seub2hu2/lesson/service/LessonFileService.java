@@ -9,45 +9,72 @@ import store.seub2hu2.lesson.mapper.LessonFileMapper;
 import store.seub2hu2.lesson.mapper.LessonMapper;
 import store.seub2hu2.lesson.vo.LessonFile;
 import store.seub2hu2.util.FileUtils;
+import store.seub2hu2.util.S3Service;
 import store.seub2hu2.util.WebContentFileUtils;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class LessonFileService {
 
-    private final WebContentFileUtils webContentFileUtils;
+    private final S3Service s3Service;
 
     @Value("${upload.directory.lesson}")
     private String saveDirectory;
 
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucketName;
+
+
+
     private final LessonFileMapper lessonFileMapper;
 
-    public void saveLessonImages(Integer lessonNo, MultipartFile thumbnail, MultipartFile mainImage)  {
+    public void saveLessonImages(Integer lessonNo, MultipartFile thumbnail, MultipartFile mainImage) {
         System.out.println("saveLessonImages lessonNo: " + lessonNo);
 
         if (thumbnail != null && !thumbnail.isEmpty()) {
-            String thumbnailFileName = UUID.randomUUID() + thumbnail.getOriginalFilename();
-            webContentFileUtils.saveWebContentFile(thumbnail, saveDirectory, thumbnailFileName);
-            LessonFile thumbnailFile = new LessonFile(
-                    lessonNo, thumbnailFileName , "THUMBNAIL", saveDirectory
-            );
-            lessonFileMapper.insertLessonFile(thumbnailFile);
+            try {
+                // Base64 인코딩
+                String thumbnailBase64 = Base64.getEncoder().encodeToString(thumbnail.getBytes());
+
+                // 저장할 파일명 생성
+                String thumbnailFileName = UUID.randomUUID() + thumbnail.getOriginalFilename();
+                s3Service.uploadFile(thumbnail, bucketName,saveDirectory, thumbnailFileName);
+
+                // LessonFile 객체 생성 (Base64 데이터를 저장소나 DB에 저장 가능)
+                LessonFile thumbnailFile = new LessonFile(
+                        lessonNo, thumbnailFileName, "THUMBNAIL", saveDirectory
+                );
+                thumbnailFile.setBase64Data(thumbnailBase64); // DB에 저장하고 싶다면 LessonFile 엔티티에 추가
+                lessonFileMapper.insertLessonFile(thumbnailFile);
+
+            } catch (IOException e) {
+                throw new RuntimeException("Error while processing thumbnail file", e);
+            }
         }
 
         if (mainImage != null && !mainImage.isEmpty()) {
-            String mainImageFileName = UUID.randomUUID() + mainImage.getOriginalFilename();
-            webContentFileUtils.saveWebContentFile(mainImage, saveDirectory, mainImageFileName);
-            LessonFile mainImageFile = new LessonFile(
-                    lessonNo,  mainImageFileName, "MAIN_IMAGE", saveDirectory
-            );
-            lessonFileMapper.insertLessonFile(mainImageFile);
+            try {
+                // Base64 인코딩
+                String mainImageBase64 = Base64.getEncoder().encodeToString(mainImage.getBytes());
+
+                // 저장할 파일명 생성
+                String mainImageFileName = UUID.randomUUID() + mainImage.getOriginalFilename();
+                s3Service.uploadFile(mainImage, bucketName, saveDirectory, mainImageFileName);
+
+                // LessonFile 객체 생성 (Base64 데이터를 저장소나 DB에 저장 가능)
+                LessonFile mainImageFile = new LessonFile(
+                        lessonNo, mainImageFileName, "MAIN_IMAGE", saveDirectory
+                );
+                mainImageFile.setBase64Data(mainImageBase64); // DB에 저장하고 싶다면 LessonFile 엔티티에 추가
+                lessonFileMapper.insertLessonFile(mainImageFile);
+
+            } catch (IOException e) {
+                throw new RuntimeException("Error while processing main image file", e);
+            }
         }
     }
 
@@ -79,26 +106,50 @@ public class LessonFileService {
         log.info("updateLessonImages mainImage: " + mainImage.getOriginalFilename());
 
         if (thumbnail == null && thumbnail.isEmpty()) {
-            String thumbnailFileName = UUID.randomUUID() + thumbnail.getOriginalFilename();
-            webContentFileUtils.saveWebContentFile(thumbnail, saveDirectory, thumbnailFileName);
-            LessonFile thumbnailFile = new LessonFile(
-                    lessonNo, thumbnailFileName, "THUMBNAIL", saveDirectory
-            );
-            lessonFileMapper.insertLessonFile(thumbnailFile);
+            try {
+                // Base64 인코딩
+                String thumbnailBase64 = Base64.getEncoder().encodeToString(thumbnail.getBytes());
+
+                // 저장할 파일명 생성
+                String thumbnailFileName = UUID.randomUUID() + thumbnail.getOriginalFilename();
+                s3Service.uploadFile(thumbnail, bucketName,saveDirectory, thumbnailFileName);
+
+                // LessonFile 객체 생성 (Base64 데이터를 저장소나 DB에 저장 가능)
+                LessonFile thumbnailFile = new LessonFile(
+                        lessonNo, thumbnailFileName, "THUMBNAIL", saveDirectory
+                );
+                thumbnailFile.setBase64Data(thumbnailBase64); // DB에 저장하고 싶다면 LessonFile 엔티티에 추가
+                lessonFileMapper.insertLessonFile(thumbnailFile);
+
+            } catch (IOException e) {
+                throw new RuntimeException("Error while processing thumbnail file", e);
+            }
         }
 
         if (mainImage == null && mainImage.isEmpty()) {
-            String mainImageFileName = UUID.randomUUID() + mainImage.getOriginalFilename();
-            webContentFileUtils.saveWebContentFile(mainImage, saveDirectory, mainImageFileName);
-            LessonFile mainImageFile = new LessonFile(
-                    lessonNo, mainImageFileName, "MAIN_IMAGE", saveDirectory
-            );
-            lessonFileMapper.insertLessonFile(mainImageFile);
+            try {
+                // Base64 인코딩
+                String mainImageBase64 = Base64.getEncoder().encodeToString(mainImage.getBytes());
+
+                // 저장할 파일명 생성
+                String mainImageFileName = UUID.randomUUID() + mainImage.getOriginalFilename();
+                s3Service.uploadFile(thumbnail, bucketName,saveDirectory, mainImageFileName);
+
+                // LessonFile 객체 생성 (Base64 데이터를 저장소나 DB에 저장 가능)
+                LessonFile mainImageFile = new LessonFile(
+                        lessonNo, mainImageFileName, "MAIN_IMAGE", saveDirectory
+                );
+                mainImageFile.setBase64Data(mainImageBase64); // DB에 저장하고 싶다면 LessonFile 엔티티에 추가
+                lessonFileMapper.insertLessonFile(mainImageFile);
+
+            } catch (IOException e) {
+                throw new RuntimeException("Error while processing main image file", e);
+            }
         }
 
         if (thumbnail != null && !thumbnail.isEmpty()) {
             String thumbnailFileName = UUID.randomUUID() + thumbnail.getOriginalFilename();
-            webContentFileUtils.saveWebContentFile(thumbnail, saveDirectory, thumbnailFileName);
+            s3Service.uploadFile(thumbnail, bucketName,saveDirectory, thumbnailFileName);
             LessonFile thumbnailFile = new LessonFile(
                     lessonNo, thumbnailFileName , "THUMBNAIL", saveDirectory
             );
@@ -107,7 +158,7 @@ public class LessonFileService {
 
         if (mainImage != null && !mainImage.isEmpty()) {
             String mainImageFileName = UUID.randomUUID() + mainImage.getOriginalFilename();
-            webContentFileUtils.saveWebContentFile(mainImage, saveDirectory, mainImageFileName);
+            s3Service.uploadFile(thumbnail, bucketName,saveDirectory, mainImageFileName);
             LessonFile mainImageFile = new LessonFile(
                     lessonNo,  mainImageFileName, "MAIN_IMAGE", saveDirectory
             );

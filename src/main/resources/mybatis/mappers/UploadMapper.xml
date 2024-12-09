@@ -141,4 +141,15 @@
     where file_no = #{fileNo}
   </update>
 
+  <!-- void insertMarathonFile(@Param("uploadFile") UploadFile uploadFile); -->
+  <insert id="insertMarathonFile">
+    insert into MARATHON_UPLOADFILES
+    ( marathon_no
+    , file_original_name
+    , file_save_name)
+    values ( #{uploadFile.no}
+           , #{uploadFile.originalName}
+           , #{uploadFile.saveName})
+  </insert>
+
 </mapper>

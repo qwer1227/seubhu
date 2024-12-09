@@ -26,7 +26,7 @@
             </div>
         </div>
         <div class="meta d-flex justify-content-between mb-3">
-            <span>${message.senderNickname}</span>
+            <span>보낸사람: ${message.senderNickname}</span>
         </div>
 
         <div class="content mb-4">
@@ -35,11 +35,20 @@
 
         <div class="actions d-flex justify-content-end mb-4">
             <div>
-                <button class="btn btn-danger">삭제</button>
-                <a type="button" href="/message/message-send-form" class="btn btn-outline-dark">답장</a>
-                <a type="button" href="/message/message-received-list" class="btn btn-dark">목록</a>
+                <!-- 삭제 버튼 -->
+                <form action="/message/delete" method="post" style="display: inline;">
+                    <input type="hidden" name="messageNo" value="${message.messageNo}"/>
+                    <button type="submit" class="btn btn-danger">삭제</button>
+                </form>
+
+                <!-- 답장 버튼 -->
+                <a type="button" href="/message/add?receiver=${message.senderNickname}" class="btn btn-outline-dark">답장</a>
+
+                <!-- 목록 버튼 -->
+                <a type="button" href="/message/list" class="btn btn-dark">목록</a>
             </div>
         </div>
+
     </div>
     <%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>

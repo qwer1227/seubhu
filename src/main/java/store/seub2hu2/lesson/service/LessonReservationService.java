@@ -147,9 +147,14 @@ public class LessonReservationService {
             lessonUpdateDto.setStatus(LessonStatus.RECRUITMENT.label());
             lessonMapper.updateLessonStatus(lessonUpdateDto);
         }
+
         lessonMapper.updateLessonParticipant(lessonUpdateDto);
 
         log.info("status.label() = {}", status.label());
+    }
+
+    public void completeReservation() {
+        lessonReservationMapper.updatePastReservationStatus();
     }
 
 }

@@ -17,7 +17,7 @@
 <div class="container-xxl text-center my-4">
     <div class="row p-3 justify-content-center">
         <div class="col mb-3">
-            <h2>받은 쪽지함</h2>
+            <h2>보낸 쪽지함</h2>
         </div>
     </div>
 
@@ -84,9 +84,9 @@
             <tr>
                 <th><input type="checkbox" onclick="toggleSelectAll(this)"></th>  <!-- 일괄 선택 체크박스 -->
                 <th>번호</th>
-                <th>보낸사람</th>
+                <th>받은사람</th>
                 <th class="text-start">제목</th>
-                <th>받은날</th>
+                <th>보낸날</th>
                 <th>읽음</th>
                 <th>읽은날</th>
                 <th>파일</th>
@@ -137,9 +137,9 @@
         <div class="row p-3 d-flex justify-content-left">
             <div class="col-2">
                 <select class="form-select" name="opt">
-                    <option value="title" ${param.opt eq 'title' ? 'selected' : ''}>쪽지 제목</option>
-                    <option value="content" ${param.opt eq 'content' ? 'selected' : ''}>쪽지 내용</option>
-                    <option value="writer" ${param.opt eq 'writer' ? 'selected' : ''}>보낸 이</option>
+                    <option value="title" ${param.opt eq 'title' ? 'selected' : ''}>제목</option>
+                    <option value="content" ${param.opt eq 'content' ? 'selected' : ''}>내용</option>
+                    <option value="writer" ${param.opt eq 'writer' ? 'selected' : ''}>보낸사람</option>
                 </select>
             </div>
 
@@ -154,7 +154,7 @@
 
             <!-- 메시지 작성 버튼 -->
             <div class="col d-flex justify-content-end">
-                <a href="/message/send" type="button" class="btn btn-dark">쪽지 작성</a>
+                <a href="/message/add" type="button" class="btn btn-dark">쪽지 작성</a>
             </div>
         </div>
 

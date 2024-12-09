@@ -93,6 +93,12 @@ public interface AdminMapper {
 
     List<SettlementDto> getSettleLists(@Param("condition") Map<String, Object> condition);
 
+    Course getCourseByNos(int courseNo);
+
+    void updateCourse(@Param("course") Course course);
+
+
+
 
 
 

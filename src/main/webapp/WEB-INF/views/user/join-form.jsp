@@ -94,10 +94,10 @@
                 <!-- 본인인증 버튼 -->
                 <input type="button" onclick="smsCheck()" class="btn btn-outline-dark" value="본인인증">
             </div>
-                <ul class="txtInfo gBlank5 mt-1" id="sendVerifyCode" style="display: none;">
-                    <li>인증번호가 발송되었습니다.</li>
-                    <li>인증번호를 받지 못하셨다면 휴대폰 번호를 확인해 주세요.</li>
-                </ul>
+            <ul class="txtInfo gBlank5 mt-1" id="sendVerifyCode" style="display: none;">
+                <li>인증번호가 발송되었습니다.</li>
+                <li>인증번호를 받지 못하셨다면 휴대폰 번호를 확인해 주세요.</li>
+            </ul>
 
             <div class="form-group d-flex align-items-center mb-3">
                 <input type="text" name="postcode" class="form-control me-2" id="postcode" placeholder="우편번호"
@@ -105,8 +105,8 @@
                 <input type="button" onclick="openPostcode()" class="btn btn-dark" value="우편번호 검색">
             </div>
             <input type="text" name="address" id="address" class="form-control mb-3" placeholder="기본주소"/>
-            <input type="text" name="address-detail" id="address-detail" class="form-control mb-3"
-                   placeholder="나머지 주소(선택입력 가능)"/>
+            <input type="text" name="addressDetail" id="address-detail" class="form-control mb-3"
+                   placeholder="나머지 주소(선택입력 가능)" value=""/>
             <input type="text" name="address-extra" id="address-extra" class="form-control mb-3"
                    placeholder="참고항목"/>
 
@@ -307,7 +307,7 @@
     // 카카오 주소 api
     function openPostcode() {
         new daum.Postcode({
-            oncomplete: function(data) {
+            oncomplete: function (data) {
                 // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
 
                 // 각 주소의 노출 규칙에 따라 주소를 조합한다.
@@ -323,18 +323,18 @@
                 }
 
                 // 사용자가 선택한 주소가 도로명 타입일때 참고항목을 조합한다.
-                if(data.userSelectedType === 'R'){
+                if (data.userSelectedType === 'R') {
                     // 법정동명이 있을 경우 추가한다. (법정리는 제외)
                     // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
-                    if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+                    if (data.bname !== '' && /[동|로|가]$/g.test(data.bname)) {
                         extraAddr += data.bname;
                     }
                     // 건물명이 있고, 공동주택일 경우 추가한다.
-                    if(data.buildingName !== '' && data.apartment === 'Y'){
+                    if (data.buildingName !== '' && data.apartment === 'Y') {
                         extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
                     }
                     // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
-                    if(extraAddr !== ''){
+                    if (extraAddr !== '') {
                         extraAddr = ' (' + extraAddr + ')';
                     }
                     // 조합된 참고항목을 해당 필드에 넣는다.
