@@ -130,10 +130,11 @@
                 <!-- 첫 번째 페이지 -->
                 <div class="carousel-item active">
                     <div class="row">
+                        <c:forEach var="product" items="${bestByRating}">
                         <div class="col-md-3">
                             <div class="card position-relative border-0">
                                 <a href="#">
-                                    <img src="../../resources/img/nikeS.jpeg" class="card-img-top" alt="상품 1">
+                                    <img src="${product.imgThum}" class="card-img-top" alt="상품 1">
                                 </a>
                                 <div class="icon-overlay d-flex justify-content-center">
                                     <button class="icon-button btn-sm">
@@ -141,73 +142,25 @@
                                     </button>
                                 </div>
                                 <div class="card-body">
-                                    <h5 class="card-title">상품명 1</h5>
-                                    <p class="card-text">₩12,000</p>
-                                    <span class="badge bg-dark">#1</span>
+                                    <span class="badge bg-dark">#${product.rankByRating}</span>
+                                    <h5 class="card-title">${product.prodName}</h5>
+                                    <p class="card-text">${product.prodPrice}</p>
+                                    <p>${product.prodRating}</p>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-3">
-                            <div class="card position-relative border-0">
-                                <a href="#">
-                                    <img src="../../resources/img/nikeS.jpeg" class="card-img-top" alt="상품 2">
-                                </a>
-                                <div class="icon-overlay d-flex justify-content-center">
-                                    <button class="icon-button btn-sm">
-                                        <i class="bi bi-heart"></i>
-                                    </button>
-                                </div>
-                                <div class="card-body">
-                                    <h5 class="card-title">상품명 2</h5>
-                                    <p class="card-text">₩14,000</p>
-                                    <span class="badge bg-dark">#2</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="card position-relative border-0">
-                                <a href="#">
-                                    <img src="../../resources/img/nikeS.jpeg" class="card-img-top" alt="상품 3">
-                                </a>
-                                <div class="icon-overlay d-flex justify-content-center">
-                                    <button class="icon-button btn-sm">
-                                        <i class="bi bi-heart"></i>
-                                    </button>
-                                </div>
-                                <div class="card-body">
-                                    <h5 class="card-title">상품명 3</h5>
-                                    <p class="card-text">₩15,000</p>
-                                    <span class="badge bg-dark">#3</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="card position-relative border-0">
-                                <a href="#">
-                                    <img src="../../resources/img/nikeS.jpeg" class="card-img-top" alt="상품 4">
-                                </a>
-                                <div class="icon-overlay d-flex justify-content-center">
-                                    <button class="icon-button btn-sm">
-                                        <i class="bi bi-heart"></i>
-                                    </button>
-                                </div>
-                                <div class="card-body">
-                                    <h5 class="card-title">상품명 4</h5>
-                                    <p class="card-text">₩16,000</p>
-                                    <span class="badge bg-dark">#4</span>
-                                </div>
-                            </div>
-                        </div>
+                        </c:forEach>
                     </div>
                 </div>
 
                 <!-- 두 번째 페이지 -->
                 <div class="carousel-item">
                     <div class="row">
+                        <c:forEach var="product" items="${bestByRating}">
                         <div class="col-md-3">
                             <div class="card position-relative border-0">
                                 <a href="#">
-                                    <img src="../../resources/img/nikeS.jpeg" class="card-img-top" alt="상품 5">
+                                    <img src="${product.imgThum}" class="card-img-top" alt="상품 5">
                                 </a>
                                 <div class="icon-overlay d-flex justify-content-center">
                                     <button class="icon-button btn-sm">
@@ -215,13 +168,14 @@
                                     </button>
                                 </div>
                                 <div class="card-body">
-                                    <h5 class="card-title">상품명 5</h5>
-                                    <p class="card-text">₩17,000</p>
-                                    <span class="badge bg-dark">#5</span>
+                                    <span class="badge bg-dark">#${product.rankByViewCount}</span>
+                                    <h5 class="card-title">${product.prodName}</h5>
+                                    <p class="card-text">${product.prodPrice}</p>
+                                    <p>${product.prodRating}</p>
                                 </div>
                             </div>
                         </div>
-                        <!-- 추가 상품들 -->
+                        </c:forEach>
                     </div>
                 </div>
             </div>
@@ -234,14 +188,16 @@
             <div class="col-md-6 mb-4">
                 <h3>러닝화 주간 랭킹</h3>
                 <ul class="list-group border-0">
+                    <c:forEach var="product" items="${bestByViewCount}">
                     <li class="list-group-item d-flex align-items-center border-0">
-                        <span class="fw-bold me-3">1</span>
+                        <span class="fw-bold me-3">${product.rankByViewCount}</span>
                         <a href="#" class="text-decoration-none">
-                            <img src="../../resources/img/nikeS.jpeg" alt="러닝화 1" width="50" class="me-3">
-                            <span class="text-muted">러닝화 1</span>
+                            <img src="${product.imgThum}" alt="러닝화 1" width="50" class="me-3">
+                            <span class="text-muted">${product.prodName}</span>
                         </a>
                         <span class="ms-auto"><i class="bi bi-arrow-up"></i></span>
                     </li>
+                    </c:forEach>
                     <li class="list-group-item d-flex align-items-center border-0">
                         <span class="fw-bold me-3">2</span>
                         <a href="#" class="text-decoration-none">
