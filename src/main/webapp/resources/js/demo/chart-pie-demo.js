@@ -7,9 +7,9 @@ var ctx = document.getElementById("myPieChart");
 var myPieChart = new Chart(ctx, {
   type: 'doughnut',
   data: {
-    labels: ["런닝화", "런닝복", "런닝용품"],
+    labels: ["호흡", "자세", "운동"],
     datasets: [{
-      
+
       data: [55, 30, 15],
       backgroundColor: ['#FF6B6B', '#4ECDC4', '#FFD93D'],
       hoverBackgroundColor: ['rgba(255,27,27,0.98)', 'rgba(32,232,216,0.87)', '#ffef23'],

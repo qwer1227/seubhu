@@ -107,6 +107,7 @@
                  , P.pay_cancel_date as payCancelDate
                  , P.pay_method as payMethod
                  , P.pay_status as status
+                 , L.lesson_subject as lessonSubject
             from
                 PAYMENTS P, USERS U, LESSON_RESERVATIONS R, LESSONS L
             where
@@ -529,6 +530,7 @@
         where
             REGION_NO = (SELECT MAX(REGION_NO) FROM COURSE_REGION);
     </select>
+
     <!--
         코스등록
         void insertCourse(@Param("course") Course course);
@@ -597,8 +599,6 @@
         </selectKey>
     </insert>
 
-
-
     <!--
         User getUserByNo(@Param("no") int no);
     -->
@@ -644,6 +644,7 @@
                 </if>
             </where>
         </select>
+
     <!--
         List<User> getUsers(@Param("condition")Map<String, Object> condition);
     -->

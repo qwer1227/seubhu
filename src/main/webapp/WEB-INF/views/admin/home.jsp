@@ -171,15 +171,15 @@
                                     <canvas id="myPieChart"></canvas>
                                 </div>
                                 <div class="mt-4 text-center small">
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-primary"></i> 런닝화
-                                        </span>
                                     <span class="mr-2">
-                                            <i class="fas fa-circle text-success"></i> 런닝복
-                                        </span>
+                                        <i class="fas fa-circle text-primary"></i> 런닝화
+                                    </span>
                                     <span class="mr-2">
-                                            <i class="fas fa-circle text-info"></i> 런닝용품
-                                        </span>
+                                        <i class="fas fa-circle text-success"></i> 런닝복
+                                    </span>
+                                    <span class="mr-2">
+                                        <i class="fas fa-circle text-info"></i> 런닝용품
+                                    </span>
                                 </div>
                             </div>
                         </div>
