@@ -39,7 +39,7 @@
             (#{addr.postcode}, #{addr.address}, #{addr.addressDetail}, #{addr.isAddrHome}, #{addr.userNo}, #{addr.name})
 
         <!-- 자동 생성된 ADDR_NO 반환 -->
-        <selectKey resultType="int" keyProperty="addr.no" keyColumn="ADDR_NO" order="AFTER">
+        <selectKey resultType="int" keyProperty="no" keyColumn="ADDR_NO" order="AFTER">
             SELECT LAST_INSERT_ID()
         </selectKey>
     </insert>
