@@ -173,20 +173,21 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <%-- 리뷰 내용을 수정한다. --%>
-            <%-- 요청 파라미터 정보 : title, content, upfile --%>
+            <%-- 요청 파라미터 정보 : courseNo, title, content, upfile --%>
             <div class="modal-body">
                 <form method="post" action="/modifyReview" enctype="multipart/form-data">
+                    <input type="hidden" name="courseNoToFix" value="${course.no }" />
                     <div class="form-group">
                         <label class="form-label">제목</label>
-                        <input type="text" class="form-control" name="title"/>
+                        <input type="text" class="form-control" name="titleToFix"/>
                     </div>
                     <div class="form-group">
                         <label class="form-label">내용</label>
-                        <textarea rows="4" class="form-control" name="content"></textarea>
+                        <textarea rows="4" class="form-control" name="contentToFix"></textarea>
                     </div>
                     <div class="form-group">
                         <label class="form-label">코스 사진 업로드</label>
-                        <input type="file" class="form-control" name="upfile" multiple="multiple"/>
+                        <input type="file" id="images-toFix" class="form-control" name="upfileToFix" multiple="multiple"/>
                         <strong style="color:red;">＊ 컨트롤(Ctrl)을 누른 채로 사진 여러 개 클릭</strong>
                     </div>
                 </form>
@@ -246,6 +247,7 @@
         let result = await response.json();
         let status = result.status;
         let message = result.message;
+        let data = result.data;
 
         // 코스 리뷰 작성자와 동일한 사용자가 아니라면, 경고 메시지를 출력한다.
         if (response.ok) {
@@ -257,6 +259,15 @@
             alert(message); // message = "로그인이 필요한 서비스입니다"
             return;
         }
+
+        // 코스 리뷰 수정 Modal창에 가져온 코스 리뷰 정보(수정 전 리뷰)를 저장한다.
+        document.querySelector("input[name=titleToFix]").value = data.title;
+        document.querySelector("textarea[name=contentToFix]").value = data.content;
+
+        // for (let i of data.reviewImage) {
+        //     let image = document.querySelector("#images-toFix").value
+        //     image = i.name;
+        // }
 
         // 코스 리뷰 수정 Modal창을 화면에 표시한다.
         modifyReviewFormModal.show();
