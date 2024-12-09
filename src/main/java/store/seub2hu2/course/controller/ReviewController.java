@@ -5,9 +5,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import store.seub2hu2.course.dto.AddReviewForm;
+import store.seub2hu2.course.dto.ReviewForm;
 import store.seub2hu2.course.exception.CourseReviewException;
 import store.seub2hu2.course.service.ReviewService;
+import store.seub2hu2.course.service.UserCourseService;
 import store.seub2hu2.course.vo.Review;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.security.dto.RestResponseDto;
@@ -22,6 +23,26 @@ import java.util.Map;
 public class ReviewController {
     @Autowired
     private ReviewService reviewService;
+
+    @Autowired
+    private UserCourseService userCourseService;
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/review/{reviewNo}")
+    public ResponseEntity<RestResponseDto<Review>> checkSameReviewer(@PathVariable("reviewNo") int reviewNo
+                                                                    , @AuthenticationPrincipal LoginUser loginUser) {
+        // 1. 리뷰를 가져온다.
+        Review review = reviewService.getReview(reviewNo);
+
+        // 2. 리뷰 작성자와 리뷰 수정하는 자가 동일한지 확인한다.
+        if (review.getUser().getNo() != loginUser.getNo()) {
+            CourseReviewException courseReviewException = new CourseReviewException("해당 리뷰 작성자만 수정 가능합니다.");
+            return ResponseEntity.ok(RestResponseDto.fail(courseReviewException.getMessage()));
+        }
+
+        // 3. 응답 데이터를 반환한다.
+        return ResponseEntity.ok(RestResponseDto.success(review));
+    }
 
     @GetMapping("/reviews/{no}/{page}")
     public ResponseEntity<RestResponseDto<ListDto<Review>>> reviews(@PathVariable("no") int courseNo,
@@ -41,7 +62,7 @@ public class ReviewController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/addReview")
     @ResponseBody
-    public Review addReview(AddReviewForm form, @AuthenticationPrincipal LoginUser loginUser) {
+    public Review addReview(ReviewForm form, @AuthenticationPrincipal LoginUser loginUser) {
         // 1. 등록할 리뷰 정보를 테이블에 저장한다.
         Review review = reviewService.addNewReview(form, loginUser.getNo());
 
@@ -62,5 +83,16 @@ public class ReviewController {
 
         // 2. 응답 데이터를 반환한다.
         return ResponseEntity.ok(RestResponseDto.success("review deleted"));
+    }
+
+    @GetMapping("/check-success/{courseNo}")
+    public ResponseEntity<RestResponseDto<String>> checkSuccess(@AuthenticationPrincipal LoginUser loginUser
+                                                                , @PathVariable("courseNo") int courseNo) {
+        // 1. 로그인한 사용자가 코스를 성공했는지 확인한다.
+        boolean isSuccess = userCourseService.checkSuccess(loginUser.getNo(), courseNo);
+        String data = isSuccess ? "success" : "fail";
+
+        // 2. 응답 데이터를 반환한다.
+        return ResponseEntity.ok(RestResponseDto.success(data));
     }
 }

@@ -104,11 +104,11 @@ public class CourseController {
         // 2. 검색에 해당하는 코스 목록을 가져온다.
         ListDto<Course> dto = courseService.getAllCourses(condition);
 
-        // 4. Model 객체에 코스 목록, 페이징 처리 정보를 저장한다.
+        // 3. Model 객체에 코스 목록, 페이징 처리 정보를 저장한다.
         model.addAttribute("courses", dto.getData());
         model.addAttribute("pagination", dto.getPaging());
 
-        // 5. 뷰 이름을 반환한다.
+        // 4. 뷰 이름을 반환한다.
         return "course/list";
     }
 
