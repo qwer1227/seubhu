@@ -24,16 +24,9 @@ public class Marathon {
     private String url;
     private String place;
     private String deleted;
-    private UploadFile uploadFile;
     private List<MarathonOrgan> organ;
     private Date createdDate;
     private Date updatedDate;
     private int viewCnt;
 
-    public String getOriginalFileName() {
-        if(uploadFile.getSaveName() == null){
-            return null;
-        }
-        return uploadFile.getSaveName().substring(13);
-    }
 }

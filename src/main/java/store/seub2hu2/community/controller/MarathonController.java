@@ -15,10 +15,7 @@ import store.seub2hu2.community.vo.Marathon;
 import store.seub2hu2.community.vo.MarathonOrgan;
 import store.seub2hu2.util.ListDto;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping("/community/marathon")
@@ -70,7 +67,17 @@ public class MarathonController {
         model.addAttribute("marathon", marathon);
 
         List<MarathonOrgan> organs = marathonService.getOrgans(marathonNo);
-        model.addAttribute("organs", organs);
+        StringJoiner host = new StringJoiner(", ");
+        StringJoiner organizer = new StringJoiner(", ");
+        for (MarathonOrgan organ : organs) {
+            if ("주최".equals(organ.getOrganRole())){
+                host.add(organ.getOrganName());
+            } else if ("주관".equals(organ.getOrganRole())){
+                organizer.add(organ.getOrganName());
+            }
+            model.addAttribute("host", host.toString());
+            model.addAttribute("organizer", organizer.toString());
+        }
 
         // url 클릭 시, 해당 url 홈페이지로 이동
         String url = marathon.getUrl();
@@ -90,6 +97,43 @@ public class MarathonController {
     @PostMapping("/register")
     public String register(MarathonForm form) {
         marathonService.addNewMarathon(form);
-        return "community/marathon/main";
+        return "redirect:detail?no=" + form.getNo();
     }
+
+    @GetMapping("/modify")
+    public String modifyForm(@RequestParam("no") int marathonNo, Model model) {
+        Marathon marathon = marathonService.getMarathonDetail(marathonNo);
+        model.addAttribute("marathon", marathon);
+
+        List<MarathonOrgan> organs = marathonService.getOrgans(marathonNo);
+        StringJoiner host = new StringJoiner(", ");
+        StringJoiner organizer = new StringJoiner(", ");
+        for (MarathonOrgan organ : organs) {
+            if ("주최".equals(organ.getOrganRole())){
+                host.add(organ.getOrganName());
+            } else if ("주관".equals(organ.getOrganRole())){
+                organizer.add(organ.getOrganName());
+            }
+            model.addAttribute("host", host.toString());
+            model.addAttribute("organizer", organizer.toString());
+        }
+
+        return "community/marathon/modify";
+    }
+
+    @PostMapping("/modify")
+    public String update(MarathonForm form) {
+        marathonService.updateMarathon(form);
+        return "redirect:detail?no=" + form.getNo();
+    }
+
+    @GetMapping("/delete")
+    public String delete(@RequestParam("no") int marathonNo) {
+        MarathonForm form = new MarathonForm();
+        form.setNo(marathonNo);
+        marathonService.deleteMarathon(marathonNo);
+
+        return "redirect:main";
+    }
+
 }

@@ -54,7 +54,7 @@
         <a href="hit?no=${marathon.no}" style="text-decoration-line: none">
           <div class="card">
             <img src="${marathon.thumbnail}" class="card-img-top" alt="마라톤 이미지"
-                style="height: 200px; filter: ${crew.entered eq 'Y' ? 'grayscale(0%)' : 'grayscale(100%)'};">
+                style="height: 200px; filter: ${marathon.marathonDate.time > now.time ? 'grayscale(0%)' : 'grayscale(100%)'};">
             <c:if test="${marathon.marathonDate.time < now.time}">
               <div class="overlay-text ">종료</div>
             </c:if>

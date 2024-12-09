@@ -1,14 +1,17 @@
 package store.seub2hu2.community.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 import store.seub2hu2.community.dto.MarathonForm;
 import store.seub2hu2.community.mapper.MarathonMapper;
 import store.seub2hu2.community.mapper.UploadMapper;
 import store.seub2hu2.community.vo.*;
 import store.seub2hu2.security.user.LoginUser;
+import store.seub2hu2.util.FileUtils;
 import store.seub2hu2.util.ListDto;
 import store.seub2hu2.util.Pagination;
 
@@ -17,6 +20,9 @@ import java.util.Map;
 
 @Service
 public class MarathonService {
+
+    @Value("C:/files/marathon")
+    private String saveFileDirectory;
 
     @Autowired
     private MarathonMapper marathonMapper;
@@ -37,14 +43,6 @@ public class MarathonService {
 
         marathonMapper.insertMarathon(marathon);
 
-        if (marathon.getUploadFile() != null) {
-            UploadFile uploadFile = marathon.getUploadFile();
-            uploadFile.setNo(marathon.getNo());
-            uploadFile.setSaveName(marathon.getUploadFile().getSaveName());
-            uploadFile.setOriginalName(marathon.getOriginalFileName());
-            // UploadFile 테이블에 저장
-            uploadMapper.insertMarathonFile(uploadFile);
-        }
 
         if (StringUtils.hasText(form.getHost())){
             // hostText = "우리은행, KBS, MBC"
@@ -111,4 +109,55 @@ public class MarathonService {
         marathon.setViewCnt(marathon.getViewCnt() + 1);
         marathonMapper.updateMarathonCnt(marathon);
     }
+
+    public void updateMarathon(MarathonForm form){
+        Marathon savedMarathon = marathonMapper.getMarathonDetailByNo(form.getNo());
+        savedMarathon.setTitle(form.getTitle());
+        savedMarathon.setContent(form.getContent());
+        savedMarathon.setMarathonDate(form.getMarathonDate());
+        savedMarathon.setStartDate(form.getStartDate());
+        savedMarathon.setEndDate(form.getEndDate());
+        savedMarathon.setUrl(form.getUrl());
+        savedMarathon.setPlace(form.getPlace());
+        savedMarathon.setThumbnail(form.getThumbnail());
+        savedMarathon.setDeleted("N");
+
+        marathonMapper.updateMarathon(savedMarathon);
+
+        if (form.getHost() != null){
+            marathonMapper.deleteMarathonOrgan(savedMarathon.getNo());
+
+            if (StringUtils.hasText(form.getHost())){
+                String organizerText = form.getHost();
+                String[] values = organizerText.split(",");
+                for (String value : values) {
+                    MarathonOrgan organ = new MarathonOrgan();
+                    organ.setMarathonNo(savedMarathon.getNo());
+                    organ.setOrganRole("host");
+                    organ.setOrganName(value.trim());
+                    marathonMapper.insertMarathonOrgan(organ);
+                }
+            }
+        }
+
+        if (StringUtils.hasText(form.getOrganizer())){
+            String organizerText = form.getOrganizer();
+            String[] values = organizerText.split(",");
+            for (String value : values) {
+                MarathonOrgan organ = new MarathonOrgan();
+                organ.setMarathonNo(savedMarathon.getNo());
+                organ.setOrganRole("organizer");
+                organ.setOrganName(value.trim());
+                marathonMapper.insertMarathonOrgan(organ);
+            }
+        }
+    }
+
+    public void deleteMarathon(int marathonNo){
+        Marathon savedMarathon = marathonMapper.getMarathonDetailByNo(marathonNo);
+        savedMarathon.setDeleted("Y");
+
+        marathonMapper.updateMarathon(savedMarathon);
+    }
+
 }

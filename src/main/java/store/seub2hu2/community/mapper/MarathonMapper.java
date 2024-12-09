@@ -20,4 +20,6 @@ public interface MarathonMapper {
     List<MarathonOrgan> getMarathonOrganDetailByNo(@Param("no") int marathonNo);
     void updateMarathonCnt(@Param("marathon") Marathon marathon);
 
+    void updateMarathon(@Param("marathon") Marathon marathon);
+    void deleteMarathonOrgan(@Param("no") int marathonNo);
 }

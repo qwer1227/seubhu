@@ -5,6 +5,34 @@
 
 <!doctype html>
 <html lang="ko">
+<style>
+    /* 툴팁 스타일 (처음에는 숨겨져 있음) */
+    #hover-box {
+        display: none; /* 기본적으로 툴팁 숨김 */
+        position: absolute;
+        top: 100%; /* 버튼 바로 아래에 위치 */
+        right: 0%;
+        transform: translateX(-50%); /* 툴팁을 버튼의 중앙에 맞춤 */
+        background-color: rgba(0, 0, 0, 0.7); /* 배경 색상 */
+        color: white; /* 글씨 색상 */
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 12px;
+        white-space: nowrap; /* 내용이 길어도 줄바꿈 하지 않음 */
+        z-index: 10; /* 툴팁을 다른 요소 위에 표시 */
+    }
+
+    /* 버튼에 마우스를 올렸을 때 툴팁 표시 */
+    .btn-outline-primary:hover + #hover-box {
+        display: block;
+    }
+
+    /* 툴팁이 나타날 때 다른 콘텐츠가 영향을 받지 않도록 */
+    #fileDown:hover {
+        z-index: 20; /* 버튼과 툴팁 위로 다른 요소들이 오지 않도록 설정 */
+        position: relative; /* 툴팁을 버튼을 기준으로 설정 */
+    }
+</style>
 <head>
   <%@include file="/WEB-INF/views/common/common.jsp" %>
 </head>
@@ -16,8 +44,8 @@
     #marathon-table tr {
         height: 40px;
     }
-    
-    #marathon-content{
+
+    #marathon-content {
         margin-left: 10px;
         margin-top: 10px;
         margin-bottom: 10px;
@@ -30,9 +58,9 @@
   
   <h2> 마라톤 정보 상세페이지 </h2>
   
-  <input type="hidden" id="place" value="${marathon.place}">
+  <input type="hidden" id="location" value="${marathon.place}">
   <div>
-    <div class="col d-flex justify-content-left">
+    <div class="col d-flex justify-content-between align-items-center">
       <div>
         <a href="main" style="text-decoration-line: none">마라톤 정보</a>
       </div>
@@ -45,13 +73,6 @@
     </div>
     <div class="meta d-flex justify-content-between">
       <fmt:formatDate value="${marathon.createdDate}" pattern="yyyy.MM.dd hh:mm:ss"/>
-      
-      <%--        <c:if test="${not empty marathon.uploadFile.originalName}">--%>
-      <%--          <div class="content mb-4" id="fileDown" style="text-align: end">--%>
-      <%--            <a href="filedown?no=${marathon.no}" class="btn btn-outline-primary btn-sm">첨부파일 다운로드</a>--%>
-      <%--            <span id="hover-box">${marathon.uploadFile.originalName}</span>--%>
-      <%--          </div>--%>
-      <%--        </c:if>--%>
     </div>
     
     <div class="row mt-1">
@@ -72,9 +93,9 @@
         </tr>
         <tr>
           <th>주최</th>
-          <td></td>
+          <td>${host}</td>
           <th>주관</th>
-          <td></td>
+          <td>${organizer}</td>
         </tr>
         <tr>
           <th>홈페이지</th>
@@ -95,7 +116,7 @@
                     style="resize: none; overflow: hidden; user-select: none;">${marathon.content}</textarea>
         </div>
         <div class=" d-flex justify-content-center">
-        <div class="col-6 mb-2" id="map" style="height: 250px; width: 500px"></div>
+          <div class="col-6 mb-2" id="map" style="height: 250px; width: 500px"></div>
         </div>
       </div>
     </div>
@@ -106,8 +127,8 @@
         <div>
           <!-- principal 프로퍼티 안의 loginUser 정보를 가져옴 -->
           <!-- loginUser.no를 가져와서 조건문 실행 -->
-            <button class="btn btn-warning" onclick="updateCrew()">수정</button>
-            <button class="btn btn-danger" onclick="deleteCrew()">삭제</button>
+          <button class="btn btn-warning" onclick="updateMarathon(${marathon.no})">수정</button>
+          <button class="btn btn-danger" onclick="deleteMarathon(${marathon.no})">삭제</button>
         </div>
       </security:authorize>
       <div>
@@ -132,7 +153,7 @@
     };
 
     var map = new kakao.maps.Map(container, options); //지도 생성 및 객체 리턴
-    let loc = document.querySelector("#place").value
+    let loc = document.querySelector("#location").value
     var ps = new kakao.maps.services.Places();
     ps.keywordSearch(loc, placesSearchCB);
 
@@ -157,6 +178,20 @@
             map: map,
             position: new kakao.maps.LatLng(place.y, place.x)
         });
+    }
+
+    function updateMarathon(marathonNo) {
+        let result = confirm("해당 마라톤 정보 게시글을 수정하시겠습니까?");
+        if (result) {
+            window.location.href = "modify?no=" + marathonNo;
+        }
+    }
+
+    function deleteMarathon(marathonNo) {
+        let result = confirm("해당 마라톤 정보 게시글을 삭제하시겠습니까?");
+        if (result) {
+            window.location.href = "delete?no=" + marathonNo;
+        }
     }
 </script>
 </html>
