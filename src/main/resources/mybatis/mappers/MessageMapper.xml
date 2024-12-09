@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="store.seub2hu2.message.mapper.MessageMapper">
 
     <!-- 메시지 삽입 -->
@@ -8,16 +8,16 @@
         VALUES (#{message.userNo}, #{message.title}, #{message.content}, NOW())
     </insert>
 
-    <update id="deleteMessage">
-        UPDATE messages
-        SET message_delete = 'Y'
-        WHERE message_no = #{messageNo}
+    <update id="deleteMessage" parameterType="store.seub2hu2.message.vo.Message">
+        UPDATE MESSAGES
+        SET MESSAGE_DELETE = 'Y'
+        WHERE MESSAGE_NO = #{messageNo}
     </update>
 
-    <update id="deleteMessages">
-        UPDATE messages
-        SET message_delete = 'Y'
-        WHERE message_no IN
+    <update id="deleteMessages" parameterType="store.seub2hu2.message.vo.Message">
+        UPDATE MESSAGES
+        SET MESSAGE_DELETE = 'Y'
+        WHERE MESSAGE_NO IN
         <foreach item="messageNo" collection="messageNos" open="(" separator="," close=")">
             #{messageNo}
         </foreach>
@@ -25,18 +25,18 @@
 
 
 
-    <update id="updateReadStatus">
-        UPDATE message_receivers
-        SET message_read = 'Y',
-            message_read_date = NOW()
-        WHERE message_rcv_no = #{messageRcvNo}
+    <update id="updateReadStatus" parameterType="store.seub2hu2.message.dto.MessageReceived">
+        UPDATE MESSAGE_RECEIVERS
+        SET MESSAGE_READ = 'Y',
+            MESSAGE_READ_DATE = NOW()
+        WHERE MESSAGE_RCV_NO = #{messageRcvNo}
     </update>
 
-    <update id="updateReadStatuses">
-        UPDATE message_receivers
-        SET message_read = 'Y',
-        message_read_date = NOW()
-        WHERE message_rcv_no IN
+    <update id="updateReadStatuses" parameterType="store.seub2hu2.message.dto.MessageReceived">
+        UPDATE MESSAGE_RECEIVERS
+        SET MESSAGE_READ = 'Y',
+        MESSAGE_READ_DATE = NOW()
+        WHERE MESSAGE_RCV_NO IN
         <foreach item="messageRcvNo" collection="messageRcvNos" open="(" separator="," close=")">
             #{messageRcvNo}
         </foreach>

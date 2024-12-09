@@ -2,6 +2,7 @@ package store.seub2hu2.user.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import store.seub2hu2.course.vo.UserLevel;
 import store.seub2hu2.user.vo.Addr;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.user.vo.Role;
@@ -58,4 +59,6 @@ public interface UserMapper {
     void updateAddrUserNo(@Param("addrNo") int addrNo, @Param("userNo") int userNo);
 
     List<User> findUsersByNickname(@Param("nickname") String nickname);
+
+    void insertUserLevel(UserLevel userLevel);
 }
