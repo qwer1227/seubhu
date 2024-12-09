@@ -37,10 +37,23 @@
                         <label for="customRange2" class="form-label text-start">추천순</label>
                         <input type="checkbox"  class="form-check" name="sort" value="like" ${param.sort eq 'like' ? 'checked' : ''}>
                     </div>
-                    <div class="col-3">
-                        <label for="customRange2" class="form-label">거리(0~10KM)</label>
+                    <div class="col-4">
+                        <label id="slider" for="customRange2" class="form-label">거리</label>
                         <input type="range" class="form-range" min="0" max="10" id="customRange2" name="distance"
                                value="${empty param.distance ? '10' : param.distance}">
+                        <div class="row">
+                            <div class="col">0</div>
+                            <div class="col">1</div>
+                            <div class="col">2</div>
+                            <div class="col">3</div>
+                            <div class="col">4</div>
+                            <div class="col">5</div>
+                            <div class="col">6</div>
+                            <div class="col">7</div>
+                            <div class="col">8</div>
+                            <div class="col">9</div>
+                            <div class="col">10</div>
+                        </div>
                     </div>
                     <div class="col-1">
                         난이도
