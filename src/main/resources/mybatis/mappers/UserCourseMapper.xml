@@ -33,8 +33,14 @@
     <select id="getRecords" resultType="store.seub2hu2.course.vo.Records">
         select *
         from (
-                select dense_rank() over (order by r.finished_time) as no
-                        , row_number() over (order by r.finished_time) as rn
+                select
+                        <if test="condition.courseNo != null">
+                            rank() over (order by r.finished_time) as no
+                            , row_number() over (order by r.finished_time) as rn
+                        </if>
+                        <if test="condition.courseNo == null">
+                            row_number() over (order by r.finished_no desc) as rn
+                        </if>
                         , c.course_no
                         , c.course_name as "course.name"
                         , c.course_distance as "course.distance"
@@ -67,11 +73,12 @@
     <select id="getCoursesToChallenge" resultType="store.seub2hu2.course.vo.Course">
         select *
         from (
-                 select row_number() over (order by c.course_no) rn
+                 select row_number() over (order by w.challenge_no desc) as rn
                       , c.course_no as no
                       , c.course_name as name
                       , c.course_distance as distance
                       , c.course_level as level
+                      , w.challenge_no
                       , w.user_no as "user.no"
                       , r.region_si as "region.si"
                       , r.region_gu as "region.gu"
@@ -83,6 +90,46 @@
                  where w.user_no = #{condition.userNo}
              ) ar
         where rn between #{condition.begin} and #{condition.end}
+    </select>
+
+    <!--
+        List<Records> getMyRecords(@Param("condition") Map<String, Object> condition);
+    -->
+    <select id="getMyRecords" resultType="store.seub2hu2.course.vo.Records">
+        select x.rn
+            , x.no
+            , x.course_no as "course.no"
+            , x.course_name as "course.name"
+            , x.course_distance as "course.distance"
+            , x.course_level as "course.level"
+            , x.finished_no as no
+            , x.finished_date as finishedDate
+            , x.finished_time as finishedTime
+            , x.user_no as "user.no"
+            , x.user_nickname as "user.nickname"
+        from (
+                 select row_number() over (order by ar.finished_time) rn
+						, ar.*
+                 from (
+                          select
+                              rank() over (order by r.finished_time) as no
+								, c.course_no
+                               , c.course_name
+                               , c.course_distance
+                               , c.course_level
+                               , r.finished_no
+                               , r.finished_date
+                               , r.finished_time
+                               , u.user_no
+                               , u.user_nickname
+                          from COURSES c inner join COURSE_RECORDS r
+                          on c.course_no = r.course_no
+                          inner join USERS u
+                          on r.user_no = u.user_no
+                          where c.course_no = #{condition.courseNo}
+                      ) ar
+                 where ar.user_no = #{condition.userNo}) x
+        where x.rn between #{condition.myBegin} and #{condition.myEnd};
     </select>
 
     <!--

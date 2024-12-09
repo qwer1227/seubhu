@@ -19,6 +19,7 @@ public class SettlementDto {
     private String name;
     private String id;
     private String title;
+    private int price;
     private int totalPrice;
     private String payMethod;
     private String status;

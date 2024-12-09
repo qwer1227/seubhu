@@ -115,12 +115,13 @@ public class CourseController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/controlChallenge")
     public String controlChallenge(@RequestParam(name = "courseNo") int courseNo,
+                                   @RequestParam(name = "page") int page,
                                    @AuthenticationPrincipal LoginUser loginUser) {
         // 1. 사용자가 코스 도전 등록 여부를 변환한다.
         userCourseService.changeChallenge(courseNo, loginUser.getNo());
 
         // 2. list.jsp를 재요청한다.
-        return "redirect:list";
+        return "redirect:list?page=" + page;
     }
 
     @GetMapping("/detail")
@@ -172,8 +173,20 @@ public class CourseController {
         // 1. 사용자가 코스 도전 등록 여부를 변환한다.
         userCourseService.changeChallenge(courseNo, loginUser.getNo());
 
-        // 2. list.jsp를 재요청한다.
+        // 2. detail.jsp를 재요청한다.
         return "redirect:detail?no=" + courseNo;
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/cancelChallenge")
+    public String cancelChallenge(@RequestParam(name = "courseNo") int courseNo,
+                                  @RequestParam(name = "page") int page,
+                                  @AuthenticationPrincipal LoginUser loginUser) {
+        // 1. 사용자가 코스 도전 등록을 취소한다.
+        userCourseService.changeChallenge(courseNo, loginUser.getNo());
+
+        // 2. list.jsp를 재요청한다.
+        return "redirect:my-course?page=" + page;
     }
 
     @GetMapping("/runner-ranking")
@@ -197,28 +210,21 @@ public class CourseController {
             // 5. 해당 코스의 모든 완주 기록을 가져온다.
             ListDto<Records> dto = userCourseService.getAllRecords(condition);
 
-            // 6. 해당 코스의 로그인한 사용자의 완주 기록을 가져온다.
+            // 6. 해당 코스의 로그인한 사용자의 완주 기록을 가져오고, Model 객체에 저장한다.
             if (loginUser != null) {
-                List<Records> records = userCourseService.getMyRecords(condition, loginUser);
-                model.addAttribute("myRecord", records);
+                condition.put("userNo", loginUser.getNo());
+                ListDto<Records> myDto = userCourseService.getMyRecords(condition);
+
+                model.addAttribute("myRecords", myDto.getData());
+                model.addAttribute("myPaging", myDto.getPaging());
             }
 
             // 7. Model 객체에 코스 완주 기록, 페이징 처리 정보를 저장한다.
             model.addAttribute("records", dto.getData());
-            model.addAttribute("pagination", dto.getPaging());
+            model.addAttribute("allPaging", dto.getPaging());
         }
 
         // 8. 뷰이름을 반환한다.
         return "course/runner-ranking";
-    }
-
-    @GetMapping("/cancelChallenge")
-    public String cancelChallenge(@RequestParam(name = "courseNo") int courseNo,
-                                  @AuthenticationPrincipal LoginUser loginUser) {
-        // 1. 사용자가 코스 도전 등록을 취소한다.
-        userCourseService.changeChallenge(courseNo, loginUser.getNo());
-
-        // 2. list.jsp를 재요청한다.
-        return "redirect:my-course";
     }
 }

@@ -74,7 +74,7 @@
             FROM PRODUCTS P
                 JOIN PROD_CATEGORIES PC ON P.CAT_NO = PC.CAT_NO
                 JOIN PROD_BRANDS PB ON P.BRAND_NO = PB.BRAND_NO
-                JOIN PROD_COLORS PL ON P.PROD_COLOR_NUM = PL.COLOR_NO
+                LEFT OUTER JOIN PROD_COLORS PL ON P.PROD_COLOR_NUM = PL.COLOR_NO
             <if test="condition != null">
                 <choose>
                     <when test="condition.opt == 'name'">
@@ -182,6 +182,7 @@
         JOIN PROD_SIZES PS
         ON PC.COLOR_NO = PS.COLOR_NO
         WHERE PS.COLOR_NO = #{colorNo}
+        ORDER BY PS.PROD_SIZE ASC
     </select>
 
     <!--

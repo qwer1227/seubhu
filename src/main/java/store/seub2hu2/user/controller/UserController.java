@@ -3,6 +3,11 @@ package store.seub2hu2.user.controller;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -12,8 +17,17 @@ import store.seub2hu2.user.dto.UserJoinForm;
 import store.seub2hu2.user.service.UserService;
 import store.seub2hu2.user.vo.User;
 
+import java.util.List;
+
 @Controller
 public class UserController {
+
+    private final AuthenticationManager authenticationManager;
+
+    @Autowired
+    public UserController(AuthenticationManager authenticationManager) {
+        this.authenticationManager = authenticationManager;
+    }
 
     @Autowired
     private UserService userService;
@@ -73,17 +87,20 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestParam String id, @RequestParam String password, HttpSession session) {
-        // 로그인 처리 코드 (예: 사용자 인증)
-        User user = userService.login(id, password); // 예시로 로그인한 사용자 객체
+    public String login(@RequestParam String id, @RequestParam String password, HttpSession session, Model model) {
+        try {
+            // 서비스에서 로그인 처리
+            LoginUser loginUser = userService.authenticateUser(id, password);
 
-        if (user != null) {
-            // 로그인 성공 시 LoginUser 객체를 세션에 저장
-            LoginUser loginUser = new LoginUser(user);
+            // 로그인 성공 시 세션에 사용자 정보 저장
             session.setAttribute("loginUser", loginUser);
-            return "redirect:/home";  // 로그인 성공 후 이동할 페이지
-        } else {
-            return "login";  // 로그인 실패 시 로그인 페이지로 돌아감
+
+            // 로그인 성공 후 홈 페이지로 리다이렉트
+            return "redirect:/home";
+        } catch (AuthenticationException e) {
+            // 인증 실패 시 오류 메시지 추가
+            model.addAttribute("errorMessage", "아이디 또는 비밀번호가 잘못되었습니다.");
+            return "user/login-form";  // 로그인 폼으로 돌아감
         }
     }
 
@@ -91,5 +108,11 @@ public class UserController {
     @GetMapping("/logout")
     public String logout() {  // 세션 무효화
         return "redirect:/main";  // 로그아웃 후 메인 페이지로 리다이렉트
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<User>> searchUsers(@RequestParam("nickname") String nickname) {
+        List<User> users = userService.searchUsersByNickname(nickname);
+        return ResponseEntity.ok(users);
     }
 }

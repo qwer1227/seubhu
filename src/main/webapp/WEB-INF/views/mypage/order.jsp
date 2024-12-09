@@ -8,6 +8,7 @@
         .tab-content {
             display: none; /* 기본적으로 모든 탭 내용을 숨기기 */
         }
+
         .tab-content.active {
             display: table-row; /* 활성화된 탭 내용만 보이기 */
         }
@@ -62,28 +63,31 @@
                     <col width="15%">
                 </colgroup>
                 <thead class="table-secondary">
-                    <tr class="text-start">
-                        <th colspan="3">주문상품</th>
-                    </tr>
+                <tr class="text-start">
+                    <th colspan="3">주문상품</th>
+                </tr>
                 </thead>
                 <tbody id="order-items">
-                    <c:forEach items="${orderItems}" var="item">
-                        <tr>
-                            <td>
-                                <img src="${item.imgThum}" class="rounded mx-auto d-block" width="90">
-                            </td>
-                            <td>
-                                <div data-prodNo="${item.product.no}"></div>
-                                <span data-prodName="${item.product.name}">${item.product.name}</span>
-                                <p class="text-secondary" id="stock-${item.size.no}" data-sizeNo="${item.size.no}" data-stock="${item.stock}">[${item.color.name}/${item.size.size}] / ${item.stock}개</p>
+                <c:forEach items="${orderItems}" var="item">
+                    <tr>
+                        <td>
+                            <img src="${item.imgThum}" class="rounded mx-auto d-block" width="90">
+                        </td>
+                        <td>
+                            <div data-prodNo="${item.product.no}"></div>
+                            <span data-prodName="${item.product.name}">${item.product.name}</span>
+                            <p class="text-secondary" id="stock-${item.size.no}" data-sizeNo="${item.size.no}"
+                               data-stock="${item.stock}">[${item.color.name}/${item.size.size}] / ${item.stock}개</p>
 
-                            </td>
-                            <td class="text-end">
-                                <span id="price-${item.size.no}" data-price="${item.product.price}"><fmt:formatNumber value="${item.product.price * item.stock}"/> 원</span>
-                                <button type="button" class="btn btn-lg delete-button" data-target-id="#item-${item.size.no}}"><i class="bi bi-x"></i></button>
-                            </td>
-                        </tr>
-                    </c:forEach>
+                        </td>
+                        <td class="text-end">
+                            <span id="price-${item.size.no}" data-price="${item.product.price}"><fmt:formatNumber
+                                    value="${item.product.price * item.stock}"/> 원</span>
+                            <button type="button" class="btn btn-lg delete-button"
+                                    data-target-id="#item-${item.size.no}}"><i class="bi bi-x"></i></button>
+                        </td>
+                    </tr>
+                </c:forEach>
                 </tbody>
             </table>
         </div>
@@ -105,91 +109,181 @@
                     <col width="25%">
                 </colgroup>
                 <tbody>
-                    <tr>
-                        <th colspan="3">
-                            <div class="d-flex">
-                                <button class="btn btn-no-style btn-sm w-50 me-2 border-left border-right">최신 배송지</button>
-                                <button class="btn btn-no-style btn-sm w-50 border-right border-left">신규 입력</button>
-                            </div>
-                        </th>
-                    </tr>
-                    <!--  배송 주소록 -->
-                    <tr class="tab-content" id="latest-tab">
-                        <td colspan="3">
-                            <table class="table">
-                                <tr>
-
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-
-                    <!-- 신규 입력 내용 (초기값으로 표시됨) -->
-                    <tr class="tab-content active" id="new-tab">
-                        <td colspan="3">
-                            <table class="table">
-                                <tr>
-                                    <th>받으실 분</th>
-                                    <td>
-                                        <input type="text" name="name" class="form-control me-2" placeholder="이름을 입력하세요" required>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>주소</th>
-                                    <td>
-                                        <div class="d-flex align-items-center mb-2">
-                                            <input type="text" name="postcode" class="form-control me-2" id="postcode" placeholder="우편번호" required readonly>
-                                            <input type="button" onclick="openPostcode()" class="btn btn-secondary" value="우편번호검색">
-                                        </div>
-                                        <input type="text" name="address" id="address" class="form-control mb-2" placeholder="기본주소"/>
-                                        <input type="text" name="address-detail" id="address-detail" class="form-control mb-2" placeholder="나머지 주소(선택입력 가능)"/>
-                                        <input type="text" name="address-extra" id="address-extra" class="form-control mb-2" placeholder="참고항목"/>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th><label>휴대폰 번호</label></th>
-                                    <td>
-                                        <div class="d-flex">
-                                            <input type="text" class="form-control" id="phone-number" name="phone-number">
-                                            <div id="phone-error" style="color: red; font-size: 12px; display: none;"></div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th><label>이메일</label></th>
-                                    <td>
-                                        <div class="d-flex">
-                                            <input type="email" id="email-user-name" name="email-user-name" class="form-control" oninput="validateEmail()"> @
-                                            <input type="email" id="email-domain" class="form-control" name="email-domain" disabled oninput="validateEmail()">
-                                            <select id="email-selector" class="form-control" name="email" onchange="updateEmailDomain()" oninput="validateEmail()">
-                                                <option>선택하세요</option>
-                                                <option value="direct">직접입력</option>
-                                                <option value="gmail.com">gmail.com</option>
-                                                <option value="naver.com">naver.com</option>
-                                                <option value="hanmail.net">hanmail.net</option>
-                                            </select>
-                                        </div>
-                                        <div id="error-message" style="color: red; display: none;">유효하지 않은 이메일 주소입니다.</div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th><label class="form-check-label" for="memo-box">배송 메모</label></th>
-                                    <td>
-                                        <select id="memo-box" class="form-control" name="memo" aria-labelledby="memo-label">
-                                            <option value="" selected>-- 메시지 선택 --</option>
-                                            <option value="배송 전에 미리 연락바랍니다.">배송 전에 미리 연락바랍니다.</option>
-                                            <option value="부재 시 경비실에 맡겨주세요.">부재 시 경비실에 맡겨주세요.</option>
-                                            <option value="부재 시 문 앞에 놓아주세요.">부재 시 문 앞에 놓아주세요.</option>
-                                            <option value="빠른 배송 부탁드립니다.">빠른 배송 부탁드립니다.</option>
-                                            <option value="택배함에 보관해주세요.">택배함에 보관해주세요.</option>
+                <tr>
+                    <th colspan="3">
+                        <div class="d-flex">
+                            <button class="btn btn-no-style btn-sm w-50 me-2 border-left border-right">최신 배송지</button>
+                            <button class="btn btn-no-style btn-sm w-50 border-right border-left">신규 입력</button>
+                        </div>
+                    </th>
+                </tr>
+                <!--  배송 주소록 -->
+                <tr class="tab-content" id="">
+                    <td colspan="3">
+                        <table class="table">
+                            <tr>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <!-- 최신 배송지 -->
+                <tr class="tab-content" id="latest-tab">
+                    <td colspan="3">
+                        <table class="table">
+                            <tr>
+                                <th>받으실 분</th>
+                                <td>
+                                    <input type="text" name="name" class="form-control me-2" placeholder="이름을 입력하세요"
+                                           value="${user.name}" required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>주소</th>
+                                <td>
+                                    <div class="d-flex align-items-center mb-2">
+                                        <input type="text" name="postcode" class="form-control me-2" id="exPostcode"
+                                               placeholder="우편번호" value="${user.postcode}" required readonly>
+                                        <input type="button" onclick="openPostcode()" class="btn btn-secondary"
+                                               value="우편번호검색">
+                                    </div>
+                                    <input type="text" name="address" id="exAddress" class="form-control mb-2"
+                                           placeholder="기본주소" value="${user.address}"/>
+                                    <input type="text" name="address-detail" id="exAddressDetail"
+                                           class="form-control mb-2" placeholder="나머지 주소(선택입력 가능)" value="${user.addressDetail}"/>
+                                    <input type="text" name="address-extra" id="exAddressExtra" class="form-control mb-2"
+                                           placeholder="참고항목" value="${user.addressExtra}"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th><label>휴대폰 번호</label></th>
+                                <td>
+                                    <div class="d-flex">
+                                        <input type="text" class="form-control" id="exPhoneNumber" name="exPhoneNumber"
+                                               value="${user.tel}">
+                                        <div id="exPhoneError" style="color: red; font-size: 12px; display: none;"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th><label>이메일</label></th>
+                                <td>
+                                    <div class="d-flex">
+                                        <input type="email" id="exEmailUserName" name="exEmailUserName" class="form-control"
+                                               value="${user.emailUserName}" oninput="validateEmail()"> @
+                                        <input type="email" id="exEmailDomain" class="form-control" name="exEmailDomain"
+                                               value="${user.emailDomain}" disabled oninput="validateEmail()">
+                                        <select id="exEmailSelector" class="form-control" name="exEmail"
+                                                onchange="updateEmailDomain()" oninput="validateEmail()">
+                                            <option>선택하세요</option>
                                             <option value="direct">직접입력</option>
+                                            <option value="gmail.com">gmail.com</option>
+                                            <option value="naver.com">naver.com</option>
+                                            <option value="hanmail.net">hanmail.net</option>
                                         </select>
-                                        <input type="text" class="form-control" id="memo-box-direct" name="memo-direct"  placeholder="배송 메모를 입력하세요"/>
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
+                                    </div>
+                                    <div id="exErrorMessage" style="color: red; display: none;">유효하지 않은 이메일 주소입니다.</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th><label class="form-check-label" for="memo-box">배송 메모</label></th>
+                                <td>
+                                    <select id="exMemoBox" class="form-control" name="memo" aria-labelledby="memo-label">
+                                        <option value="" selected>-- 메시지 선택 --</option>
+                                        <option value="배송 전에 미리 연락바랍니다.">배송 전에 미리 연락바랍니다.</option>
+                                        <option value="부재 시 경비실에 맡겨주세요.">부재 시 경비실에 맡겨주세요.</option>
+                                        <option value="부재 시 문 앞에 놓아주세요.">부재 시 문 앞에 놓아주세요.</option>
+                                        <option value="빠른 배송 부탁드립니다.">빠른 배송 부탁드립니다.</option>
+                                        <option value="택배함에 보관해주세요.">택배함에 보관해주세요.</option>
+                                        <option value="direct">직접입력</option>
+                                    </select>
+                                    <input type="text" class="form-control" id="exMemoBoxDirect" name="exMemoBoxDirect"
+                                           placeholder="배송 메모를 입력하세요"/>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <tr>
+
+
+
+                <!-- 신규 입력 내용 (초기값으로 표시됨) -->
+                <tr class="tab-content active" id="new-tab">
+                    <td colspan="3">
+                        <table class="table">
+                            <tr>
+                                <th>받으실 분</th>
+                                <td>
+                                    <input type="text" name="name" class="form-control me-2" placeholder="이름을 입력하세요"
+                                           required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>주소</th>
+                                <td>
+                                    <div class="d-flex align-items-center mb-2">
+                                        <input type="text" name="postcode" class="form-control me-2" id="postcode"
+                                               placeholder="우편번호" required readonly>
+                                        <input type="button" onclick="openPostcode()" class="btn btn-secondary"
+                                               value="우편번호검색">
+                                    </div>
+                                    <input type="text" name="address" id="address" class="form-control mb-2"
+                                           placeholder="기본주소"/>
+                                    <input type="text" name="address-detail" id="address-detail"
+                                           class="form-control mb-2" placeholder="나머지 주소(선택입력 가능)"/>
+                                    <input type="text" name="address-extra" id="address-extra" class="form-control mb-2"
+                                           placeholder="참고항목"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th><label>휴대폰 번호</label></th>
+                                <td>
+                                    <div class="d-flex">
+                                        <input type="text" class="form-control" id="phone-number" name="phone-number">
+                                        <div id="phone-error" style="color: red; font-size: 12px; display: none;"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th><label>이메일</label></th>
+                                <td>
+                                    <div class="d-flex">
+                                        <input type="email" id="email-user-name" name="email-user-name"
+                                               class="form-control" oninput="validateEmail()"> @
+                                        <input type="email" id="email-domain" class="form-control" name="email-domain"
+                                               disabled oninput="validateEmail()">
+                                        <select id="email-selector" class="form-control" name="email"
+                                                onchange="updateEmailDomain()" oninput="validateEmail()">
+                                            <option>선택하세요</option>
+                                            <option value="direct">직접입력</option>
+                                            <option value="gmail.com">gmail.com</option>
+                                            <option value="naver.com">naver.com</option>
+                                            <option value="hanmail.net">hanmail.net</option>
+                                        </select>
+                                    </div>
+                                    <div id="error-message" style="color: red; display: none;">유효하지 않은 이메일 주소입니다.</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th><label class="form-check-label" for="memo-box">배송 메모</label></th>
+                                <td>
+                                    <select id="memo-box" class="form-control" name="memo" aria-labelledby="memo-label">
+                                        <option value="" selected>-- 메시지 선택 --</option>
+                                        <option value="배송 전에 미리 연락바랍니다.">배송 전에 미리 연락바랍니다.</option>
+                                        <option value="부재 시 경비실에 맡겨주세요.">부재 시 경비실에 맡겨주세요.</option>
+                                        <option value="부재 시 문 앞에 놓아주세요.">부재 시 문 앞에 놓아주세요.</option>
+                                        <option value="빠른 배송 부탁드립니다.">빠른 배송 부탁드립니다.</option>
+                                        <option value="택배함에 보관해주세요.">택배함에 보관해주세요.</option>
+                                        <option value="direct">직접입력</option>
+                                    </select>
+                                    <input type="text" class="form-control" id="memo-box-direct" name="memo-direct"
+                                           placeholder="배송 메모를 입력하세요"/>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
                 </tbody>
             </table>
         </div>
@@ -211,21 +305,21 @@
                 </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <th><label>쿠폰</label></th>
-                        <td>
-                            <input type="text" class="form-control mb-3">
-                        </td>
-                    </tr>
-                    <tr>
-                        <th><label>적립금</label></th>
-                        <td>
-                            <div class="d-flex align-items-center mb-3">
-                                <input type="text" class="form-control me-2"/>
-                                <input type="button" class="btn btn-secondary" value="모두 사용">
-                            </div>
-                        </td>
-                    </tr>
+                <tr>
+                    <th><label>쿠폰</label></th>
+                    <td>
+                        <input type="text" class="form-control mb-3">
+                    </td>
+                </tr>
+                <tr>
+                    <th><label>적립금</label></th>
+                    <td>
+                        <div class="d-flex align-items-center mb-3">
+                            <input type="text" class="form-control me-2"/>
+                            <input type="button" class="btn btn-secondary" value="모두 사용">
+                        </div>
+                    </td>
+                </tr>
                 </tbody>
             </table>
         </div>
@@ -242,13 +336,20 @@
                 </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <th><label>결제 수단</label></th>
-                        <td><input type="radio" name="paymentMethod" value="신용카드"><img src="https://ecimg.cafe24img.com/pg90b05313110010/brooksrunning/web/upload/icon_202210121023113100.png" /></td>
-                        <td><input type="radio" name="paymentMethod" value="카카오페이" checked><img src="https://ecimg.cafe24img.com/pg90b05313110010/brooksrunning/web/upload/icon_202210121022402200.png"/></td>
-                        <td><input type="radio" name="paymentMethod" value="페이코"><img src="https://img.echosting.cafe24.com/design/skin/admin/ko_KR/ico_payco_disabled.gif" /></td>
-                        <td><input type="radio" name="paymentMethod" value="네이버페이"><img src="https://img.echosting.cafe24.com/skin/admin_ko_KR/order/admin_naverpay_disabled.gif" /></td>
-                    </tr>
+                <tr>
+                    <th><label>결제 수단</label></th>
+                    <td><input type="radio" name="paymentMethod" value="신용카드"><img
+                            src="https://ecimg.cafe24img.com/pg90b05313110010/brooksrunning/web/upload/icon_202210121023113100.png"/>
+                    </td>
+                    <td><input type="radio" name="paymentMethod" value="카카오페이" checked><img
+                            src="https://ecimg.cafe24img.com/pg90b05313110010/brooksrunning/web/upload/icon_202210121022402200.png"/>
+                    </td>
+                    <td><input type="radio" name="paymentMethod" value="페이코"><img
+                            src="https://img.echosting.cafe24.com/design/skin/admin/ko_KR/ico_payco_disabled.gif"/></td>
+                    <td><input type="radio" name="paymentMethod" value="네이버페이"><img
+                            src="https://img.echosting.cafe24.com/skin/admin_ko_KR/order/admin_naverpay_disabled.gif"/>
+                    </td>
+                </tr>
                 </tbody>
             </table>
         </div>
@@ -291,16 +392,17 @@
             </table>
             <div class="d-grid gap-2">
                 <button class="col btn btn-dark" type="button" disabled>주문취소하기</button>
-                <button class="col btn btn-dark" id="submit-button" type="button">결제하기 <small id="total-quantity"></small></button>
+                <button class="col btn btn-dark" id="submit-button" type="button">결제하기 <small
+                        id="total-quantity"></small></button>
             </div>
         </div>
-</div>
+    </div>
     <script>
 
         // 카카오 주소 api
         function openPostcode() {
             new daum.Postcode({
-                oncomplete: function(data) {
+                oncomplete: function (data) {
                     // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
 
                     // 각 주소의 노출 규칙에 따라 주소를 조합한다.
@@ -316,18 +418,18 @@
                     }
 
                     // 사용자가 선택한 주소가 도로명 타입일때 참고항목을 조합한다.
-                    if(data.userSelectedType === 'R'){
+                    if (data.userSelectedType === 'R') {
                         // 법정동명이 있을 경우 추가한다. (법정리는 제외)
                         // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
-                        if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+                        if (data.bname !== '' && /[동|로|가]$/g.test(data.bname)) {
                             extraAddr += data.bname;
                         }
                         // 건물명이 있고, 공동주택일 경우 추가한다.
-                        if(data.buildingName !== '' && data.apartment === 'Y'){
+                        if (data.buildingName !== '' && data.apartment === 'Y') {
                             extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
                         }
                         // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
-                        if(extraAddr !== ''){
+                        if (extraAddr !== '') {
                             extraAddr = ' (' + extraAddr + ')';
                         }
                         // 조합된 참고항목을 해당 필드에 넣는다.
@@ -361,14 +463,14 @@
         });
 
         // 핸드폰 번호 정규식
-        $(document).on("focus", "#phone-number", function() {
+        $(document).on("focus", "#phone-number", function () {
             // 입력 시 자동으로 010을 채워넣기
             if ($(this).val() === "") {
                 $(this).val("010");
             }
         });
 
-        $(document).on("keyup", "#phone-number", function() {
+        $(document).on("keyup", "#phone-number", function () {
             var phoneNumber = $(this).val().replace(/[^0-9]/g, "");  // 숫자만 남기기
 
             // 입력이 비어있으면 에러 메시지 제거
@@ -384,7 +486,7 @@
                     // 010으로 시작하면 포맷팅: 010-xxxx-xxxx
                     $(this).val(
                         phoneNumber
-                            .replace(/^(\d{3})(\d{1,4})(\d{0,4})$/, function(_, p1, p2, p3) {
+                            .replace(/^(\d{3})(\d{1,4})(\d{0,4})$/, function (_, p1, p2, p3) {
                                 if (p3) {
                                     return p1 + '-' + p2 + '-' + p3;  // 010-xxxx-xxxx 형식
                                 } else if (p2) {
@@ -473,13 +575,13 @@
             }
         }
 
-        $(document).ready(function() {
+        $(document).ready(function () {
             // 초기 상태 설정 (기본적으로 신규 입력 탭을 활성화)
             $('#new-tab').addClass('active');
             $('#latest-tab').removeClass('active');
 
             // 버튼 클릭 시 탭 전환
-            $('.btn-no-style').click(function() {
+            $('.btn-no-style').click(function () {
                 const tabId = $(this).text() === '최신 배송지' ? '#latest-tab' : '#new-tab';
 
                 // 모든 탭 내용 숨기고 선택된 탭만 보이게
@@ -489,7 +591,7 @@
         });
 
         // 총 계산
-        $(document).ready(function() {
+        $(document).ready(function () {
             // 기본 변수 초기화
             let totalPrice = 0; // 주문 상품들 총 가격
             let totalQuantity = 0; // 총 수량
@@ -497,7 +599,7 @@
             let discountPrice = 0; // 할인 금액
 
             // 각 아이템에 대해 반복 처리
-            $('#order-items tr').each(function() {
+            $('#order-items tr').each(function () {
                 // 각 아이템의 가격과 재고 가져오기
                 let price = parseInt($(this).find('[id^="price-"]').data('price'));  // 가격
                 let stock = parseInt($(this).find('[id^="stock-"]').data('stock'));  // 재고
@@ -527,7 +629,7 @@
             $('#delivery-price').text(deliveryPrice.toLocaleString() + ' 원');
             $('#discount-price').text(discountPrice.toLocaleString() + ' 원');
             $('#final-total-price').text(finalTotalPrice.toLocaleString() + ' 원');
-            $('#total-quantity').text(`(` +totalQuantity + ' 개)');
+            $('#total-quantity').text(`(` + totalQuantity + ' 개)');
         });
 
 
@@ -636,6 +738,6 @@
 
     </script>
 
-<%@include file="/WEB-INF/views/common/footer.jsp" %>
+    <%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
 </html>

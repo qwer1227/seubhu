@@ -3,6 +3,9 @@ package store.seub2hu2.security.user;
 import lombok.*;
 import store.seub2hu2.user.vo.User;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 @NoArgsConstructor
 @Getter
 @Setter

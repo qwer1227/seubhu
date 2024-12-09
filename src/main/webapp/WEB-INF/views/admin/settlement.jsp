@@ -105,7 +105,7 @@
                            name="sort"
                            value="oldestDate"
                            onchange="changeSort()"
-                    ${empty param.sort or param.sort eq 'oldestDate' ? 'checked' : ''}
+                    ${param.sort eq 'oldestDate' ? 'checked' : ''}
                     >
                     <label class="form-check-label" >오래된 순</label>
                   </div>
@@ -115,7 +115,7 @@
                            name="sort"
                            value="price"
                            onchange="changeSort()"
-                    ${empty param.sort or param.sort eq 'price' ? 'checked' : ''}
+                    ${param.sort eq 'price' ? 'checked' : ''}
                     >
                     <label class="form-check-label" >높은가격 순</label>
                   </div>
@@ -141,8 +141,13 @@
                   <%@include file="/WEB-INF/views/admincommon/searchbar.jsp" %>
                   <!-- Search -->
                 </div>
-              </div>
             </form>
+                <div class="col">
+                  <a class="btn btn-success" href="chart">
+                    차트보기
+                  </a>
+                </div>
+              </div>
           </div>
         </div>
         <div class="row mb-3">
@@ -180,7 +185,7 @@
                       <td>${d.name}</td>
                       <td>${d.id}</td>
                       <td>${d.title}</td>
-                      <td><fmt:formatNumber value="${d.totalPrice }"/> 원</td>
+                      <td><fmt:formatNumber value="${d.price }"/> 원</td>
                       <td>${d.payMethod}</td>
                       <td>${d.status}</td>
                       <td>
@@ -193,6 +198,11 @@
                   </c:forEach>
                 </tbody>
               </table>
+              <div class="row mb-3">
+                <div class="col">
+                  <div class="border p-2 bg-dark text-white fw-bold">${param.day} | 매출액: <fmt:formatNumber value="${totalPriceSum}"/> 원</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

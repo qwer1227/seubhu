@@ -56,7 +56,7 @@
             <%-- 성공 표시 --%>
             <div class="row mt-3 mb-3 justify-content-center">
                 <c:if test="${isSuccess == true}">
-                    <span class="badge text-bg-primary" style="width: 80px;">완주 성공!</span>
+                    <span class="badge text-bg-primary" style="width: 100px; font-size: 20px;">완주 성공!</span>
                 </c:if>
             </div>
 
@@ -66,17 +66,19 @@
                     <c:choose>
                         <%-- 현재 도전 가능한 단계(난이도)가 코스 난이도보다 적으면, 도전 불가능 문구를 표시한다. --%>
                         <c:when test="${currentUserLevel < course.level}">
-                            <button class="btn btn-danger disabled" style="width: 300px;">아직 도전할 수 없습니다!</button>
+                            <button class="btn btn-danger disabled" style="width: 200px;">아직 도전할 수 없습니다!</button>
                         </c:when>
                         <c:otherwise>
                             <c:choose>
                                 <%-- 사용자가 코스 도전 등록을 했다면 등록 취소 버튼을 표시하고, 클릭하면 코스 등록을 취소한다. --%>
                                 <c:when test="${isChallenge == true}">
-                                    <a href="changeChallenge?courseNo=${course.no}" class="btn btn-danger" style="width: 100px;">등록 취소</a>
+                                    <a href="changeChallenge?courseNo=${course.no}" class="btn btn-danger"
+                                       style="width: 100px;" onclick="cancelChallenge(event)">등록 취소</a>
                                 </c:when>
                                 <%-- 사용자가 코스 도전 등록을 하지 않았다면 등록하기 버튼을 표시하고, 클릭하면 코스를 등록한다. --%>
                                 <c:otherwise>
-                                    <a href="changeChallenge?courseNo=${course.no}" class="btn btn-warning" style="width: 100px;">등록하기</a>
+                                    <a href="changeChallenge?courseNo=${course.no}" class="btn btn-warning"
+                                       style="width: 100px;" onclick="registerChallenge(event)">등록하기</a>
                                 </c:otherwise>
                             </c:choose>
                         </c:otherwise>
@@ -167,6 +169,25 @@
 
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script type="text/javascript">
+    // 등록하기 버튼을 클릭하면, 확인창을 표시한다.
+    function registerChallenge(event) {
+        if (confirm("도전할 코스 목록에 추가하시겠습니까?")) {
+            alert("도전할 코스 목록에 추가되었습니다!");
+        } else {
+            event.preventDefault();
+        }
+    }
+
+    // 등록 취소 버튼을 클릭하면, 확인창을 표시한다.
+    function cancelChallenge(event) {
+        if (confirm("도전할 코스 목록에서 제외하시겠습니까?")) {
+            alert("도전할 코스 목록에서 제외되었습니다!");
+        } else {
+            event.preventDefault();
+        }
+    }
+
+    // Modal창을 정의한다.
     const reviewFormModal = new bootstrap.Modal('#modal-review-form')
 
     // 코스 리뷰 등록 Modal창을 연다.
