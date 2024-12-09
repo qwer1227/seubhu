@@ -4,7 +4,7 @@
 <html lang="en">
 
 <head>
-
+    <%@include file="/WEB-INF/views/common/common.jsp" %>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -125,7 +125,7 @@
                                 <div class="row p-3 ">
                                     <div class="col-5 ">
                                         <c:if test="${not empty images['THUMBNAIL']}">
-                                            <img src="${pageContext.request.contextPath}/resources/images/lesson/${images['THUMBNAIL']}"
+                                            <img src="${s3}/resources/images/lesson/${images['THUMBNAIL']}"
                                                  alt="Thumbnail" id="previewThumbnail" class="p-3"
                                                  style="width: 100%;"/>
                                         </c:if>
@@ -137,7 +137,7 @@
                                 <div class="row p-3 ">
                                     <div class="col-5">
                                         <c:if test="${not empty images.MAIN_IMAGE}">
-                                            <img src="${pageContext.request.contextPath}/resources/images/lesson/${images['MAIN_IMAGE']}"
+                                            <img src="${s3}/resources/images/lesson/${images['MAIN_IMAGE']}"
                                                  alt="Main Image" id="previewMainImage" class="p-3"
                                                  style="width: 100%;"/>
                                         </c:if>
