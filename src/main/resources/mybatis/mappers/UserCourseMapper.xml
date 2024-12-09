@@ -20,7 +20,7 @@
         UserLevel getUserLevel(@Param("userNo") int userNo);
     -->
     <select id="getUserLevel" resultType="store.seub2hu2.course.vo.UserLevel">
-        select u.user_no as "user.no"
+        select u.user_no as userNo
             , l.challenge_level as level
         from USERS u inner join COURSE_USER_LEVELS l
         on u.user_no = l.user_no

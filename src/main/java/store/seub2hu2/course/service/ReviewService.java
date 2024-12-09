@@ -6,14 +6,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import store.seub2hu2.admin.mapper.AdminMapper;
-import store.seub2hu2.course.dto.AddReviewForm;
+import store.seub2hu2.course.dto.ReviewForm;
 import store.seub2hu2.course.exception.CourseReviewException;
 import store.seub2hu2.course.mapper.ReviewMapper;
 import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.course.vo.Review;
 import store.seub2hu2.course.vo.ReviewImage;
 import store.seub2hu2.user.vo.User;
-import store.seub2hu2.util.FileUtils;
 import store.seub2hu2.util.ListDto;
 import store.seub2hu2.util.Pagination;
 import store.seub2hu2.util.WebContentFileUtils;
@@ -37,6 +36,23 @@ public class ReviewService {
 
     @Autowired
     private AdminMapper adminMapper;
+
+    /**
+     * 로그인한 사용자가 리뷰 작성자와 동일한지 확인한다.
+     * @param reviewNo
+     * @return
+     */
+    public boolean checkSameReviewer(int reviewNo, int userNo) {
+        // 리뷰를 가져온다.
+        Review review = reviewMapper.getReviewByNo(reviewNo);
+
+        // 리뷰 작성자와 로그인한 사용자가 동일한지 확인하고, 동일 여부를 반환한다.
+        if (review.getUser().getNo() == userNo) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     /**
      * 코스에 등록된 리뷰 목록을 가져온다.
@@ -78,7 +94,7 @@ public class ReviewService {
      * @param userNo 사용자 번호
      * @return 입력한 리뷰 정보
      */
-    public Review addNewReview(AddReviewForm form, int userNo) {
+    public Review addNewReview(ReviewForm form, int userNo) {
         // 1. 등록할 리뷰 정보를 리뷰 객체에 저장한다.
         Review review = new Review();
         review.setTitle(form.getTitle());
