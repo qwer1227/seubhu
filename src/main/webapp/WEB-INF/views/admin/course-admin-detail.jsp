@@ -50,7 +50,51 @@
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
           <h1 class="h3 mb-0 text-gray-800">코스 상세</h1>
         </div>
-
+        <div class="row">
+          <div class="col-5">
+              <table class="table table-bordered">
+                  <div class="card">
+                      <div class="card-header">${course.name}</div>
+                  </div>
+                  <tbody>
+                  <tr>
+                      <th scope="row">코스 지역</th>
+                      <td>${course.region.si} ${course.region.gu} ${course.region.dong}</td>
+                  </tr>
+                  <tr>
+                      <th scope="row">코스 거리</th>
+                      <td>${course.distance}KM</td>
+                  </tr>
+                  <tr>
+                      <th scope="row">평균 완주 시간</th>
+                      <td>${course.time}분</td>
+                  </tr>
+                  <tr>
+                      <th scope="row">코스 난이도</th>
+                      <td>${course.level}단계</td>
+                  </tr>
+                  </tbody>
+              </table>
+              <div class="row mt-3 mb-3 justify-content-center">
+                  <span>좋아요 수 : ${course.likeCnt}개</span>
+              </div>
+              <div class="row justify-content-end">
+                <a type="button" class="btn btn-primary justify-content-end mr-2" href="course">뒤로가기</a>
+                <a type="button" class="btn btn-warning justify-content-end" href="course-edit-form?no=${param.no}">수정</a>
+              </div>
+          </div>
+        <div class="col-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row mb-1">
+                        <div class="col">
+                            <img src="/resources/images/course/${course.filename}" class="img-thumbnail">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
       </div>
       <!-- end Page Content -->
     </div>
