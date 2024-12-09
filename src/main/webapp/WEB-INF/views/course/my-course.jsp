@@ -47,12 +47,19 @@
                         <tr>
                             <th scope="row">현재 배지</th>
                             <td>
-                                <c:forEach var="userBadge" items="${userBadges}">
-                                    <div>
-                                        <img src="/resources/images/badge/${userBadge.badge.image}" width="40px" height="40px">
-                                        ${userBadge.badge.name} : ${userBadge.badge.description}
-                                    </div>
-                                </c:forEach>
+                                <c:choose>
+                                    <c:when test="${not empty userBadges}">
+                                        <c:forEach var="userBadge" items="${userBadges}">
+                                            <div>
+                                                <img src="/resources/images/badge/${userBadge.badge.image}" width="40px" height="40px">
+                                                    ${userBadge.badge.name} : ${userBadge.badge.description}
+                                            </div>
+                                        </c:forEach>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <div>획득한 배지가 없습니다.</div>
+                                    </c:otherwise>
+                                </c:choose>
                             </td>
                         </tr>
                         <tr>

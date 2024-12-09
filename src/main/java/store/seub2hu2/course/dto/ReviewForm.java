@@ -12,7 +12,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @ToString
-public class AddReviewForm {
+public class ReviewForm {
     private int courseNo;
     private String title;
     private String content;
