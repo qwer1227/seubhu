@@ -68,6 +68,8 @@ public class MessageController {
         // 모델에 데이터 추가
         model.addAttribute("messages", dto.getData());
         model.addAttribute("paging", dto.getPaging());
+        model.addAttribute("condition", condition); // 검색 조건도 모델에 포함 (필요 시 사용)
+
 
         return "message/message-received-list";
     }
@@ -77,32 +79,36 @@ public class MessageController {
     public String sentList(
             @RequestParam(name = "page", required = false, defaultValue = "1") int page,
             @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
-            @RequestParam(name = "sort", required = false, defaultValue = "date") String sort,
+            @RequestParam(name = "sort", required = false, defaultValue = "desc") String sort, // 기본값 변경
             @RequestParam(name = "opt", required = false) String opt,
             @RequestParam(name = "keyword", required = false) String keyword,
             @AuthenticationPrincipal LoginUser loginUser,
             Model model) {
 
+        // 검색 조건 수집
         Map<String, Object> condition = new HashMap<>();
         condition.put("page", page);
         condition.put("rows", rows);
         condition.put("sort", sort);
-        condition.put("userNo", loginUser.getNo());  // 로그인된 사용자 번호
+        condition.put("userNo", loginUser.getNo()); // 로그인된 사용자 번호
 
+        // 검색 조건 추가 (유효성 검증 포함)
         if (StringUtils.hasText(keyword)) {
-            condition.put("opt", opt);
-            condition.put("keyword", keyword);
+                condition.put("opt", opt);
+                condition.put("keyword", keyword);
         }
 
-        // 보낸 메시지 목록 조회
+        // 메시지 목록 조회
         ListDto<MessageReceived> dto = messageService.getSentMessages(condition);
 
         // 모델에 데이터 추가
         model.addAttribute("messages", dto.getData());
         model.addAttribute("paging", dto.getPaging());
+        model.addAttribute("condition", condition); // 검색 조건도 모델에 포함 (필요 시 사용)
 
         return "message/message-sent-list";
     }
+
 
     // 메시지 상세 조회
     @GetMapping("/detail")
@@ -144,34 +150,28 @@ public class MessageController {
 
     // 개별 삭제
     @PostMapping("/delete")
-    public ResponseEntity<String> deleteMessage(@RequestParam("messageNo") int messageNo) {
+    public String deleteMessage(@RequestParam("messageNo") int messageNo) {
         messageService.deleteMessage(messageNo);
-        return ResponseEntity.ok("메시지가 삭제되었습니다.");
+        return "redirect:/message/sent";
     }
 
     // 일괄 삭제
     @PostMapping("/deleteMultiple")
-    @ResponseBody
-    public ResponseEntity<String> deleteMessages(@RequestParam("messageNos") List<Integer> messageNos) {
-        if (messageNos.isEmpty()) {
-            return ResponseEntity.badRequest().body("삭제할 메시지를 선택해주세요.");
-        }
+    public String deleteMessages(@RequestParam("messageNos") List<Integer> messageNos) {
         messageService.deleteMessages(messageNos);
-        return ResponseEntity.ok("선택한 메시지가 삭제되었습니다.");
+        return "redirect:/message/sent";
     }
 
     @PostMapping("/markAsRead")
-    @ResponseBody
-    public ResponseEntity<String> markAsRead(@RequestParam("messageNo") int messageNo) {
+    public String markAsRead(@RequestParam("messageNo") int messageNo) {
         messageService.markAsRead(messageNo);
-        return ResponseEntity.ok("메시지가 읽음 처리되었습니다.");
+        return "redirect:/message/list";
     }
 
     @PostMapping("/markMultipleAsRead")
-    @ResponseBody
-    public ResponseEntity<String> markMultipleAsRead(@RequestParam("messageNos") List<Integer> messageNos) {
+    public String markMultipleAsRead(@RequestParam("messageNos") List<Integer> messageNos) {
         messageService.markMultipleAsRead(messageNos);
-        return ResponseEntity.ok("선택한 메시지가 읽음 처리되었습니다.");
+        return "redirect:/message/list";
     }
 
     // 파일 다운로드 요청

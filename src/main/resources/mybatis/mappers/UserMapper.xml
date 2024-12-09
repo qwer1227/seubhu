@@ -34,7 +34,7 @@
 
     <insert id="insertAddr">
         INSERT INTO ADDRESSES (ZIP_CODE, ADDR_1, ADDR_2, ISADDR_HOME, USER_NO, ADDR_NAME)
-        VALUES (#{addr.zipcode}, #{addr.address}, #{addr.addressDetail}, #{addr.isAddrHome}, #{addr.userNo}, #{addr.name})
+        VALUES (#{addr.postcode}, #{addr.address}, #{addr.addressDetail}, #{addr.isAddrHome}, #{addr.userNo}, #{addr.name})
 
         <!-- 자동 생성된 ADDR_NO 반환 -->
         <selectKey resultType="int" keyProperty="addr.no" keyColumn="ADDR_NO" order="AFTER">
@@ -48,6 +48,12 @@
         INSERT INTO USER_GRANTED_ROLES (USER_NO, ROLE_NO)
         VALUES (#{userRole.userNo}, #{userRole.role.no});
     </insert>
+
+    <insert id="insertUserLevel" parameterType="store.seub2hu2.course.vo.UserLevel">
+        INSERT INTO COURSE_USER_LEVELS (USER_NO, CHALLENGE_LEVEL)
+        VALUES (#{userNo}, #{level})
+    </insert>
+
 
     <!--
         사용자 주소 추가
