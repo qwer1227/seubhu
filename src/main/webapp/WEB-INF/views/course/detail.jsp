@@ -86,13 +86,13 @@
                 </sec:authorize>
             </div>
         </div>
-        <div class="col-1"></div> <%-- 빈칸 --%>
+        <div class="col-1"></div>
         <div class="col-6">
             <div class="card">
                 <div class="card-body">
                     <div class="row mb-1">
                         <div class="col">
-                            <img src="/resources/images/course/${course.filename}" class="img-thumbnail">
+                            <img src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/images/course/${course.filename}" class="img-thumbnail">
                         </div>
                     </div>
                 </div>
@@ -137,7 +137,6 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <%-- 리뷰 내용을 입력하고 등록한다. --%>
-            <%-- 요청 파라미터 정보 : courseNo, title, content, upfile --%>
             <div class="modal-body">
                 <form method="post" action="/addReview" enctype="multipart/form-data">
                     <input type="hidden" name="courseNo" value="${course.no }" />
@@ -152,49 +151,14 @@
                     <div class="form-group">
                         <label class="form-label">코스 사진 업로드</label>
                         <input type="file" class="form-control" name="upfile" multiple="multiple"/>
-                        <strong style="color:red;">＊ 컨트롤(Ctrl)을 누른 채로 사진 여러 개 클릭</strong>
+                        <div><strong style="color:red;">＊ 컨트롤(Ctrl)을 누른 채로 사진 여러 개 클릭</strong></div>
+                        <div><strong style="color:red;">＊ 한 번 등록한 리뷰는 수정할 수 없습니다.</strong></div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
                 <button type="submit" class="btn btn-primary" onclick="submitReview()">등록</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<%-- 코스 리뷰 수정 Modal창 --%>
-<div class="modal fade" id="modal-modify-review-form" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">코스 리뷰 수정하기</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <%-- 리뷰 내용을 수정한다. --%>
-            <%-- 요청 파라미터 정보 : courseNo, title, content, upfile --%>
-            <div class="modal-body">
-                <form method="post" action="/modifyReview" enctype="multipart/form-data">
-                    <input type="hidden" name="courseNoToFix" value="${course.no }" />
-                    <div class="form-group">
-                        <label class="form-label">제목</label>
-                        <input type="text" class="form-control" name="titleToFix"/>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">내용</label>
-                        <textarea rows="4" class="form-control" name="contentToFix"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">코스 사진 업로드</label>
-                        <input type="file" id="images-toFix" class="form-control" name="upfileToFix" multiple="multiple"/>
-                        <strong style="color:red;">＊ 컨트롤(Ctrl)을 누른 채로 사진 여러 개 클릭</strong>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                <button type="submit" class="btn btn-primary" onclick="submitReview()">수정</button>
             </div>
         </div>
     </div>
@@ -222,7 +186,6 @@
 
     // Modal창을 정의한다.
     const addReviewFormModal = new bootstrap.Modal('#modal-add-review-form');
-    const modifyReviewFormModal = new bootstrap.Modal('#modal-modify-review-form');
 
     // 코스 리뷰 등록 Modal창을 연다.
     async function openAddReviewFormModal() {
@@ -238,39 +201,6 @@
 
         // 2. 코스 리뷰 등록 Modal창을 화면에 표시한다.
         addReviewFormModal.show();
-    }
-
-    // 코스 리뷰 수정 Modal창을 연다.
-    async function openModifyReviewFormModal(reviewNo) {
-        // 코스 리뷰를 가져온다.
-        let response = await fetch("/ajax/review/" + reviewNo);
-        let result = await response.json();
-        let status = result.status;
-        let message = result.message;
-        let data = result.data;
-
-        // 코스 리뷰 작성자와 동일한 사용자가 아니라면, 경고 메시지를 출력한다.
-        if (response.ok) {
-            if (status === 500) {
-                alert(message); // message = "해당 리뷰 작성자만 수정 가능합니다."
-                return;
-            }
-        } else {
-            alert(message); // message = "로그인이 필요한 서비스입니다"
-            return;
-        }
-
-        // 코스 리뷰 수정 Modal창에 가져온 코스 리뷰 정보(수정 전 리뷰)를 저장한다.
-        document.querySelector("input[name=titleToFix]").value = data.title;
-        document.querySelector("textarea[name=contentToFix]").value = data.content;
-
-        // for (let i of data.reviewImage) {
-        //     let image = document.querySelector("#images-toFix").value
-        //     image = i.name;
-        // }
-
-        // 코스 리뷰 수정 Modal창을 화면에 표시한다.
-        modifyReviewFormModal.show();
     }
 
     // 리뷰 목록이 화면에 표시된다.
@@ -356,7 +286,6 @@
 	                <div id="box-images-\${review.no}"></div>
 	            </div>
 	            <div class="card-footer text-end">
-                    <button class="btn btn-success btn-sm" onclick="openModifyReviewFormModal(\${review.no})">수정</button>
 	                <button class="btn btn-danger btn-sm" onclick="removeReview(\${review.no})">삭제</button>
 	            </div>
 	        </div>
@@ -370,7 +299,7 @@
         let imgContent = '';
         if (images != null) {
             for (let image of images) {
-                imgContent += `<img src="/resources/images/courseReviewImages/\${image.name}" class="img-thumbnail" style="width: 100px; height: 100px;"/>`;
+                imgContent += `<img src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/images/courseReviewImages/\${image.name}" class="img-thumbnail" style="width: 100px; height: 100px;"/>`;
             }
 
             let imagesbox = document.querySelector(`#box-images-\${review.no}`);
@@ -405,8 +334,6 @@
 
         document.querySelector("#paging").innerHTML = pages;
     }
-
-    // 리뷰를 수정한다.
 
     // 리뷰를 삭제한다.
     async function removeReview(reviewNo) {

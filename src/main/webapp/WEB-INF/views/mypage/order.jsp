@@ -126,6 +126,19 @@
                         </table>
                     </td>
                 </tr>
+                <!-- 최신 배송지 -->
+                <tr class="tab-content" id="latest-tab">
+                    <td colspan="3">
+                        <table class="table">
+                            <tr>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <tr>
+
+
 
                 <!-- 신규 입력 내용 (초기값으로 표시됨) -->
                 <tr class="tab-content active" id="new-tab">

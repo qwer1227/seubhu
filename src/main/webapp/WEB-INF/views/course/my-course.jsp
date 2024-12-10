@@ -51,7 +51,7 @@
                                     <c:when test="${not empty userBadges}">
                                         <c:forEach var="userBadge" items="${userBadges}">
                                             <div>
-                                                <img src="/resources/images/badge/${userBadge.badge.image}" width="40px" height="40px">
+                                                <img src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/images/badge/${userBadge.badge.image}" width="40px" height="40px">
                                                     ${userBadge.badge.name} : ${userBadge.badge.description}
                                             </div>
                                         </c:forEach>
