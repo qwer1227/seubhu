@@ -38,7 +38,7 @@
             <h2 class="text-center text-success mb-4">우리의 러닝 클래스</h2>
             <div class="row">
                 <div class="col-md-4">
-                    <img src="${pageContext.request.contextPath}/resources/images/lesson/lesson-main2.jpg" alt="Running Track" style="height: 350px">
+                    <img src="${s3}/resources/images/lesson/lesson-main2.jpg" alt="Running Track" style="height: 350px">
                 </div>
                 <div class="col-md-4">
                     <img src="${pageContext.request.contextPath}/resources/images/lesson/lesson-main3.jpg" alt="Running Group" style="height: 350px">
