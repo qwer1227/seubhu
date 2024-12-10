@@ -114,38 +114,36 @@ public class MessageService {
         return getMessages(condition, false); // 보낸 메시지 조회
     }
 
+
     // 메시지 상세 조회
     public Message getMessageDetail(int messageNo) {
         return messageMapper.getMessageDetailByNo(messageNo);
     }
 
 
+    // 단일 메시지 읽음 처리
+    @Transactional
+    public void markAsRead(int messageNo, int userNo) {
+        // 읽음 상태 업데이트
+        messageMapper.updateReceiveMessageReadStatus(messageNo, userNo);
+        messageMapper.updateMessageReadStatus(messageNo);
+    }
+
+
     // 단일 메시지 삭제
-    public void deleteMessage(int messageNo) {
+    public void deleteMessage ( int messageNo){
         messageMapper.deleteMessage(messageNo);
     }
 
     // 다중 메시지 삭제
-    public void deleteMessages(List<Integer> messageNos) {
+    public void deleteMessages (List < Integer > messageNos) {
         messageMapper.deleteMessages(messageNos);
     }
 
-    // 단일 메시지 읽음 처리
-    @Transactional
-    public void markAsRead(int messageNo, int userNo) {
-        // 수신 번호를 찾기 위한 로직
-        int messageRcvNo = messageMapper.findMessageRcvNo(messageNo, userNo);
-
-        // 읽음 상태 업데이트
-        messageMapper.updateReadStatus(messageRcvNo);
-    }
-
-
 
     // 다중 메시지 읽음 처리
-    public void markMultipleAsRead(List<Integer> messageNos) {
+    public void markMultipleAsRead (List < Integer > messageNos) {
         messageMapper.updateReadStatuses(messageNos);
     }
-
 
 }
