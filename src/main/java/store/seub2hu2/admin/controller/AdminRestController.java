@@ -40,13 +40,17 @@ public class AdminRestController {
         currentDate.setTime(currentDate.getTime() - (1000 * 60 * 60 * 24));  // 하루 전
         String yesterday = formatter.format(currentDate);
 
-        Map<String, Object> yesterdayData = adminService.getTotalSubject(yesterday);
+        // 금일 데이터 조회
+        Map<String, Object> conditions = adminService.getTotalSubject(today);
+        // 하루 전날 데이터 조회
+        Map<String, Object> yesterdayData = adminService.getTotalPrice(yesterday);
 
-        Map<String, Object> conditions = adminService.getTotalSubject(day);
 
+
+        conditions.put("day", day);
+        conditions.put("yesterdayPrice", yesterdayData.get("totalPrice"));
         conditions.put("labels", Arrays.asList("호흡", "자세", "운동"));
         conditions.put("data", Arrays.asList(conditions.get("breath"), conditions.get("action"), conditions.get("exercise")));
-
 
         return ResponseEntity.ok(conditions);
     }
@@ -65,7 +69,6 @@ public class AdminRestController {
         conditions.put("day", day);
         conditions.put("labels", Arrays.asList("호흡", "자세", "운동"));
         conditions.put("data", Arrays.asList(conditions.get("breath"), conditions.get("action"), conditions.get("exercise")));
-
 
         return ResponseEntity.ok(conditions);
     }

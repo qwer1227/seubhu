@@ -103,6 +103,8 @@ public interface AdminMapper {
 
     int getTotalExercise(@Param("day")String day);
 
+    int getTotalPriceByDay(String yesterday);
+
 
 
 

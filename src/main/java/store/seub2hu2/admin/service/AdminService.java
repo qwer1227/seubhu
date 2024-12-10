@@ -428,6 +428,16 @@ public class AdminService {
         return condition;
     }
 
+    public Map<String, Object> getTotalPrice(String yesterday) {
+
+        int totalPrice = adminMapper.getTotalPriceByDay(yesterday);
+
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("totalPrice", totalPrice);
+
+        return condition;
+    }
+
 
 //    public Color getProductByColorNo(Integer colorNo) {
 //

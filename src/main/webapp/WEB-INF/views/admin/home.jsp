@@ -58,8 +58,8 @@
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                            전일 매출액</div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>
+                                            전일 매출액(레슨)</div>
+                                        <div id="yesterdayRevenue" class="h5 mb-0 font-weight-bold text-gray-800">$0</div>
                                     </div>
                                     <div class="col-auto">
                                         <i class="fas fa-calendar fa-2x text-gray-300"></i>
@@ -246,6 +246,7 @@
                 // 응답 데이터를 차트에 적용
                 const labels = response.labels; // 응답에서 labels 추출
                 const data = response.data;     // 응답에서 data 추출
+                const yesterdayPrice = response.yesterdayPrice; // 전일 매출액 추출
 
                 // 데이터가 모두 0인지 확인
                 const isNoData = data.every(value => value === 0);
@@ -255,7 +256,7 @@
                     $('#noDataMessage').show();  // "금일 결제내역이 없습니다." 메시지 표시
                     $('#myPieChart3').hide();    // 차트 숨김
                 } else {
-                    $('#noDataMessage').hide(); // 메시지 숨김
+                    $('#noDataMessage').hide();  // 메시지 숨김
                     $('#myPieChart3').show();   // 차트 표시
                     // 차트 데이터 업데이트
                     myPieChart3.data.labels = labels;
@@ -263,6 +264,9 @@
                     // 차트 업데이트
                     myPieChart3.update();
                 }
+
+                // 전일 매출액 업데이트
+                $('#yesterdayRevenue').text('$' + yesterdayPrice.toLocaleString()); // div에 전일 매출액을 표시
             },
             error: function (xhr, status, error) {
                 console.error('Error:', error);
