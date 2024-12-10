@@ -67,22 +67,32 @@
     , u.user_nickname as "user.nickname"
     , u.user_no as "user.no"
     , (select count(*) from BOARD_REPLIES r where r.board_no = b.board_no) as replyCnt
-    from
-    BOARDS b join USERS u
+    from BOARDS b join USERS u
     on b.user_no = u.user_no
+    <if test="condition.opt == 'reply'">
+      join BOARD_REPLIES br
+      on b.board_no = br.board_no
+    </if>
     where b.is_deleted = 'N'
     <if test="condition.category != null">
       and b.board_cat_name = #{condition.category}
     </if>
     <if test="condition.opt != null">
       <choose>
+        <when test="condition.opt == 'all'">
+          and b.board_title like concat ('%', #{condition.keyword}, '%')
+          || b.board_content like concat('%', #{condition.keyword}, '%')
+        </when>
         <when test="condition.opt == 'title'">
           and b.board_title like concat ('%', #{condition.keyword}, '%')
         </when>
         <when test="condition.opt == 'content'">
           and b.board_content like concat('%', #{condition.keyword}, '%')
         </when>
-        <when test="condition.opt == 'writer'">
+        <when test="condition.opt == 'reply'">
+          and br.reply_content like concat ('%', #{condition.keyword}, '%')
+        </when>
+        <when test="condition.opt == 'nickname'">
           and b.user_nickname like concat('%', #{condition.keyword}, '%')
         </when>
       </choose>
@@ -90,27 +100,52 @@
     ) as board
     where rn between #{condition.begin} and #{condition.end}
     order by rn
+
+  </select>
+
+  <!-- List<Board> getBoardsTopFive(@Param("condition") Map<String, Object> condition); -->
+  <select id="getBoardsTopFive" resultType="store.seub2hu2.community.vo.Board">
+    select *
+    from (select row_number() over(order by b.board_created_date desc) rn
+                , b.board_no as no
+                , b.board_cat_name as catName
+                , b.board_title as title
+                , b.board_view_cnt as viewCnt
+                , b.board_like_cnt as `like`
+                , u.user_nickname as "user.nickname"
+          from BOARDS b join USERS u
+          on b.user_no = u.user_no
+          where b.is_deleted = 'N'
+          order by viewCnt desc, `like` desc, rn) board limit 5
   </select>
 
   <!-- int getTotalRowsForBoard(@Param("condition") Map<String, Object> condition); -->
   <select id="getTotalRowsForBoard" resultType="int">
     select count(*)
-    from BOARDS board
-    where is_deleted = 'N'
+    from BOARDS b join BOARD_REPLIES br
+    on b.board_no = br.board_no
+    where b.is_deleted = 'N'
     <if test="condition.category != null">
-      and board.board_cat_name = #{condition.category}
+      and b.board_cat_name = #{condition.category}
     </if>
     <if test="condition.opt != null">
       <choose>
+        <when test="condition.opt == 'all'">
+          and b.board_title like concat ('%', #{condition.keyword}, '%')
+          || b.board_content like concat('%', #{condition.keyword}, '%')
+        </when>
         <when test="condition.opt == 'title'">
-          and board.board_title like concat ('%', #{condition.keyword}, '%')
+          and b.board_title like concat ('%', #{condition.keyword}, '%')
         </when>
         <when test="condition.opt == 'content'">
-          and board.board_content like concat('%', #{condition.keyword}, '%')
+          and b.board_content like concat('%', #{condition.keyword}, '%')
         </when>
-        <!--        <when test="condition.opt == 'writer'">-->
-        <!--          and board.user_no like concat('%', #{condition.keyword}, '%')-->
-        <!--        </when>-->
+        <when test="condition.opt == 'reply'">
+          and br.reply_content like concat ('%', #{condition.keyword}, '%')
+        </when>
+        <when test="condition.opt == 'nickname'">
+          and b.user_nickname like concat('%', #{condition.keyword}, '%')
+        </when>
       </choose>
     </if>
   </select>

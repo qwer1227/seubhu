@@ -105,6 +105,10 @@ public class BoardController {
         board.setReply(replyList);
         int replyCnt = replyService.getReplyCnt(boardNo);
 
+        Map<String, Object> condition = new HashMap<>();
+        ListDto<Board> dto = boardService.getBoardsTop(condition);
+        model.addAttribute("boards", dto.getData());
+
         if (loginUser != null) {
             int boardResult = boardService.getCheckLike(boardNo, loginUser);
             model.addAttribute("boardLiked", boardResult);

@@ -218,7 +218,6 @@
             <%--        <option value="hashtag"> 해시태그</option>--%>
           </select>
         </div>
-        
         <div class="col-4">
           <input type="text" class="form-control" name="keyword" value="${param.keyword }">
         </div>
@@ -237,6 +236,7 @@
       </div>
       
       <!-- 페이징처리 -->
+      <c:if test="${paging.totalRows > 10}">
       <div>
         <ul class="pagination justify-content-center">
           <li class="page-item ${paging.first ? 'disabled' : '' }">
@@ -260,6 +260,7 @@
           </li>
         </ul>
       </div>
+      </c:if>
     </form>
   </div>
   <%@include file="/WEB-INF/views/common/footer.jsp" %>
@@ -280,7 +281,7 @@
     }
 
     // 검색어를 입력하고 검색버튼을 클릭 했을 때
-    function searchValue() {
+    function searchKeyword() {
         let pageInput = form.querySelector("input[name=page]");
         pageInput.value = 1;
         form.submit();
