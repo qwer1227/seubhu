@@ -18,10 +18,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import store.seub2hu2.community.dto.CrewForm;
 import store.seub2hu2.community.dto.ReplyForm;
@@ -255,7 +252,7 @@ public class CrewController {
             , @AuthenticationPrincipal LoginUser loginUser){
 
         ReplyForm form = new ReplyForm();
-        form.setNo(replyNo);
+        form.setId(replyNo);
         form.setCrewNo(crewNo);
         form.setContent(replyContent);
         form.setUserNo(loginUser.getNo());
@@ -271,7 +268,7 @@ public class CrewController {
                               @RequestParam("cno") int crewNo){
 
         ReplyForm form = new ReplyForm();
-        form.setNo(replyNo);
+        form.setId(replyNo);
         form.setCrewNo(crewNo);
         crewReplyService.deleteReply(replyNo);
 
@@ -300,7 +297,7 @@ public class CrewController {
     public String reportCrew(ReportForm form
             , @AuthenticationPrincipal LoginUser loginUser){
 
-        reportService.registerReportToCrew(form, loginUser);
+        reportService.registerReport(form, loginUser);
         return "redirect:detail?no=" + form.getNo();
     }
 
@@ -309,7 +306,7 @@ public class CrewController {
             , @RequestParam("cno") int crewNo
             , @AuthenticationPrincipal LoginUser loginUser){
 
-        reportService.registerReportToCrew(form, loginUser);
+        reportService.registerReport(form, loginUser);
         return "redirect:detail?no=" + crewNo;
     }
 
@@ -330,5 +327,16 @@ public class CrewController {
     @GetMapping("/example")
     public String ex() {
         return "community/crew/example";
+    }
+
+    @GetMapping("report-check")
+    @ResponseBody
+    public String reportCheck(@RequestParam("type") String type
+            , @RequestParam("no") int no
+            , @AuthenticationPrincipal LoginUser loginUser){
+
+        boolean isReported = reportService.isReported(type, no, loginUser);
+
+        return isReported ? "yes" : "no";
     }
 }

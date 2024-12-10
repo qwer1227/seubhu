@@ -111,7 +111,7 @@
     <!-- 댓글 작성 -->
     <div class="comment-form mb-4">
       <h5 style="text-align: start">댓글 작성</h5>
-      <form method="get" action="add-reply">
+      <form method="post" action="add-reply">
         <input type="hidden" name="boardNo" value="${board.no}">
         <input type="hidden" name="userNo" value="${loginUser.no}">
         <div class="row">
@@ -179,7 +179,7 @@
                         <c:if test="${loginUser.no ne reply.user.no}">
                           <button type="button" class="btn btn-danger"
                                   style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
-                                  onclick="report('reply', ${reply.no})">
+                                  onclick="report('boardReply', ${reply.no})">
                             신고
                           </button>
                         </c:if>
@@ -304,7 +304,7 @@
                   if (type === 'board') {
                       $(".modal form").attr('action', 'report-board');
                   }
-                  if (type === 'reply') {
+                  if (type === 'boardReply') {
                       $(".modal form").attr('action', 'report-reply');
                   }
 

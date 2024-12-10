@@ -239,7 +239,7 @@
                         <c:if test="${loginUser.no ne reply.user.no}">
                           <button type="button" class="btn btn-danger"
                                   style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
-                                  onclick="report('reply', ${reply.no})">
+                                  onclick="report('crewReply', ${reply.no})">
                             신고
                           </button>
                         </c:if>
@@ -451,19 +451,38 @@
         }
     }
 
-    function report(type, no) {
-        document.querySelector(".modal input[name=type]").value = type;
-        document.querySelector(".modal input[name=no]").value = no;
-        document.querySelector(".modal input[name=cno]").value = ${crew.no};
+    async function report(type, no) {
+        let response = await fetch("/community/crew/report-check?type=" + type + "&no=" + no, {
+            // 요청방식을 지정한다.
+            method: "GET",
+            // 요청메세지의 바디부에 포함된 컨텐츠의 형식을 지정한다.
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
 
-        if (type === 'crew') {
-            $(".modal form").attr('action', 'report-crew');
-        }
-        if (type === 'reply') {
-            $(".modal form").attr('action', 'report-reply');
-        }
+        if (response.ok) {
+            let exists = await response.text();
 
-        myModalRepoter.show();
+            if (exists === "yes") {
+                // 신고한 내역이 있으면
+                alert("이미 신고한 내역이 있습니다");
+            } else {
+                // 신고한 내역이 없으면 모달창 보이기
+                document.querySelector(".modal input[name=type]").value = type;
+                document.querySelector(".modal input[name=no]").value = no;
+                document.querySelector(".modal input[name=cno]").value = ${crew.no};
+
+                if (type === 'crew') {
+                    $(".modal form").attr('action', 'report-crew');
+                }
+                if (type === 'crewReply') {
+                    $(".modal form").attr('action', 'report-reply');
+                }
+
+                myModalRepoter.show();
+            }
+        }
     }
 
     function reportButton() {
