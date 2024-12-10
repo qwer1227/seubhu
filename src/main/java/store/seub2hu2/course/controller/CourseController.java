@@ -190,7 +190,8 @@ public class CourseController {
     }
 
     @GetMapping("/runner-ranking")
-    public String runnerRanking(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+    public String runnerRanking(@RequestParam(name = "myPage", required = false, defaultValue = "1") int myPage,
+                                @RequestParam(name = "allPage", required = false, defaultValue = "1") int allPage,
                                 @RequestParam(name = "courseNo", required = false) Integer courseNo,
                                 @AuthenticationPrincipal LoginUser loginUser,
                                 Model model) {
@@ -200,7 +201,8 @@ public class CourseController {
 
         // 2. Map 객체를 생성하고, page(페이지)를 Map 객체에 저장한다.
         Map<String, Object> condition = new HashMap<>();
-        condition.put("page", page);
+        condition.put("myPage", myPage);
+        condition.put("allPage", allPage);
 
         // 3. 코스 번호가 존재하는 경우에만 해당 코스의 완주 기록을 가져온다.
         if (courseNo != null) {

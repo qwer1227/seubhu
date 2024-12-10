@@ -201,7 +201,7 @@ public class UserCourseService {
         int totalRows = userCourseMapper.getTotalRows(condition);
 
         // 2. 페이징 처리 정보를 가져오고, Pagination 객체에 저장한다.
-        int page = (Integer) condition.get("page");
+        int page = (Integer) condition.get("allPage");
         Pagination pagination = new Pagination(page, totalRows, 10);
 
         // 3. 데이터 검색 범위를 조회해서 Map 객체에 저장한다.
@@ -221,7 +221,7 @@ public class UserCourseService {
         int totalRows = userCourseMapper.getTotalRows(condition);
 
         // 페이징 처리 정보를 가져오고, Pagination 객체에 저장한다.
-        int page = (Integer) condition.get("page");
+        int page = (Integer) condition.get("myPage");
         Pagination pagination = new Pagination(page, totalRows, 5);
 
         // 데이터 검색 범위를 조회해서 Map 객체에 저장한다.
