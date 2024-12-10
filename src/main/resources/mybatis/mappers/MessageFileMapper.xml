@@ -4,20 +4,20 @@
 
         <!-- 파일 삽입 -->
         <insert id="insertMessageFile" parameterType="store.seub2hu2.message.vo.MessageFile">
-                INSERT INTO MESSAGE_FILES (message_no, file_name, file_path, file_size, created_date)
-                VALUES (#{messageNo}, #{fileName}, #{filePath}, #{fileSize}, NOW())
+                INSERT INTO MESSAGE_FILES (message_no, file_original_name, file_saved_name, file_type, file_created_date)
+                VALUES (#{messageFile.messageNo}, #{messageFile.originalName}, #{messageFile.savedName}, #{messageFile.type}, NOW())
         </insert>
 
         <!-- 파일 상세 조회 -->
         <select id="getMessageFileByMessageNo" parameterType="int" resultType="store.seub2hu2.message.vo.MessageFile">
                 SELECT * FROM MESSAGE_FILES
-                WHERE message_no = #{messageNo}
+                WHERE message_no = #{messageFile.messageNo}
         </select>
 
         <!-- 파일 다운로드 정보 조회 -->
         <select id="getFileForDownload" parameterType="int" resultType="store.seub2hu2.message.vo.MessageFile">
                 SELECT * FROM MESSAGE_FILES
-                WHERE file_no = #{fileNo}
+                WHERE file_no = #{messageFile.fileNo}
         </select>
 
 </mapper>

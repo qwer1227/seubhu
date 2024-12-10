@@ -20,7 +20,7 @@
     <div class="row mb-3 d-flex justify-content-center">
         <div class="col-4">
             <c:if test="${not empty images['THUMBNAIL']}">
-                <img src="${pageContext.request.contextPath}/resources/images/lesson/${images['THUMBNAIL']}"
+                <img src="${s3}/resources/images/lesson/${images['THUMBNAIL']}"
                      alt="Thumbnail" id="Thumbnail" style="width: 100%; height: 300px;"/>
             </c:if>
         </div>
@@ -113,7 +113,7 @@
             </p>
             <p>
                 <c:if test="${not empty images.MAIN_IMAGE}">
-                    <img src="${pageContext.request.contextPath}/resources/images/lesson/${images['MAIN_IMAGE']}"
+                    <img src="${s3}/resources/images/lesson/${images['MAIN_IMAGE']}"
                          alt="Main Image"/>
                 </c:if>
             </p>

@@ -2,12 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="store.seub2hu2.product.mapper.ProductMapper">
 
-    <!--
-        void insertProduct(Product product);
-    -->
-    <insert id="insertProduct">
-
-    </insert>
+    <update id="updateAmount">
+        UPDATE PROD_SIZES
+        SET PROD_AMOUNT = #{size.amount}
+        WHERE SIZE_NO = #{size.no}
+    </update>
 
     <!--
     int getTotalRows(@Param("condition") Map<String, Object> condition);
@@ -209,6 +208,17 @@
         JOIN PROD_IMGS PI
         ON PC.COLOR_NO = PI.COLOR_NO
         WHERE PC.COLOR_NO = ${colorNo}
+    </select>
+
+    <!--
+       수량정보가져오기
+    -->
+    <select id="getSizeAmount" resultType="store.seub2hu2.product.vo.Size">
+        SELECT
+            SIZE_NO as no
+            , PROD_AMOUNT as amount
+        FROM PROD_SIZES
+        WHERE SIZE_NO = #{sizeNo}
     </select>
 
 </mapper>

@@ -96,7 +96,7 @@
         <div class="row p-3">
             <div class="col d-flex justify-content-between">
                 <div class="col d-flex justify-content-end">
-                    <button type="button" class="btn btn-outline-dark m-1">취소</button>
+                    <button type="button" href="/message/list" class="btn btn-outline-dark m-1">취소</button>
                     <button type="submit" class="btn btn-dark m-1">등록</button>
                 </div>
             </div>

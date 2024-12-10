@@ -23,16 +23,20 @@ public class PaymentDto {
     private String method;      // 결제 방식
     // 상품 파트
     // 주문상품정보
-    private List<OrderItem> orderItems; // 주문상품
+    private List<OrderItem> orderItems; // 주문상품들
+    private OrderItem orderItem; // 주문상품
     // 배송지 정보
     private String recipientName; // 받는 사람
     private String postcode; // 우편번호
     private String address; // 주소
     private String addressDetail; // 주소 상세
+    private String phoneNumber;
 
     // 배송 정보
     private String memo; // 배송지 메모
     // 주문정보
+    private int orderNo;
+    private String orderId; //주문 아이디
     private int totalPrice; // 총 주문 금액(상품가격들)
     private int deliveryPrice; // 배송비
     private int discountPrice; // 할인 금액
@@ -52,4 +56,5 @@ public class PaymentDto {
         this.type = payment.getType();
         this.userId = payment.getUserId();
     }
+
 }

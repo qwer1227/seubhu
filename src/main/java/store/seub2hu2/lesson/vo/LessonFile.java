@@ -18,6 +18,7 @@ public class LessonFile {
     private String fileType;
     private String filePath;
     private Date uploadDate;
+    private String base64Data;
 
     public LessonFile(Integer lessonNo, String fileName, String fileType, String filePath) {
         this.lessonNo = lessonNo;
