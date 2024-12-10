@@ -32,6 +32,7 @@ public class OrderProductDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime payDate;
     private LocalDateTime payCancelDate;
+    private int totalPrice;
 
 
 

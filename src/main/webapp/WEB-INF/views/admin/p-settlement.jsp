@@ -122,11 +122,11 @@
                     <option value="cancel" ${param.opt eq 'cancel' ? 'selected' : '' }>취소</option>
                   </select>
                 </div>
-                <div class="col-1">
+                <div class="col-2">
                   <select class="form-control" name="keyword">
-                    <option value="all">선택안함</option>
-                    <option value="payName">결제자</option>
-                    <option value="payId">결제자 ID</option>
+                    <option value="all" ${param.keyword eq 'all' ? 'selected' : ''}>선택안함</option>
+                    <option value="payName" ${param.keyword eq 'payName' ? 'selected' : ''}>결제자</option>
+                    <option value="payId" ${param.keyword eq 'payId' ? 'selected' : ''}>결제자 ID</option>
                   </select>
                 </div>
                 <div class="col-3">
@@ -193,7 +193,7 @@
               </table>
               <div class="row mb-3">
                 <div class="col">
-                  <div class="border p-2 bg-dark text-white fw-bold">${param.day} | 매출액: <fmt:formatNumber value=""/> 원</div>
+                  <div class="border p-2 bg-dark text-white fw-bold">${param.day} | 매출액: <fmt:formatNumber value="${totalPriceSum}"/> 원</div>
                 </div>
               </div>
             </div>

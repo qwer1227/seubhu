@@ -8,24 +8,13 @@
     -->
     <select id="getSettleProdList" resultType="store.seub2hu2.admin.dto.OrderProductDto">
         select
-            *
+            *,
+            totalSummary.totalPrice
         from
         (
         select
-                <if test="condition.sort != null">
-                    <choose>
-                        <when test="condition.sort == 'latest'">
-                            ROW_NUMBER() OVER (ORDER BY PM.pay_no desc) as RN ,
-                        </when>
-                        <when test="condition.sort == 'oldestDate'">
-                            ROW_NUMBER() OVER (ORDER BY PM.pay_no asc) as RN ,
-                        </when>
-                        <when test="condition.sort == 'price'">
-                            ROW_NUMBER() OVER (ORDER BY PM.pay_price desc) as RN ,
-                        </when>
-                    </choose>
-                </if>
-                PM.pay_no               as payNo
+        ROW_NUMBER() OVER (PARTITION BY PM.pay_no ORDER BY OP.order_prod_no desc) as RN
+                , PM.pay_no               as payNo
                 , O.order_no            as orderNo
                 , O.order_number        as orderNum
                 , OP.order_prod_no      as orderProdNo
@@ -48,7 +37,7 @@
                 JOIN PRODUCTS P ON OP.prod_no = P.prod_no
                 JOIN PROD_SIZES PS ON OP.size_no = PS.size_no
                 where
-                    pay_type = '상품'
+                    PM.pay_type = '상품'
                     <if test="condition.day != null">
                         and (
                         DATE_FORMAT(PM.pay_date, '%Y-%m-%d') = #{condition.day}
@@ -61,10 +50,10 @@
 
                             </when>
                             <when test="condition.opt == 'notReady'">
-                                and P.pay_status = '결제완료'
+                                and PM.pay_status = '결제완료'
                             </when>
                             <when test="condition.opt == 'cancel'">
-                                and P.pay_status = '취소'
+                                and PM.pay_status = '취소'
                             </when>
                         </choose>
                     </if>
@@ -82,6 +71,38 @@
                         </choose>
                     </if>
         ) as subquery
+        JOIN
+            (
+            SELECT
+                SUM(PM.pay_price) AS totalPrice
+            FROM
+            ORDERS O
+            JOIN PAYMENTS PM ON O.pay_no = PM.pay_no
+            WHERE
+                PM.pay_type = '상품'
+            AND
+                PM.pay_status = '결제완료'
+            <if test="condition.day != null">
+                and (
+                DATE_FORMAT(PM.pay_date, '%Y-%m-%d') = #{condition.day}
+                or DATE_FORMAT(PM.pay_date, '%Y-%m') = #{condition.day}
+                )
+            </if>
+            ) AS totalSummary ON 1 = 1
+        where RN = 1
+        <if test="condition.sort != null">
+            <choose>
+                <when test="condition.sort == 'latest'">
+                    order by payNo desc
+                </when>
+                <when test="condition.sort == 'oldestDate'">
+                    order by payNo asc
+                </when>
+                <when test="condition.sort == 'price'">
+                    order by payPrice desc
+                </when>
+            </choose>
+        </if>
     </select>
     <!--
         int getTotalOrderProd(condition);
@@ -140,10 +161,10 @@
 
                     </when>
                     <when test="condition.opt == 'notReady'">
-                        and P.pay_status = '결제완료'
+                        and PM.pay_status = '결제완료'
                     </when>
                     <when test="condition.opt == 'cancel'">
-                        and P.pay_status = '취소'
+                        and PM.pay_status = '취소'
                     </when>
                 </choose>
             </if>
@@ -157,9 +178,6 @@
                     </when>
                     <when test="condition.keyword == 'payId'">
                         and U.user_id like CONCAT('%',#{condition.value},'%')
-                    </when>
-                    <when test="condition.keyword == 'lessonName'">
-                        and L.lesson_title like CONCAT('%',#{condition.value},'%')
                     </when>
                 </choose>
             </if>

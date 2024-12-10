@@ -741,6 +741,14 @@ public class AdminController {
 
         ListDto<OrderProductDto> dto = adminService.getOrderProduct(condition);
 
+        int totalPriceSum = dto.getData().stream()
+                .mapToInt(OrderProductDto::getTotalPrice)
+                .distinct()   // 중복된 값 제거 (한 번만 합산)
+                .limit(1)     // 첫 번째 값만 선택
+                .sum();
+
+        model.addAttribute("totalPriceSum", totalPriceSum);
+
         model.addAttribute("dto", dto.getData());
         model.addAttribute("paging", dto.getPaging());
 
