@@ -13,8 +13,9 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 public class ReviewForm {
-    private int courseNo;
-    private String title;
-    private String content;
-    List<MultipartFile> upfiles;
+    // 리뷰 작성할 때 사용되는 정보
+    private int courseNo; // 코스 번호
+    private String title; // 리뷰 제목
+    private String content; // 리뷰 내용
+    List<MultipartFile> upfiles; // 첨부 파일
 }

@@ -1,6 +1,5 @@
 package store.seub2hu2.course.controller;
 
-import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -8,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import store.seub2hu2.course.dto.SuccessCountRankForm;
 import store.seub2hu2.course.service.CourseService;
 import store.seub2hu2.course.service.UserCourseService;
 import store.seub2hu2.course.vo.*;
@@ -189,18 +189,20 @@ public class CourseController {
         return "redirect:my-course?page=" + page;
     }
 
-    @GetMapping("/runner-ranking")
-    public String runnerRanking(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
-                                @RequestParam(name = "courseNo", required = false) Integer courseNo,
-                                @AuthenticationPrincipal LoginUser loginUser,
-                                Model model) {
+    @GetMapping("/shortest-record-ranking")
+    public String shortestRecordRanking(@RequestParam(name = "myPage", required = false, defaultValue = "1") int myPage,
+                                        @RequestParam(name = "allPage", required = false, defaultValue = "1") int allPage,
+                                        @RequestParam(name = "courseNo", required = false) Integer courseNo,
+                                        @AuthenticationPrincipal LoginUser loginUser,
+                                        Model model) {
         // 1. 모든 코스 목록을 가져온다.
         List<Course> courses = courseService.getCourses();
         model.addAttribute("courses", courses);
 
         // 2. Map 객체를 생성하고, page(페이지)를 Map 객체에 저장한다.
         Map<String, Object> condition = new HashMap<>();
-        condition.put("page", page);
+        condition.put("myPage", myPage);
+        condition.put("allPage", allPage);
 
         // 3. 코스 번호가 존재하는 경우에만 해당 코스의 완주 기록을 가져온다.
         if (courseNo != null) {
@@ -225,6 +227,31 @@ public class CourseController {
         }
 
         // 8. 뷰이름을 반환한다.
-        return "course/runner-ranking";
+        return "course/shortest-record-ranking";
+    }
+
+    @GetMapping("success-count-ranking")
+    public String successCountRanking (@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                                       @AuthenticationPrincipal LoginUser loginUser,
+                                       Model model) {
+        // Map 객체를 생성하고, page를 객체에 저장한다.
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("page", page);
+
+        // 코스 달성 수 순위 목록을 가져온다.
+        ListDto<SuccessCountRankForm> dto = userCourseService.getAllSuccessCountRanking(condition);
+
+        // 로그인한 경우, 나의 코스 달성 수 순위를 가져온다.
+        if (loginUser != null) {
+            SuccessCountRankForm successCountRank = userCourseService.getMySuccessCountRanking(loginUser.getNo());
+            model.addAttribute("successCountRank", successCountRank);
+        }
+
+        // Model 객체에 가져온 정보들을 저장한다.
+        model.addAttribute("successCountRanks", dto.getData());
+        model.addAttribute("pagination", dto.getPaging());
+
+        // 뷰이름을 반환한다.
+        return "course/success-count-ranking";
     }
 }
