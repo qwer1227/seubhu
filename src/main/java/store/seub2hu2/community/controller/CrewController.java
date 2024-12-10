@@ -1,5 +1,11 @@
 package store.seub2hu2.community.controller;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -12,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import store.seub2hu2.community.dto.CrewForm;
 import store.seub2hu2.community.dto.ReplyForm;
@@ -23,10 +30,15 @@ import store.seub2hu2.community.view.FileDownloadView;
 import store.seub2hu2.community.vo.Crew;
 import store.seub2hu2.community.vo.CrewMember;
 import store.seub2hu2.community.vo.Reply;
+import store.seub2hu2.community.vo.UploadFile;
 import store.seub2hu2.security.user.LoginUser;
+import store.seub2hu2.util.FileUtils;
 import store.seub2hu2.util.ListDto;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
@@ -137,11 +149,12 @@ public class CrewController {
     }
 
     @PostMapping("/register")
-    public String register(CrewForm form
+    @ResponseBody
+    public Crew register(CrewForm form
             , @AuthenticationPrincipal LoginUser loginUser) {
 
         Crew crew = crewService.addNewCrew(form, loginUser);
-        return "redirect:detail?no=" + crew.getNo();
+        return crew;
     }
 
     @GetMapping("/modify")
@@ -328,4 +341,7 @@ public class CrewController {
 
         return isReported ? "yes" : "no";
     }
+
+
+
 }

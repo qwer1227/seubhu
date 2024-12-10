@@ -205,7 +205,6 @@
   </select>
 
   <!-- List<Crew> getCrewByUserNo(@Param("userNo") int userNo); -->
-
   <select id="getCrewByUserNo" resultType="store.seub2hu2.community.vo.Crew">
     select
         *
@@ -231,20 +230,5 @@
 
   </select>
 
-<!--  <select id="getCrewsTopFive" resultType="store.seub2hu2.community.vo.Crew">-->
-<!--    select *-->
-<!--    from (select row_number() over(order by c.crew_view_cnt desc) rn-->
-<!--               , c.crew_no as no-->
-<!--               , c.crew_title as title-->
-<!--               , c.crew_name as name-->
-<!--               , (select count(*)-->
-<!--                  from CREW_MEMBERS cm-->
-<!--                  where cm.is_join = 'Y'-->
-<!--                    and cm.crew_no = c.crew_no-->
-<!--      ) as memberCnt-->
-<!--          from CREWS c-->
-<!--          where c.is_deleted = 'N'-->
-<!--            and c.is_entered = 'Y') crew limit 5-->
-<!--  </select>-->
 
 </mapper>

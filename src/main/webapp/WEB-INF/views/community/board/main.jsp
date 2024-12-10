@@ -210,22 +210,22 @@
       <div class="row p-3 d-flex justify-content-left">
         <div class="col-2">
           <select class="form-control" name="opt">
-            <option value="title" ${param.opt eq 'title' ? 'selected' : ''}> 게시글 제목</option>
-            <option value="content" ${param.opt eq 'content' ? 'selected' : ''}> 게시글 내용</option>
-            <option value="writer" ${param.opt eq 'writer' ? 'selected' : ''}> 작성자</option>
+            <option value="all" ${param.opt eq 'all' ? 'selected' : ''}> 제목+내용</option>
+            <option value="title" ${param.opt eq 'title' ? 'selected' : ''}> 제목</option>
+            <option value="content" ${param.opt eq 'content' ? 'selected' : ''}> 내용</option>
+            <option value="reply" ${param.opt eq 'reply' ? 'selected' : ''}> 댓글</option>
+            <option value="nickname" ${param.opt eq 'nickname' ? 'selected' : ''}> 닉네임</option>
             <%--        <option value="hashtag"> 해시태그</option>--%>
           </select>
         </div>
         
-        <div class="col-2">
+        <div class="col-4">
           <input type="text" class="form-control" name="keyword" value="${param.keyword }">
         </div>
         <div class="col-1">
           <button class="btn btn-outline-primary" onclick="searchKeyword()">검색</button>
         </div>
-        <div class="col d-flex justify-content-center">
         
-        </div>
         <security:authorize access="isAuthenticated()">
           <security:authentication property="principal" var="loginUser"/>
           <div class="col d-flex justify-content-end">

@@ -62,7 +62,7 @@
                   <c:when test="${empty crew.thumbnail}">
                     <img src="/resources/images/community/inviting_default_main.jpg" alt="크루 대표 이미지"
                          class="card-img-top"
-                         style="height: 200px; filter: ${crew.entered eq 'Y' ? 'grayscale(0%)' : 'grayscale(100%)'}">
+                         style="height: 220px; filter: ${crew.entered eq 'Y' ? 'grayscale(0%)' : 'grayscale(100%)'}">
                     <c:if test="${crew.entered eq 'N'}">
                       <div class="overlay-text ">마감</div>
                     </c:if>
@@ -70,7 +70,7 @@
                   <c:otherwise>
                     <img src="/resources/images/community/${crew.thumbnail.saveName}" alt="크루 대표 이미지"
                          class="card-img-top"
-                         style="height: 200px; filter: ${crew.entered eq 'Y' ? 'grayscale(0%)' : 'grayscale(100%)'}">
+                         style="height: 220px; filter: ${crew.entered eq 'Y' ? 'grayscale(0%)' : 'grayscale(100%)'}">
                     <c:if test="${crew.entered eq 'N'}">
                       <div class="overlay-text ">마감</div>
                     </c:if>
@@ -95,6 +95,16 @@
       </div>
       
       <div class="row p-3 d-flex justify-content-left">
+        <div class="col-2">
+          <select class="form-control" name="opt">
+            <option value="all" ${param.opt eq 'all' ? 'selected' : ''}> 제목+내용</option>
+            <option value="title" ${param.opt eq 'title' ? 'selected' : ''}> 제목</option>
+            <option value="content" ${param.opt eq 'content' ? 'selected' : ''}> 내용</option>
+            <option value="reply" ${param.opt eq 'reply' ? 'selected' : ''}> 댓글</option>
+            <option value="nickname" ${param.opt eq 'nickname' ? 'selected' : ''}> 닉네임</option>
+            <%--        <option value="hashtag"> 해시태그</option>--%>
+          </select>
+        </div>
         <div class="col-4">
           <input type="text" class="form-control" name="keyword" value="${param.keyword}">
         </div>

@@ -103,7 +103,6 @@
           <th>대표 이미지</th>
           <td>
             <button type="button" class="btn btn-dark" onclick="thumbnail()">등록</button>
-            <input type="file" class="form-control" name="image" style="width: 84%"/>
           </td>
         </tr>
         <tr>
@@ -129,7 +128,7 @@
           </div>
           <div class="col d-flex justify-content-end">
             <button type="button" class="btn btn-outline-primary m-1">보관</button>
-            <button type="submit" class="btn btn-primary m-1">등록</button>
+            <button type="submit" id="submit" class="btn btn-primary m-1">등록</button>
           </div>
         </div>
       </div>
@@ -149,10 +148,10 @@
             <input type="file" accept="image/jpeg, image/png" capture="camera" id="photoBtn" onchange="readURL(this);">
             <label for="photoBtn">사진 첨부하기</label>
           </button>
-          <div class="box border border-1">
+          <div class="box">
             <div class="photo_them">
               <div class="them_img">
-                <img src="/resources/images/community/inviting_default_main.jpg" id="image">
+                <img src="" id="image" style="max-height: 400px">
               </div>
             </div>
           </div>
@@ -169,19 +168,53 @@
     const myModalThumbnail = new bootstrap.Modal('#modal-thumbnail')
     
     let image = document.querySelector("#image")
-    var cropper = new Cropper(image, {
-        dragMode: 'move',
-        aspectRatio: 16 / 11,
-        autoCropArea: 0.6,
-        restore: false,
-        guides: false,
-        center: false,
-        highlight: false,
-        cropBoxMovable: true,
-        cropBoxResizable: false,
-        toggleDragModeOnDblclick: false,
-    });
+    
+    let cropper = null;
+    let formData = new FormData();
+    
+    document.querySelector("#submit").addEventListener("click", function (){
+       let title = document.querySelector("input[name=title]").value();
+       let description = document.querySelector("input[name=description]").value();
+       let name = document.querySelector("input[name=name]").value();
+       let type = document.querySelector("input[name=schedule-type]").value();
+       let detail = document.querySelector("input[name=schedule-detail]").value();
+       let location = document.querySelector("input[name=location]").value();
+       let image = document.querySelector("input[name=image]").value();
+       let upfile = document.querySelector("input[name=upfile]").value();
+       
+       formData.append("title", title);
+       formData.append("description", description);
+       formData.append("name", name);
+       formData.append("type", type);
+       formData.append("detail", detail);
+       formData.append("location", location);
+       formData.append("image", image);
+       formData.append("upfile", upfile.files[0]);
 
+        $.ajax({
+            method: "post",
+            url: "register",
+            data: formData,
+            processData: false,
+            contentType: false,
+        })
+    });
+    
+    function initCropper() {
+        cropper = new Cropper(image, {
+            dragMode: 'move',
+            aspectRatio: 16 / 11,
+            autoCropArea: 0.6,
+            restore: false,
+            guides: false,
+            center: false,
+            highlight: false,
+            cropBoxMovable: true,
+            cropBoxResizable: true,
+            toggleDragModeOnDblclick: false,
+        });
+    }
+    
     $("#btn-cropper").click(function () {
         if (cropper) {
             let boxData = cropper.getCropBoxData();
@@ -191,15 +224,7 @@
                 width: 334.30,
                 height: 188.66
             }).toBlob(function (blob) {
-                let formData = new FormData();
-                formData.append('img', blob, 'photo.png');
-                $.ajax({
-                    method: "post",
-                    url: "crew-thumbnail",
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                })
+                formData.append('thumbnail', blob, 'crew_thumbnail.png');
             })
         }
     });
@@ -224,26 +249,19 @@
             cropper.destroy();
         });
     });
-
     
-    window.addEventListener('DOMContentLoaded', function () {
-        var image = document.querySelector('#image');
-        var cropper = new Cropper(image, {
-            dragMode: 'move',
-            aspectRatio: 16 / 9,
-            autoCropArea: 0.65,
-            restore: false,
-            guides: false,
-            center: false,
-            highlight: false,
-            cropBoxMovable: false,
-            cropBoxResizable: false,
-            toggleDragModeOnDblclick: false,
-        });
-    });
-    
-    
-
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('image').src = e.target.result;
+                initCropper();
+            };
+            reader.readAsDataURL(input.files[0]);
+        } else {
+            document.getElementById('preview').src = "";
+        }
+    }
 
     function abort() {
         let result = confirm("작성중이던 글을 임시보관하시겠습니까?");
