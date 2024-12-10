@@ -100,7 +100,7 @@
                         <td>${message.messageNo}</td>
                         <td>${message.senderNickname}</td>
                         <td id="content-title" class="text-start">
-                            <a href="/message/detail?messageNo=${message.messageNo}"
+                            <a href="/message/markAsRead?messageNo=${message.messageNo}"
                                style="text-decoration-line: none; color: black">
                                     ${message.title}
                             </a>

@@ -94,8 +94,8 @@ public class MessageController {
 
         // 검색 조건 추가 (유효성 검증 포함)
         if (StringUtils.hasText(keyword)) {
-                condition.put("opt", opt);
-                condition.put("keyword", keyword);
+            condition.put("opt", opt);
+            condition.put("keyword", keyword);
         }
 
         // 메시지 목록 조회
@@ -109,7 +109,6 @@ public class MessageController {
         return "message/message-sent-list";
     }
 
-
     @GetMapping("/detail")
     public String detail(
             @RequestParam("messageNo") int messageNo,
@@ -118,7 +117,7 @@ public class MessageController {
         int userNo = loginUser.getNo();  // 로그인된 사용자 번호
 
         // 메시지 읽음 처리
-        messageService.markAsRead(messageNo, userNo);
+        //messageService.markAsRead(messageNo, userNo);
 
         // 메시지 상세 조회
         Message message = messageService.getMessageDetail(messageNo);
@@ -128,6 +127,8 @@ public class MessageController {
 
         return "message/message-detail";  // JSP 경로
     }
+
+
 
 
     // 쪽지 작성 폼 화면 반환
@@ -167,7 +168,7 @@ public class MessageController {
         return "redirect:/message/sent";
     }
 
-    @PostMapping("/markAsRead")
+    @GetMapping("/markAsRead")
     public String markAsRead(@RequestParam("messageNo") int messageNo, @AuthenticationPrincipal LoginUser loginUser) {
         int userNo = loginUser.getNo();  // 로그인된 사용자 번호
 
@@ -175,7 +176,7 @@ public class MessageController {
         messageService.markAsRead(messageNo, userNo);
 
         // 메시지 목록으로 리디렉션
-        return "redirect:/message/list";
+        return "redirect:/message/detail?messageNo=" + messageNo;
     }
 
 
@@ -190,6 +191,7 @@ public class MessageController {
     @GetMapping("/filedown")
     public ModelAndView download(@RequestParam("no") int messageNo) {
 
+        // isSent 값을 false로 설정 (받은 메시지라고 가정)
         Message message = messageService.getMessageDetail(messageNo);
 
         ModelAndView mav = new ModelAndView();
@@ -205,6 +207,7 @@ public class MessageController {
     @GetMapping("/download")
     public ResponseEntity<Resource> downloadFile(int messageNo) throws Exception{
 
+        // isSent 값을 false로 설정 (받은 메시지라고 가정)
         Message message = messageService.getMessageDetail(messageNo);
 
         String fileName = message.getMessageFile().getSavedName();
