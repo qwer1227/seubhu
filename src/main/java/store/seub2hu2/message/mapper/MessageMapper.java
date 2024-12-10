@@ -38,7 +38,9 @@ public interface MessageMapper {
     void deleteMessage(@Param("messageNo") int messageNo);
 
     // 단일 메시지 읽음 처리
-    void updateReadStatus(@Param("messageNo") int messageNo);
+    void updateReadStatus(@Param("messageRcvNo") int messageRcvNo);
+
+    int findMessageRcvNo(@Param("messageNo") int messageNo, @Param("userNo") int userNo);
 
     // 다중 메시지 삭제
     void deleteMessages(@Param("messageNos") List<Integer> messageNos);

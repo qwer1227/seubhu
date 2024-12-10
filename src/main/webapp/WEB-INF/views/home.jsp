@@ -133,7 +133,7 @@
                         <c:forEach var="product" items="${bestByRating}">
                         <div class="col-md-3">
                             <div class="card position-relative border-0">
-                                <a href="#">
+                                <a href="detail?no=${product.no}&colorNo=${product.colorNum}">
                                     <img src="${product.imgThum}" class="card-img-top" alt="상품 1">
                                 </a>
                                 <div class="icon-overlay d-flex justify-content-center">
@@ -142,10 +142,10 @@
                                     </button>
                                 </div>
                                 <div class="card-body">
-                                    <span class="badge bg-dark">#${product.rankByRating}</span>
-                                    <h5 class="card-title">${product.prodName}</h5>
-                                    <p class="card-text">${product.prodPrice}</p>
-                                    <p>${product.prodRating}</p>
+                                    <span class="badge bg-dark">#${product.status}</span>
+                                    <h5 class="card-title">${product.name}</h5>
+                                    <p class="card-text">${product.price}</p>
+                                    <p>${product.brand.name}</p>
                                 </div>
                             </div>
                         </div>
@@ -159,7 +159,7 @@
                         <c:forEach var="product" items="${bestByRating}">
                         <div class="col-md-3">
                             <div class="card position-relative border-0">
-                                <a href="#">
+                                <a href="detail?no=${product.no}&colorNo=${product.colorNum}">
                                     <img src="${product.imgThum}" class="card-img-top" alt="상품 5">
                                 </a>
                                 <div class="icon-overlay d-flex justify-content-center">
@@ -168,10 +168,10 @@
                                     </button>
                                 </div>
                                 <div class="card-body">
-                                    <span class="badge bg-dark">#${product.rankByViewCount}</span>
-                                    <h5 class="card-title">${product.prodName}</h5>
-                                    <p class="card-text">${product.prodPrice}</p>
-                                    <p>${product.prodRating}</p>
+                                    <span class="badge bg-dark">#${product.status}</span>
+                                    <h5 class="card-title">${product.name}</h5>
+                                    <p class="card-text">${product.price}</p>
+                                    <p>${product.brand.name}</p>
                                 </div>
                             </div>
                         </div>
@@ -191,9 +191,9 @@
                     <c:forEach var="product" items="${bestByViewCount}">
                     <li class="list-group-item d-flex align-items-center border-0">
                         <span class="fw-bold me-3">${product.rankByViewCount}</span>
-                        <a href="#" class="text-decoration-none">
+                        <a href="detail?no=${product.no}&colorNo=${product.colorNum}" class="text-decoration-none">
                             <img src="${product.imgThum}" alt="러닝화 1" width="50" class="me-3">
-                            <span class="text-muted">${product.prodName}</span>
+                            <span class="text-muted">${product.name}</span>
                         </a>
                         <span class="ms-auto"><i class="bi bi-arrow-up"></i></span>
                     </li>
