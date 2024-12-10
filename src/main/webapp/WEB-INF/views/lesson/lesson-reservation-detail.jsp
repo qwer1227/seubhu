@@ -49,8 +49,8 @@
                 <tr>
                     <th>예약상태</th>
                     <td>
-                        <c:if test="${lessonReservation.status eq '완료'}">
-                            <span class="badge bg-success">예약</span>
+                        <c:if test="${lessonReservation.status eq '수강종료'}">
+                            <span class="badge bg-secondary">수강종료</span>
                         </c:if>
                         <c:if test="${lessonReservation.status eq '예약'}">
                             <span class="badge bg-success">예약</span>

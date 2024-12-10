@@ -1,13 +1,15 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@include file="/WEB-INF/views/common/tags.jsp" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>500 - 내부 서버 오류</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <%@include file="/WEB-INF/views/common/common.jsp" %>
 </head>
 <body>
+<%@include file="/WEB-INF/views/common/nav.jsp" %>
 <div class="container-xxl text-center align-content-center" id="wrap">
     <div class="row">
         <h1 class="text-primary">500</h1>
@@ -20,5 +22,6 @@
         </div>
     </div>
 </div>
+<%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
 </html>
