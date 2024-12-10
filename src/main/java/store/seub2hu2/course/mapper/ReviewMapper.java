@@ -2,7 +2,6 @@ package store.seub2hu2.course.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.security.core.parameters.P;
 import store.seub2hu2.course.vo.Review;
 import store.seub2hu2.course.vo.ReviewImage;
 

@@ -14,7 +14,6 @@ import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.security.dto.RestResponseDto;
 import store.seub2hu2.util.ListDto;
 
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,23 +25,6 @@ public class ReviewController {
 
     @Autowired
     private UserCourseService userCourseService;
-
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping("/review/{reviewNo}")
-    public ResponseEntity<RestResponseDto<Review>> checkSameReviewer(@PathVariable("reviewNo") int reviewNo
-                                                                    , @AuthenticationPrincipal LoginUser loginUser) {
-        // 1. 리뷰를 가져온다.
-        Review review = reviewService.getReview(reviewNo);
-
-        // 2. 리뷰 작성자와 리뷰 수정하는 자가 동일한지 확인한다.
-        if (review.getUser().getNo() != loginUser.getNo()) {
-            CourseReviewException courseReviewException = new CourseReviewException("해당 리뷰 작성자만 수정 가능합니다.");
-            return ResponseEntity.ok(RestResponseDto.fail(courseReviewException.getMessage()));
-        }
-
-        // 3. 응답 데이터를 반환한다.
-        return ResponseEntity.ok(RestResponseDto.success(review));
-    }
 
     @GetMapping("/reviews/{no}/{page}")
     public ResponseEntity<RestResponseDto<ListDto<Review>>> reviews(@PathVariable("no") int courseNo,

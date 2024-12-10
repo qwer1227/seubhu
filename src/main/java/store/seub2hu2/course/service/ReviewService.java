@@ -2,7 +2,6 @@ package store.seub2hu2.course.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,7 +16,6 @@ import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.ListDto;
 import store.seub2hu2.util.Pagination;
 import store.seub2hu2.util.S3Service;
-import store.seub2hu2.util.WebContentFileUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,23 +39,6 @@ public class ReviewService {
 
     @Autowired
     private AdminMapper adminMapper;
-
-    /**
-     * 리뷰 번호로 리뷰를 가져온다.
-     * @param reviewNo 리뷰 번호
-     * @return 리뷰
-     */
-    public Review getReview(int reviewNo) {
-        // 1. 리뷰 번호로 리뷰를 가져온다.
-        Review review = reviewMapper.getReviewByNo(reviewNo);
-
-        // 2. 리뷰 이미지를 가져온다.
-        List<ReviewImage> reviewImages = reviewMapper.getReviewImagesByNo(reviewNo);
-        review.setReviewImage(reviewImages);
-
-        // 3. 리뷰를 반환한다.
-        return review;
-    }
 
     /**
      * 코스에 등록된 리뷰 목록을 가져온다.
