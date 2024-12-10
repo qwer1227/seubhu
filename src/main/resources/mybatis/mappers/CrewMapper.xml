@@ -208,25 +208,43 @@
 
   <select id="getCrewByUserNo" resultType="store.seub2hu2.community.vo.Crew">
     select
-      c.crew_name as name
-    , c.crew_description as description
-    , cf.file_save_name as saveName
-    , count(cm.user_no) as memberCnt
-    from
-      CREWS c
-        JOIN CREW_MEMBERS cm
-            ON cm.crew_no = c.crew_no
-        JOIN CREW_FILES cf
-            ON cf.crew_no = c.crew_no
-    where
-      cm.user_no = #{userNo}
-    and
-      cm.is_join = 'Y'
-    and
-      c.is_deleted = 'N'
-    and
-      cf.is_deleted = 'N'
+        *
+    from (
+            select
+              c.crew_no as no
+            , c.crew_title as title
+            , c.crew_name as name
+            , c.crew_description as description
+            , c.crew_thumbnail as "thumbnail.saveName"
+            , (select count(*)
+               from CREW_MEMBERS cm
+               where cm.crew_no =  c.crew_no
+               and cm.is_join = 'Y'
+                   ) as memberCnt
+            from CREWS c
+
+            inner join CREW_MEMBERS cm on cm.crew_no = c.crew_no
+            where c.is_deleted = 'N'
+            and cm.is_join = 'Y'
+            and cm.user_no = #{userNo}
+         ) crew
 
   </select>
+
+<!--  <select id="getCrewsTopFive" resultType="store.seub2hu2.community.vo.Crew">-->
+<!--    select *-->
+<!--    from (select row_number() over(order by c.crew_view_cnt desc) rn-->
+<!--               , c.crew_no as no-->
+<!--               , c.crew_title as title-->
+<!--               , c.crew_name as name-->
+<!--               , (select count(*)-->
+<!--                  from CREW_MEMBERS cm-->
+<!--                  where cm.is_join = 'Y'-->
+<!--                    and cm.crew_no = c.crew_no-->
+<!--      ) as memberCnt-->
+<!--          from CREWS c-->
+<!--          where c.is_deleted = 'N'-->
+<!--            and c.is_entered = 'Y') crew limit 5-->
+<!--  </select>-->
 
 </mapper>
