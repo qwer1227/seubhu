@@ -1,6 +1,5 @@
 package store.seub2hu2.course.controller;
 
-import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -189,12 +188,12 @@ public class CourseController {
         return "redirect:my-course?page=" + page;
     }
 
-    @GetMapping("/runner-ranking")
-    public String runnerRanking(@RequestParam(name = "myPage", required = false, defaultValue = "1") int myPage,
-                                @RequestParam(name = "allPage", required = false, defaultValue = "1") int allPage,
-                                @RequestParam(name = "courseNo", required = false) Integer courseNo,
-                                @AuthenticationPrincipal LoginUser loginUser,
-                                Model model) {
+    @GetMapping("/shortest-record-ranking")
+    public String ShortestRecordRanking(@RequestParam(name = "myPage", required = false, defaultValue = "1") int myPage,
+                                        @RequestParam(name = "allPage", required = false, defaultValue = "1") int allPage,
+                                        @RequestParam(name = "courseNo", required = false) Integer courseNo,
+                                        @AuthenticationPrincipal LoginUser loginUser,
+                                        Model model) {
         // 1. 모든 코스 목록을 가져온다.
         List<Course> courses = courseService.getCourses();
         model.addAttribute("courses", courses);
@@ -227,6 +226,6 @@ public class CourseController {
         }
 
         // 8. 뷰이름을 반환한다.
-        return "course/runner-ranking";
+        return "course/shortest-record-ranking";
     }
 }
