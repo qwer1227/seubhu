@@ -5,7 +5,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import store.seub2hu2.course.dto.SuccessRankForm;
+import store.seub2hu2.course.dto.SuccessCountRankForm;
 import store.seub2hu2.course.mapper.CourseMapper;
 import store.seub2hu2.course.mapper.UserCourseMapper;
 import store.seub2hu2.course.vo.*;
@@ -13,7 +13,6 @@ import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.util.ListDto;
 import store.seub2hu2.util.Pagination;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -242,7 +241,26 @@ public class UserCourseService {
         return dto;
     }
 
-    public ListDto<SuccessRankForm> getSuccessCountRanking(Map<String, Object> condition) {
+    /**
+     * 로그인한 사용자의 코스 달성 수 순위를 가져온다.
+     * @param userNo 사용자 번호
+     * @return 로그인한 사용자의 코스 달성 수 순위
+     */
+    public SuccessCountRankForm getMySuccessCountRanking(int userNo) {
+        // 로그인한 사용자의 코스 달성 수 순위를 가져온다.
+        SuccessCountRankForm successRank = userCourseMapper.getMySuccessCountRank(userNo);
+        System.out.println("코스 달성 수 순위: " + successRank);
+
+        // 로그인한 사용자의 코스 달성 수 순위를 반환한다.
+        return successRank;
+    }
+
+    /**
+     * 모든 사용자의 코스 달성 수 순위 목록을 가져온다.
+     * @param condition 페이지
+     * @return 코스 달성 수 순위 목록
+     */
+    public ListDto<SuccessCountRankForm> getAllSuccessCountRanking(Map<String, Object> condition) {
         // 모든 사용자의 코스 달성 수 순위의 갯수를 가져온다.
         int totalRows = userCourseMapper.getTotalAllSuccessCountRanks(condition);
 
@@ -255,10 +273,10 @@ public class UserCourseService {
         condition.put("end", pagination.getEnd());
 
         // 모든 사용자의 코스 달성 수 순위 목록을 가져온다.
-        List<SuccessRankForm> allSuccessRanks = userCourseMapper.getAllSuccessCountRanks(condition);
+        List<SuccessCountRankForm> allSuccessRanks = userCourseMapper.getAllSuccessCountRanks(condition);
 
         // ListDto 객체에 모든 사용자의 코스 달성 수 순위 목록, 페이징 처리 정보를 저장하고 반환한다.
-        ListDto<SuccessRankForm> dto = new ListDto<>(allSuccessRanks, pagination);
+        ListDto<SuccessCountRankForm> dto = new ListDto<>(allSuccessRanks, pagination);
         return dto;
     }
 }

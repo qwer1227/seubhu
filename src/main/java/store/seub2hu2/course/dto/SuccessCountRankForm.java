@@ -9,7 +9,7 @@ import lombok.ToString;
 @Setter
 @NoArgsConstructor
 @ToString
-public class SuccessRankForm {
+public class SuccessCountRankForm {
     // 코스 달성 수 순위를 표시할 때 사용하는 정보
     private int userNo; // 사용자 번호
     private String nickName; // 사용자 닉네임
