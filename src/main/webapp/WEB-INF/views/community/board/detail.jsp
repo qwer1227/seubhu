@@ -134,7 +134,7 @@
             </c:otherwise>
           </c:choose>
         </div>
-      </form>
+      </form>`
     </div>
     
     <!-- 댓글 목록 -->
