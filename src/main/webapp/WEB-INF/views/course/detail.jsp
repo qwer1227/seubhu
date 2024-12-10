@@ -92,7 +92,7 @@
                 <div class="card-body">
                     <div class="row mb-1">
                         <div class="col">
-                            <img src="/resources/images/course/${course.filename}" class="img-thumbnail">
+                            <img src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/images/course/${course.filename}" class="img-thumbnail">
                         </div>
                     </div>
                 </div>
@@ -370,7 +370,7 @@
         let imgContent = '';
         if (images != null) {
             for (let image of images) {
-                imgContent += `<img src="/resources/images/courseReviewImages/\${image.name}" class="img-thumbnail" style="width: 100px; height: 100px;"/>`;
+                imgContent += `<img src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/images/courseReviewImages/\${image.name}" class="img-thumbnail" style="width: 100px; height: 100px;"/>`;
             }
 
             let imagesbox = document.querySelector(`#box-images-\${review.no}`);

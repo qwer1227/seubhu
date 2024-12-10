@@ -16,6 +16,7 @@ import store.seub2hu2.course.vo.ReviewImage;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.ListDto;
 import store.seub2hu2.util.Pagination;
+import store.seub2hu2.util.S3Service;
 import store.seub2hu2.util.WebContentFileUtils;
 
 import java.util.ArrayList;
@@ -26,11 +27,14 @@ import java.util.Map;
 @Service
 @Transactional
 public class ReviewService {
-    @Value("${upload.directory.course}")
-    private String saveDirectory;
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucketName;
+
+    @Value("resources/images/courseReviewImages")
+    private String folder;
 
     @Autowired
-    WebContentFileUtils webContentFileUtils;
+    private S3Service s3Service;
 
     @Autowired
     private ReviewMapper reviewMapper;
@@ -112,17 +116,17 @@ public class ReviewService {
         // 2. 입력한 리뷰를 테이블에 저장한다.
         reviewMapper.insertReview(review);
 
-        // 3. 첨부 파일을 지정된 경로에 저장하고, 테이블에 저장한다.
+        // 3. 첨부 파일이 있다면 if문을 실행한다.
         List<MultipartFile> multipartFiles = form.getUpfiles();
         List<ReviewImage> reviewImages = new ArrayList<>();
+
         if (multipartFiles != null) {
             for (MultipartFile multipartFile : multipartFiles) {
-                // 첨부 파일을 지정된 경로에 저장 후, 파일 이름을 가져온다.
+                // 첨부파일을 지정된 경로에 저장한다.
                 String filename = System.currentTimeMillis() + multipartFile.getOriginalFilename();
-                webContentFileUtils.saveWebContentFile(multipartFile, saveDirectory, filename);
-                System.out.println(filename);
+                s3Service.uploadFile(multipartFile, bucketName, folder, filename);
 
-                // 코스 리뷰 이미지 테이블에 데이터를 추가한다.
+                // ReviewImage 객체에 파일 정보를 저장하고, 테이블에도 저장한다.
                 ReviewImage reviewImage = new ReviewImage();
                 reviewImage.setName(filename);
                 reviewImage.setReviewNo(review.getNo());
