@@ -81,11 +81,11 @@
       <div class="row p-3">
         <div class="col d-flex justify-content-between">
           <div class="col d-flex" style="text-align: start">
-            <button type="button" class="btn btn-secondary m-1">취소</button>
+            <button type="button" class="btn btn-secondary m-1" onclick="abort(${marathon.no})">취소</button>
           </div>
           <div class="col d-flex justify-content-end">
             <button type="button" class="btn btn-outline-primary m-1">보관</button>
-            <button type="submit" class="btn btn-primary m-1">등록</button>
+            <button type="submit" class="btn btn-primary m-1">수정</button>
           </div>
         </div>
       </div>
@@ -95,6 +95,12 @@
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
 <script>
+    function abort(marathonNo) {
+        let result = confirm("수정 중이던 글을 취소하시겠습니까?");
+        if (result) {
+            window.location.href = "detail?no=" + marathonNo;
+        }
+    }
     function deleteUploadFile(marathonNo, fileNo) {
         let result = confirm("기존에 등록된 첨부파일을 삭제하시겠습니까?");
         if (result) {

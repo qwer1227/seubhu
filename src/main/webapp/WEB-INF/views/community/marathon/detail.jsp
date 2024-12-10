@@ -6,6 +6,20 @@
 <!doctype html>
 <html lang="ko">
 <style>
+    #marathon-table th {
+        text-align: center;
+    }
+
+    #marathon-table tr {
+        height: 40px;
+    }
+
+    #marathon-content {
+        margin-left: 10px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        padding-left: 50px;
+    }
     /* 툴팁 스타일 (처음에는 숨겨져 있음) */
     #hover-box {
         display: none; /* 기본적으로 툴팁 숨김 */
@@ -36,22 +50,6 @@
 <head>
   <%@include file="/WEB-INF/views/common/common.jsp" %>
 </head>
-<style>
-    #marathon-table th {
-        text-align: center;
-    }
-
-    #marathon-table tr {
-        height: 40px;
-    }
-
-    #marathon-content {
-        margin-left: 10px;
-        margin-top: 10px;
-        margin-bottom: 10px;
-        padding-left: 50px;
-    }
-</style>
 <body>
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
 <div class="container-xxl text-center" id="wrap">
@@ -68,6 +66,9 @@
     <div class="title h4 d-flex justify-content-between align-items-center">
       <div>
         ${marathon.title}
+          <c:if test="${marathon.endDate.time < now.time}">
+          <span class="badge text-bg-secondary">마감</span>
+        </c:if>
       </div>
       <span><i class="bi bi-eye"></i> ${marathon.viewCnt}</span>
     </div>

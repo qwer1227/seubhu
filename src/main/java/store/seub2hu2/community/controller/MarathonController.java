@@ -85,6 +85,7 @@ public class MarathonController {
             url = "https://www." + url;
         }
         model.addAttribute("marathonUrl", url);
+        model.addAttribute("now", new Date());
 
         return "community/marathon/detail";
     }

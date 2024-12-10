@@ -11,4 +11,5 @@ public interface ReportMapper {
     void updateDisableBoard(@Param("report") Report report);
 
     void insertReportToCrew(@Param("report") Report report);
+    boolean isAlreadyReported(@Param("type") String type, @Param("no") int no, @Param("userNo") int userNo);
 }

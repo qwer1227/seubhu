@@ -65,4 +65,14 @@
     , #{report.reason}
     )
   </insert>
+
+  <!-- boolean isAlreadyReported(@Param("type") String type, @Param("no") int no, @Param("userNo") int userNo); -->
+  <select id="isAlreadyReported">
+    select count(*)
+    from BOARD_REPORTS
+    where
+      report_type = #{type}
+      and report_no = #{no}
+      and user_no = #{userNo}
+  </select>
 </mapper>

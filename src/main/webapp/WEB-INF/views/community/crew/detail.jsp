@@ -119,19 +119,21 @@
               <th></th>
               <td>
                 <security:authorize access="isAuthenticated()">
-                <security:authentication property="principal" var="loginUser"/>
-                  <c:choose>
-                    <c:when test="${isExists}">
-                       <button id="btn-crew-leave" class="btn btn-danger btn-sm" onclick="crewLeaveButton(${crew.no})">
+                  <security:authentication property="principal" var="loginUser"/>
+                  <c:if test="${loginUser.no ne crew.user.no}">
+                    <c:choose>
+                      <c:when test="${isExists}">
+                        <button id="btn-crew-leave" class="btn btn-danger btn-sm" onclick="crewLeaveButton(${crew.no})">
                           모임 탈퇴
                         </button>
-                    </c:when>
-                    <c:otherwise>
-                      <button id="btn-crew_join" class="btn btn-primary btn-sm" onclick="crewJoinButton(${crew.no})">
+                      </c:when>
+                      <c:otherwise>
+                        <button id="btn-crew_join" class="btn btn-primary btn-sm" onclick="crewJoinButton(${crew.no})">
                           모임 가입
                         </button>
-                    </c:otherwise>
-                  </c:choose>
+                      </c:otherwise>
+                    </c:choose>
+                  </c:if>
                 </security:authorize></td>
             </tr>
             </tbody>
@@ -144,10 +146,11 @@
       </div>
     </div>
     
-    <div class="actions d-flex justify-content-between mb-4">
+    <div class="row actions mb-4">
+
       <!-- 로그인 여부를 체크하기 위해 먼저 선언 -->
       <security:authorize access="isAuthenticated()">
-        <div>
+        <div class="col-6 d-flex justify-content-start">
           <!-- principal 프로퍼티 안의 loginUser 정보를 가져옴 -->
           <!-- loginUser.no를 가져와서 조건문 실행 -->
           <c:if test="${loginUser.no eq crew.user.no and loginUser ne null}">
@@ -159,9 +162,10 @@
           </c:if>
         </div>
       </security:authorize>
-      <div>
+      <div class="col-6 d-flex justify-content-end">
         <a type="button" href="main" class="btn btn-secondary">목록</a>
       </div>
+
     </div>
     
     <!-- 댓글 작성 -->
@@ -315,13 +319,13 @@
   </div>
   
   <!-- 신고 모달 창 -->
-  <%@include file="/WEB-INF/views/community/report-modal.jsp"%>
-  
+  <%@include file="/WEB-INF/views/community/report-modal.jsp" %>
+
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
 <script>
-    
+
     const myModalRepoter = new bootstrap.Modal('#modal-reporter')
 
     function updateCrew(crewNo) {

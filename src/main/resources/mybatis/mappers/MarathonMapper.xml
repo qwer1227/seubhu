@@ -66,7 +66,16 @@
   </select>
 
   <!-- List<Marathon> getMarathonTopFive(@Param("condition") Map<String, Object> condition); -->
-
+  <select id="getMarathonTopThree" resultType="store.seub2hu2.community.vo.Marathon">
+    select *
+    from (select row_number() over(order by marathon_view_cnt desc) rn
+                    , marathon_no as no
+                    , marathon_title as title
+                    , marathon_thumbnail as thumbnail
+                    , marathon_date as marathonDate
+          from MARATHONS
+          where is_deleted = 'N') crew limit 3
+  </select>
 
   <!-- int getTotalMarathons(@Param("condition") Map<String, Object> condition); -->
   <select id="getTotalMarathons" resultType="int">
@@ -128,6 +137,6 @@
   <!-- void deleteMarathonOrgan(@Param("no") int marathonNo); -->
   <delete id="deleteMarathonOrgan">
     delete from ORGANS
-    where marathon_no = #{marathonNo}
+    where marathon_no = #{no}
   </delete>
 </mapper>

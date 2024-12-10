@@ -60,4 +60,10 @@ public class ReportService {
 
         reportMapper.insertReportToCrew(report);
     }
+
+    public boolean isReported(String type
+                              , int no
+                            , @AuthenticationPrincipal LoginUser loginUser) {
+        return reportMapper.isAlreadyReported(type, no, loginUser.getNo());
+    }
 }

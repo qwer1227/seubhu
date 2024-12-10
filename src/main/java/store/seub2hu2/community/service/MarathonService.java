@@ -30,7 +30,7 @@ public class MarathonService {
     @Autowired
     private UploadMapper uploadMapper;
 
-    public Marathon addNewMarathon(MarathonForm form){
+    public Marathon addNewMarathon(MarathonForm form) {
         Marathon marathon = new Marathon();
         marathon.setTitle(form.getTitle());
         marathon.setContent(form.getContent());
@@ -43,27 +43,28 @@ public class MarathonService {
 
         marathonMapper.insertMarathon(marathon);
 
+        System.out.println("================" + marathon.getNo());
 
-        if (StringUtils.hasText(form.getHost())){
+        if (StringUtils.hasText(form.getHost())) {
             // hostText = "우리은행, KBS, MBC"
             String hostText = form.getHost();
             // values = ["우리은행", " KBS", " MBC"]
             String[] values = hostText.split(",");
             for (String value : values) {
                 MarathonOrgan organ = new MarathonOrgan();
-                organ.setMarathonNo(marathon.getNo());
+                organ.setMarathonNo(form.getNo());
                 organ.setOrganRole("host");
                 organ.setOrganName(value.trim());
                 marathonMapper.insertMarathonOrgan(organ);
             }
         }
 
-        if (StringUtils.hasText(form.getOrganizer())){
+        if (StringUtils.hasText(form.getOrganizer())) {
             String organizerText = form.getOrganizer();
             String[] values = organizerText.split(",");
             for (String value : values) {
                 MarathonOrgan organ = new MarathonOrgan();
-                organ.setMarathonNo(marathon.getNo());
+                organ.setMarathonNo(form.getNo());
                 organ.setOrganRole("organizer");
                 organ.setOrganName(value.trim());
                 marathonMapper.insertMarathonOrgan(organ);
@@ -73,7 +74,7 @@ public class MarathonService {
         return marathon;
     }
 
-    public ListDto<Marathon> getMarathons(Map<String, Object> condition){
+    public ListDto<Marathon> getMarathons(Map<String, Object> condition) {
         int totalRows = marathonMapper.getTotalMarathons(condition);
 
         int page = (Integer) condition.get("page");
@@ -89,7 +90,7 @@ public class MarathonService {
         return dto;
     }
 
-    public Marathon getMarathonDetail(int marathonNo){
+    public Marathon getMarathonDetail(int marathonNo) {
         Marathon marathon = marathonMapper.getMarathonDetailByNo(marathonNo);
         List<MarathonOrgan> organ = marathonMapper.getMarathonOrganDetailByNo(marathonNo);
 
@@ -98,7 +99,7 @@ public class MarathonService {
         return marathon;
     }
 
-    public List<MarathonOrgan> getOrgans(int marathonNo){
+    public List<MarathonOrgan> getOrgans(int marathonNo) {
         List<MarathonOrgan> organs = marathonMapper.getMarathonOrganDetailByNo(marathonNo);
 
         return organs;
@@ -110,7 +111,7 @@ public class MarathonService {
         marathonMapper.updateMarathonCnt(marathon);
     }
 
-    public void updateMarathon(MarathonForm form){
+    public void updateMarathon(MarathonForm form) {
         Marathon savedMarathon = marathonMapper.getMarathonDetailByNo(form.getNo());
         savedMarathon.setTitle(form.getTitle());
         savedMarathon.setContent(form.getContent());
@@ -124,28 +125,26 @@ public class MarathonService {
 
         marathonMapper.updateMarathon(savedMarathon);
 
-        if (form.getHost() != null){
-            marathonMapper.deleteMarathonOrgan(savedMarathon.getNo());
+        marathonMapper.deleteMarathonOrgan(form.getNo());
 
-            if (StringUtils.hasText(form.getHost())){
-                String organizerText = form.getHost();
-                String[] values = organizerText.split(",");
-                for (String value : values) {
-                    MarathonOrgan organ = new MarathonOrgan();
-                    organ.setMarathonNo(savedMarathon.getNo());
-                    organ.setOrganRole("host");
-                    organ.setOrganName(value.trim());
-                    marathonMapper.insertMarathonOrgan(organ);
-                }
+        if (StringUtils.hasText(form.getHost())) {
+            String organizerText = form.getHost();
+            String[] values = organizerText.split(",");
+            for (String value : values) {
+                MarathonOrgan organ = new MarathonOrgan();
+                organ.setMarathonNo(form.getNo());
+                organ.setOrganRole("host");
+                organ.setOrganName(value.trim());
+                marathonMapper.insertMarathonOrgan(organ);
             }
         }
 
-        if (StringUtils.hasText(form.getOrganizer())){
+        if (StringUtils.hasText(form.getOrganizer())) {
             String organizerText = form.getOrganizer();
             String[] values = organizerText.split(",");
             for (String value : values) {
                 MarathonOrgan organ = new MarathonOrgan();
-                organ.setMarathonNo(savedMarathon.getNo());
+                organ.setMarathonNo(form.getNo());
                 organ.setOrganRole("organizer");
                 organ.setOrganName(value.trim());
                 marathonMapper.insertMarathonOrgan(organ);
@@ -153,11 +152,17 @@ public class MarathonService {
         }
     }
 
-    public void deleteMarathon(int marathonNo){
+    public void deleteMarathon(int marathonNo) {
         Marathon savedMarathon = marathonMapper.getMarathonDetailByNo(marathonNo);
         savedMarathon.setDeleted("Y");
 
         marathonMapper.updateMarathon(savedMarathon);
     }
 
+    public ListDto<Marathon> getMarathonTop(Map<String, Object> condition) {
+        List<Marathon> marathons = marathonMapper.getMarathonTopThree(condition);
+        ListDto<Marathon> dto = new ListDto<>(marathons);
+
+        return dto;
+    }
 }
