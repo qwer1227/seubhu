@@ -68,13 +68,10 @@
             P.PROD_IMG_THUM AS imgThum,
             PC.CAT_NO AS "category.no",
             PC.CAT_NAME AS "category.name",
-            PB.BRAND_NAME AS "brand.name",
-            PL.COLOR_NAME AS "color.name",
-            PL.COLOR_NO AS "color.no"
+            PB.BRAND_NAME AS "brand.name"
             FROM PRODUCTS P
                 JOIN PROD_CATEGORIES PC ON P.CAT_NO = PC.CAT_NO
                 JOIN PROD_BRANDS PB ON P.BRAND_NO = PB.BRAND_NO
-                LEFT OUTER JOIN PROD_COLORS PL ON P.PROD_COLOR_NUM = PL.COLOR_NO
             <if test="condition != null">
                 <choose>
                     <when test="condition.opt == 'name'">

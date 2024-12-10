@@ -153,7 +153,7 @@
                                 </a>
                             </div>
                             <div class="mr-2">
-                              <a href="register-color?no=${param.no}">
+                              <a href="register-color?no=${param.no}&colorNo=${param.colorNo}">
                                 <button class="btn btn-outline btn-success btn-sm">상품 색상 추가</button>
                               </a>
                             </div>
@@ -172,7 +172,7 @@
                         </div>
                         <div class="row m-2">
                             <div class="mr-2">
-                                <a href="register-image?no=${param.no}">
+                                <a href="register-image?no=${param.no}&colorNo=${param.colorNo}">
                                     <button class="btn btn-outline btn-success btn-sm">상품 이미지 추가</button>
                                 </a>
                             </div>

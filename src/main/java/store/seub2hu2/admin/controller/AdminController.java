@@ -714,6 +714,39 @@ public class AdminController {
         return conditions;
     }
 
+    @GetMapping("/p-settlement")
+    public String pSettlement(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                              @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
+                              @RequestParam(name = "sort", required = false) String sort,
+                              @RequestParam(name = "opt", required = false, defaultValue = "all") String opt,
+                              @RequestParam(name = "day", required = false) String day,
+                              @RequestParam(name = "keyword", required = false, defaultValue = "all") String keyword,
+                              @RequestParam(name = "value", required = false) String value,
+                              Model model) {
+
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("page", page);
+        condition.put("rows", rows);
+        condition.put("sort", sort);
+        condition.put("opt", opt);
+
+        if (StringUtils.hasText(day)) {
+            condition.put("day", day);
+        }
+
+        if (StringUtils.hasText(value)) {
+            condition.put("keyword", keyword);
+            condition.put("value", value);
+        }
+
+        ListDto<OrderProductDto> dto = adminService.getOrderProduct(condition);
+
+        model.addAttribute("dto", dto.getData());
+        model.addAttribute("paging", dto.getPaging());
+
+        return "admin/p-settlement";
+    }
+
     @GetMapping("/settlement")
     public String settlement(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
                              @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
@@ -722,7 +755,7 @@ public class AdminController {
                              @RequestParam(name = "sort", required = false, defaultValue ="latest") String sort,
                              @RequestParam(name = "opt", required = false, defaultValue = "all") String opt,
                              @RequestParam(name = "keyword", required = false) String keyword,
-                             @RequestParam(name= "value", required = false) String value,
+                             @RequestParam(name = "value", required = false) String value,
                              Model model) {
 
     Map<String, Object> condition = new HashMap<>();

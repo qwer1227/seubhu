@@ -50,11 +50,11 @@
       <div class="container-fluid">
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-          <h1 class="h3 mb-0 text-gray-800">레슨 정산</h1>
+          <h1 class="h3 mb-0 text-gray-800">상품 정산</h1>
         </div>
         <div class="row mt-3">
           <div class="col-12">
-            <form id="form-search" method="get" action="/admin/settlement">
+            <form id="form-search" method="get" action="/admin/p-settlement">
               <input type="hidden" name="page" />
               <input type="hidden" name="rows" />
               <div class="row g-3">
@@ -117,7 +117,7 @@
                 <div class="col-1">
                   <select class="form-control" name="opt">
                     <option value="all" ${param.opt eq 'all' ? 'selected' : ''}>전체</option>
-                    <option value="ready" ${param.opt eq 'ready' ? 'selected' : ''}>결제확정</option>
+<%--                    <option value="ready" ${param.opt eq 'ready' ? 'selected' : ''}>결제확정</option>--%>
                     <option value="notReady" ${param.opt eq 'notReady' ? 'selected' : '' }>결제완료</option>
                     <option value="cancel" ${param.opt eq 'cancel' ? 'selected' : '' }>취소</option>
                   </select>
@@ -127,7 +127,6 @@
                     <option value="all">선택안함</option>
                     <option value="payName">결제자</option>
                     <option value="payId">결제자 ID</option>
-                    <option value="lessonName">레슨명</option>
                   </select>
                 </div>
                 <div class="col-3">
@@ -164,7 +163,7 @@
                     <th>결제타입</th>
                     <th>결제자</th>
                     <th>결제자ID</th>
-                    <th>레슨명</th>
+                    <th>상품명</th>
                     <th>총금액</th>
                     <th>결제방법</th>
                     <th>결제상태</th>
@@ -175,13 +174,13 @@
                 <tbody>
                   <c:forEach var="d" items="${dto}">
                     <tr>
-                      <td>${d.settleType}</td>
-                      <td>${d.name}</td>
-                      <td>${d.id}</td>
-                      <td>${d.title}</td>
-                      <td><fmt:formatNumber value="${d.price }"/> 원</td>
+                      <td>${d.payType}</td>
+                      <td>${d.userName}</td>
+                      <td>${d.userId}</td>
+                      <td>${d.prodName}</td>
+                      <td><fmt:formatNumber value="${d.payPrice }"/> 원</td>
                       <td>${d.payMethod}</td>
-                      <td>${d.status}</td>
+                      <td>${d.payStatus}</td>
                       <td>
                       ${d.payDate}
                       </td>
@@ -194,7 +193,7 @@
               </table>
               <div class="row mb-3">
                 <div class="col">
-                  <div class="border p-2 bg-dark text-white fw-bold">${param.day} | 매출액: <fmt:formatNumber value="${totalPriceSum}"/> 원</div>
+                  <div class="border p-2 bg-dark text-white fw-bold">${param.day} | 매출액: <fmt:formatNumber value=""/> 원</div>
                 </div>
               </div>
             </div>
@@ -268,4 +267,5 @@
 </script>
 
 </html>
+
 
