@@ -11,20 +11,14 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import store.seub2hu2.community.dto.BoardForm;
 import store.seub2hu2.community.dto.ReplyForm;
 import store.seub2hu2.community.dto.ReportForm;
 import store.seub2hu2.community.service.*;
 import store.seub2hu2.community.view.FileDownloadView;
-import store.seub2hu2.community.vo.Board;
-import store.seub2hu2.community.vo.Crew;
-import store.seub2hu2.community.vo.Notice;
-import store.seub2hu2.community.vo.Reply;
+import store.seub2hu2.community.vo.*;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.util.ListDto;
 
@@ -59,6 +53,9 @@ public class BoardController {
     @Autowired
     private CrewService crewService;
 
+    @Autowired
+    private MarathonService marathonService;
+
     @GetMapping("/main")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page
             , @RequestParam(name = "rows", required = false, defaultValue = "10") int rows
@@ -87,11 +84,13 @@ public class BoardController {
         ListDto<Board> bDto = boardService.getBoards(condition);
         ListDto<Notice> nDto = boardService.getNoticesTop(condition);
         ListDto<Crew> cDto = crewService.getCrewsTop(condition);
+        ListDto<Marathon> mDto = marathonService.getMarathonTop(condition);
 
         model.addAttribute("boards", bDto.getData());
         model.addAttribute("paging", bDto.getPaging());
         model.addAttribute("notices", nDto.getData());
         model.addAttribute("crews", cDto.getData());
+        model.addAttribute("marathons", mDto.getData());
 
         return "community/board/main";
     }
@@ -321,8 +320,12 @@ public class BoardController {
     @PostMapping("/report-board")
     public String reportBoard(ReportForm form
                               , @AuthenticationPrincipal LoginUser loginUser){
+        boolean isReported = reportService.isReported(form.getType(), form.getNo(), loginUser);
 
-        reportService.registerReportToBoard(form, loginUser);
+        if (!isReported){
+            reportService.registerReportToBoard(form, loginUser);
+        }
+
         return "redirect:detail?no=" + form.getNo();
     }
 
@@ -331,7 +334,24 @@ public class BoardController {
                                 , @RequestParam("bno") int boardNo
                                 , @AuthenticationPrincipal LoginUser loginUser){
 
-        reportService.registerReportToBoard(form, loginUser);
+        boolean isReported = reportService.isReported(form.getType(), form.getNo(), loginUser);
+
+        if (!isReported){
+            reportService.registerReportToBoard(form, loginUser);
+        }
+
         return "redirect:detail?no=" + boardNo;
+    }
+
+    @GetMapping("report-check")
+    @ResponseBody
+    public String reportCheck(String type
+            , int no
+            , @AuthenticationPrincipal LoginUser loginUser){
+
+        boolean isReported = reportService.isReported(type, no, loginUser);
+
+        System.out.println("=============" + isReported);
+        return isReported ? "yes" : "no";
     }
 }

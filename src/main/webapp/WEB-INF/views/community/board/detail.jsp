@@ -259,162 +259,183 @@
   </div>
   
   <!-- 신고 모달 창 -->
-  <%@include file="/WEB-INF/views/community/report-modal.jsp"%>
+  <%@include file="/WEB-INF/views/community/report-modal.jsp" %>
+  
+  <script type="text/javascript">
 
+      const myModalRepoter = new bootstrap.Modal('#modal-reporter')
+
+      function updateBoard(boardNo) {
+          let result = confirm("해당 게시글을 수정하시겠습니까?");
+          if (result) {
+              window.location.href = "modify?no=" + boardNo;
+          }
+      }
+
+      function deleteBoard(boardNo) {
+          let result = confirm("해당 게시글을 삭제하시겠습니까?");
+          if (result) {
+              window.location.href = "delete?no=" + boardNo;
+          }
+      }
+
+      async function report(type, no) {
+          let response = await fetch("/community/board/report-check?type=" + type + "&no=" + no, {
+              // 요청방식을 지정한다.
+              method: "GET",
+              // 요청메세지의 바디부에 포함된 컨텐츠의 형식을 지정한다.
+              headers: {
+                  "Content-Type": "application/json"
+              }
+          });
+
+          if (response.ok) {
+              let exists = await response.text();
+
+              if (exists === "yes") {
+                  // 신고한 내역이 있으면
+                  alert("이미 신고한 내역이 있습니다");
+              } else {
+                  // 신고한 내역이 없으면 모달창 보이기
+                  document.querySelector(".modal input[name=type]").value = type;
+                  document.querySelector(".modal input[name=no]").value = no;
+                  document.querySelector(".modal input[name=bno]").value = ${board.no};
+
+                  if (type === 'board') {
+                      $(".modal form").attr('action', 'report-board');
+                  }
+                  if (type === 'reply') {
+                      $(".modal form").attr('action', 'report-reply');
+                  }
+
+                  myModalRepoter.show();
+              }
+          }
+      }
+
+      function reportButton() {
+
+          if (document.querySelector("#reason-etc").checked) {
+              document.querySelector("#reason-etc").value = document.querySelector("#etc").value;
+          }
+          $(".modal form").trigger("submit");
+
+      }
+
+      function scrapButton(boardNo, userNo) {
+          let scrap = document.querySelector("#icon-scrap");
+          if (scrap.classList.contains("bi-bookmark")) {
+              window.location.href = `update-board-scrap?no=\${boardNo}&userNo=\${userNo}`;
+          } else {
+              window.location.href = `delete-board-scrap?no=\${boardNo}&userNo=\${userNo}`;
+          }
+      }
+
+      function boardLikeButton(boardNo, userNo) {
+          let heart = document.querySelector("#icon-heart");
+          if (heart.classList.contains("bi-heart")) {
+              window.location.href = `update-board-like?no=\${boardNo}&userNo=\${userNo}`;
+          } else {
+              window.location.href = `delete-board-like?no=\${boardNo}&userNo=\${userNo}`;
+          }
+      }
+
+      function replyLikeButton(boardNo, replyNo, userNo) {
+          let heart = document.querySelector("#icon-thumbs");
+          if (heart.classList.contains("bi-hand-thumbs-up")) {
+              window.location.href = `update-reply-like?no=\${boardNo}&rno=\${replyNo}&userNo=\${userNo}`;
+          } else {
+              window.location.href = `delete-reply-like?no=\${boardNo}&rno=\${replyNo}&userNo=\${userNo}`;
+          }
+      }
+
+      function goLogin() {
+          let result = confirm("로그인하시겠습니까?");
+          if (result) {
+              window.location.href = "/login";
+          }
+      }
+
+      /* 댓글&답글 입력 폼이 클릭한 버튼 바로 아래 위치하도록 처리 */
+      document.addEventListener("click", function (event) {
+          // 클릭된 요소가 '답글' 버튼인지 확인
+          if (event.target && event.target.classList.contains('btn-outline-dark')) {
+              let replyElement = event.target.closest('.comment-item'); // 댓글의 가장 가까운 부모 요소 찾기
+              if (replyElement) {
+                  appendComment(replyElement);
+                  appendModify(replyElement);
+              }
+          }
+      });
+
+      /* 댓글 제출(/community/add-reply로 데이터 전달) */
+      async function submitReply() {
+          let boardNo = document.querySelector("input[name=No]").value;
+          let content = document.querySelector("textarea[name=content]").value;
+          let userNo = document.querySelector("input[name=userNo]").value;
+
+          let data = {
+              boardNo,
+              content,
+              userNo
+          }
+
+          // 자바스크립트 객체를 json형식의 텍스트로 변환한다.
+          let jsonText = JSON.stringify(data);
+
+          // POST 방식으로 객체를 JSON 형식의 데이터를 서버로 보내기
+          let response = await fetch("/community/add-reply", {
+              // 요청방식을 지정한다.
+              method: "POST",
+              // 요청메세지의 바디부에 포함된 컨텐츠의 형식을 지정한다.
+              headers: {
+                  "Content-Type": "application/json"
+              },
+              // 요청메세지의 바디부에 서버로 전달할 json형식의 텍스트 데이터를 포함시킨다.
+              body: jsonText
+          });
+          // 서버가 보낸 응답데이터를 받는다.
+          if (response.ok) {
+              // 응답으로 새로 추가된 코멘트를 추가한다.
+              let reply = await response.json();
+          }
+      }
+
+      /* 댓글&답글 삭제 */
+      function deleteReply(replyNo, boardNo) {
+          let result = confirm("해당 댓글을 삭제하시겠습니까?");
+          if (result) {
+              window.location.href = "delete-reply?rno=" + replyNo + "&bno=" + boardNo;
+          }
+      }
+
+      /* 버튼 클릭 시 댓글 수정 입력 폼 활성화 */
+      function appendModify(replyNo) {
+          let box = document.querySelector("#box-reply-" + replyNo);
+          box.classList.toggle("d-none");
+
+          // 댓글 수정 버튼 클릭 여부에 따라 색상 변경
+          let modifyButton = document.querySelector("#replyModifyButton-" + replyNo);
+          if (modifyButton) {
+              if (box.classList.contains("d-none")) {
+                  // 폼이 닫혔을 때 색상 초기화
+                  modifyButton.style.backgroundColor = "";
+                  modifyButton.style.color = "";
+              } else {
+                  // 폼이 열렸을 때 색상 변경
+                  modifyButton.style.backgroundColor = "white";
+                  modifyButton.style.color = "black";
+              }
+          }
+      }
+
+      /* 버튼 클릭 시 답글 입력 폼 활성화 */
+      function appendComment(replyNo) {
+          let box = document.querySelector("#box-comments-" + replyNo);
+          box.classList.toggle("d-none");
+      }
+  </script>
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
-<script type="text/javascript">
-
-    const myModalRepoter = new bootstrap.Modal('#modal-reporter')
-
-    function updateBoard(boardNo) {
-        let result = confirm("해당 게시글을 수정하시겠습니까?");
-        if (result) {
-            window.location.href = "modify?no=" + boardNo;
-        }
-    }
-
-    function deleteBoard(boardNo) {
-        let result = confirm("해당 게시글을 삭제하시겠습니까?");
-        if (result) {
-            window.location.href = "delete?no=" + boardNo;
-        }
-    }
-
-    function report(type, no) {
-        document.querySelector(".modal input[name=type]").value = type;
-        document.querySelector(".modal input[name=no]").value = no;
-        document.querySelector(".modal input[name=bno]").value = ${board.no};
-
-        if (type === 'board') {
-            $(".modal form").attr('action', 'report-board');
-        }
-        if (type === 'reply') {
-            $(".modal form").attr('action', 'report-reply');
-        }
-
-        myModalRepoter.show();
-    }
-
-    function reportButton() {
-        if (document.querySelector("#reason-etc").checked) {
-            document.querySelector("#reason-etc").value = document.querySelector("#etc").value;
-        }
-        $(".modal form").trigger("submit");
-    }
-
-    function scrapButton(boardNo, userNo) {
-        let scrap = document.querySelector("#icon-scrap");
-        if (scrap.classList.contains("bi-bookmark")) {
-            window.location.href = `update-board-scrap?no=\${boardNo}&userNo=\${userNo}`;
-        } else {
-            window.location.href = `delete-board-scrap?no=\${boardNo}&userNo=\${userNo}`;
-        }
-    }
-
-    function boardLikeButton(boardNo, userNo) {
-        let heart = document.querySelector("#icon-heart");
-        if (heart.classList.contains("bi-heart")) {
-            window.location.href = `update-board-like?no=\${boardNo}&userNo=\${userNo}`;
-        } else {
-            window.location.href = `delete-board-like?no=\${boardNo}&userNo=\${userNo}`;
-        }
-    }
-
-    function replyLikeButton(boardNo, replyNo, userNo) {
-        let heart = document.querySelector("#icon-thumbs");
-        if (heart.classList.contains("bi-hand-thumbs-up")) {
-            window.location.href = `update-reply-like?no=\${boardNo}&rno=\${replyNo}&userNo=\${userNo}`;
-        } else {
-            window.location.href = `delete-reply-like?no=\${boardNo}&rno=\${replyNo}&userNo=\${userNo}`;
-        }
-    }
-
-    function goLogin() {
-        let result = confirm("로그인하시겠습니까?");
-        if (result) {
-            window.location.href = "/login";
-        }
-    }
-
-    /* 댓글&답글 입력 폼이 클릭한 버튼 바로 아래 위치하도록 처리 */
-    document.addEventListener("click", function (event) {
-        // 클릭된 요소가 '답글' 버튼인지 확인
-        if (event.target && event.target.classList.contains('btn-outline-dark')) {
-            let replyElement = event.target.closest('.comment-item'); // 댓글의 가장 가까운 부모 요소 찾기
-            if (replyElement) {
-                appendComment(replyElement);
-                appendModify(replyElement);
-            }
-        }
-    });
-
-    /* 댓글 제출(/community/add-reply로 데이터 전달) */
-    async function submitReply() {
-        let boardNo = document.querySelector("input[name=No]").value;
-        let content = document.querySelector("textarea[name=content]").value;
-        let userNo = document.querySelector("input[name=userNo]").value;
-
-        let data = {
-            boardNo,
-            content,
-            userNo
-        }
-
-        // 자바스크립트 객체를 json형식의 텍스트로 변환한다.
-        let jsonText = JSON.stringify(data);
-
-        // POST 방식으로 객체를 JSON 형식의 데이터를 서버로 보내기
-        let response = await fetch("/community/add-reply", {
-            // 요청방식을 지정한다.
-            method: "POST",
-            // 요청메세지의 바디부에 포함된 컨텐츠의 형식을 지정한다.
-            headers: {
-                "Content-Type": "application/json"
-            },
-            // 요청메세지의 바디부에 서버로 전달할 json형식의 텍스트 데이터를 포함시킨다.
-            body: jsonText
-        });
-        // 서버가 보낸 응답데이터를 받는다.
-        if (response.ok) {
-            // 응답으로 새로 추가된 코멘트를 추가한다.
-            let reply = await response.json();
-        }
-    }
-
-    /* 댓글&답글 삭제 */
-    function deleteReply(replyNo, boardNo) {
-        let result = confirm("해당 댓글을 삭제하시겠습니까?");
-        if (result) {
-            window.location.href = "delete-reply?rno=" + replyNo + "&bno=" + boardNo;
-        }
-    }
-
-    /* 버튼 클릭 시 댓글 수정 입력 폼 활성화 */
-    function appendModify(replyNo) {
-        let box = document.querySelector("#box-reply-" + replyNo);
-        box.classList.toggle("d-none");
-
-        // 댓글 수정 버튼 클릭 여부에 따라 색상 변경
-        let modifyButton = document.querySelector("#replyModifyButton-" + replyNo);
-        if (modifyButton) {
-            if (box.classList.contains("d-none")) {
-                // 폼이 닫혔을 때 색상 초기화
-                modifyButton.style.backgroundColor = "";
-                modifyButton.style.color = "";
-            } else {
-                // 폼이 열렸을 때 색상 변경
-                modifyButton.style.backgroundColor = "white";
-                modifyButton.style.color = "black";
-            }
-        }
-    }
-
-    /* 버튼 클릭 시 답글 입력 폼 활성화 */
-    function appendComment(replyNo) {
-        let box = document.querySelector("#box-comments-" + replyNo);
-        box.classList.toggle("d-none");
-    }
-</script>
 </html>

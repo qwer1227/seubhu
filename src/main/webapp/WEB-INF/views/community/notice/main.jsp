@@ -25,14 +25,12 @@
     <div class="row p-3">
       <table class="table">
         <colgroup>
-          <col width="10%">
           <col width="*%">
           <col width="10%">
           <col width="15%">
         </colgroup>
         <thead>
         <tr style="text-align: center">
-          <th>번호</th>
           <th>제목</th>
           <th>조회</th>
           <th>날짜</th>
@@ -41,7 +39,6 @@
         <tbody style="text-align: center">
         <c:forEach var="notice" items="${notices}">
           <tr>
-            <td>${notice.no}</td>
             <td id="content-title" style="text-align: start">
               <a href="hit?no=${notice.no}"
                  style="text-decoration-line: none; color: ${notice.first eq 'true' ? 'red' : 'black'}">
