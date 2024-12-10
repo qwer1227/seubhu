@@ -92,10 +92,7 @@ public class QnaService {
 
         Pagination pagination = new Pagination(page, totalRows, rows);
 
-        // 데이터 검색 범위를 조회해서 Map에 저장한다
-        //condition.put("begin", pagination.getBegin());
         requestParamsDto.setBegin(pagination.getBegin());
-        //condition.put("end", pagination.getEnd());
         requestParamsDto.setEnd(pagination.getEnd());
 
         // ProdListDto 타입의 데이터를 담는 ListDto객체를 생성한다

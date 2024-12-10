@@ -556,8 +556,6 @@ public class MyPageController {
     public String qna(Model model, @AuthenticationPrincipal LoginUser loginUser, RequestParamsDto requestParamsDto){
 
         ListDto<QnaResponse> qnaDto = qnaService.getQnas2(requestParamsDto);
-
-        //todo opt와 keyword를 활용해서 검색하는 부분이 이상함
         
         model.addAttribute("qna", qnaDto.getData());
         model.addAttribute("pagination", qnaDto.getPaging());
