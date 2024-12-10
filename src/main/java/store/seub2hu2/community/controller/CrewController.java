@@ -1,12 +1,5 @@
 package store.seub2hu2.community.controller;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.MultipartConfig;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.Part;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -25,7 +18,6 @@ import store.seub2hu2.community.dto.ReplyForm;
 import store.seub2hu2.community.dto.ReportForm;
 import store.seub2hu2.community.service.CrewReplyService;
 import store.seub2hu2.community.service.CrewService;
-import store.seub2hu2.community.service.BoardReplyService;
 import store.seub2hu2.community.service.ReportService;
 import store.seub2hu2.community.view.FileDownloadView;
 import store.seub2hu2.community.vo.Crew;
@@ -35,9 +27,6 @@ import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.util.ListDto;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
@@ -324,9 +313,9 @@ public class CrewController {
         return "redirect:detail?no=" + crewNo;
     }
 
-    @GetMapping("/example")
+    @GetMapping("/image-crop")
     public String ex() {
-        return "community/crew/example";
+        return "community/crew/image-crop";
     }
 
     @GetMapping("report-check")
