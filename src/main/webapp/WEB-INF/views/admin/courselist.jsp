@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="/WEB-INF/views/common/tags.jsp" %>
+<c:set var="s3" value="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com" />
 <!DOCTYPE html>
 <html lang="en">
 
@@ -55,58 +56,71 @@
           <h1 class="h3 mb-0 text-gray-800">코스</h1>
         </div>
         <!-- 5-10-20개씩 보기 최신순 이름순 -->
-        <form id="form-search" method="get" action="/admin/course">
-          <input type="hidden" name="page" />
-          <div class="rows g-3 d-flex">
-            <div class="col-2 mb-4 pt-2">
-              <select class="form-control" name="rows" onchange="changeRows()">
-                <option value="5" ${param.rows eq 5 ? "selected" : ""}>5개씩 보기</option>
-                <option value="10"${empty param.rows or param.rows eq 10 ? "selected" : ""}>10개씩 보기</option>
-                <option value="20"${param.rows eq 20 ? "selected" : ""}>20개씩 보기</option>
-              </select>
-            </div>
-            <div class="col-3 mt-2 pt-2">
-              <div class="form-check form-check-inline">
-                <div class="mr-2">
-                  <input class="form-check-input"
-                         type="radio"
-                         name="sort"
-                         value="latest"
-                         onchange="changeSort()"/>
-                  <label class="form-check-label">최신순</label>
+        <div class="row row-cols-1 row-cols-md-1 g-4 mt-3 mb-3">
+        <div class="col" style="border: 1px solid rgb(78, 115, 223); padding: 20px">
+            <form id="form-search" method="get" action="/admin/course">
+                <input type="hidden" name="page"/>
+                <div class="row g-3 d-flex justify-content-center">
+                    <div class="col-2 text-start">
+                        <label for="customRange2" class="form-label text-start">추천순</label>
+                        <input type="checkbox"  class="form-check" name="sort" value="like" ${param.sort eq 'like' ? 'checked' : ''}>
+                    </div>
+                    <div class="col-4">
+                        <label id="slider" for="customRange2" class="form-label">거리</label>
+                        <input type="range" class="form-range" min="0" max="10" id="customRange2" name="distance"
+                               value="${empty param.distance ? '10' : param.distance}">
+                        <div class="row">
+                            <div class="col">0</div>
+                            <div class="col">1</div>
+                            <div class="col">2</div>
+                            <div class="col">3</div>
+                            <div class="col">4</div>
+                            <div class="col">5</div>
+                            <div class="col">6</div>
+                            <div class="col">7</div>
+                            <div class="col">8</div>
+                            <div class="col">9</div>
+                            <div class="col">10</div>
+                        </div>
+                    </div>
+                    <div class="col-1">
+                        난이도
+                        <select class="form-control form-select" name="level">
+                            <option value=""> 전체</option>
+                            <c:forEach var="num" begin="1" end="5">
+                                <option value="${num }" ${param.level eq num ? "selected" : ""}> ${num }단계</option>
+                            </c:forEach>
+                        </select>
+                    </div>
+                    <div class="col-3">
+                        지역(구) 검색<input type="text" class="form-control" name="keyword" value="${param.keyword }">
+                    </div>
+                    <div class="col-1 pt-4">
+                        <button type="button" class="btn btn-outline-primary" onclick="searchKeyword()">검색</button>
+                    </div>
                 </div>
-                <div class="mr-2">
-                  <input class="form-check-input"
-                         type="radio"
-                         name="sort"
-                         value="oldest"
-                         onchange="changeSort()"/>
-                  <label class="form-check-label">오래된순</label>
-                </div>
-              </div>
-            </div>
-            <div class="col-4 pt-2">
-              <!-- Search -->
-              <%@include file="/WEB-INF/views/admincommon/searchbar.jsp" %>
-            </div>
-          </div>
-        </form>
+            </form>
+        </div>
+    </div>
+
         <div class="container-xxl text-center" id="wrap">
           <div class="row row-cols-1 row-cols-md-3 g-4 mt-5 mb-5">
         <c:forEach var="course" items="${courses }">
             <div class="col mb-3">
                 <div class="card h-100">
-                    <a class="text-decoration-none" href="detail?no=${course.no }">
-                        <img src="/resources/images/course/${course.filename }" class="card-img-top" alt="...">
+                    <a class="text-decoration-none" href="course-detail?no=${course.no }">
+                        <img src="${s3}/resources/images/course/${course.filename }" class="card-img-top" alt="...">
                     </a>
                     <div class="card-body">
                         <h5 class="card-title">${course.name }</h5>
-                        <a class="text-decoration-none" href="detail?no=${course.no }">
+                        <a class="text-decoration-none" href="course-detail?no=${course.no }">
                             <p class="card-text">${course.region.si } ${course.region.gu } ${course.region.dong }</p>
                         </a>
                     </div>
                     <div class="card-footer bg-transparent border-primary" >
-                        <span>난이도 : ${course.level }단계</span><span> / 거리 : ${course.distance }KM</span>
+                        <span class="badge rounded-pill text-bg-dark">난이도 ${course.level }단계</span>
+                        <span class="badge rounded-pill text-bg-dark">거리 ${course.distance }KM</span>
+                        <span class="badge rounded-pill text-bg-danger">♡ ${course.likeCnt }개</span>
                     </div>
                 </div>
             </div>
@@ -181,6 +195,12 @@
     pageInput.value = page;	// 페이지번호 링크를 클릭했다면 해당 페이지 요청
 
     form.submit();
+  }
+
+  // 검색 버튼을 클릭했을 때, 요청 파라미터 정보를 제출한다.
+  function searchKeyword() {
+      pageInput.value = 1;
+      form.submit();
   }
 </script>
 </body>

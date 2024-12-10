@@ -4,6 +4,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import store.seub2hu2.cart.dto.CartItemDto;
 import store.seub2hu2.mypage.dto.OrderResponse;
+import store.seub2hu2.mypage.dto.OrderResultDto;
+import store.seub2hu2.mypage.dto.OrdersDTO;
 import store.seub2hu2.mypage.dto.ResponseDTO;
 import store.seub2hu2.order.vo.Order;
 import store.seub2hu2.order.vo.OrderItem;
@@ -25,4 +27,8 @@ public interface OrderMapper {
     List<OrderResponse> getOrders(@Param("userNo") int userNo);
 
     ResponseDTO getOrderDetails(@Param("orderNo") int orderNo);
+
+    OrderResultDto getOrderResult(@Param("orderNo") int orderNo);
+
+    int updateOrder(@Param("order") OrdersDTO order);
 }

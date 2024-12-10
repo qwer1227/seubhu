@@ -37,7 +37,7 @@
         VALUES (#{addr.postcode}, #{addr.address}, #{addr.addressDetail}, #{addr.isAddrHome}, #{addr.userNo}, #{addr.name})
 
         <!-- 자동 생성된 ADDR_NO 반환 -->
-        <selectKey resultType="int" keyProperty="addr.no" keyColumn="ADDR_NO" order="AFTER">
+        <selectKey resultType="int" keyProperty="no" keyColumn="ADDR_NO" order="AFTER">
             SELECT LAST_INSERT_ID()
         </selectKey>
     </insert>
@@ -63,6 +63,9 @@
         INSERT INTO ADDRESSES (ZIP_CODE, ADDR_1, ADDR_2, ADDR_NAME, USER_NO)
         VALUES
             (#{addr.postcode}, #{addr.address}, #{addr.addressDetail}, #{addr.name}, #{addr.userNo})
+        <selectKey resultType="int" keyProperty="addr.no" keyColumn="ADDR_NO" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
     </insert>
 
     <!-- 사용자 번호로 역할 정보 조회: 특정 사용자가 가진 역할을 조회 -->

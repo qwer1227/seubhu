@@ -472,6 +472,49 @@
             , #{condition.thumbnail}
             )
     </insert>
+
+    <!--
+        void updateCourse(@Param("course") Course course);
+    -->
+    <update id="updateCourse">
+        update COURSES
+        set
+          course_no = #{course.no}
+        , course_name = #{course.name}
+        , course_time = #{course.time}
+        , course_distance = #{course.distance}
+        , course_level = #{course.level}
+        <if test="course.filename != null">
+            , course_filename =  #{course.filename}
+        </if>
+        ,region_no = #{course.region.no}
+        where
+            course_no = #{course.no}
+    </update>
+
+    <!--
+            Course getCourseByNos(int courseNo);
+    -->
+    <select id="getCourseByNos" resultType="store.seub2hu2.course.vo.Course">
+        select
+            C.course_no             as no
+             , C.course_name        as name
+             , C.course_time        as time
+             , C.course_distance    as distance
+             , C.course_level       as level
+             , C.course_filename    as filename
+             , R.region_no          as "region.no"
+             , R.region_si          as "region.si"
+             , R.region_gu          as "region.gu"
+             , R.region_dong        as "region.dong"
+        from
+            COURSES C, COURSE_REGION R
+        where
+            C.REGION_NO = R.REGION_NO
+          and
+            C.course_no = #{courseNo}
+    </select>
+
     <!--
         List<Region> getRegions(@Param("region") Region region);
     -->
@@ -527,10 +570,8 @@
             , R.region_gu as gu
             , R.region_dong as dong
         from
-            COURSES C, COURSE_REGION R
+            COURSE_REGION R
         where
-            C.REGION_NO = R.REGION_NO
-          and
             R.REGION_SI = #{region.si}
           and
             R.REGION_GU = #{region.gu}

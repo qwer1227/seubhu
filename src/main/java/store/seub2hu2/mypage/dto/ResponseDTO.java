@@ -10,10 +10,13 @@ import java.util.List;
 @Getter
 @Setter
 public class ResponseDTO {
+    private int no;
     private PaymentsDTO payments;
     private ProductImgDTO productImg;
     private OrdersDTO orders;
     private List<ProductDTO> products;
-
+    private ProductDTO product;
+    private AddrDto addrDto;
+    private DeliveryDto deliveryDto;
 
 }

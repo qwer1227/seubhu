@@ -11,7 +11,8 @@ import store.seub2hu2.course.vo.Region;
 @Getter
 @Setter
 public class CourseRegisterForm {
-    private String Name;
+    private int no;
+    private String name;
     private int time;
     private Double distance;
     private int level;

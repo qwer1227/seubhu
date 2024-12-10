@@ -292,4 +292,8 @@ public class CrewService {
 
         crewMapper.updateCrewMember(member);
     }
+
+    public List<Crew> getCrewByUserNo(int userNo){
+        return crewMapper.getCrewByUserNo(userNo);
+    }
 }

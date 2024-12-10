@@ -18,6 +18,9 @@
                , #{pay.amount}
                , #{pay.price}
                , #{pay.type})
+        <selectKey resultType="int" keyProperty="pay.no" keyColumn="pay_no" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
     </insert>
 
     <!-- public Payment getPaymentById(String id); -->

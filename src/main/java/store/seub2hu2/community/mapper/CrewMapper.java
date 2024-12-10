@@ -18,6 +18,7 @@ public interface CrewMapper {
     List<Crew> getCrews(@Param("condition") Map<String, Object> condition);
     List<Crew> getCrewsTopFive(@Param("condition") Map<String, Object> condition);
     List<CrewMember> getCrewMembers(@Param("no") int crewNo);
+    List<Crew> getCrewByUserNo(@Param("userNo") int userNo);
     int getTotalRowsForCrew(@Param("condition") Map<String, Object> condition);
     Crew getCrewDetailByNo(@Param("no") int crewNo);
     void updateCrewCnt(@Param("crew") Crew crew);

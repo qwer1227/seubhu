@@ -3,6 +3,7 @@ package store.seub2hu2.admin.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -11,7 +12,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import store.seub2hu2.admin.dto.*;
 import store.seub2hu2.admin.service.AdminService;
 import store.seub2hu2.course.service.CourseService;
+import store.seub2hu2.course.service.UserCourseService;
 import store.seub2hu2.course.vo.Course;
+import store.seub2hu2.course.vo.UserLevel;
 import store.seub2hu2.lesson.dto.LessonRegisterForm;
 import store.seub2hu2.lesson.dto.LessonUpdateDto;
 import store.seub2hu2.lesson.service.LessonFileService;
@@ -27,6 +30,7 @@ import store.seub2hu2.product.vo.Category;
 import store.seub2hu2.product.vo.Color;
 import store.seub2hu2.product.vo.Image;
 import store.seub2hu2.product.vo.Product;
+import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.service.UserService;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.ListDto;
@@ -53,6 +57,7 @@ public class AdminController {
     private final ProductService productService;
     private final UserService userService;
     private final QnaService qnaService;
+    private final UserCourseService userCourseService;
 
     @GetMapping("/home")
     public String home() {
@@ -156,6 +161,24 @@ public class AdminController {
         return "admin/lessonlist";
     }
 
+    @GetMapping("/course-edit-form")
+    public String getCourseEditForm(@RequestParam("no") int courseNo, Model model) {
+
+        Course course = adminService.getCourseByNo(courseNo);
+
+        model.addAttribute("course", course);
+
+        return "admin/course-edit-form";
+    }
+
+    @PostMapping("/course-edit-form")
+    public String courseEditForm(@RequestParam("no") int courseNo,CourseRegisterForm form) {
+
+        adminService.getUpdateCourse(form);
+
+        return "redirect:/admin/course-detail?no=" + courseNo;
+    }
+
     @GetMapping("/course-register-form")
     public String courseRegisterForm() {
         return "admin/course-register-form";
@@ -170,18 +193,38 @@ public class AdminController {
         return "redirect:/admin/course";
     }
 
+    @GetMapping("/course-detail")
+    public String courseDetail(@RequestParam(name = "no") int courseNo,
+                               Model model) {
+        // 1. 코스의 상세 정보를 가져온다.
+        Course course = courseService.getCourseDetail(courseNo);
+
+        // 3. Model 객체에 코스의 상세 정보를 저장한다.
+        model.addAttribute("course", course);
+
+        return "admin/course-admin-detail";
+    }
+
     /*코스 목록*/
     @GetMapping("/course")
     public String course(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
-                       @RequestParam(name = "distance", required = false) Double distance,
-                       @RequestParam(name = "level", required = false) Integer level,
-                       @RequestParam(name = "keyword", required = false) String keyword,
+                         @RequestParam(name = "sort", required = false) String sort,
+                         @RequestParam(name = "distance", required = false, defaultValue = "10") Double distance,
+                         @RequestParam(name = "level", required = false) Integer level,
+                         @RequestParam(name = "keyword", required = false) String keyword,
                        Model model){
         // 1. 요청 파라미터 정보를 Map 객체에 담는다.
         Map<String, Object> condition = new HashMap<>();
         condition.put("page", page);
-        condition.put("distance", distance);
-        condition.put("level", level);
+        if (StringUtils.hasText(sort)) {
+            condition.put("sort", sort);
+        }
+        if (distance != null) {
+            condition.put("distance", distance);
+        }
+        if (level != null) {
+            condition.put("level", level);
+        }
         if (StringUtils.hasText(keyword)) {
             condition.put("keyword", keyword);
         }
@@ -190,7 +233,7 @@ public class AdminController {
 
         // 3. Model 객체에 화면에 표시할 데이터를 저장해서 보낸다.
         model.addAttribute("courses", dto.getData());
-        model.addAttribute("pagination", dto.getPaging());
+        model.addAttribute("paging", dto.getPaging());
 
         return "admin/courselist";
     }
@@ -748,9 +791,9 @@ public class AdminController {
     }
 
     @PostMapping("/qna/answer")
-    public String qnaAnswerPage(@ModelAttribute AnswerDTO answerDTO){
+    public String qnaAnswerPage(@ModelAttribute AnswerDTO answerDTO, @AuthenticationPrincipal LoginUser loginUser){
 
-        qnaService.updateAnswer(answerDTO);
+        qnaService.updateAnswer(answerDTO, loginUser.getNo());
 
         return "redirect:/admin/qna";
     }
