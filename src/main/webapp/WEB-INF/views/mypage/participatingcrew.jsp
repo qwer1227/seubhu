@@ -51,9 +51,18 @@
     <c:forEach var="c" items="${crews}">
     <div class="crew-container row align-items-center">
         <!-- 왼쪽 이미지 -->
-        <div class="col-md-3 text-center">
-            <img src="images/community/${c.uploadFile.saveName}" alt="크루 이미지" class="crew-image">
-        </div>
+        <c:choose>
+        <c:when test="${empty c.thumbnail.saveName}">
+            <img src="/resources/images/community/inviting_default_main.jpg" alt="크루 대표 이미지"
+                         class="card-img-top"
+                         style="height: 200px; filter: ${crew.entered eq 'Y' ? 'grayscale(0%)' : 'grayscale(100%)'}">
+        </c:when>
+        <c:otherwise>
+            <div class="col-md-3 text-center">
+                <img src="/resources/images/community/${c.thumbnail.saveName}" alt="크루 이미지" class="crew-image">
+            </div>
+        </c:otherwise>
+        </c:choose>
         <!-- 오른쪽 정보 -->
         <div class="col-md-9">
             <div class="d-flex justify-content-between mb-3">

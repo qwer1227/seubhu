@@ -29,9 +29,9 @@
     <div class="p-1 col d-flex justify-content-between">
       <!-- 왼쪽 끝단 버튼 영역 -->
       <div>
-        <input type="hidden" name="type" id="typeInput">
-        <button class="btn btn-outline-primary me-2" id="btnValue1">내가 쓴 글 보기</button>
-        <button class="btn btn-outline-secondary" id="btnValue2" >내가 쓴 댓글 보기</button>
+        <input type="hidden" name="type" id="typeInput" value="${empty param.type ? 'value1' : param.type}">
+        <button type="button" class="btn ${empty param.type or param.type eq 'value1' ? 'btn-outline-primary' : 'btn-outline-secondary'} me-2" id="btnValue1" >내가 쓴 글 보기</button>
+        <button type="button"  class="btn ${param.type eq 'value2' ? 'btn-outline-primary' : 'btn-outline-secondary'}" id="btnValue2" >내가 쓴 댓글 보기</button>
       </div>
 
       <!-- 오른쪽 끝단 검색 옵션 영역 -->
@@ -98,7 +98,7 @@
                 <td>${board.no}</td>
                 <td>${board.catName}</td>
                 <td id="content-title" style="text-align: start">
-                  <a href="detail?no=${board.no}" style="text-decoration-line: none; color: black">${board.title}</a>
+                  <a href="/community/board/detail?no=${board.no}" style="text-decoration-line: none; color: black">${board.title}</a>
                   <c:if test="${board.replyCnt gt 0}">
                     <span class="badge rounded-pill text-bg-danger">${board.replyCnt}</span>
                   </c:if>
@@ -130,7 +130,7 @@
         <input type="text" class="form-control" name="keyword" value="${param.keyword }">
       </div>
       <div class="col-1">
-        <button class="btn btn-outline-primary" onclick="searchKeyword()">검색</button>
+        <button type="button" class="btn btn-outline-primary" onclick="searchKeyword()">검색</button>
       </div>
       <div class="col d-flex justify-content-center">
 
@@ -169,6 +169,11 @@
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
 <script type="text/javascript">
+
+  let form = document.querySelector("#form-search");
+  let pageInput = document.querySelector("input[name=page]");
+  let catInput = document.querySelector("#categoryInput");
+
     // 페이지 번호 링크를 클릭했을 때 변화
     function changePage(page, event) {
         // 기본 동작을 막음
@@ -185,27 +190,20 @@
 
     // 검색어를 입력하고 검색버튼을 클릭 했을 때
     function searchValue() {
-        let pageInput = form.querySelector("input[name=page]");
+
         pageInput.value = 1;
         form.submit();
     }
 
     // 정렬방식이 변경될 때
     function changeSort() {
-        let form = document.querySelector("#form-search");
-        let sortInput = document.querySelector("input[name=sort]");
+
         sortInput.value = 1;
         form.submit();
     }
 
     // 한 화면에 표기할 행의 갯수가 변경될 때
     function changeRows() {
-        // 페이지 갯수를 클릭했다면 해당 페이징 요청
-        let form = document.querySelector("#form-search");
-        // 페이지 번호 input 요소 선택
-        let rowsInput = document.querySelector("input[name=rows]");
-        // 새로 요청하는 페이지는 1로 초기화
-        let pageInput = form.querySelector("input[name=page]");
         pageInput.value = 1;
         // 폼 제출
         form.submit();
@@ -213,31 +211,26 @@
 
     // 카테고리를 선택했을 때
     function changeCategory(category) {
-        let form = document.querySelector("#form-search");
-        let catInput = document.querySelector("#categoryInput");
-        let pageInput = document.querySelector("input[name=page]");
-
         catInput.value = category;
         pageInput.value = 1;
-
         form.submit();
     }
 
+    function searchKeyword() {
+      pageInput.value = 1;
+      form.submit();
+    }
 
-    $(document).ready(function (){
-      $("#btnValue1").on("click", function (){
-        $("#typeInput").val("value1");
-
-      });
-
-      $("#btnValue2").on("click", function (){
-        $("#typeInput").val("value2");
-
-      });
+    $("#btnValue1").click(function () {
+      $("input[name=type]").val("value1");
+      pageInput.value = 1;
+      form.submit();
     })
 
-
-
-
+    $("#btnValue2").click(function () {
+      $("input[name=type]").val("value2");
+      pageInput.value = 1;
+      form.submit();
+    })
 </script>
 </html>

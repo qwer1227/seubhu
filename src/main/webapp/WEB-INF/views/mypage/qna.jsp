@@ -189,8 +189,6 @@
     <!-- 검색 폼 -->
     <div class="search-form">
         <form action="/mypage/qna" method="get">
-            <input type="hidden" name="category" value="${param.category}">
-
             <div>
                 <select name="opt" class="search-select">
                     <option value="title" ${param.opt == 'title' ? 'selected' : ''}>제목</option>

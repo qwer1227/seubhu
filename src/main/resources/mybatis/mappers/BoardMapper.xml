@@ -111,25 +111,25 @@
     select count(*)
     from BOARDS board
     where is_deleted = 'N'
-<!--    <choose>-->
-<!--      &lt;!&ndash; 내가 쓴 글 보기 &ndash;&gt;-->
-<!--      <when test="condition.type == 'value1'">-->
-<!--        and user_no = #{condition.userNo}-->
-<!--      </when>-->
-<!--      &lt;!&ndash; 내가 쓴 댓글을 작성한 글 보기 &ndash;&gt;-->
-<!--      <when test="condition.type == 'value2'">-->
-<!--        and board.board_no in (-->
-<!--        select distinct board_no-->
-<!--        from BOARD_REPLIES-->
-<!--        where user_no = #{condition.userNo}-->
-<!--        and is_deleted = 'N'-->
-<!--        )-->
-<!--      </when>-->
-<!--      &lt;!&ndash; 기본 조건 (type 값이 없을 경우 등) &ndash;&gt;-->
-<!--      <otherwise>-->
-<!--        and user_no = #{condition.userNo} &lt;!&ndash; 필요 시 기본 조건 추가 &ndash;&gt;-->
-<!--      </otherwise>-->
-<!--    </choose>-->
+    <choose>
+      <!-- 내가 쓴 글 보기 -->
+      <when test="condition.type == 'value1'">
+        and user_no = #{condition.userNo}
+      </when>
+      <!-- 내가 쓴 댓글을 작성한 글 보기 -->
+      <when test="condition.type == 'value2'">
+        and board.board_no in (
+        select distinct board_no
+        from BOARD_REPLIES
+        where user_no = #{condition.userNo}
+        and is_deleted = 'N'
+        )
+      </when>
+      <!-- 기본 조건 (type 값이 없을 경우 등) -->
+      <otherwise>
+        and user_no = #{condition.userNo} <!-- 필요 시 기본 조건 추가 -->
+      </otherwise>
+    </choose>
     <if test="condition.category != null">
       and board.board_cat_name = #{condition.category}
     </if>
