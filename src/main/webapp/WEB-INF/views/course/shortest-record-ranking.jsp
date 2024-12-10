@@ -22,12 +22,18 @@
             <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="list">코스 목록</a>
         </div>
         <div class="col " >
-            <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="runner-ranking">런너 랭킹</a>
+            <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="shortest-record-ranking">런너 랭킹</a>
         </div>
     </div>
 
+    <%-- 런너 순위를 종류별로 선택한다. --%>
+    <div class="mt-5">
+        <a class="btn btn-primary" href="#" role="button">코스 달성 수 순위</a>
+        <a class="btn btn-primary" href="shortest-record-ranking" role="button">최단 기록 순위</a>
+    </div>
+
     <%-- 코스를 선택하면, 해당 코스에 대한 완주자 기록 목록이 화면에 나타난다. --%>
-    <form id="form-select" method="get" action="runner-ranking">
+    <form id="form-select" method="get" action="shortest-record-ranking">
         <div class="row justify-content-center mt-5">
             <input type="hidden" name="myPage"/>
             <input type="hidden" name="allPage"/>
