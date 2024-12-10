@@ -3,6 +3,7 @@ package store.seub2hu2.course.mapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.security.core.parameters.P;
+import store.seub2hu2.course.dto.SuccessRankForm;
 import store.seub2hu2.course.vo.*;
 
 import java.util.List;
@@ -15,9 +16,12 @@ public interface UserCourseMapper {
 
     int getTotalRows(@Param("condition") Map<String, Object> condition); // 코스에 해당하는 완주 기록의 갯수를 가져온다.
     int getTotalRegisterRows(@Param("condition") Map<String, Object> condition); // 로그인한 사용자가 도전 등록한 코스의 갯수를 가져온다.
+    int getTotalAllSuccessCountRanks(@Param("condition") Map<String, Object> condition); // 모든 사용자의 코스 달성 수 순위 목록의 갯수를 가져온다.
+
     List<Records> getRecords(@Param("condition") Map<String, Object> condition); // 조회 범위 내에서 완주 기록 목록을 가져온다.
     List<Course> getCoursesToChallenge(@Param("condition") Map<String, Object> condition); // 조회 범위 내에서 로그인한 사용자가 도전 등록한 코스 목록을 가져온다.
     List<Records> getMyRecords(@Param("condition") Map<String, Object> condition); // 조회 범위 내에서 로그인한 사용자의 코스에 해당하는 완주 기록 목록을 가져온다.
+    List<SuccessRankForm> getAllSuccessCountRanks(@Param("condition") Map<String, Object> condition); // 조회 범위 내에서 모든 사용자의 코스 달성 수 순위 목록을 가져온다.
 
     SuccessWhether checkSuccess(@Param("userNo") int userNo, @Param("courseNo") int courseNo); // 로그인한 사용자가 코스를 성공했는지 확인한다.
     ChallengeWhether checkChallenge(@Param("courseNo") int courseNo, @Param("userNo") int userNo); // 로그인한 사용자가 코스 도전 등록을 했는지 확인한다.
