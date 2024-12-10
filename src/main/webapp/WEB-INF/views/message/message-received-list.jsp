@@ -31,6 +31,7 @@
     </div>
 
     <form id="form-search" action="list" method="get">
+        <input type="hidden" name="page" />
         <!-- 쪽지 리스트 -->
         <div class="p-1 d-flex justify-content-between align-items-center mb-4">
             <!-- 좌측: 일괄 삭제 및 읽음 처리 버튼 -->
@@ -44,13 +45,13 @@
                 <!-- 정렬 옵션 -->
                 <div class="me-3">
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="sort" value="asc" onchange="changeSort()"
-                        ${empty param.sort or param.sort eq 'asc' ? 'checked' : ''}>
+                        <input class="form-check-input" type="radio" name="sort" value="desc" onchange="changeSort()"
+                        ${empty param.sort or param.sort eq 'desc' ? 'checked' : ''}>
                         <label class="form-check-label">최신순</label>
                     </div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="sort" value="desc" onchange="changeSort()"
-                        ${param.sort eq 'desc' ? 'checked' : ''}>
+                        <input class="form-check-input" type="radio" name="sort" value="asc" onchange="changeSort()"
+                        ${param.sort eq 'asc' ? 'checked' : ''}>
                         <label class="form-check-label">오래된순</label>
                     </div>
                 </div>
@@ -58,10 +59,10 @@
                 <!-- 행 수 선택 -->
                 <div>
                     <select class="form-select form-select-sm" name="rows" onchange="changeRows()">
-                        <option value="5" ${param.rows eq 5 ? 'selected' : ''}>5개씩 보기</option>
-                        <option value="10" ${empty param.rows or param.rows eq 10 ? 'selected' : ''}>10개씩 보기</option>
-                        <option value="20" ${param.rows eq 20 ? 'selected' : ''}>20개씩 보기</option>
-                        <option value="30" ${param.rows eq 30 ? 'selected' : ''}>30개씩 보기</option>
+                        <option value="5" ${param.rows eq 5 ? "selected" : ""}>5개씩 보기</option>
+                        <option value="10" ${empty param.rows or param.rows eq 10 ? "selected" : ""}>10개씩 보기</option>
+                        <option value="20" ${param.rows eq 20 ? "selected" : ""}>20개씩 보기</option>
+                        <option value="30" ${param.rows eq 30 ? "selected" : ""}>30개씩 보기</option>
                     </select>
                 </div>
             </div>
@@ -106,27 +107,27 @@
                         </td>
 
                         <td>
-                            <fmt:formatDate value="${message.createdDate}" pattern="yyyy-MM-dd"/>
-                        </td>
-                        <td>${message.readStatus eq 'Y' ? '읽음' : '미읽음'}</td>
-                        <td>
-                            <c:choose>
-                                <c:when test="${message.readStatus eq 'Y'}">
-                                    <fmt:formatDate value="${message.readDate}" pattern="yyyy-MM-dd"/>
-                                </c:when>
-                                <c:otherwise>
-                                    -
-                                </c:otherwise>
-                            </c:choose>
-                        </td>
-                        <td>
-                            <c:if test="${not empty message.messageFile}">
-                                <i class="bi bi-file-earmark-text"></i> <!-- 파일 첨부 아이콘 -->
-                            </c:if>
-                            <c:if test="${empty message.messageFile}">
-                                <i class="bi bi-file-earmark-x"></i> <!-- 파일 첨부 없음 아이콘 -->
-                            </c:if>
-                        </td>
+                        <fmt:formatDate value="${message.createdDate}" pattern="yyyy-MM-dd"/>
+                    </td>
+                    <td>${message.readStatus eq 'Y' ? '읽음' : '미읽음'}</td>
+                    <td>
+                        <c:choose>
+                            <c:when test="${message.readStatus eq 'Y'}">
+                                <fmt:formatDate value="${message.readDate}" pattern="yyyy-MM-dd"/>
+                            </c:when>
+                            <c:otherwise>
+                                -
+                            </c:otherwise>
+                        </c:choose>
+                    </td>
+                    <td>
+                        <c:if test="${not empty message.messageFile}">
+                            <i class="bi bi-file-earmark-text"></i> <!-- 파일 첨부 아이콘 -->
+                        </c:if>
+                        <c:if test="${empty message.messageFile}">
+                            <i class="bi bi-file-earmark-x"></i> <!-- 파일 첨부 없음 아이콘 -->
+                        </c:if>
+                    </td>
                     </tr>
                 </c:forEach>
                 </tbody>
@@ -145,7 +146,7 @@
                 <input type="text" class="form-control" name="keyword" value="${param.keyword}">
             </div>
             <div class="col-1">
-                <button type="submit" class="btn btn-outline-dark" onclick="searchKeyword()">검색</button>
+                <button class="btn btn-outline-dark" onclick="searchKeyword()">검색</button>
             </div>
             <div class="col d-flex justify-content-center">
             </div>
@@ -225,7 +226,6 @@
     // form 태그를 가져온다.
     let form = document.querySelector("#form-search");
     let pageInput = document.querySelector("input[name=page]");
-    let sortInput = document.querySelector("input[name=sort]");
 
     // 검색 버튼을 클릭했을 때, 요청 파라미터 정보를 제출한다.
     function searchKeyword() {
@@ -236,28 +236,18 @@
     // 페이지 번호 링크를 클릭했을 때 변화
     function changePage(page, event) {
         event.preventDefault();
-
         pageInput.value = page;
         form.submit();
     }
 
-    // 검색어를 입력하고 검색버튼을 클릭 했을 때
-    function searchValue() {
-        pageInput.value = 1;
-        form.submit();
-    }
-
     // 정렬 방식 변경 시 호출
-    function changeSort(sortValue) {
-        sortInput.value = sortValue; // 선택한 정렬 값을 숨겨진 input에 설정
+    function changeSort() {
         pageInput.value = 1; // 정렬 변경 시 페이지를 1로 초기화
         form.submit(); // 폼 제출
     }
 
     // 페이지당 행 수 변경 시 호출
-    function changeRows(rowsValue) {
-        let rowsInput = document.querySelector("input[name=rows]");
-        rowsInput.value = rowsValue; // 선택한 행 수를 숨겨진 input에 설정
+    function changeRows() {
         pageInput.value = 1; // 행 수 변경 시 페이지를 1로 초기화
         form.submit(); // 폼 제출
     }

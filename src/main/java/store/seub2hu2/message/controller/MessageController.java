@@ -44,7 +44,7 @@ public class MessageController {
     public String receivedList(
             @RequestParam(name = "page", required = false, defaultValue = "1") int page,
             @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
-            @RequestParam(name = "sort", required = false, defaultValue = "date") String sort,
+            @RequestParam(name = "sort", required = false, defaultValue = "desc") String sort,
             @RequestParam(name = "opt", required = false) String opt,
             @RequestParam(name = "keyword", required = false) String keyword,
             @AuthenticationPrincipal LoginUser loginUser,
@@ -79,7 +79,7 @@ public class MessageController {
     public String sentList(
             @RequestParam(name = "page", required = false, defaultValue = "1") int page,
             @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
-            @RequestParam(name = "sort", required = false, defaultValue = "desc") String sort, // 기본값 변경
+            @RequestParam(name = "sort", required = false, defaultValue = "date") String sort, // 기본값 변경
             @RequestParam(name = "opt", required = false) String opt,
             @RequestParam(name = "keyword", required = false) String keyword,
             @AuthenticationPrincipal LoginUser loginUser,
@@ -110,20 +110,25 @@ public class MessageController {
     }
 
 
-    // 메시지 상세 조회
     @GetMapping("/detail")
     public String detail(
             @RequestParam("messageNo") int messageNo,
             @AuthenticationPrincipal LoginUser loginUser,
             Model model) {
         int userNo = loginUser.getNo();  // 로그인된 사용자 번호
+
+        // 메시지 읽음 처리
+        messageService.markAsRead(messageNo, userNo);
+
+        // 메시지 상세 조회
         Message message = messageService.getMessageDetail(messageNo);
 
         model.addAttribute("message", message);
-        model.addAttribute("userNo", userNo); // userNo를 model에 추가
+        model.addAttribute("userNo", userNo);  // userNo를 model에 추가
 
         return "message/message-detail";  // JSP 경로
     }
+
 
     // 쪽지 작성 폼 화면 반환
     @GetMapping("/add")
@@ -163,10 +168,16 @@ public class MessageController {
     }
 
     @PostMapping("/markAsRead")
-    public String markAsRead(@RequestParam("messageNo") int messageNo) {
-        messageService.markAsRead(messageNo);
+    public String markAsRead(@RequestParam("messageNo") int messageNo, @AuthenticationPrincipal LoginUser loginUser) {
+        int userNo = loginUser.getNo();  // 로그인된 사용자 번호
+
+        // 읽음 처리
+        messageService.markAsRead(messageNo, userNo);
+
+        // 메시지 목록으로 리디렉션
         return "redirect:/message/list";
     }
+
 
     @PostMapping("/markMultipleAsRead")
     public String markMultipleAsRead(@RequestParam("messageNos") List<Integer> messageNos) {

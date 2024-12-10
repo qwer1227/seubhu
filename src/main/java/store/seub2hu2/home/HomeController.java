@@ -6,7 +6,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import lombok.extern.slf4j.Slf4j;
 import store.seub2hu2.product.dto.ProdListDto;
-import store.seub2hu2.user.mapper.UserMapper;
 
 import java.util.List;
 
