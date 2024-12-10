@@ -694,8 +694,9 @@ public class AdminController {
         return "admin/order";
     }
 
+
+
     @GetMapping("/chart")
-//    @ResponseBody
     public Map<String, Object> chart(@RequestParam(name = "day", required = false) String day,
 
                         Model model) {

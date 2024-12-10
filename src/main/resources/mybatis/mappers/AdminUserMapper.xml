@@ -4,6 +4,10 @@
 <mapper namespace="store.seub2hu2.admin.mapper.AdminMapper">
 
     <!--
+
+    -->
+
+    <!--
         void getTotalBreath(@Param("day")String day);
 
         void getTotalAction(@Param("day")String day);
