@@ -138,7 +138,13 @@ public class ReviewService {
             throw new CourseReviewException("해당 리뷰 작성자만 삭제 가능합니다.");
         }
 
-        // 3. 리뷰를 삭제한다.
+        // 3. 테이블에서 리뷰를 삭제한다.
         reviewMapper.deleteReview(reviewNo);
+
+        // 4. 버킷에 저장된 리뷰 이미지를 삭제한다.
+        List<ReviewImage> reviewImages = reviewMapper.getReviewImagesByNo(reviewNo);
+        for (ReviewImage reviewImage : reviewImages) {
+            s3Service.deleteFile(bucketName, folder, reviewImage.getName());
+        }
     }
 }
