@@ -28,7 +28,7 @@
 
     <%-- 런너 순위를 종류별로 선택한다. --%>
     <div class="mt-5">
-        <a class="btn btn-primary" href="#" role="button">코스 달성 수 순위</a>
+        <a class="btn btn-primary" href="success-count-ranking" role="button">코스 달성 수 순위</a>
         <a class="btn btn-primary" href="shortest-record-ranking" role="button">최단 기록 순위</a>
     </div>
 

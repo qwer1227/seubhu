@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import store.seub2hu2.course.dto.SuccessRankForm;
 import store.seub2hu2.course.service.CourseService;
 import store.seub2hu2.course.service.UserCourseService;
 import store.seub2hu2.course.vo.*;
@@ -189,7 +190,7 @@ public class CourseController {
     }
 
     @GetMapping("/shortest-record-ranking")
-    public String ShortestRecordRanking(@RequestParam(name = "myPage", required = false, defaultValue = "1") int myPage,
+    public String shortestRecordRanking(@RequestParam(name = "myPage", required = false, defaultValue = "1") int myPage,
                                         @RequestParam(name = "allPage", required = false, defaultValue = "1") int allPage,
                                         @RequestParam(name = "courseNo", required = false) Integer courseNo,
                                         @AuthenticationPrincipal LoginUser loginUser,
@@ -227,5 +228,26 @@ public class CourseController {
 
         // 8. 뷰이름을 반환한다.
         return "course/shortest-record-ranking";
+    }
+
+    @GetMapping("success-count-ranking")
+    public String successCountRanking (@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                                       @AuthenticationPrincipal LoginUser loginUser,
+                                       Model model) {
+        // Map 객체를 생성하고, page를 객체에 저장한다.
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("page", page);
+
+        // 코스 달성 수 순위 목록을 가져온다.
+        ListDto<SuccessRankForm> dto = userCourseService.getSuccessCountRanking(condition);
+
+        // 로그인한 경우, 나의 코스 달성 수 순위를 가져온다.
+
+        // Model 객체에 가져온 정보들을 저장한다.
+        model.addAttribute("successCountRanks", dto.getData());
+        model.addAttribute("pagination", dto.getPaging());
+
+        // 뷰이름을 반환한다.
+        return "course/success-count-ranking";
     }
 }
