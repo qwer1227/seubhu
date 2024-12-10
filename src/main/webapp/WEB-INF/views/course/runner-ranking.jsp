@@ -29,7 +29,8 @@
     <%-- 코스를 선택하면, 해당 코스에 대한 완주자 기록 목록이 화면에 나타난다. --%>
     <form id="form-select" method="get" action="runner-ranking">
         <div class="row justify-content-center mt-5">
-            <input type="hidden" name="page"/>
+            <input type="hidden" name="myPage"/>
+            <input type="hidden" name="allPage"/>
             <select class="form-select" aria-label="Default select example" style="width: 300px"
                     name="courseNo" onchange="changeCourse()">
                 <option selected value="">코스 선택</option>
@@ -98,21 +99,21 @@
                 <ul class="pagination justify-content-center">
                     <li class="page-item ${myPaging.first ? 'disabled' : '' }">
                         <a class="page-link"
-                           onclick="changeMyRankPage(${myPaging.prevPage}, event)"
+                           onclick="changeMyRankPage(${myPaging.prevPage}, 1, event)"
                            href="list?page=${myPaging.prevPage}">이전</a>
                     </li>
 
                     <c:forEach var="num" begin="${myPaging.beginPage }" end="${myPaging.endPage }">
                         <li class="page-item ${myPaging.page eq num ? 'active' : '' }">
                             <a class="page-link"
-                               onclick="changeMyRankPage(${num }, event)"
+                               onclick="changeMyRankPage(${num }, 1, event)"
                                href="list?page=${num }">${num }</a>
                         </li>
                     </c:forEach>
 
                     <li class="page-item ${myPaging.last ? 'disabled' : '' }">
                         <a class="page-link"
-                           onclick="changeMyRankPage(${myPaging.nextPage}, event)"
+                           onclick="changeMyRankPage(${myPaging.nextPage}, 1, event)"
                            href="list?page=${myPaging.nextPage}">다음</a>
                     </li>
                 </ul>
@@ -158,21 +159,21 @@
                 <ul class="pagination justify-content-center">
                     <li class="page-item ${allPaging.first ? 'disabled' : '' }">
                         <a class="page-link"
-                           onclick="changeAllRankPage(${allPaging.prevPage}, event)"
+                           onclick="changeAllRankPage(${allPaging.prevPage}, 1, event)"
                            href="list?page=${allPaging.prevPage}">이전</a>
                     </li>
 
                     <c:forEach var="num" begin="${allPaging.beginPage }" end="${allPaging.endPage }">
                         <li class="page-item ${allPaging.page eq num ? 'active' : '' }">
                             <a class="page-link"
-                               onclick="changeAllRankPage(${num }, event)"
+                               onclick="changeAllRankPage(${num }, 1, event)"
                                href="list?page=${num }">${num }</a>
                         </li>
                     </c:forEach>
 
                     <li class="page-item ${allPaging.last ? 'disabled' : '' }">
                         <a class="page-link"
-                           onclick="changeAllRankPage(${allPaging.nextPage}, event)"
+                           onclick="changeAllRankPage(${allPaging.nextPage}, 1, event)"
                            href="list?page=${allPaging.nextPage}">다음</a>
                     </li>
                 </ul>
@@ -185,27 +186,40 @@
 <script type="text/javascript">
     // form 태그를 가져온다.
     let form = document.querySelector("#form-select");
-    let pageInput = document.querySelector("input[name=page]");
+    let myPageInput = document.querySelector("input[name=myPage]");
+    let allPageInput = document.querySelector("input[name=allPage]");
 
     // 코스를 선택할 때마다 1페이지를 요청한다.
     function changeCourse() {
-        pageInput.value = 1;
+        myPageInput.value = 1;
+        allPageInput.value = 1;
+
         form.submit();
     }
 
     // 나의 순위 목록의 페이지 번호를 클릭했을 때, 요청 파라미터 정보를 제출한다.
-    function changeMyRankPage(page, event) {
+    function changeMyRankPage(myPage, allPage, event) {
+        // 나의 순위 목록에서 페이지 번호를 클릭하면, 해당 페이지로 이동한다.
         event.preventDefault();
+        myPageInput.value = myPage;
 
-        pageInput.value = page;
+        // 모든 사용자의 순위 목록의 페이지는 1로 고정된다.
+        allPageInput.value = allPage;
+
+        // 요청 파라미터 정보를 제출한다.
         form.submit();
     }
 
     // 모든 사용자의 순위 목록의 페이지 번호를 클릭했을 때, 요청 파라미터 정보를 제출한다.
-    function changeAllRankPage(page, event) {
+    function changeAllRankPage(allPage, myPage, event) {
+        // 모든 사용자의 순위 목록에서 페이지 번호를 클릭하면, 해당 페이지로 이동한다.
         event.preventDefault();
+        allPageInput.value = allPage;
 
-        pageInput.value = page;
+        // 나의 순위 목록의 페이지는 1로 고정된다.
+        myPageInput.value = myPage;
+
+        // 요청 파라미터 정보를 제출한다.
         form.submit();
     }
 </script>
