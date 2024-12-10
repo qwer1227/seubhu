@@ -173,9 +173,27 @@
     </select>
 
     <!--
+        SuccessRankForm getMySuccessCountRank(@Param("userNo") int userNo);
+    -->
+    <select id="getMySuccessCountRank" resultType="store.seub2hu2.course.dto.SuccessCountRankForm">
+        select cr.user_no as userNo
+             , cr.user_nickname as nickName
+             , cr.cnt as successCount
+             , cr.rn as ranking
+        from (select u.user_no
+                   , u.user_nickname
+                   , count(*) as cnt
+                   , rank() over (order by count(*) desc) as rn
+              from COURSE_RECORDS r inner join USERS u
+                                               on r.user_no = u.user_no
+              group by u.user_no) cr
+        where cr.user_no = #{userNo};
+    </select>
+
+    <!--
         List<SuccessRankForm> getAllSuccessCountRanks(@Param("condition") Map<String, Object> condition);
     -->
-    <select id="getAllSuccessCountRanks" resultType="store.seub2hu2.course.dto.SuccessRankForm">
+    <select id="getAllSuccessCountRanks" resultType="store.seub2hu2.course.dto.SuccessCountRankForm">
         select cr.user_no as userNo
              , cr.user_nickname as nickName
              , cr.cnt as successCount

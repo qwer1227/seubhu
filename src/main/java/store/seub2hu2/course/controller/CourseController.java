@@ -7,7 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import store.seub2hu2.course.dto.SuccessRankForm;
+import store.seub2hu2.course.dto.SuccessCountRankForm;
 import store.seub2hu2.course.service.CourseService;
 import store.seub2hu2.course.service.UserCourseService;
 import store.seub2hu2.course.vo.*;
@@ -239,9 +239,13 @@ public class CourseController {
         condition.put("page", page);
 
         // 코스 달성 수 순위 목록을 가져온다.
-        ListDto<SuccessRankForm> dto = userCourseService.getSuccessCountRanking(condition);
+        ListDto<SuccessCountRankForm> dto = userCourseService.getAllSuccessCountRanking(condition);
 
         // 로그인한 경우, 나의 코스 달성 수 순위를 가져온다.
+        if (loginUser != null) {
+            SuccessCountRankForm successCountRank = userCourseService.getMySuccessCountRanking(loginUser.getNo());
+            model.addAttribute("successCountRank", successCountRank);
+        }
 
         // Model 객체에 가져온 정보들을 저장한다.
         model.addAttribute("successCountRanks", dto.getData());

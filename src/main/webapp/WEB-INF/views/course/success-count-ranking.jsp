@@ -1,3 +1,4 @@
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="/WEB-INF/views/common/tags.jsp" %>
 <!doctype html>
@@ -34,22 +35,51 @@
     <%-- 나의 코스 달성 수 순위 --%>
     <%-- 기록이 없는 경우, 기록이 없다고 표시한다. / 로그인하지 않은 경우, 로그인해야 확인 가능하다고 표시한다. --%>
     <table class="table mt-4">
-        <thead>
-            <tr class="table-warning">
-                <th scope="col">나의 순위</th>
-                <th scope="col">나의 닉네임</th>
-                <th scope="col">나의 코스 달성 수</th>
-                <th scope="col">달성한 코스</th>
-            </tr>
-        </thead>
-        <tbody>
+        <sec:authorize access="isAuthenticated()">
+            <sec:authentication property="principal" var="loginUser"/>
+            <c:if test="${!empty loginUser}">
+                <c:choose>
+                    <c:when test="${successCountRank != null}">
+                        <thead>
+                        <tr class="table-warning">
+                            <th scope="col">나의 순위</th>
+                            <th scope="col">나의 닉네임</th>
+                            <th scope="col">나의 코스 달성 수</th>
+                            <th scope="col">달성한 코스</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <th>${successCountRank.ranking}</th>
+                            <td>${successCountRank.nickName}</td>
+                            <td>${successCountRank.successCount}</td>
+                            <td><button class="btn btn-primary">달성한 코스 목록</button></td>
+                        </tr>
+                        </tbody>
+                    </c:when>
+                    <c:otherwise>
+                        <thead>
+                        <tr class="table-warning">
+                            <th scope="col">나의 순위</th>
+                            <th scope="col">나의 닉네임</th>
+                            <th scope="col">나의 코스 달성 수</th>
+                            <th scope="col">달성한 코스</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <th colspan="4">완주한 코스가 없어서 기록이 존재하지 않습니다!</th>
+                        </tr>
+                        </tbody>
+                    </c:otherwise>
+                </c:choose>
+            </c:if>
+        </sec:authorize>
+        <c:if test="${empty loginUser}">
             <tr>
-                <th></th>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td>로그인 후 나의 순위를 확인할 수 있습니다!</td>
             </tr>
-        </tbody>
+        </c:if>
     </table>
 
     <%-- 모든 사용자의 코스 달성 수 순위 --%>
