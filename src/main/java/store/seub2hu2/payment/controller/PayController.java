@@ -15,6 +15,7 @@ import store.seub2hu2.lesson.vo.LessonReservation;
 import store.seub2hu2.mypage.dto.OrderResultDto;
 import store.seub2hu2.mypage.dto.PaymentsDTO;
 import store.seub2hu2.mypage.dto.ResponseDTO;
+import store.seub2hu2.order.exception.PaymentAmountMismatchException;
 import store.seub2hu2.order.mapper.OrderMapper;
 import store.seub2hu2.order.service.OrderService;
 import store.seub2hu2.order.vo.Order;
@@ -86,7 +87,6 @@ public class PayController {
     public String payCompleted(@RequestParam("pg_token") String pgToken
                                , @AuthenticationPrincipal LoginUser loginUser
             , @RequestParam  Map<String, Object> param
-            , @AuthenticationPrincipal LoginUser loginUser
             , Model model) {
 
         String tid = sessionUtils.getAttribute("tid");
@@ -155,27 +155,37 @@ public class PayController {
     // 결제 취소 요청
     @PostMapping("/cancel")
     public String payCancel(@ModelAttribute PaymentDto paymentDto
+                            ,@RequestParam("orderNo") int orderNo
                            , @AuthenticationPrincipal LoginUser loginUser
             , Model model) {
 
-        String paymentId= paymentDto.getPaymentId();
+        if ("레슨".equals(paymentDto.getType())){
 
-        // 예약 정보 조회
-        LessonReservation lessonReservation = lessonReservationService.getLessonReservationByPayId(paymentId);
+            String paymentId= paymentDto.getPaymentId();
 
-        // 주문 정보 조회
+            // 예약 정보 조회
+            LessonReservation lessonReservation = lessonReservationService.getLessonReservationByPayId(paymentId);
 
 
-        // 카카오 결제 취소하기
-        CancelResponse cancelResponse = kakaoPayService.payCancel(paymentDto, paymentId);
+            // 카카오 결제 취소하기
+            CancelResponse cancelResponse = kakaoPayService.payCancel(paymentDto, paymentId);
 
-        // 예약 상태 변경
-        if (lessonReservation != null) {
-            lessonReservationService.cancelReservation(paymentId, ReservationStatus.CANCELLED, paymentDto.getLessonNo());
+            // 예약 상태 변경
+            if (lessonReservation != null) {
+                lessonReservationService.cancelReservation(paymentId, ReservationStatus.CANCELLED, paymentDto.getLessonNo());
+            }
+
+            model.addAttribute("cancelResponse", cancelResponse);
+            return "redirect:/lesson/reservation";
+
+        } else if ("상품".equals(paymentDto.getType())) {
+
+            orderService.cancelOrder(paymentDto);
+
+            return "redirect:/mypage/orderhistory";
         }
 
-        model.addAttribute("cancelResponse", cancelResponse);
-        return "redirect:/lesson/reservation";
+        return null;
     }
 
     // 결제 성공 화면
