@@ -1,8 +1,8 @@
 package store.seub2hu2.order.exception;
 
+// 재고 부족 예외
 public class OutOfStockException extends RuntimeException {
-    
-    // 재고 수량 없을 때
+
     public OutOfStockException(String message) {
         super(message);
     }
