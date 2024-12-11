@@ -13,6 +13,7 @@ public interface BoardMapper {
 
     void insertBoard(@Param("board") Board board);
     List<Board> getBoards(@Param("condition") Map<String, Object> condition);
+    List<Board> getBoardsTopFive(@Param("condition") Map<String, Object> condition);
     int getTotalRowsForBoard(@Param("condition") Map<String, Object> condition);
     Board getBoardDetailByNo(@Param("no") int boardNo);
     void updateBoard(@Param("board") Board board); // 게시글 수정 및 삭제

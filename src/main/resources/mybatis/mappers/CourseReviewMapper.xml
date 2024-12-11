@@ -40,7 +40,7 @@
              , u.user_no
              , u.user_nickname
         from COURSE_REVIEWS r inner join USERS u
-                                         on r.user_no = u.user_no
+        on r.user_no = u.user_no
         where review_no = #{no}
     </select>
 

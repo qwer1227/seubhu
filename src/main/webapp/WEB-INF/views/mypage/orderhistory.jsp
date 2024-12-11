@@ -105,44 +105,64 @@
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
 
 <div id="wrap">
-    <h2>주문 내역</h2>
-    <table class="order-list">
-        <thead>
-            <tr>
-                <th>주문번호</th>
-                <th>이미지</th>
-                <th>상품명</th>
-                <th>가격</th>
-                <th>수량</th>
-                <th>주문상태</th>
-                <th>배송상태</th>
-                <th>리뷰</th>
-            </tr>
-        </thead>
-        <tbody>
-            <c:forEach var="order" items="${orders}">
+    <div class="mb-3">
+        <h2>주문 내역</h2>
+    </div>
+    <form method="post" action="/pay/cancel" id="cancelForm">
+        <input type="hidden" name="type" value="상품" />
+
+        <table class="order-list">
+            <thead>
                 <tr>
-                    <!-- 주문번호 -->
-                    <td class="order-no">
-                        <a href="/mypage/orderhistorydetail/${order.orderNo}">
-                            ${order.orderDate}<br>${order.orderNo}
-                        </a>
-                    </td>
-                    <td><img src="${order.productImage}" alt="상품 이미지"></td>
-                    <td>${order.productName}</td>
-                    <td>${order.productPrice}원</td>
-                    <td>${order.quantity}</td>
-                    <td>${order.orderStatus}</td>
-                    <td>${order.deliveryStatus} <br>${order.deliveryNo}</td>
-                    <td>
-                        <a href="/mypage/reviews/${order.orderNo}" class="btn btn-reviews">리뷰작성</a>
-                        <a href="/mypage/cancel/${order.orderNo}" class="btn btn-cancel">주문취소</a>
-                    </td>
+                    <th>주문번호</th>
+                    <th>이미지</th>
+                    <th>상품명</th>
+                    <th>가격</th>
+                    <th>총 주문 수량</th>
+                    <th>주문상태</th>
+                    <th>배송상태</th>
+                    <th>리뷰</th>
                 </tr>
-            </c:forEach>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                <c:forEach var="order" items="${orders}">
+                    <tr>
+                        <!-- 주문번호 -->
+                        <td class="order-no">
+                            <a href="/mypage/orderhistorydetail/${order.orderNo}">
+                                ${order.orderId}
+                            </a>
+                        </td>
+                        <td><img src="${order.productImage}" alt="상품 이미지"></td>
+                        <td>${order.productName}</td>
+                        <td><fmt:formatNumber>${order.productPrice}</fmt:formatNumber> 원</td>
+                        <td>${order.quantity} 개</td>
+                        <td>${order.orderStatus}</td>
+                        <td>${order.deliveryStatus}</td>
+                        <td>
+                            <a href="/product/detail/${order.orderNo}" class="btn btn-reviews">리뷰작성</a>
+                            <button type="button" class="btn btn-cancel" onclick="confirmCancel(${order.orderNo})">
+                                주문취소
+                            </button>
+                        </td>
+                    </tr>
+                </c:forEach>
+            </tbody>
+        </table>
+        <input type="hidden" name="orderNo" id="orderNo">
+    </form>
 </div>
+<script>
+    function confirmCancel(orderNo) {
+        const confirmResult = confirm("주문을 취소하시겠습니까?");
+        if (confirmResult) {
+            // 숨겨진 필드에 주문 번호 설정
+            document.getElementById("orderNo").value = orderNo;
+            // 폼 제출
+            document.getElementById("cancelForm").submit();
+        }
+    }
+</script>
 
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>

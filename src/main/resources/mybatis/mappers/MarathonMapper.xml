@@ -54,13 +54,42 @@
   <!-- List<Marathon> getMarathons(@Param("condition") Map<String, Object> condition); -->
   <select id="getMarathons" resultType="store.seub2hu2.community.vo.Marathon">
     select *
-    from (select row_number() over(order by marathon_date desc) rn
-        , marathon_no as no
-        , marathon_title as title
-        , marathon_date as marathonDate
-        , marathon_thumbnail as thumbnail
-          from MARATHONS
-          where is_deleted = 'N') as marathon
+    from (select row_number() over(order by m.marathon_date desc) rn
+    , m.marathon_no as no
+    , m.marathon_title as title
+    , m.marathon_date as marathonDate
+    , m.marathon_thumbnail as thumbnail
+    from MARATHONS m join ORGANS o
+     on m.marathon_no = o.marathon_no
+    where m.is_deleted = 'N'
+    <if test="condition.category != null">
+    <choose>
+      <when test="condition.category == '진행중'">
+        and DATE(m.marathon_date) > DATE(now())
+      </when>
+      <otherwise>
+        and DATE(m.marathon_date) &lt; DATE(now())
+      </otherwise>
+    </choose>
+    </if>
+    <if test="condition.opt != null">
+      <choose>
+        <when test="condition.opt == 'all'">
+          and m.marathon_title like concat ('%', #{condition.keyword}, '%')
+          || m.marathon_content like concat('%', #{condition.keyword}, '%')
+        </when>
+        <when test="condition.opt == 'title'">
+          and m.marathon_title like concat ('%', #{condition.keyword}, '%')
+        </when>
+        <when test="condition.opt == 'content'">
+          and m.marathon_content like concat('%', #{condition.keyword}, '%')
+        </when>
+        <when test="condition.opt == 'organ'">
+          and o.organ_name like concat ('%', #{condition.keyword}, '%')
+        </when>
+      </choose>
+    </if>
+    group by no) as marathon
     where rn between #{condition.begin} and #{condition.end}
     order by rn
   </select>
@@ -86,7 +115,7 @@
 
   <!-- Marathon getMarathonDetailByNo(@Param("no") int marathonNo); -->
   <select id="getMarathonDetailByNo" resultType="store.seub2hu2.community.vo.Marathon">
-    select m.marathon_no            as no
+    select m.marathon_no as no
             , m.marathon_thumbnail  as thumbnail
             , m.marathon_title      as title
             , m.marathon_content    as content
@@ -136,7 +165,8 @@
 
   <!-- void deleteMarathonOrgan(@Param("no") int marathonNo); -->
   <delete id="deleteMarathonOrgan">
-    delete from ORGANS
+    delete
+    from ORGANS
     where marathon_no = #{no}
   </delete>
 </mapper>

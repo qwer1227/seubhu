@@ -105,6 +105,10 @@ public class BoardController {
         board.setReply(replyList);
         int replyCnt = replyService.getReplyCnt(boardNo);
 
+        Map<String, Object> condition = new HashMap<>();
+        ListDto<Board> dto = boardService.getBoardsTop(condition);
+        model.addAttribute("boards", dto.getData());
+
         if (loginUser != null) {
             int boardResult = boardService.getCheckLike(boardNo, loginUser);
             model.addAttribute("boardLiked", boardResult);
@@ -218,7 +222,7 @@ public class BoardController {
         return "redirect:/user/login";
     }
 
-    @GetMapping("/add-reply")
+    @PostMapping("/add-reply")
     @PreAuthorize("isAuthenticated()")
     public String addReply(ReplyForm form
             , @AuthenticationPrincipal LoginUser loginUser) {
@@ -244,7 +248,7 @@ public class BoardController {
                               , @AuthenticationPrincipal LoginUser loginUser){
 
         ReplyForm form = new ReplyForm();
-        form.setNo(replyNo);
+        form.setId(replyNo);
         form.setBoardNo(boardNo);
         form.setContent(replyContent);
         form.setUserNo(loginUser.getNo());
@@ -260,7 +264,7 @@ public class BoardController {
                               @RequestParam("bno") int boardNo){
 
         ReplyForm form = new ReplyForm();
-        form.setNo(replyNo);
+        form.setId(replyNo);
         form.setBoardNo(boardNo);
         replyService.deleteReply(replyNo);
 
@@ -323,7 +327,7 @@ public class BoardController {
         boolean isReported = reportService.isReported(form.getType(), form.getNo(), loginUser);
 
         if (!isReported){
-            reportService.registerReportToBoard(form, loginUser);
+            reportService.registerReport(form, loginUser);
         }
 
         return "redirect:detail?no=" + form.getNo();
@@ -337,7 +341,7 @@ public class BoardController {
         boolean isReported = reportService.isReported(form.getType(), form.getNo(), loginUser);
 
         if (!isReported){
-            reportService.registerReportToBoard(form, loginUser);
+            reportService.registerReport(form, loginUser);
         }
 
         return "redirect:detail?no=" + boardNo;
@@ -345,13 +349,12 @@ public class BoardController {
 
     @GetMapping("report-check")
     @ResponseBody
-    public String reportCheck(String type
-            , int no
+    public String reportCheck(@RequestParam("type") String type
+            , @RequestParam("no") int no
             , @AuthenticationPrincipal LoginUser loginUser){
 
         boolean isReported = reportService.isReported(type, no, loginUser);
 
-        System.out.println("=============" + isReported);
         return isReported ? "yes" : "no";
     }
 }

@@ -14,6 +14,7 @@ public interface ProductMapper {
 
     void updateAmount(@Param("size") Size size);
 
+    // 수량 체크
     Size getSizeAmount(@Param("sizeNo") int sizeNo);
 
     // 옵션에 따른 데이터 전체 개수를 조회하기
@@ -34,6 +35,4 @@ public interface ProductMapper {
     // 색상 번호에 따른 이미지들 조회하기
     ProdImagesDto getProdImagesByColorNo(@Param("colorNo") int colorNo);
 
-    // 상품 등록(임시: 관리자가 하기)
-    void insertProduct(Product product);
 }

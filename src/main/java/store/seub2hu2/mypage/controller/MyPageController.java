@@ -334,7 +334,7 @@ public class MyPageController {
             , @RequestParam("content") String replyContent
             , @AuthenticationPrincipal LoginUser loginUser){
         ReplyForm form = new ReplyForm();
-        form.setNo(replyNo);
+        form.setId(replyNo);
         form.setBoardNo(boardNo);
         form.setContent(replyContent);
         form.setUserNo(loginUser.getNo());
@@ -349,7 +349,7 @@ public class MyPageController {
     public String deleteReply(@RequestParam("rno") int replyNo,
                               @RequestParam("bno") int boardNo){
         ReplyForm form = new ReplyForm();
-        form.setNo(replyNo);
+        form.setId(replyNo);
         form.setBoardNo(boardNo);
         replyService.deleteReply(replyNo);
 
@@ -408,7 +408,7 @@ public class MyPageController {
     public String reportBoard(ReportForm form
             , @AuthenticationPrincipal LoginUser loginUser){
 
-        reportService.registerReportToBoard(form, loginUser);
+        reportService.registerReport(form, loginUser);
         return "redirect:detail?no=" + form.getNo();
     }
 
@@ -417,7 +417,7 @@ public class MyPageController {
             , @RequestParam("bno") int boardNo
             , @AuthenticationPrincipal LoginUser loginUser){
 
-        reportService.registerReportToBoard(form, loginUser);
+        reportService.registerReport(form, loginUser);
         return "redirect:detail?no=" + boardNo;
     }
 

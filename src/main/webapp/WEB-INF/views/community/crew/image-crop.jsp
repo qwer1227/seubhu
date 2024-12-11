@@ -28,7 +28,7 @@
   <div class="row">
     <div class="col-12">
       <div class="box border border-1">
-        <img src="https://fengyuanchen.github.io/cropperjs/images/picture.jpg"
+        <img src=""
              id="image">
       </div>
       <div class="text-center">

@@ -112,12 +112,12 @@
                              reservation.status ne '취소' and
                              reservation.status ne '수강종료'}">
 
-                            <form action="/pay/cancel" name="paymentDto" method="POST" style="display: inline;">
+                            <form action="/pay/cancel" name="paymentDto" method="POST" style="display: inline;" id="cancel-form">
                                 <input type="hidden" name="paymentId" value="${reservation.payment.id}">
                                 <input type="hidden" name="userId" value="${loginUser.id}">
                                 <input type="hidden" name="lessonNo" value="${reservation.lesson.lessonNo}">
                                 <input type="hidden" name="totalAmount" value="${reservation.lesson.price}">
-                                <button type="submit" id="cancel-btn" class="btn btn-sm btn-danger"
+                                <button type="button" id="cancel-btn" class="btn btn-sm btn-danger"
                                         onclick="confirmCancel()">취소
                                 </button>
                             </form>
@@ -130,17 +130,12 @@
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script>
-    function confirmCancel() {
-        // 사용자에게 취소 확인 메시지 표시
-        var confirmResult = confirm("예약을 취소하시겠습니까?");
-
-        // 사용자가 '확인'을 클릭하면 폼을 제출
-        if (confirmResult) {
-            return true;  // 폼 제출
-        } else {
-            return false;  // 폼 제출 안 함
-        }
+function confirmCancel() {
+    var confirmResult = confirm("예약을 취소하시겠습니까?");
+    if (confirmResult) {
+        document.getElementById("cancel-form").submit();
     }
+}
 </script>
 </body>
 </html>

@@ -22,7 +22,7 @@
             <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="list">코스 목록</a>
         </div>
         <div class="col " >
-            <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="runner-ranking">런너 랭킹</a>
+            <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="shortest-record-ranking">런너 랭킹</a>
         </div>
     </div>
 
@@ -51,7 +51,7 @@
                                     <c:when test="${not empty userBadges}">
                                         <c:forEach var="userBadge" items="${userBadges}">
                                             <div>
-                                                <img src="/resources/images/badge/${userBadge.badge.image}" width="40px" height="40px">
+                                                <img src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/images/badge/${userBadge.badge.image}" width="40px" height="40px">
                                                     ${userBadge.badge.name} : ${userBadge.badge.description}
                                             </div>
                                         </c:forEach>
@@ -215,12 +215,11 @@
     // 완주 기록 보기 Modal창을 가져온다.
     let myModal = new bootstrap.Modal('#modal-finish-records');
 
-    // 완주 기록 보기 버튼을 클릭하면, 완주 기록을 보여준다.
+    // 완주 기록 보기 버튼을 클릭하면, 로그인한 사용자의 완주 기록을 보여준다.
     function showFinishRecords() {
         getFinishRecords(1);
     }
 
-    // 완주 기록 보기 버튼을 클릭하면, 로그인한 사용자의 완주 기록을 확인한다.
     async function getFinishRecords(page, event) {
         // 1. 페이지 클릭 시 링크 이동을 방지한다.
         if (event) {

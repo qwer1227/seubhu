@@ -13,12 +13,9 @@ import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.course.vo.Region;
 import store.seub2hu2.lesson.mapper.LessonMapper;
 import store.seub2hu2.lesson.vo.Lesson;
-import store.seub2hu2.lesson.vo.LessonReservation;
-import store.seub2hu2.payment.vo.Payment;
 import store.seub2hu2.product.vo.*;
 import store.seub2hu2.user.mapper.UserMapper;
 import store.seub2hu2.user.vo.User;
-import store.seub2hu2.util.FileUtils;
 import store.seub2hu2.util.ListDto;
 import store.seub2hu2.util.Pagination;
 import store.seub2hu2.util.S3Service;
@@ -413,6 +410,52 @@ public class AdminService {
 
             adminMapper.updateCourse(course);
         }
+    }
+
+    public Map<String, Object> getTotalSubject(String day) {
+
+        int breath = adminMapper.getTotalBreath(day);
+
+        int action = adminMapper.getTotalAction(day);
+
+        int exercise = adminMapper.getTotalExercise(day);
+
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("breath", breath);
+        condition.put("action", action);
+        condition.put("exercise", exercise);
+
+        return condition;
+    }
+
+    public Map<String, Object> getTotalPrice(String yesterday) {
+
+        int totalPrice = adminMapper.getTotalPriceByDay(yesterday);
+
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("totalPrice", totalPrice);
+
+        return condition;
+    }
+
+    public ListDto<OrderProductDto> getOrderProduct(Map<String, Object> condition) {
+
+        int totalRows = adminMapper.getTotalOrderProd(condition);
+
+        int page = (Integer) condition.get("page");
+        int rows = (Integer) condition.get("rows");
+
+        Pagination pagination = new Pagination(page, totalRows, rows);
+        int begin = pagination.getBegin();
+        int end = pagination.getEnd();
+        condition.put("begin", begin);
+        condition.put("end", end);
+
+        List<OrderProductDto> orderProductDtos = adminMapper.getSettleProdList(condition);
+
+        ListDto<OrderProductDto> dto = new ListDto<>(orderProductDtos, pagination);
+
+        return dto;
     }
 
 

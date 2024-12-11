@@ -15,6 +15,7 @@ import store.seub2hu2.lesson.vo.LessonReservation;
 import store.seub2hu2.mypage.dto.OrderResultDto;
 import store.seub2hu2.mypage.dto.PaymentsDTO;
 import store.seub2hu2.mypage.dto.ResponseDTO;
+import store.seub2hu2.order.exception.PaymentAmountMismatchException;
 import store.seub2hu2.order.mapper.OrderMapper;
 import store.seub2hu2.order.service.OrderService;
 import store.seub2hu2.order.vo.Order;
@@ -153,28 +154,49 @@ public class PayController {
 
     // 결제 취소 요청
     @PostMapping("/cancel")
-    public String payCancel(@ModelAttribute PaymentDto paymentDto
+    public String payCancel(PaymentDto paymentDto
                            , @AuthenticationPrincipal LoginUser loginUser
             , Model model) {
 
-        String paymentId= paymentDto.getPaymentId();
+        if ("레슨".equals(paymentDto.getType())){
 
-        // 예약 정보 조회
-        LessonReservation lessonReservation = lessonReservationService.getLessonReservationByPayId(paymentId);
+            String paymentId= paymentDto.getPaymentId();
+            // 예약 정보 조회
+            LessonReservation lessonReservation = lessonReservationService.getLessonReservationByPayId(paymentId);
+            // 카카오 결제 취소하기
+            CancelResponse cancelResponse = kakaoPayService.payCancel(paymentDto, paymentId);
+            // 예약 상태 변경
+            if (lessonReservation != null) {
+                lessonReservationService.cancelReservation(paymentId, ReservationStatus.CANCELLED, paymentDto.getLessonNo());
+            }
 
-        // 주문 정보 조회
+            model.addAttribute("cancelResponse", cancelResponse);
+            return "redirect:/lesson/reservation";
+
+        } else if ("상품".equals(paymentDto.getType())) {
+
+            // 주문관련 정보 수정
+            OrderResultDto dto = orderService.cancelOrder(paymentDto);
+
+            String paymentId = dto.getPayId();
+            paymentDto.setTotalAmount(dto.getPayPrice());
+
+            // 카카오 결제 취소
+            CancelResponse cancelResponse = kakaoPayService.payCancel(paymentDto, paymentId);
+
+            // 결재정보를 변경
+            Payment p2 = new Payment();
+            p2.setId(paymentId);
+            p2.setStatus("취소");
+            payMapper.updateProductPayStatus(p2);
 
 
-        // 카카오 결제 취소하기
-        CancelResponse cancelResponse = kakaoPayService.payCancel(paymentDto, paymentId);
+            model.addAttribute("cancelResponse", cancelResponse);
 
-        // 예약 상태 변경
-        if (lessonReservation != null) {
-            lessonReservationService.cancelReservation(paymentId, ReservationStatus.CANCELLED, paymentDto.getLessonNo());
+            return "redirect:/mypage/orderhistory";
         }
 
-        model.addAttribute("cancelResponse", cancelResponse);
-        return "redirect:/lesson/reservation";
+        return null;
     }
 
     // 결제 성공 화면

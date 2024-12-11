@@ -50,7 +50,7 @@
       <div class="container-fluid">
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-          <h1 class="h3 mb-0 text-gray-800">정산</h1>
+          <h1 class="h3 mb-0 text-gray-800">레슨 정산</h1>
         </div>
         <div class="row mt-3">
           <div class="col-12">
@@ -75,12 +75,6 @@
                       class="form-control form-control-sm rounded-pill border-gray"
                     />
                   </div>
-                </div>
-                <div class="col-1">
-                  <select class="form-control" name="pType" onchange="changeRows()">
-                    <option value="lesson" ${param.pType eq 'lesson' ? 'selected' : ''}>레슨</option>
-                    <option value="product" ${param.pType eq 'product' ? 'selected' : ''}>상품</option>
-                  </select>
                 </div>
 <%--                <div class="col-1">--%>
 <%--                  <select class="form-control" name="dayType" onchange="changeRows()">--%>
