@@ -173,6 +173,7 @@
     let cropper = null;
     let formData = new FormData();
     
+    // 이미지 슬라이싱 기본 설정
     function initCropper() {
         cropper = new Cropper(image, {
             dragMode: 'move',
@@ -188,6 +189,7 @@
         });
     }
     
+    // 모달의 설정 버튼 클릭 시, 임시로 썸네일 이미지 저장
     $("#btn-cropper").click(function () {
         if (cropper) {
             let boxData = cropper.getCropBoxData();
@@ -202,7 +204,7 @@
         }
     });
 
-
+    // 등록 버튼 클릭 시, 폼에 있는 값을 전달(이미지는 슬라이싱할 때 전달했기 때문에 따로 추가 설정 안해도 됨)
     document.querySelector("#submit").addEventListener("click", function (){
         let title = document.querySelector("input[name=title]").value;
         let description = document.querySelector("textarea[name=description]").value;
@@ -222,7 +224,6 @@
             formData.append("upfile", upfile.files[0]);
         }
         
-
         $.ajax({
             method: "post",
             url: "register",
@@ -230,13 +231,17 @@
             processData: false,
             contentType: false,
             success: function (crew){
-                console.log(crew); // 서버 응답을 확인
                 window.location.href = "detail?no=" + crew.no;
             }
         })
     });
     
+    // 첨부한 이미지 미리보기 기능을 제공
     function readURL(input) {
+        if (cropper) {
+            cropper.destroy()
+        }
+        
         if (input.files && input.files[0]) {
             var reader = new FileReader();
             reader.onload = function(e) {
@@ -247,7 +252,24 @@
         } else {
             document.getElementById('image').src = "";
         }
+        
+        // if (reader && $('photoBtn').onclick){
+        //     if (input.files && input.files[0]) {
+        //         var reader = new FileReader();
+        //         reader.onload = function(e) {
+        //             document.getElementById('image').src = e.target.result;
+        //             initCropper();
+        //         };
+        //         reader.readAsDataURL(input.files[0]);
+        //     } else {
+        //         document.getElementById('image').src = "";
+        //     }
     }
+    //
+    // $('#photoBtn').click(function(){
+    //     // initCropper();
+    //     readURL();
+    // });
 
     function abort() {
         let result = confirm("작성중이던 글을 임시보관하시겠습니까?");
