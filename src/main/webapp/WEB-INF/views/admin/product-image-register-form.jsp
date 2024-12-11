@@ -84,8 +84,13 @@
                     <button type="button" class="btn btn-danger mt-2 btn-delete">삭제</button>
                   </div>
                 </div>
-                <div class="text-end" style="text-align: right">
-                  <button type="submit" class="btn btn-primary">등록</button>
+                <div class="row justify-content-end">
+                  <div class="text-end" style="text-align: right">
+                    <a type="button" class="btn btn-success mr-2" href="/admin/product-detail?no=${param.no}&colorNo=${param.colorNo}">뒤로가기</a>
+                  </div>
+                  <div class="text-end" style="text-align: right">
+                    <button type="submit" class="btn btn-primary">등록</button>
+                  </div>
                 </div>
               </form>
             </div>

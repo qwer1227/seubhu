@@ -22,7 +22,7 @@
             <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="list">코스 목록</a>
         </div>
         <div class="col " >
-            <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="runner-ranking">런너 랭킹</a>
+            <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="shortest-record-ranking">런너 랭킹</a>
         </div>
     </div>
 
@@ -47,12 +47,19 @@
                         <tr>
                             <th scope="row">현재 배지</th>
                             <td>
-                                <c:forEach var="userBadge" items="${userBadges}">
-                                    <div>
-                                        <img src="/resources/images/badge/${userBadge.badge.image}" width="40px" height="40px">
-                                        ${userBadge.badge.name} : ${userBadge.badge.description}
-                                    </div>
-                                </c:forEach>
+                                <c:choose>
+                                    <c:when test="${not empty userBadges}">
+                                        <c:forEach var="userBadge" items="${userBadges}">
+                                            <div>
+                                                <img src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/images/badge/${userBadge.badge.image}" width="40px" height="40px">
+                                                    ${userBadge.badge.name} : ${userBadge.badge.description}
+                                            </div>
+                                        </c:forEach>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <div>획득한 배지가 없습니다.</div>
+                                    </c:otherwise>
+                                </c:choose>
                             </td>
                         </tr>
                         <tr>

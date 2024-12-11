@@ -86,13 +86,13 @@
                 </sec:authorize>
             </div>
         </div>
-        <div class="col-1"></div> <%-- 빈칸 --%>
+        <div class="col-1"></div>
         <div class="col-6">
             <div class="card">
                 <div class="card-body">
                     <div class="row mb-1">
                         <div class="col">
-                            <img src="/resources/images/course/${course.filename}" class="img-thumbnail">
+                            <img src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/images/course/${course.filename}" class="img-thumbnail">
                         </div>
                     </div>
                 </div>
@@ -107,7 +107,7 @@
             <div class="text-end">
                  <sec:authorize access="isAuthenticated()">
                      <sec:authentication property="principal" var="loginUser" />
-                     <button class="btn btn-primary" onclick="openReviewFormModal(${loginUser.no})">리뷰 작성</button>
+                     <button class="btn btn-primary" onclick="openAddReviewFormModal()">리뷰 작성</button>
                  </sec:authorize>
             </div>
         </div>
@@ -129,7 +129,7 @@
 </div>
 
 <%-- 코스 리뷰 등록 Modal창 --%>
-<div class="modal fade" id="modal-review-form" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modal-add-review-form" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -137,7 +137,6 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <%-- 리뷰 내용을 입력하고 등록한다. --%>
-            <%-- 요청 파라미터 정보 : courseNo, title, content, upfile --%>
             <div class="modal-body">
                 <form method="post" action="/addReview" enctype="multipart/form-data">
                     <input type="hidden" name="courseNo" value="${course.no }" />
@@ -152,10 +151,8 @@
                     <div class="form-group">
                         <label class="form-label">코스 사진 업로드</label>
                         <input type="file" class="form-control" name="upfile" multiple="multiple"/>
-                        <strong style="color:red;">＊ 컨트롤(Ctrl)을 누른 채로 사진 여러 개 클릭</strong>
-                    </div>
-                    <div class="form-group">
-                        <strong style="color:red;">＊ 리뷰 수정이 불가하니 신중히 작성바랍니다!</strong>
+                        <div><strong style="color:red;">＊ 컨트롤(Ctrl)을 누른 채로 사진 여러 개 클릭</strong></div>
+                        <div><strong style="color:red;">＊ 한 번 등록한 리뷰는 수정할 수 없습니다.</strong></div>
                     </div>
                 </form>
             </div>
@@ -188,13 +185,13 @@
     }
 
     // Modal창을 정의한다.
-    const reviewFormModal = new bootstrap.Modal('#modal-review-form')
+    const addReviewFormModal = new bootstrap.Modal('#modal-add-review-form');
 
     // 코스 리뷰 등록 Modal창을 연다.
-    async function openReviewFormModal(userNo) {
+    async function openAddReviewFormModal() {
         // 1. 코스 완주를 성공한 사용자가 아니라면, 경고 메시지를 출력한다.
         let courseNo = document.querySelector("input[name=courseNo]").value;
-        let response = await fetch("/course/check-success/" + userNo + "/" + courseNo);
+        let response = await fetch("/ajax/check-success/" + courseNo);
         let result = await response.json();
 
         if (result.data === "fail") {
@@ -203,7 +200,7 @@
         }
 
         // 2. 코스 리뷰 등록 Modal창을 화면에 표시한다.
-        reviewFormModal.show();
+        addReviewFormModal.show();
     }
 
     // 리뷰 목록이 화면에 표시된다.
@@ -268,7 +265,7 @@
             let review = await response.json();
             appendReview(review);
 
-            reviewFormModal.hide();
+            addReviewFormModal.hide();
         }
     }
 
@@ -280,7 +277,7 @@
 	            <div class="card-header">
 	                <span>\${review.title}</span>
 	                <span class="float-end">
-	                    <small>\${review.user.nickname}</small>
+	                    <small><strong style="color: blue;">\${review.user.nickname}</strong></small>
 	                    <small>\${review.createdDate}</small>
 	                </span>
 	            </div>
@@ -302,7 +299,7 @@
         let imgContent = '';
         if (images != null) {
             for (let image of images) {
-                imgContent += `<img src="/resources/images/courseReviewImages/\${image.name}" class="img-thumbnail" style="width: 100px; height: 100px;"/>`;
+                imgContent += `<img src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/images/courseReviewImages/\${image.name}" class="img-thumbnail" style="width: 100px; height: 100px;"/>`;
             }
 
             let imagesbox = document.querySelector(`#box-images-\${review.no}`);

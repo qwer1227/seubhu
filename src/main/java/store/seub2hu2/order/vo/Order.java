@@ -13,6 +13,7 @@ import java.util.Date;
 @Getter
 public class Order {
     private int no; // 주문번호
+    private String orderId; // 주문 아이디
     private Date orderDate; // 주문날짜
     private String status; // 주문 상태
     private int totalPrice; // 총 주문 금액(상품가격들)

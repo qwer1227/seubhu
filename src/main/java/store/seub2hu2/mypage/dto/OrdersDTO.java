@@ -20,4 +20,5 @@ public class OrdersDTO {
     private double delPayment;
     private double disPrice;
     private double realPrice;
+    private int payNo;
 }

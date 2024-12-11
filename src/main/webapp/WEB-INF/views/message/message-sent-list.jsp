@@ -97,7 +97,7 @@
                 <tr>
                     <td><input type="checkbox" name="messageNo" value="${message.messageNo}"></td> <!-- 개별 체크박스 -->
                     <td>${message.messageNo}</td>
-                    <td>${message.senderNickname}</td>
+                    <td></td>
                     <td id="content-title" class="text-start">
                         <a href="/message/detail?messageNo=${message.messageNo}"
                            style="text-decoration-line: none; color: black">
@@ -188,9 +188,52 @@
     </form>
 </div>
 
-<script type="text/javascript">
-    const form = document.querySelector("#form-search");
-    const pageInput = document.querySelector("input[name=page]");
+<script>
+    function deleteMultiple() {
+        const selectedMessages = Array.from(document.querySelectorAll('input[name="messageNo"]:checked')).map(checkbox => checkbox.value);
+        if (selectedMessages.length === 0) {
+            alert("삭제할 메시지를 선택해주세요.");
+            return;
+        }
+
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/message/deleteMultiple';
+
+        selectedMessages.forEach(messageNo => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'messageNo';
+            input.value = messageNo;
+            form.appendChild(input);
+        });
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+
+    function markMultipleAsRead() {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/message/markMultipleAsRead';
+        document.body.appendChild(form);
+        form.submit();
+    }
+
+    function toggleSelectAll(source) {
+        const checkboxes = document.querySelectorAll('input[name="messageNo"]');
+        checkboxes.forEach(checkbox => checkbox.checked = source.checked);
+    }
+
+    // form 태그를 가져온다.
+    let form = document.querySelector("#form-search");
+    let pageInput = document.querySelector("input[name=page]");
+
+    // 검색 버튼을 클릭했을 때, 요청 파라미터 정보를 제출한다.
+    function searchKeyword() {
+        pageInput.value = 1;
+        form.submit();
+    }
 
     // 페이지 번호 링크를 클릭했을 때 변화
     function changePage(page, event) {
@@ -199,50 +242,19 @@
         form.submit();
     }
 
-    // 전체 선택 체크박스 토글
-    function toggleSelectAll(source) {
-        checkboxes = document.getElementsByName('messageNo');
-        for (var i in checkboxes)
-            checkboxes[i].checked = source.checked;
+    // 정렬 방식 변경 시 호출
+    function changeSort() {
+        pageInput.value = 1; // 정렬 변경 시 페이지를 1로 초기화
+        form.submit(); // 폼 제출
     }
 
-    // 일괄 삭제
-    function deleteSelectedMessages() {
-        const selectedMessages = [];
-        document.querySelectorAll('input[name="messageNo"]:checked').forEach(checkbox => {
-            selectedMessages.push(checkbox.value);
-        });
-
-        if (selectedMessages.length > 0) {
-            alert('삭제할 쪽지 ID: ' + selectedMessages.join(', '));
-        } else {
-            alert('삭제할 쪽지를 선택하세요.');
-        }
+    // 페이지당 행 수 변경 시 호출
+    function changeRows() {
+        pageInput.value = 1; // 행 수 변경 시 페이지를 1로 초기화
+        form.submit(); // 폼 제출
     }
 
-    // 일괄 읽음 처리
-    function markAllAsRead() {
-        const selectedMessages = [];
-        document.querySelectorAll('input[name="messageNo"]:checked').forEach(checkbox => {
-            selectedMessages.push(checkbox.value);
-        });
 
-        if (selectedMessages.length > 0) {
-            alert('읽음 처리할 쪽지 ID: ' + selectedMessages.join(', '));
-
-            // 정렬 방식 변경
-            function changeSort() {
-                const form = document.querySelector("#form-search");
-                form.submit(); // 폼 제출
-            }
-
-// 페이지당 항목 수 변경
-            function changeRows() {
-                const form = document.querySelector("#form-search");
-                form.submit(); // 폼 제출
-            }
-        }
-    }
 </script>
 </body>
 </html>

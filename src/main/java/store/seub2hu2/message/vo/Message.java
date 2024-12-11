@@ -14,14 +14,16 @@ import java.util.Date;
 public class Message {
 
     private int messageNo;
-    private int userNo;
-    private String senderNickname;
+    private int userNo;              // 보낸 사람 번호
+    private String senderNickname;   // 보낸 사람 닉네임
+    private String receiverNickname; // 받는 사람 닉네임
     private String title;
     private String content;
     private Date createdDate;
     private Date updatedDate;
     private String deleted;
     private MessageFile messageFile;
+    private String readStatus;
 
 }
 

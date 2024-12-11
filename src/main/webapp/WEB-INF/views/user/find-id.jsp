@@ -49,7 +49,7 @@
                 </div>
                 <div class="modal-body" id="modalBody">
                     <!--결과 메시지 표시 부분-->
-                    가입하신 아이디는 <b>${userId}</b>입니다.
+                    가입하신 아이디는 <b>${data.userId}</b>입니다.
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
@@ -89,7 +89,7 @@
                 // 모달 본문에 결과 메시지 추가
                 const modalBody = document.getElementById("modalBody");
                 if (data.success) {
-                    modalBody.innerHTML = `<p>아이디는: ${data.userId}</p>`;
+                    modalBody.innerHTML = `<p>가입하신 아이디는 <b>${data.userId}</b>입니다.</p>`;
                 } else {
                     modalBody.innerHTML = `<p>${data.error}</p>`;
                 }

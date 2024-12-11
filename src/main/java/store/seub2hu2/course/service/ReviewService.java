@@ -6,17 +6,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import store.seub2hu2.admin.mapper.AdminMapper;
-import store.seub2hu2.course.dto.AddReviewForm;
+import store.seub2hu2.course.dto.ReviewForm;
 import store.seub2hu2.course.exception.CourseReviewException;
 import store.seub2hu2.course.mapper.ReviewMapper;
 import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.course.vo.Review;
 import store.seub2hu2.course.vo.ReviewImage;
 import store.seub2hu2.user.vo.User;
-import store.seub2hu2.util.FileUtils;
 import store.seub2hu2.util.ListDto;
 import store.seub2hu2.util.Pagination;
-import store.seub2hu2.util.WebContentFileUtils;
+import store.seub2hu2.util.S3Service;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -26,11 +25,14 @@ import java.util.Map;
 @Service
 @Transactional
 public class ReviewService {
-    @Value("${upload.directory.course}")
-    private String saveDirectory;
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucketName;
+
+    @Value("resources/images/courseReviewImages")
+    private String folder;
 
     @Autowired
-    WebContentFileUtils webContentFileUtils;
+    private S3Service s3Service;
 
     @Autowired
     private ReviewMapper reviewMapper;
@@ -78,7 +80,7 @@ public class ReviewService {
      * @param userNo 사용자 번호
      * @return 입력한 리뷰 정보
      */
-    public Review addNewReview(AddReviewForm form, int userNo) {
+    public Review addNewReview(ReviewForm form, int userNo) {
         // 1. 등록할 리뷰 정보를 리뷰 객체에 저장한다.
         Review review = new Review();
         review.setTitle(form.getTitle());
@@ -95,17 +97,17 @@ public class ReviewService {
         // 2. 입력한 리뷰를 테이블에 저장한다.
         reviewMapper.insertReview(review);
 
-        // 3. 첨부 파일을 지정된 경로에 저장하고, 테이블에 저장한다.
+        // 3. 첨부 파일이 있다면 if문을 실행한다.
         List<MultipartFile> multipartFiles = form.getUpfiles();
         List<ReviewImage> reviewImages = new ArrayList<>();
+
         if (multipartFiles != null) {
             for (MultipartFile multipartFile : multipartFiles) {
-                // 첨부 파일을 지정된 경로에 저장 후, 파일 이름을 가져온다.
+                // 첨부파일을 지정된 경로에 저장한다.
                 String filename = System.currentTimeMillis() + multipartFile.getOriginalFilename();
-                webContentFileUtils.saveWebContentFile(multipartFile, saveDirectory, filename);
-                System.out.println(filename);
+                s3Service.uploadFile(multipartFile, bucketName, folder, filename);
 
-                // 코스 리뷰 이미지 테이블에 데이터를 추가한다.
+                // ReviewImage 객체에 파일 정보를 저장하고, 테이블에도 저장한다.
                 ReviewImage reviewImage = new ReviewImage();
                 reviewImage.setName(filename);
                 reviewImage.setReviewNo(review.getNo());
@@ -136,7 +138,13 @@ public class ReviewService {
             throw new CourseReviewException("해당 리뷰 작성자만 삭제 가능합니다.");
         }
 
-        // 3. 리뷰를 삭제한다.
+        // 3. 테이블에서 리뷰를 삭제한다.
         reviewMapper.deleteReview(reviewNo);
+
+        // 4. 버킷에 저장된 리뷰 이미지를 삭제한다.
+        List<ReviewImage> reviewImages = reviewMapper.getReviewImagesByNo(reviewNo);
+        for (ReviewImage reviewImage : reviewImages) {
+            s3Service.deleteFile(bucketName, folder, reviewImage.getName());
+        }
     }
 }

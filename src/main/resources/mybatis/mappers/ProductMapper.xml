@@ -2,12 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="store.seub2hu2.product.mapper.ProductMapper">
 
-    <!--
-        void insertProduct(Product product);
-    -->
-    <insert id="insertProduct">
-
-    </insert>
+    <update id="updateAmount">
+        UPDATE PROD_SIZES
+        SET PROD_AMOUNT = #{size.amount}
+        WHERE SIZE_NO = #{size.no}
+    </update>
 
     <!--
     int getTotalRows(@Param("condition") Map<String, Object> condition);
@@ -68,13 +67,10 @@
             P.PROD_IMG_THUM AS imgThum,
             PC.CAT_NO AS "category.no",
             PC.CAT_NAME AS "category.name",
-            PB.BRAND_NAME AS "brand.name",
-            PL.COLOR_NAME AS "color.name",
-            PL.COLOR_NO AS "color.no"
+            PB.BRAND_NAME AS "brand.name"
             FROM PRODUCTS P
                 JOIN PROD_CATEGORIES PC ON P.CAT_NO = PC.CAT_NO
                 JOIN PROD_BRANDS PB ON P.BRAND_NO = PB.BRAND_NO
-                LEFT OUTER JOIN PROD_COLORS PL ON P.PROD_COLOR_NUM = PL.COLOR_NO
             <if test="condition != null">
                 <choose>
                     <when test="condition.opt == 'name'">
@@ -212,6 +208,17 @@
         JOIN PROD_IMGS PI
         ON PC.COLOR_NO = PI.COLOR_NO
         WHERE PC.COLOR_NO = ${colorNo}
+    </select>
+
+    <!--
+       수량정보가져오기
+    -->
+    <select id="getSizeAmount" resultType="store.seub2hu2.product.vo.Size">
+        SELECT
+            SIZE_NO as no
+            , PROD_AMOUNT as amount
+        FROM PROD_SIZES
+        WHERE SIZE_NO = #{sizeNo}
     </select>
 
 </mapper>

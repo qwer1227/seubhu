@@ -36,7 +36,9 @@ import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.ListDto;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -47,10 +49,7 @@ import java.util.*;
 @Slf4j
 public class AdminController {
 
-
-
     private final CourseService courseService;
-
     private final AdminService adminService;
     private final LessonService lessonService;
     private final LessonFileService lessonFileService;
@@ -522,7 +521,6 @@ public class AdminController {
                                      @RequestParam("colorNo") int colorNo,
                                      Model model) {
 
-
         ProdDetailDto prodDetailDto = productService.getProductByNo(no);
         model.addAttribute("prodDetailDto", prodDetailDto);
 
@@ -696,10 +694,57 @@ public class AdminController {
         return "admin/order";
     }
 
-    @GetMapping("/chart")
-    public String chart() {
 
-        return "admin/chart";
+
+    @GetMapping("/chart")
+    public Map<String, Object> chart(@RequestParam(name = "day", required = false) String day,
+
+                        Model model) {
+
+        if (day == null || day.isEmpty()) {
+            // 현재 날짜로 기본 설정
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            day = sdf.format(new Date());
+        }
+
+        Map<String, Object> conditions = adminService.getTotalSubject(day);
+
+        model.addAttribute("conditions", conditions);
+
+        return conditions;
+    }
+
+    @GetMapping("/p-settlement")
+    public String pSettlement(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                              @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
+                              @RequestParam(name = "sort", required = false) String sort,
+                              @RequestParam(name = "opt", required = false, defaultValue = "all") String opt,
+                              @RequestParam(name = "day", required = false) String day,
+                              @RequestParam(name = "keyword", required = false, defaultValue = "all") String keyword,
+                              @RequestParam(name = "value", required = false) String value,
+                              Model model) {
+
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("page", page);
+        condition.put("rows", rows);
+        condition.put("sort", sort);
+        condition.put("opt", opt);
+
+        if (StringUtils.hasText(day)) {
+            condition.put("day", day);
+        }
+
+        if (StringUtils.hasText(value)) {
+            condition.put("keyword", keyword);
+            condition.put("value", value);
+        }
+
+        ListDto<OrderProductDto> dto = adminService.getOrderProduct(condition);
+
+        model.addAttribute("dto", dto.getData());
+        model.addAttribute("paging", dto.getPaging());
+
+        return "admin/p-settlement";
     }
 
     @GetMapping("/settlement")
@@ -710,7 +755,7 @@ public class AdminController {
                              @RequestParam(name = "sort", required = false, defaultValue ="latest") String sort,
                              @RequestParam(name = "opt", required = false, defaultValue = "all") String opt,
                              @RequestParam(name = "keyword", required = false) String keyword,
-                             @RequestParam(name= "value", required = false) String value,
+                             @RequestParam(name = "value", required = false) String value,
                              Model model) {
 
     Map<String, Object> condition = new HashMap<>();

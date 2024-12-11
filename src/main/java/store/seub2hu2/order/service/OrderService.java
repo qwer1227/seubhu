@@ -5,12 +5,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.seub2hu2.cart.dto.CartItemDto;
 import store.seub2hu2.delivery.vo.Delivery;
-import store.seub2hu2.mypage.dto.OrderResponse;
-import store.seub2hu2.mypage.dto.ResponseDTO;
+import store.seub2hu2.mypage.dto.*;
 import store.seub2hu2.order.dto.OrderForm;
 import store.seub2hu2.order.mapper.OrderMapper;
 import store.seub2hu2.order.vo.Order;
 import store.seub2hu2.order.vo.OrderItem;
+import store.seub2hu2.payment.dto.PaymentDto;
+import store.seub2hu2.product.mapper.ProductMapper;
+import store.seub2hu2.product.vo.Size;
 import store.seub2hu2.user.vo.Addr;
 import store.seub2hu2.user.vo.User;
 
@@ -24,6 +26,9 @@ public class OrderService {
 
     @Autowired
     OrderMapper orderMapper;
+
+    @Autowired
+    ProductMapper productMapper;
 
 
     /**
@@ -57,4 +62,37 @@ public class OrderService {
         System.out.println("테스트"+orderMapper.getOrderDetails(orderNo));
         return orderMapper.getOrderDetails(orderNo);
     }
+
+    public OrderResultDto getOrderResult(int orderNo){
+
+        return orderMapper.getOrderResult(orderNo);
+    }
+
+    public int updateOrderPayNo(int orderNo, int payNo){
+        OrdersDTO ordersDTO = new OrdersDTO();
+        ordersDTO.setOrderNo(orderNo);
+        ordersDTO.setPayNo(payNo);
+
+        return orderMapper.updateOrder(ordersDTO);
+    }
+
+    // 주문 취소
+    public void cancelOrder(PaymentDto paymentDto) {
+        // 1. 주문 상태 변경
+        orderMapper.updateOrderStatus(paymentDto.getOrderNo(), "주문취소");
+
+        // 2. 주문 재고 복원
+        List<OrderItem> orderItems = paymentDto.getOrderItems();
+        for (OrderItem item : orderItems) {
+            // 현재 재고 조회
+            Size size = productMapper.getSizeAmount(item.getSizeNo());
+
+            // 주문된 수량만큼 재고 복원
+            size.setAmount(size.getAmount() + item.getStock());
+
+            // 변경된 재고 업데이트
+            productMapper.updateAmount(size);
+        }
+    }
+
 }

@@ -4,11 +4,312 @@
 <mapper namespace="store.seub2hu2.admin.mapper.AdminMapper">
 
     <!--
+        List<OrderProductDto> getSettleProdList(Map<String, Object> condition);
+    -->
+    <select id="getSettleProdList" resultType="store.seub2hu2.admin.dto.OrderProductDto">
+        select
+            *
+        from
+        (
+        select
+                <if test="condition.sort != null">
+                    <choose>
+                        <when test="condition.sort == 'latest'">
+                            ROW_NUMBER() OVER (ORDER BY PM.pay_no desc) as RN ,
+                        </when>
+                        <when test="condition.sort == 'oldestDate'">
+                            ROW_NUMBER() OVER (ORDER BY PM.pay_no asc) as RN ,
+                        </when>
+                        <when test="condition.sort == 'price'">
+                            ROW_NUMBER() OVER (ORDER BY PM.pay_price desc) as RN ,
+                        </when>
+                    </choose>
+                </if>
+                PM.pay_no               as payNo
+                , O.order_no            as orderNo
+                , O.order_number        as orderNum
+                , OP.order_prod_no      as orderProdNo
+                , PM.pay_type           as payType
+                , U.user_name           as userName
+                , U.user_id             as userId
+                , U.user_tel            as userTel
+                , PM.pay_price          as payPrice
+                , PM.pay_status         as payStatus
+                , PM.pay_method         as payMethod
+                , P.prod_name           as prodName
+                , PS.prod_size          as prodSize
+                , OP.order_prod_amount  as orderProdAmount
+                , PM.pay_date           as payDate
+                from
+                    ORDERS O
+                JOIN PAYMENTS PM ON O.pay_no = PM.pay_no
+                JOIN USERS U ON O.user_no = U.user_no
+                JOIN ORDER_PRODUCTS OP ON O.order_no = OP.order_no
+                JOIN PRODUCTS P ON OP.prod_no = P.prod_no
+                JOIN PROD_SIZES PS ON OP.size_no = PS.size_no
+                where
+                    pay_type = '상품'
+                    <if test="condition.day != null">
+                        and (
+                        DATE_FORMAT(PM.pay_date, '%Y-%m-%d') = #{condition.day}
+                        or DATE_FORMAT(PM.pay_date, '%Y-%m') = #{condition.day}
+                        )
+                    </if>
+                    <if test="condition.opt != null">
+                        <choose>
+                            <when test="condition.opt == 'all'">
+
+                            </when>
+                            <when test="condition.opt == 'notReady'">
+                                and P.pay_status = '결제완료'
+                            </when>
+                            <when test="condition.opt == 'cancel'">
+                                and P.pay_status = '취소'
+                            </when>
+                        </choose>
+                    </if>
+                    <if test="condition != null and condition.keyword != null">
+                        <choose>
+                            <when test="condition.keyword == 'all'">
+
+                            </when>
+                            <when test="condition.keyword == 'payName'">
+                                and U.user_name like CONCAT('%',#{condition.value},'%')
+                            </when>
+                            <when test="condition.keyword == 'payId'">
+                                and U.user_id like CONCAT('%',#{condition.value},'%')
+                            </when>
+                        </choose>
+                    </if>
+        ) as subquery
+    </select>
+    <!--
+        int getTotalOrderProd(condition);
+    -->
+    <select id="getTotalOrderProd" resultType="int">
+        select
+            count(*)
+        from
+            (
+            SELECT
+                <if test="condition.sort != null">
+                    <choose>
+                        <when test="condition.sort == 'latest'">
+                            ROW_NUMBER() OVER (ORDER BY PM.pay_no desc) as RN ,
+                        </when>
+                        <when test="condition.sort == 'oldestDate'">
+                            ROW_NUMBER() OVER (ORDER BY PM.pay_no asc) as RN ,
+                        </when>
+                        <when test="condition.sort == 'price'">
+                            ROW_NUMBER() OVER (ORDER BY PM.pay_price desc) as RN ,
+                        </when>
+                    </choose>
+                </if>
+                PM.pay_no
+                 , O.order_no
+                 , O.order_number
+                 , OP.order_prod_no
+                 , PM.pay_type
+                 , U.user_name
+                 , U.user_id
+                 , U.user_tel
+                 , PM.pay_price
+                 , PM.pay_status
+                 , P.prod_name
+                 , PS.prod_size
+                 , OP.order_prod_amount
+                 , PM.pay_date
+            FROM
+                ORDERS O
+                    JOIN PAYMENTS PM ON O.pay_no = PM.pay_no
+                    JOIN USERS U ON O.user_no = U.user_no
+                    JOIN ORDER_PRODUCTS OP ON O.order_no = OP.order_no
+                    JOIN PRODUCTS P ON OP.prod_no = P.prod_no
+                    JOIN PROD_SIZES PS ON OP.size_no = PS.size_no
+            WHERE
+                pay_type = '상품'
+            <if test="condition.day != null">
+                and (
+                DATE_FORMAT(PM.pay_date, '%Y-%m-%d') = #{condition.day}
+                or DATE_FORMAT(PM.pay_date, '%Y-%m') = #{condition.day}
+                )
+            </if>
+            <if test="condition.opt != null">
+                <choose>
+                    <when test="condition.opt == 'all'">
+
+                    </when>
+                    <when test="condition.opt == 'notReady'">
+                        and P.pay_status = '결제완료'
+                    </when>
+                    <when test="condition.opt == 'cancel'">
+                        and P.pay_status = '취소'
+                    </when>
+                </choose>
+            </if>
+            <if test="condition != null and condition.keyword != null">
+                <choose>
+                    <when test="condition.keyword == 'all'">
+
+                    </when>
+                    <when test="condition.keyword == 'payName'">
+                        and U.user_name like CONCAT('%',#{condition.value},'%')
+                    </when>
+                    <when test="condition.keyword == 'payId'">
+                        and U.user_id like CONCAT('%',#{condition.value},'%')
+                    </when>
+                    <when test="condition.keyword == 'lessonName'">
+                        and L.lesson_title like CONCAT('%',#{condition.value},'%')
+                    </when>
+                </choose>
+            </if>
+            ) as subquery;
+    </select>
+    <!--
+        int getTotalPriceByDay(String yesterday);
+    -->
+    <select id="getTotalPriceByDay" resultType="int">
+        select
+            (
+                select SUM(P2.pay_price)
+                from PAYMENTS P2, USERS U2, LESSON_RESERVATIONS R2, LESSONS L2
+                where P2.user_id = U2.user_id
+                  and P2.pay_id = R2.lesson_reservation_pay_id
+                  and R2.lesson_no = L2.lesson_no
+                  and P2.pay_type = '레슨'
+                  and P2.PAY_STATUS = '결제확정'
+                  and (
+                    DATE_FORMAT(P2.pay_date, '%Y-%m-%d') = #{yesterday}
+                    )
+            ) as totalPrice
+        from
+            (
+                select
+                    P.pay_no		as payNo
+                     , P.pay_type	as settleType
+                     , U.user_name 	as name
+                     , U.user_id	as id
+                     , L.lesson_title    as title
+                     , P.pay_price	as price
+                     , P.pay_date	as payDate
+                     , P.pay_cancel_date as payCancelDate
+                     , P.pay_method as payMethod
+                     , P.pay_status as status
+                     , L.lesson_subject as lessonSubject
+                from
+                    PAYMENTS P, USERS U, LESSON_RESERVATIONS R, LESSONS L
+                where
+                    P.user_id = U.user_id
+                  and
+                    P.pay_id = R.lesson_reservation_pay_id
+                  and
+                    R.lesson_no = L.lesson_no
+                  and
+                    P.pay_type = '레슨'
+                    LIMIT 1
+            )as subquery;
+    </select>
+    <!--
+        void getTotalBreath(@Param("day")String day);
+
+        void getTotalAction(@Param("day")String day);
+
+        void getTotalExercise(@Param("day")String day);
+    -->
+    <select id="getTotalBreath" resultType="int">
+        select
+            count(*)
+        from
+            (
+                select
+                    L.lesson_subject
+                from PAYMENTS P, USERS U, LESSON_RESERVATIONS R, LESSONS L
+
+                where
+                    P.user_id = U.user_id
+                  and
+                    P.pay_id = R.lesson_reservation_pay_id
+                  and
+                    R.lesson_no = L.lesson_no
+                  and
+                    P.pay_type = '레슨'
+                  and
+                    L.LESSON_SUBJECT = '호흡'
+                  and
+                    DATE_FORMAT(P.pay_date, '%Y-%m-%d') = #{day}
+            ) as subquery;
+
+    </select>
+
+    <select id="getTotalAction" resultType="int">
+        select
+            count(*)
+        from
+            (
+                select
+                    L.lesson_subject
+                from PAYMENTS P, USERS U, LESSON_RESERVATIONS R, LESSONS L
+
+                where
+                    P.user_id = U.user_id
+                  and
+                    P.pay_id = R.lesson_reservation_pay_id
+                  and
+                    R.lesson_no = L.lesson_no
+                  and
+                    P.pay_type = '레슨'
+                  and
+                    L.LESSON_SUBJECT = '운동'
+                  and
+                    DATE_FORMAT(P.pay_date, '%Y-%m-%d') = #{day}
+            ) as subquery;
+    </select>
+
+    <select id="getTotalExercise" resultType="int">
+        select
+            count(*)
+        from
+            (
+            select
+                L.lesson_subject
+            from
+                PAYMENTS P, USERS U, LESSON_RESERVATIONS R, LESSONS L
+            where
+                P.user_id = U.user_id
+              and
+                P.pay_id = R.lesson_reservation_pay_id
+              and
+                R.lesson_no = L.lesson_no
+              and
+                P.pay_type = '레슨'
+              and
+                L.LESSON_SUBJECT = '자세'
+              and
+                DATE_FORMAT(P.pay_date, '%Y-%m-%d') = #{day}
+            ) as subquery;
+    </select>
+
+    <!--
         int getSettleTotalRows(Map<String, Object> condition);
     -->
     <select id="getSettleTotalRows" resultType="int">
         select
-            count(*)
+            count(*),
+        (
+        select SUM(P2.pay_price)
+        from PAYMENTS P2, USERS U2, LESSON_RESERVATIONS R2, LESSONS L2
+        where P2.user_id = U2.user_id
+        and P2.pay_id = R2.lesson_reservation_pay_id
+        and R2.lesson_no = L2.lesson_no
+        and P2.pay_type = '레슨'
+        and P2.PAY_STATUS = '결제확정'
+        <if test="condition.day != null">
+            and (
+            DATE_FORMAT(P2.pay_date, '%Y-%m-%d') = #{condition.day}
+            or DATE_FORMAT(P2.pay_date, '%Y-%m') = #{condition.day}
+            )
+        </if>
+        ) as totalPrice
         from
             PAYMENTS P, USERS U, LESSON_RESERVATIONS R, LESSONS L
         where
@@ -107,6 +408,7 @@
                  , P.pay_cancel_date as payCancelDate
                  , P.pay_method as payMethod
                  , P.pay_status as status
+                 , L.lesson_subject as lessonSubject
             from
                 PAYMENTS P, USERS U, LESSON_RESERVATIONS R, LESSONS L
             where
@@ -529,6 +831,7 @@
         where
             REGION_NO = (SELECT MAX(REGION_NO) FROM COURSE_REGION);
     </select>
+
     <!--
         코스등록
         void insertCourse(@Param("course") Course course);
@@ -597,8 +900,6 @@
         </selectKey>
     </insert>
 
-
-
     <!--
         User getUserByNo(@Param("no") int no);
     -->
@@ -644,6 +945,7 @@
                 </if>
             </where>
         </select>
+
     <!--
         List<User> getUsers(@Param("condition")Map<String, Object> condition);
     -->

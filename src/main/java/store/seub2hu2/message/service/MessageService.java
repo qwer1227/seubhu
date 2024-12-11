@@ -3,6 +3,7 @@ package store.seub2hu2.message.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import store.seub2hu2.message.dto.MessageForm;
 import store.seub2hu2.message.dto.MessageReceived;
@@ -64,7 +65,7 @@ public class MessageService {
             messageFile.setFileNo(message.getMessageNo());
             messageFile.setSavedName(message.getMessageFile().getSavedName());
             messageFile.setOriginalName(message.getMessageFile().getOriginalName());
-            // UploadFile 테이블에 저장
+            // MessageFile 테이블에 저장
             messageFileMapper.insertMessageFile(messageFile);
 
             // 수신자 처리
@@ -113,31 +114,36 @@ public class MessageService {
         return getMessages(condition, false); // 보낸 메시지 조회
     }
 
+
     // 메시지 상세 조회
     public Message getMessageDetail(int messageNo) {
         return messageMapper.getMessageDetailByNo(messageNo);
     }
 
 
+    // 단일 메시지 읽음 처리
+    @Transactional
+    public void markAsRead(int messageNo, int userNo) {
+        // 읽음 상태 업데이트
+        messageMapper.updateReceiveMessageReadStatus(messageNo, userNo);
+        messageMapper.updateMessageReadStatus(messageNo);
+    }
+
+
     // 단일 메시지 삭제
-    public void deleteMessage(int messageNo) {
+    public void deleteMessage ( int messageNo){
         messageMapper.deleteMessage(messageNo);
     }
 
     // 다중 메시지 삭제
-    public void deleteMessages(List<Integer> messageNos) {
+    public void deleteMessages (List < Integer > messageNos) {
         messageMapper.deleteMessages(messageNos);
     }
 
-    // 단일 메시지 읽음 처리
-    public void markAsRead(int messageNo) {
-        messageMapper.updateReadStatus(messageNo);
-    }
 
     // 다중 메시지 읽음 처리
-    public void markMultipleAsRead(List<Integer> messageNos) {
+    public void markMultipleAsRead (List < Integer > messageNos) {
         messageMapper.updateReadStatuses(messageNos);
     }
-
 
 }

@@ -4,12 +4,18 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import store.seub2hu2.product.dto.*;
 import store.seub2hu2.product.vo.Product;
+import store.seub2hu2.product.vo.Size;
 
 import java.util.List;
 import java.util.Map;
 
 @Mapper
 public interface ProductMapper {
+
+    void updateAmount(@Param("size") Size size);
+
+    // 수량 체크
+    Size getSizeAmount(@Param("sizeNo") int sizeNo);
 
     // 옵션에 따른 데이터 전체 개수를 조회하기
     int getTotalRows(@Param("condition")Map<String, Object> condition);
@@ -29,6 +35,4 @@ public interface ProductMapper {
     // 색상 번호에 따른 이미지들 조회하기
     ProdImagesDto getProdImagesByColorNo(@Param("colorNo") int colorNo);
 
-    // 상품 등록(임시: 관리자가 하기)
-    void insertProduct(Product product);
 }
