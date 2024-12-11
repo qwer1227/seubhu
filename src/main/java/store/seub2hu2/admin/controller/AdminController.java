@@ -714,6 +714,17 @@ public class AdminController {
         return conditions;
     }
 
+    @GetMapping("/p-settlement/preview")
+    @ResponseBody
+    public List<prevOrderProdDto> prodPreview(@RequestParam("orderNo") int orderNo
+                                             ){
+
+        List<prevOrderProdDto> dtos = adminService.getOrderProdPrev(orderNo);
+
+        System.out.println("-----------------dtos:" + dtos);
+        return dtos;
+    }
+
     @GetMapping("/p-settlement")
     public String pSettlement(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
                               @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
@@ -765,6 +776,11 @@ public class AdminController {
                              @RequestParam(name = "keyword", required = false) String keyword,
                              @RequestParam(name = "value", required = false) String value,
                              Model model) {
+        if (day == null || day.isEmpty()) {
+            // 현재 날짜로 기본 설정
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            day = sdf.format(new Date());
+        }
 
     Map<String, Object> condition = new HashMap<>();
     condition.put("page", page);

@@ -458,9 +458,45 @@ public class AdminService {
         return dto;
     }
 
+    public List<prevOrderProdDto> getOrderProdPrev(int orderNo) {
 
-//    public Color getProductByColorNo(Integer colorNo) {
-//
-//        return adminMapper.getCallProductByColorNo(colorNo);
-//    }
+        List<prevOrderProdDto> dto = adminMapper.orderProdPrev(orderNo);
+
+        return dto;
+    }
+
+
+    public Map<String, Object> getTotalProdPrice(String yesterday) {
+
+        int totalProdPrice = adminMapper.getTotalProdPriceByDay(yesterday);
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("totalProdPrice", totalProdPrice);
+
+        return condition;
+    }
+
+    public Map<String, Object> getTotalProdAmount(String yesterday) {
+        int totalProdAmount = adminMapper.getTotalOrderProdAmount(yesterday);
+
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("totalProdAmount", totalProdAmount);
+
+        return condition;
+    }
+
+    public Map<String, Object> getTotalProdCatNo(String day) {
+
+        int man = adminMapper.getTotalProdMan(day);
+
+        int woman = adminMapper.getTotalProdWoman(day);
+
+        int run = adminMapper.getTotalProdRun(day);
+
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("man", man);
+        condition.put("woman", woman);
+        condition.put("run", run);
+
+        return condition;
+    }
 }

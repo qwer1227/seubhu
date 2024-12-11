@@ -4,6 +4,244 @@
 <mapper namespace="store.seub2hu2.admin.mapper.AdminMapper">
 
     <!--
+        int getTotalProdMan(@Param("day")String day);
+
+        int getTotalProdWoman(@Param("day")String day);
+
+        int getTotalProdRun(@Param("day")String day);
+    -->
+    <select id="getTotalProdMan" resultType="int">
+        select
+            count(*)
+        from
+            (
+            select
+                CAT.top_cat_no
+            from
+                ORDERS O
+                    JOIN PAYMENTS PM ON O.pay_no = PM.pay_no
+                    JOIN USERS U ON O.user_no = U.user_no
+                    JOIN ORDER_PRODUCTS OP ON O.order_no = OP.order_no
+                    JOIN PRODUCTS P ON OP.prod_no = P.prod_no
+                    JOIN PROD_SIZES PS ON OP.size_no = PS.size_no
+                    JOIN PROD_CATEGORIES CAT ON P.cat_no = CAT.cat_no
+            where
+                PM.pay_type = '상품'
+              and
+                CAT.top_cat_no = 10
+              and
+                (
+                    DATE_FORMAT(PM.pay_date, '%Y-%m-%d') = #{day}
+                    )
+            ) as subquery;
+    </select>
+
+    <select id="getTotalProdWoman" resultType="int">
+        select
+            count(*)
+        from
+            (
+                select
+                    CAT.top_cat_no
+                from
+                    ORDERS O
+                        JOIN PAYMENTS PM ON O.pay_no = PM.pay_no
+                        JOIN USERS U ON O.user_no = U.user_no
+                        JOIN ORDER_PRODUCTS OP ON O.order_no = OP.order_no
+                        JOIN PRODUCTS P ON OP.prod_no = P.prod_no
+                        JOIN PROD_SIZES PS ON OP.size_no = PS.size_no
+                        JOIN PROD_CATEGORIES CAT ON P.cat_no = CAT.cat_no
+                where
+                    PM.pay_type = '상품'
+                  and
+                    CAT.top_cat_no = 20
+                  and
+                    (
+                        DATE_FORMAT(PM.pay_date, '%Y-%m-%d') = #{day}
+                        )
+            ) as subquery;
+    </select>
+
+    <select id="getTotalProdRun" resultType="int">
+        select
+            count(*)
+        from
+            (
+                select
+                    CAT.top_cat_no
+                from
+                    ORDERS O
+                        JOIN PAYMENTS PM ON O.pay_no = PM.pay_no
+                        JOIN USERS U ON O.user_no = U.user_no
+                        JOIN ORDER_PRODUCTS OP ON O.order_no = OP.order_no
+                        JOIN PRODUCTS P ON OP.prod_no = P.prod_no
+                        JOIN PROD_SIZES PS ON OP.size_no = PS.size_no
+                        JOIN PROD_CATEGORIES CAT ON P.cat_no = CAT.cat_no
+                where
+                    PM.pay_type = '상품'
+                  and
+                    CAT.top_cat_no = 30
+                  and
+                    (
+                        DATE_FORMAT(PM.pay_date, '%Y-%m-%d') = #{day}
+                        )
+            ) as subquery;
+    </select>
+
+    <!--
+        int getTotalOrderProdAmount(String yesterday);
+    -->
+    <select id="getTotalOrderProdAmount" resultType="int">
+        select
+            totalSummary.totalOrderProdAmount
+        from
+            (
+                select
+                    ROW_NUMBER() OVER (PARTITION BY PM.pay_no ORDER BY OP.order_prod_no asc) as RN,
+                        PM.pay_no               as payNo,
+                    O.order_no              as orderNo,
+                    O.order_number          as orderNum,
+                    OP.order_prod_no        as orderProdNo,
+                    PM.pay_type             as payType,
+                    U.user_name             as userName,
+                    U.user_id               as userId,
+                    U.user_tel              as userTel,
+                    PM.pay_price            as payPrice,
+                    PM.pay_status           as payStatus,
+                    PM.pay_method           as payMethod,
+                    P.prod_name             as prodName,
+                    PS.prod_size            as prodSize,
+                    OP.order_prod_amount    as orderProdAmount,
+                    PM.pay_date             as payDate
+                from
+                    ORDERS O
+                        JOIN PAYMENTS PM ON O.pay_no = PM.pay_no
+                        JOIN USERS U ON O.user_no = U.user_no
+                        JOIN ORDER_PRODUCTS OP ON O.order_no = OP.order_no
+                        JOIN PRODUCTS P ON OP.prod_no = P.prod_no
+                        JOIN PROD_SIZES PS ON OP.size_no = PS.size_no
+                where
+                    PM.pay_type = '상품'
+                LIMIT 1
+            ) as subquery
+                JOIN
+            (
+                SELECT
+                    SUM(OP.order_prod_amount) AS totalOrderProdAmount
+                FROM
+                    ORDERS O
+                        JOIN PAYMENTS PM ON O.pay_no = PM.pay_no
+                        JOIN ORDER_PRODUCTS OP ON O.order_no = OP.order_no
+                WHERE
+                    PM.pay_type = '상품'
+                  AND PM.pay_status = '결제완료'
+            ) AS totalSummary ON 1 = 1
+        where payStatus = '결제완료'
+          and (
+            DATE_FORMAT(payDate, '%Y-%m-%d') = #{yesterday}
+                or DATE_FORMAT(payDate, '%Y-%m') = #{yesterday}
+            )
+        order by payNo desc
+    </select>
+
+    <!--
+        int getTotalProdPriceByDay(String yesterday);
+    -->
+    <select id="getTotalProdPriceByDay" resultType="int">
+        select
+            totalSummary.totalPrice
+        from
+        (
+        select
+        ROW_NUMBER() OVER (PARTITION BY PM.pay_no ORDER BY OP.order_prod_no asc) as RN
+        , PM.pay_no               as payNo
+        , O.order_no            as orderNo
+        , O.order_number        as orderNum
+        , OP.order_prod_no      as orderProdNo
+        , PM.pay_type           as payType
+        , U.user_name           as userName
+        , U.user_id             as userId
+        , U.user_tel            as userTel
+        , PM.pay_price          as payPrice
+        , PM.pay_status         as payStatus
+        , PM.pay_method         as payMethod
+        , P.prod_name           as prodName
+        , PS.prod_size          as prodSize
+        , OP.order_prod_amount  as orderProdAmount
+        , PM.pay_date           as payDate
+        from
+        ORDERS O
+        JOIN PAYMENTS PM ON O.pay_no = PM.pay_no
+        JOIN USERS U ON O.user_no = U.user_no
+        JOIN ORDER_PRODUCTS OP ON O.order_no = OP.order_no
+        JOIN PRODUCTS P ON OP.prod_no = P.prod_no
+        JOIN PROD_SIZES PS ON OP.size_no = PS.size_no
+        where
+        PM.pay_type = '상품'
+            and (
+            DATE_FORMAT(PM.pay_date, '%Y-%m-%d') = #{yesterday}
+            or DATE_FORMAT(PM.pay_date, '%Y-%m') = #{yesterday}
+            )
+        LIMIT 1
+        ) as subquery
+        JOIN
+        (
+        SELECT
+        SUM(PM.pay_price) AS totalPrice
+        FROM
+        ORDERS O
+        JOIN PAYMENTS PM ON O.pay_no = PM.pay_no
+        WHERE
+        PM.pay_type = '상품'
+        AND
+        PM.pay_status = '결제완료'
+            and (
+            DATE_FORMAT(PM.pay_date, '%Y-%m-%d') = #{yesterday}
+            or DATE_FORMAT(PM.pay_date, '%Y-%m') = #{yesterday}
+            )
+        ) AS totalSummary ON 1 = 1
+        where RN = 1
+    </select>
+
+    <!--
+        List<prevOrderProdDto> orderProdPrev(int orderProdNo);
+    -->
+    <select id="orderProdPrev" resultType="store.seub2hu2.admin.dto.prevOrderProdDto">
+        select
+        PM.pay_no               as payNo
+        , O.order_no            as orderNo
+        , O.order_number        as orderNum
+        , OP.order_prod_no      as orderProdNo
+        , PM.pay_type           as payType
+        , U.user_name           as userName
+        , U.user_id             as userId
+        , U.user_tel            as userTel
+        , PM.pay_price          as payPrice
+        , O.order_price         as orderPrice
+        , PM.pay_status         as payStatus
+        , PM.pay_method         as payMethod
+        , P.prod_name           as prodName
+        , P.prod_price          as prodPrice
+        , PC.color_name			as colorName
+        , PS.prod_size          as prodSize
+        , OP.order_prod_amount  as orderProdAmount
+        , O.dis_price           as orderDisPrice
+        , O.real_price          as orderRealPrice
+        from
+            ORDERS O
+        JOIN PAYMENTS PM ON O.pay_no = PM.pay_no
+        JOIN USERS U ON O.user_no = U.user_no
+        JOIN ORDER_PRODUCTS OP ON O.order_no = OP.order_no
+        JOIN PRODUCTS P ON OP.prod_no = P.prod_no
+        JOIN PROD_SIZES PS ON OP.size_no = PS.size_no
+        JOIN PROD_COLORS PC ON PS.color_no = PC.color_no
+        where
+            PM.pay_type = '상품'
+        and
+            OP.order_no = #{orderNo}
+    </select>
+
+    <!--
         List<OrderProductDto> getSettleProdList(Map<String, Object> condition);
     -->
     <select id="getSettleProdList" resultType="store.seub2hu2.admin.dto.OrderProductDto">
@@ -13,7 +251,7 @@
         from
         (
         select
-        ROW_NUMBER() OVER (PARTITION BY PM.pay_no ORDER BY OP.order_prod_no desc) as RN
+        ROW_NUMBER() OVER (PARTITION BY PM.pay_no ORDER BY OP.order_prod_no asc) as RN
                 , PM.pay_no               as payNo
                 , O.order_no            as orderNo
                 , O.order_number        as orderNum
@@ -242,7 +480,6 @@
                 select
                     L.lesson_subject
                 from PAYMENTS P, USERS U, LESSON_RESERVATIONS R, LESSONS L
-
                 where
                     P.user_id = U.user_id
                   and
@@ -969,7 +1206,7 @@
     -->
     <select id="getUsers" resultType="store.seub2hu2.user.vo.User">
         select
-            *,
+            *
         from (
             select
              user_no               as no

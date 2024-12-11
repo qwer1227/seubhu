@@ -2,10 +2,7 @@ package store.seub2hu2.admin.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import store.seub2hu2.admin.dto.ImageUrlDto;
-import store.seub2hu2.admin.dto.LessonUsersDto;
-import store.seub2hu2.admin.dto.OrderProductDto;
-import store.seub2hu2.admin.dto.SettlementDto;
+import store.seub2hu2.admin.dto.*;
 import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.course.vo.Region;
 import store.seub2hu2.lesson.vo.Lesson;
@@ -109,6 +106,18 @@ public interface AdminMapper {
     int getTotalOrderProd(@Param("condition") Map<String, Object> condition);
 
     List<OrderProductDto> getSettleProdList(@Param("condition") Map<String, Object> condition);
+
+    List<prevOrderProdDto> orderProdPrev(int orderNo);
+
+    int getTotalProdPriceByDay(String yesterday);
+
+    int getTotalOrderProdAmount(String yesterday);
+
+    int getTotalProdMan(@Param("day")String day);
+
+    int getTotalProdWoman(@Param("day")String day);
+
+    int getTotalProdRun(@Param("day")String day);
 
 
 

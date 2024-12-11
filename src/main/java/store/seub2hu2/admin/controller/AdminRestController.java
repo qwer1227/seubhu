@@ -12,6 +12,7 @@ import store.seub2hu2.admin.service.AdminService;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -44,10 +45,14 @@ public class AdminRestController {
         Map<String, Object> conditions = adminService.getTotalSubject(today);
         // 하루 전날 데이터 조회
         Map<String, Object> yesterdayData = adminService.getTotalPrice(yesterday);
+        // 하루 전날 상품매출 조회
+        Map<String, Object> yesterdayProdData = adminService.getTotalProdPrice(yesterday);
 
-
+        Map<String, Object> yesterdayProdAmount = adminService.getTotalProdAmount(yesterday);
 
         conditions.put("day", day);
+        conditions.put("yesterdayTotalProdAmount",yesterdayProdAmount.get("totalProdAmount"));
+        conditions.put("yesterdayProdPrice", yesterdayProdData.get("totalProdPrice"));
         conditions.put("yesterdayPrice", yesterdayData.get("totalPrice"));
         conditions.put("labels", Arrays.asList("호흡", "자세", "운동"));
         conditions.put("data", Arrays.asList(conditions.get("breath"), conditions.get("action"), conditions.get("exercise")));
@@ -69,6 +74,13 @@ public class AdminRestController {
         conditions.put("day", day);
         conditions.put("labels", Arrays.asList("호흡", "자세", "운동"));
         conditions.put("data", Arrays.asList(conditions.get("breath"), conditions.get("action"), conditions.get("exercise")));
+
+        Map<String, Object> conditions2 = adminService.getTotalProdCatNo(day);
+        conditions.putAll(conditions2);
+
+        conditions.put("labels2", Arrays.asList("남성상품", "여성상품", "러닝용품"));
+        conditions.put("data2", Arrays.asList(conditions2.get("man"), conditions2.get("woman"), conditions2.get("run")));
+
 
         return ResponseEntity.ok(conditions);
     }

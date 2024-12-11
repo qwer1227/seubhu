@@ -70,13 +70,7 @@
                     class="form-control form-control-sm rounded-pill border-gray"
             />
           </div>
-          <div class="col-3">
-            <select class="form-control" name="pType" onchange="changeRows()">
-              <option value="lesson" ${param.pType eq 'lesson' ? 'selected' : ''}>레슨</option>
-              <option value="product" ${param.pType eq 'product' ? 'selected' : ''}>상품</option>
-            </select>
-          </div>
-          <button id="loadData" class="btn btn-primary">데이터 가져오기</button>
+          <button id="loadData" class="btn btn-primary">조회</button>
         </div>
         <div id="result" class="mt-4"></div>
 
@@ -86,7 +80,7 @@
               <!-- Card Header - Dropdown -->
               <div
                       class="card-header py-3 d-flex flex-row align-items-center justify-content-center">
-                <h6 class="m-0 font-weight-bold text-primary">레슨 과목별 결제량</h6>
+                <h6 class="m-0 font-weight-bold text-primary">과목별 레슨 결제량</h6>
               </div>
               <!-- Card Body -->
               <div class="card-body">
@@ -98,13 +92,13 @@
                 </div>
                 <div class="mt-4 text-center small">
                   <span class="mr-2">
-                      <i class="fas fa-circle text-primary"></i> 런닝화
+                      <i class="fas fa-circle" style="color: #FF6B6B;"></i> 호흡
                   </span>
                   <span class="mr-2">
-                      <i class="fas fa-circle text-success"></i> 런닝복
+                      <i class="fas fa-circle" style="color: #4ECDC4;"></i> 자세
                   </span>
                   <span class="mr-2">
-                      <i class="fas fa-circle text-info"></i> 런닝용품
+                      <i class="fas fa-circle" style="color: #FFD93D;"></i> 운동
                   </span>
                 </div>
               </div>
@@ -115,52 +109,31 @@
               <!-- Card Header - Dropdown -->
               <div
                       class="card-header py-3 d-flex flex-row align-items-center justify-content-center">
-                <h6 class="m-0 font-weight-bold text-primary">전일 매출</h6>
+                <h6 class="m-0 font-weight-bold text-primary">카테고리별 상품 판매량</h6>
               </div>
               <!-- Card Body -->
               <div class="card-body">
                 <div class="chart-pie pt-4 pb-2">
                   <canvas id="myPieChart2"></canvas>
+                  <div id="noDataMessage2" style="display: none; text-align: center; color: #ff0000; font-size: 18px;">
+                    결제내역이 없습니다.
+                  </div>
                 </div>
                 <div class="mt-4 text-center small">
-                    <span class="mr-2">
-                        <i class="fas fa-circle text-primary"></i> 런닝화
-                    </span>
                   <span class="mr-2">
-                        <i class="fas fa-circle text-success"></i> 런닝복
-                    </span>
+                    <i class="fas fa-circle text-primary"></i> 남성상품
+                  </span>
                   <span class="mr-2">
-                        <i class="fas fa-circle text-info"></i> 런닝용품
-                    </span>
+                    <i class="fas fa-circle text-success"></i> 여성상품
+                  </span>
+                  <span class="mr-2">
+                    <i class="fas fa-circle text-info"></i> 런닝용품
+                  </span>
                 </div>
               </div>
             </div>
           </div>
-          <div class="col-xl-4 col-lg-5">
-            <div class="card shadow mb-4">
-              <!-- Card Header - Dropdown -->
-              <div class="card-header py-3 d-flex flex-row align-items-center justify-content-center">
-                <h6 class="m-0 font-weight-bold text-primary">금일 매출</h6>
-              </div>
-              <!-- Card Body -->
-              <div class="card-body">
-                <div class="chart-pie pt-4 pb-2">
-                  <canvas id="myPieChart3"></canvas>
-                </div>
-                <div class="mt-4 text-center small">
-                    <span class="mr-2">
-                        <i class="fas fa-circle text-primary"></i> 런닝화
-                    </span>
-                  <span class="mr-2">
-                        <i class="fas fa-circle text-success"></i> 런닝복
-                    </span>
-                  <span class="mr-2">
-                        <i class="fas fa-circle text-info"></i> 런닝용품
-                    </span>
-                </div>
-              </div>
-            </div>
-          </div>
+
         </div>
       </div>
     </div>

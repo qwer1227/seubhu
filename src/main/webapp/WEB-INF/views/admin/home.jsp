@@ -62,7 +62,7 @@
                                         <div id="yesterdayRevenue" class="h5 mb-0 font-weight-bold text-gray-800">$0</div>
                                     </div>
                                     <div class="col-auto">
-                                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                        <i class="fas fa-chalkboard-teacher fa-2x text-gray-300"></i>
                                     </div>
                                 </div>
                             </div>
@@ -76,18 +76,16 @@
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                            월 매출액</div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">$215,000</div>
+                                            전일 매출액(상품)</div>
+                                        <div id="yesterdayProdRevenue" class="h5 mb-0 font-weight-bold text-gray-800">$0</div>
                                     </div>
                                     <div class="col-auto">
-                                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                                        <i class="fas fa-box fa-2x text-gray-300"></i>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-
                     <!-- Pending Requests Card Example -->
                     <div class="col-xl-4 col-md-6 mb-4">
                         <div class="card border-left-warning shadow h-100 py-2">
@@ -95,12 +93,12 @@
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                            레슨
+                                            전일 상품 판매량
                                         </div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                                        <div id="yesterdayProdAmountRevenue" class="h5 mb-0 font-weight-bold text-gray-800">0</div>
                                     </div>
                                     <div class="col-auto">
-                                        <i class="fas fa-bell fa-2x text-gray-300"></i>
+                                        <i class="fas fa-shopping-cart fa-2x text-gray-300"></i>
                                     </div>
                                 </div>
                             </div>
@@ -175,13 +173,13 @@
                                 </div>
                                 <div class="mt-4 text-center small">
                                     <span class="mr-2">
-                                        <i class="fas fa-circle text-primary"></i> 런닝화
+                                        <i class="fas fa-circle" style="color: #FF6B6B;"></i> 호흡
                                     </span>
                                     <span class="mr-2">
-                                        <i class="fas fa-circle text-success"></i> 런닝복
+                                        <i class="fas fa-circle" style="color: #4ECDC4;"></i> 자세
                                     </span>
                                     <span class="mr-2">
-                                        <i class="fas fa-circle text-info"></i> 런닝용품
+                                        <i class="fas fa-circle" style="color: #FFD93D;"></i> 운동
                                     </span>
                                 </div>
                             </div>
@@ -214,8 +212,8 @@
                 labels: [], // AJAX 응답으로 라벨 업데이트
                 datasets: [{
                     data: [], // AJAX 응답으로 데이터 업데이트
-                    backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc'],
-                    hoverBackgroundColor: ['#3366ff', '#21ffb2', '#3fe6ff'],
+                    backgroundColor: ['#FF6B6B', '#4ECDC4', '#FFD93D'],
+                    hoverBackgroundColor: ['rgba(255,27,27,0.98)', 'rgba(32,232,216,0.87)', '#ffef23'],
                     hoverBorderColor: "rgba(234, 236, 244, 1)",
                 }],
             },
@@ -247,6 +245,8 @@
                 const labels = response.labels; // 응답에서 labels 추출
                 const data = response.data;     // 응답에서 data 추출
                 const yesterdayPrice = response.yesterdayPrice; // 전일 매출액 추출
+                const yesterdayProdPrice = response.yesterdayProdPrice;
+                const yesterdayTotalProdAmount = response.yesterdayTotalProdAmount;
 
                 // 데이터가 모두 0인지 확인
                 const isNoData = data.every(value => value === 0);
@@ -267,6 +267,9 @@
 
                 // 전일 매출액 업데이트
                 $('#yesterdayRevenue').text('$' + yesterdayPrice.toLocaleString()); // div에 전일 매출액을 표시
+                $('#yesterdayProdRevenue').text('$' + yesterdayProdPrice.toLocaleString()); // div에 전일 상품 매출액을 표시
+                $('#yesterdayProdAmountRevenue').text(yesterdayTotalProdAmount.toLocaleString() + '개') // div에 전일 상품 판매수량을 표시
+
             },
             error: function (xhr, status, error) {
                 console.error('Error:', error);
