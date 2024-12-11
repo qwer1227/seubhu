@@ -16,6 +16,8 @@ import org.springframework.security.web.header.writers.frameoptions.XFrameOption
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import store.seub2hu2.security.CustomAccessDeniedHandler;
 import store.seub2hu2.security.CustomAuthenticationEntryPoint;
 import store.seub2hu2.security.service.CustomOAuth2UserService;
@@ -84,6 +86,8 @@ public class SecurityConfig {
 
 // 세션 기반 일반 로그인 설정
         http
+                .headers((headers) -> headers
+                        .addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN)))
                 .csrf(csrf -> csrf.disable()) // CSRF 활성화
                 // 접근 인가정책을 설정한다.
                 .authorizeHttpRequests(auth -> auth

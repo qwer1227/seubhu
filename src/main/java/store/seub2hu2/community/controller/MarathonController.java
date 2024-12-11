@@ -26,7 +26,7 @@ public class MarathonController {
 
     @GetMapping("/main")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page
-            , @RequestParam(name = "rows", required = false, defaultValue = "15") int rows
+            , @RequestParam(name = "rows", required = false, defaultValue = "6") int rows
             , @RequestParam(name = "opt", required = false) String opt
             , @RequestParam(name = "category", required = false) String category
             , @RequestParam(name = "keyword", required = false) String keyword

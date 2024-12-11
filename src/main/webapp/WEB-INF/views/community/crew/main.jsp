@@ -103,6 +103,32 @@
         </c:otherwise>
       </c:choose>
       
+      <c:if test="${paging.totalRows > 6}">
+        <div class="mt-3">
+          <ul class="pagination justify-content-center">
+            <li class="page-item ${paging.first ? 'disabled' : '' }">
+              <a class="page-link"
+                 onclick="changePage(${paging.prevPage}, event)"
+                 href="javascript:void(0)"><<</a>
+            </li>
+            
+            <c:forEach var="num" begin="${paging.beginPage }" end="${paging.endPage }">
+              <li class="page-item ${paging.page eq num ? 'active' : '' }">
+                <a class="page-link"
+                   onclick="changePage(${num }, event)"
+                   href="javascript:void(0)">${num }</a>
+              </li>
+            </c:forEach>
+            
+            <li class="page-item ${paging.last ? 'disabled' : '' }">
+              <a class="page-link"
+                 onclick="changePage(${paging.nextPage}, event)"
+                 href="javascript:void(0)">>></a>
+            </li>
+          </ul>
+        </div>
+      </c:if>
+      
       <div class="row p-3 d-flex justify-content-left">
         <div class="col-2">
           <select class="form-control" name="opt">
@@ -134,6 +160,7 @@
       </div>
     </form>
   </div>
+  
   <%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
 <script>
@@ -147,7 +174,7 @@
 
         form.submit();
     }
-    
+
     function changePage(page, event) {
         event.preventDefault();
         let form = document.querySelector("#form-search");

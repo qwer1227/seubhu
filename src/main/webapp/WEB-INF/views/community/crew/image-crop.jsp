@@ -34,7 +34,6 @@
         align-items: center; /* 수직 중앙 정렬 */
     }
 </style>
-<body>
 <div class="modal" tabindex="-1" id="modal-thumbnail">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -122,5 +121,3 @@
         }
     }
 </script>
-</body>
-</html>
