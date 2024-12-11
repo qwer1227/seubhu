@@ -83,7 +83,7 @@ public class ProductController {
 
         model.addAttribute("loginUser", loginUser);
 
-        User user = userService.findbyUserNo(loginUser.getId());
+        User user = userService.findbyUserId(loginUser.getId());
         model.addAttribute("user", user);
 
         ProdDetailDto prodDetailDto = productService.getProductByNo(no);
