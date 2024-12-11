@@ -73,7 +73,7 @@
             <h3><a href="/mypage/workout">운동일지</a></h3>
         </div>
         <div class="item">
-            <h3>참여크루</h3>
+            <h3><a href="/mypage/participatingcrew">참여크루</a></h3>
         </div>
         <div class="item">
             <h3><a href="/lesson/reservation?userId=${userId}">레슨예약내역</a></h3>

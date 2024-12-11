@@ -7,8 +7,8 @@ import store.seub2hu2.community.vo.Report;
 @Mapper
 public interface ReportMapper {
 
-    void insertReportToBoard(@Param("report") Report report);
-    void updateDisableBoard(@Param("report") Report report);
+    void insertReport(@Param("report") Report report);
 
     void insertReportToCrew(@Param("report") Report report);
+    boolean isAlreadyReported(@Param("type") String type, @Param("no") int no, @Param("userNo") int userNo);
 }

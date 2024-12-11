@@ -14,7 +14,7 @@ public class ReplyForm {
     private int boardNo;
     private int crewNo;
     private int userNo;
-    private int no;
+    private int id;
     private int prevNo;
     private String content;
     private String deleted;
