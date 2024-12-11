@@ -105,8 +105,12 @@
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
 
 <div id="wrap">
-    <h2>주문 내역</h2>
+    <div class="mb-3">
+        <h2>주문 내역</h2>
+    </div>
     <form method="post" action="/pay/cancel" id="cancelForm">
+        <input type="hidden" name="type" value="상품" />
+
         <table class="order-list">
             <thead>
                 <tr>
@@ -114,7 +118,7 @@
                     <th>이미지</th>
                     <th>상품명</th>
                     <th>가격</th>
-                    <th>수량</th>
+                    <th>총 주문 수량</th>
                     <th>주문상태</th>
                     <th>배송상태</th>
                     <th>리뷰</th>
@@ -126,17 +130,17 @@
                         <!-- 주문번호 -->
                         <td class="order-no">
                             <a href="/mypage/orderhistorydetail/${order.orderNo}">
-                                ${order.orderDate}<br>${order.orderNo}
+                                ${order.orderId}
                             </a>
                         </td>
                         <td><img src="${order.productImage}" alt="상품 이미지"></td>
                         <td>${order.productName}</td>
-                        <td>${order.productPrice}원</td>
-                        <td>${order.quantity}</td>
+                        <td><fmt:formatNumber>${order.productPrice}</fmt:formatNumber> 원</td>
+                        <td>${order.quantity} 개</td>
                         <td>${order.orderStatus}</td>
-                        <td>${order.deliveryStatus} <br>${order.deliveryNo}</td>
+                        <td>${order.deliveryStatus}</td>
                         <td>
-                            <a href="/mypage/reviews/${order.orderNo}" class="btn btn-reviews">리뷰작성</a>
+                            <a href="/product/detail/${order.orderNo}" class="btn btn-reviews">리뷰작성</a>
                             <button type="button" class="btn btn-cancel" onclick="confirmCancel(${order.orderNo})">
                                 주문취소
                             </button>

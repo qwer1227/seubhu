@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.seub2hu2.cart.dto.CartItemDto;
+import store.seub2hu2.delivery.mapper.DeliveryMapper;
 import store.seub2hu2.delivery.vo.Delivery;
 import store.seub2hu2.mypage.dto.*;
 import store.seub2hu2.order.dto.OrderForm;
@@ -12,13 +13,16 @@ import store.seub2hu2.order.vo.Order;
 import store.seub2hu2.order.vo.OrderItem;
 import store.seub2hu2.payment.dto.PaymentDto;
 import store.seub2hu2.product.mapper.ProductMapper;
+import store.seub2hu2.product.vo.Product;
 import store.seub2hu2.product.vo.Size;
 import store.seub2hu2.user.vo.Addr;
 import store.seub2hu2.user.vo.User;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -29,6 +33,9 @@ public class OrderService {
 
     @Autowired
     ProductMapper productMapper;
+
+    @Autowired
+    DeliveryMapper  deliveryMapper;
 
 
     /**
@@ -54,8 +61,47 @@ public class OrderService {
     }
 
     public List<OrderResponse> getAllOrders(int userNo) {
-        System.out.println(orderMapper.getOrders(userNo));
-        return orderMapper.getOrders(userNo);
+
+            // 주문 목록 가져오기
+            List<OrderResponse> orders = orderMapper.getOrders(userNo);
+
+            // 주문 데이터를 그룹화: Map<orderNo, List<OrderResponse>>
+            Map<Integer, List<OrderResponse>> groupedOrders = orders.stream()
+                    .collect(Collectors.groupingBy(OrderResponse::getOrderNo));
+
+            // 그룹화된 데이터를 가공하여 최종 List<OrderResponse> 생성
+            List<OrderResponse> processedOrders = new ArrayList<>();
+
+            for (Map.Entry<Integer, List<OrderResponse>> entry : groupedOrders.entrySet()) {
+                List<OrderResponse> orderGroup = entry.getValue();
+
+                // 첫 번째 상품 정보 가져오기
+                OrderResponse firstOrder = orderGroup.get(0);
+
+                // 상품명 가공
+                if (orderGroup.size() > 1) {
+                    String updatedProductName = firstOrder.getProductName() + " 외 " + (orderGroup.size() - 1) + " 개";
+                    firstOrder.setProductName(updatedProductName);
+                }
+
+                // 총 수량 계산
+                int totalQuantity = orderGroup.stream()
+                        .mapToInt(OrderResponse::getQuantity)
+                        .sum();
+
+                // 총 가격 계산
+                int totalPrice = orderGroup.stream()
+                        .mapToInt(order -> order.getQuantity() * order.getProductPrice())
+                        .sum();
+
+                // 첫 번째 OrderResponse에 총 수량과 총 가격 설정
+                firstOrder.setQuantity(totalQuantity); // 총 수량
+                firstOrder.setProductPrice(totalPrice); // 총 가격
+
+                // 가공된 주문을 최종 리스트에 추가
+                processedOrders.add(firstOrder);
+            }
+            return processedOrders;
     }
 
     public ResponseDTO getOrderDetails(int orderNo){
@@ -77,22 +123,35 @@ public class OrderService {
     }
 
     // 주문 취소
-    public void cancelOrder(PaymentDto paymentDto) {
-        // 1. 주문 상태 변경
-        orderMapper.updateOrderStatus(paymentDto.getOrderNo(), "주문취소");
+    @Transactional
+    public OrderResultDto cancelOrder(PaymentDto paymentDto) {
 
-        // 2. 주문 재고 복원
-        List<OrderItem> orderItems = paymentDto.getOrderItems();
-        for (OrderItem item : orderItems) {
-            // 현재 재고 조회
-            Size size = productMapper.getSizeAmount(item.getSizeNo());
+        OrderResultDto dto = this.getOrderResult(paymentDto.getOrderNo());
 
+        // 재고 변경 완료
+        List<OrderResultItemDto> items = dto.getItems();
+        for (OrderResultItemDto itemDto : items) {
+            Size size = productMapper.getSizeAmount(itemDto.getSizeNo());
             // 주문된 수량만큼 재고 복원
-            size.setAmount(size.getAmount() + item.getStock());
+            int updatedAmount = size.getAmount() + itemDto.getOrderProdAmount();
+            size.setAmount(updatedAmount);
 
             // 변경된 재고 업데이트
             productMapper.updateAmount(size);
         }
-    }
+        
+        // 주문 상태 변경
+        Order order = new Order();
+        order.setNo(paymentDto.getOrderNo());
+        order.setStatus("주문취소");
+        orderMapper.updateOrderStatus(order);
 
+        // 배송 상태 변경
+        Delivery delivery = new Delivery();
+        delivery.setOrderNo(paymentDto.getOrderNo());
+        delivery.setStatus("배송취소");
+        deliveryMapper.updateDeliveryStatus(delivery);
+
+        return dto;
+    }
 }

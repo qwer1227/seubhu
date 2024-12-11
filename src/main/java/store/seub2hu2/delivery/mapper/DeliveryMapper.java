@@ -10,4 +10,6 @@ public interface DeliveryMapper {
     // 배송 정보 저장
     void insertDeliveryMemo(@Param("delivery") Delivery delivery);
 
+    // 배송 상태 변경
+    void updateDeliveryStatus(@Param("delivery") Delivery delivery);
 }

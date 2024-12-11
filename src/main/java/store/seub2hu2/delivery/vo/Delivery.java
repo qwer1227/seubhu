@@ -13,6 +13,7 @@ public class Delivery {
 
     private int no; // 배송 번호
     private String company; // 배송 업체
+    private String status;
     private String memo; // 배송 메모
     private String deliPhoneNumber;
     private int orderNo; // 주문 번호

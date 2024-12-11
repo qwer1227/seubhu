@@ -247,6 +247,7 @@ public class KakaoPayService {
     // 사용자가 결제 수단을 선택하고 비밀번호를 입력해 결제 인증을 완료한 뒤,
     // 최종적으로 결제 취소 처리를 하는 단계
     public CancelResponse payCancel(PaymentDto paymentDto, String tid) {
+
         Map<String, String> parameters = new HashMap<>();
         parameters.put("cid", "TC0ONETIME");
         parameters.put("tid", tid);
@@ -254,7 +255,6 @@ public class KakaoPayService {
         parameters.put("cancel_tax_free_amount", String.valueOf(0));
         parameters.put("quantity", String.valueOf(paymentDto.getQuantity()));
         log.info("결제 취소 = {}", paymentDto);
-
 
         // HttpEntity : HTTP 요청 또는 응답에 해당하는 Http Header와 Http Body를 포함하는 클래스
         HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(parameters, this.getHeaders());
