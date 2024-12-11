@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import lombok.extern.slf4j.Slf4j;
+import store.seub2hu2.community.vo.Board;
 import store.seub2hu2.product.dto.ProdListDto;
 
 import java.util.List;
@@ -25,9 +26,12 @@ public class HomeController {
         // 주간 베스트 상품 - 조회수 순 (러닝화 기준)
         List<ProdListDto> bestByViewCount = homeService.getWeeklyBestProductsByViewCount();
 
+        List<Board> topViewedBoards  = homeService.getTopViewedBoards();
+
         // 모델에 데이터 추가
         model.addAttribute("bestByRating", bestByRating);
         model.addAttribute("bestByViewCount", bestByViewCount);
+        model.addAttribute("topViewedBoards", topViewedBoards );
 
         return "home"; // 해당 JSP 페이지로 전달
     }
