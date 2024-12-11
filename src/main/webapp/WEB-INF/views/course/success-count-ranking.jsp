@@ -32,6 +32,10 @@
         <a class="btn btn-primary" href="shortest-record-ranking" role="button">최단 기록 순위</a>
     </div>
 
+    <div class="mt-3">
+        <h4>코스 달성 수 순위</h4>
+    </div>
+
     <%-- 나의 코스 달성 수 순위 --%>
     <%-- 기록이 없는 경우, 기록이 없다고 표시한다. / 로그인하지 않은 경우, 로그인해야 확인 가능하다고 표시한다. --%>
     <table class="table mt-4">
@@ -98,7 +102,7 @@
                     <th>${successCountRank.ranking}</th>
                     <td>${successCountRank.nickName}</td>
                     <td>${successCountRank.successCount}</td>
-                    <td><button class="btn btn-primary" onclick="showAllSuccessCourses(${successCountRank.userNo})">달성한 코스 목록</button></td>
+                    <td><button class="btn btn-primary" onclick="showOtherSuccessCourses(${successCountRank.userNo})">달성한 코스 목록</button></td>
                 </tr>
             </c:forEach>
         </tbody>
@@ -143,7 +147,7 @@
         <div class="modal-content">
             <%-- 달성한 코스 목록 --%>
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="modal-user-success-courses">님의 코스 완주 기록</h1>
+                <h1 class="modal-title fs-5" id="modal-user-success-courses"></h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -191,7 +195,7 @@
         form.submit();
     }
 
-    let myModal = new bootstrap.Modal("#modal-success-courses");
+    let modal = new bootstrap.Modal("#modal-success-courses");
 
     // 로그인한 사용자가 달성한 코스 목록을 보여준다.
     function showMySuccessCourses() {
@@ -207,20 +211,30 @@
         // 2. 달성한 코스 목록, 페이징 처리 정보를 가져온다.
         let response = await fetch("/course/mySuccessCourses?page=" + page);
 
-        // 3. 데이터를 javascript 객체로 변환한다.
+        // 3. 데이터를 javascript 객체로 변환하고, 변수에 저장한다.
         let result = await response.json();
         let mySuccessCourses = result.data;
         let paging = result.paging;
         let num = paging.begin;
+        let nickname = mySuccessCourses[0].nickname;
 
-        // 4. 달성한 코스 목록을 화면에 표시한다.
+        // 4. 로그인한 사용자의 닉네임을 화면에 표시한다.
+        let name = "";
+
+        name = `
+            \${nickname}님의 달성한 코스 목록
+        `;
+
+        document.querySelector("#modal-user-success-courses").innerHTML = name;
+
+        // 5. 달성한 코스 목록을 화면에 표시한다.
         let rows = "";
 
         for (let mySuccessCourse of mySuccessCourses) {
             rows += `
                 <tr>
                     <th><span>\${num}</span></th>
-                    <td><a href="detail?no=\${mySuccessCourse.no}"><span>\${mySuccessCourse.name}</span></a></td>
+                    <td><a href="detail?no=\${mySuccessCourse.courseNo}"><span>\${mySuccessCourse.courseName}</span></a></td>
                     <td><span>\${mySuccessCourse.distance}KM</span></td>
                     <td><span>\${mySuccessCourse.level}단계</span></td>
                     <td><span>\${mySuccessCourse.successCount}회</span></td>
@@ -231,7 +245,7 @@
 
         document.querySelector("#success-courses tbody").innerHTML = rows;
 
-        // 5. 페이징 처리 기능을 화면에 표시한다.
+        // 6. 페이징 처리 기능을 화면에 표시한다.
         let pages = "";
 
         pages += `
@@ -257,13 +271,86 @@
 
         document.querySelector("#current-paging").innerHTML = pages;
 
-        // 6. Modal창을 화면에 표시한다.
-        myModal.show();
+        // 7. Modal창을 화면에 표시한다.
+        modal.show();
     }
 
-    // 모든 사용자의 달성한 코스 목록을 보여준다.
-    function showAllSuccessCourses(userNo) {
+    //
+    function showOtherSuccessCourses(userNo) {
+        getOtherSuccessCourses(1, userNo);
+    }
 
+    async function getOtherSuccessCourses(page, userNo, event) {
+        // 1. 페이지 클릭 시, 링크 이동을 방지한다.
+        if (event) {
+            event.preventDefault();
+        }
+
+        // 2. 달성한 코스 목록, 페이징 처리 정보를 가져온다.
+        let response = await fetch("/course/otherSuccessCourses?page=" + page + "&userNo=" + userNo);
+
+        // 3. 데이터를 javascript 객체로 변환하고, 변수에 저장한다.
+        let result = await response.json();
+        let otherSuccessCourses = result.data;
+        let paging = result.paging;
+        let num = paging.begin;
+        let nickname = otherSuccessCourses[0].nickname;
+
+        // 4. 사용자의 닉네임을 화면에 표시한다.
+        let name = "";
+
+        name = `
+            \${nickname}님의 달성한 코스 목록
+        `;
+
+        document.querySelector("#modal-user-success-courses").innerHTML = name;
+
+        // 5. 달성한 코스 목록을 화면에 표시한다.
+        let rows = "";
+
+        for (let otherSuccessCourse of otherSuccessCourses) {
+            rows += `
+                <tr>
+                    <th><span>\${num}</span></th>
+                    <td><a href="detail?no=\${otherSuccessCourse.courseNo}"><span>\${otherSuccessCourse.courseName}</span></a></td>
+                    <td><span>\${otherSuccessCourse.distance}KM</span></td>
+                    <td><span>\${otherSuccessCourse.level}단계</span></td>
+                    <td><span>\${otherSuccessCourse.successCount}회</span></td>
+                </tr>
+            `;
+            num++;
+        }
+
+        document.querySelector("#success-courses tbody").innerHTML = rows;
+
+        // 6. 페이징 처리 기능을 화면에 표시한다.
+        let pages = "";
+
+        pages += `
+            <li class="page-item \${paging.first ? 'disabled' : ''}">
+                <a class="page-link" href="" onclick="getOtherSuccessCourses(\${paging.prevPage}, \${userNo}, event)">이전</a>
+            </li>
+        `;
+
+        for (let num = paging.beginPage; num <= paging.endPage; num++) {
+            pages += `
+                <li class="page-item ">
+                    <a class="page-link \${paging.page == num ? 'active' : ''}"
+                        href="" onclick="getOtherSuccessCourses(\${num}, \${userNo}, event)">\${num}</a>
+                </li>
+            `;
+        }
+
+        pages += `
+            <li class="page-item \${paging.last ? 'disabled' : ''}">
+                <a class="page-link" href="" onclick="getOtherSuccessCourses(\${paging.nextPage}, \${userNo}, event)">다음</a>
+            </li>
+        `;
+
+        document.querySelector("#current-paging").innerHTML = pages;
+
+        // 7. Modal창을 화면에 표시한다.
+        modal.show();
     }
 </script>
 </body>

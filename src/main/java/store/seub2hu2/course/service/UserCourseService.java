@@ -281,11 +281,11 @@ public class UserCourseService {
     }
 
     /**
-     * 로그인한 사용자가 달성한 코스 목록을 가져온다.
+     * 각 사용자가 달성한 코스 목록을 가져온다.
      * @param condition 페이지, 사용자 번호
-     * @return 로그인한 사용자가 달성한 코스 목록
+     * @return 각 사용자가 달성한 코스 목록
      */
-    public ListDto<SuccessCoursesForm> getMySuccessCourses(Map<String, Object> condition) {
+    public ListDto<SuccessCoursesForm> getSuccessCourses(Map<String, Object> condition) {
         // 1. 로그인한 사용자가 달성한 코스 목록의 갯수를 가져온다.
         int totalRows = userCourseMapper.getTotalSuccessCourseRows(condition);
 
@@ -298,7 +298,7 @@ public class UserCourseService {
         condition.put("end", pagination.getEnd());
 
         // 4. 로그인한 사용자가 달성한 코스 목록을 가져온다.
-        List<SuccessCoursesForm> mySuccessCourses = userCourseMapper.getMySuccessCourses(condition);
+        List<SuccessCoursesForm> mySuccessCourses = userCourseMapper.getSuccessCourses(condition);
 
         // 5. ListDto 객체에 로그인한 사용자가 달성한 코스 목록, 페이징 처리 정보를 저장하고 반환한다.
         ListDto<SuccessCoursesForm> dto = new ListDto<>(mySuccessCourses, pagination);

@@ -27,7 +27,7 @@
     </div>
 
     <%-- 검색 기능 --%>
-    <%-- 요청 파라미터(검색 정보) : page, distance, level, keyword --%>
+    <%-- 요청 파라미터(검색 정보) : page, sort, distance, level, keyword --%>
     <div class="row row-cols-1 row-cols-md-1 g-4 mt-3 mb-3">
         <div class="col" style="border: 1px solid black; padding: 20px">
             <form id="form-search" method="get" action="list">
@@ -76,10 +76,10 @@
     </div>
 
     <%-- 안내 문구 --%>
-    <div class="card row row-cols-1 row-cols-md-1 g-4 mt-3 mb-3">
-        <h5>* <strong style="background-color: orange">등록하기</strong>를 클릭하여 <strong style="color: red">도전할 코스 목록</strong>에 추가하면,
-            <strong style="color: red">나의 코스 기록</strong>에서 코스를 확인하실 수 있습니다!</h5>
-        <h5>* <strong style="color: red">이전 난이도 코스 3개</strong>를 완주하면, 다음 난이도의 코스에 도전하실 수 있습니다! (ex 1단계 3개 클리어 시, 2단계 도전 가능)</h5>
+    <div class="card row row-cols-1 row-cols-md-1 g-4 mt-3 mb-3" align="left">
+        <h5>* <strong style="background-color: orange">등록하기</strong>를 클릭하여 도전할 코스 목록에 추가하면,
+            나의 코스 기록에서 코스를 확인하실 수 있습니다!</h5>
+        <h5>* 이전 난이도 코스 3개를 완주해야 다음 난이도의 코스에 도전하실 수 있습니다! (ex 1단계 3개 클리어 시, 2단계 도전 가능)</h5>
     </div>
 
     <%-- 코스 목록 --%>
@@ -115,13 +115,14 @@
                                     <c:otherwise>
                                         <c:choose>
                                             <%-- 사용자가 코스 도전 등록을 했다면 등록 취소 버튼을 표시하고, 클릭하면 코스 등록을 취소한다. --%>
+                                            <%-- page=1 --%>
                                             <c:when test="${course.challengeWhether.courseNo == '1'}">
-                                                <a href="controlChallenge?courseNo=${course.no}&page=${pagination.page}"
+                                                <a href="controlChallenge?courseNo=${course.no}&page=${pagination.page}&sort=${param.sort}&distance=${param.distance}&level=${param.level}&keyword=${param.keyword}"
                                                    class="btn btn-danger" onclick="cancelChallenge(event)">등록 취소</a>
                                             </c:when>
                                             <%-- 사용자가 코스 도전 등록을 하지 않았다면 등록하기 버튼을 표시하고, 클릭하면 코스를 등록한다. --%>
                                             <c:otherwise>
-                                                <a href="controlChallenge?courseNo=${course.no}&page=${pagination.page}"
+                                                <a href="controlChallenge?courseNo=${course.no}&page=${pagination.page}&sort=${param.sort}&distance=${param.distance}&level=${param.level}&keyword=${param.keyword}"
                                                    class="btn btn-warning" onclick="registerChallenge(event)">등록하기</a>
                                             </c:otherwise>
                                         </c:choose>

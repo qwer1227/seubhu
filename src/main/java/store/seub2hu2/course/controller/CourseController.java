@@ -117,13 +117,34 @@ public class CourseController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/controlChallenge")
     public String controlChallenge(@RequestParam(name = "courseNo") int courseNo,
-                                   @RequestParam(name = "page") int page,
+                                   @RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                                   @RequestParam(name = "sort", required = false) String sort,
+                                   @RequestParam(name = "distance", required = false, defaultValue = "10") Double distance,
+                                   @RequestParam(name = "level", required = false) Integer level,
+                                   @RequestParam(name = "keyword", required = false) String keyword,
                                    @AuthenticationPrincipal LoginUser loginUser) {
         // 1. 사용자가 코스 도전 등록 여부를 변환한다.
         userCourseService.changeChallenge(courseNo, loginUser.getNo());
 
-        // 2. list.jsp를 재요청한다.
-        return "redirect:list?page=" + page;
+        StringBuilder sb = new StringBuilder();
+        sb.append("list?");
+        sb.append("page=").append(page);
+
+        if (sort != null) {
+            sb.append("&sort=").append(sort);
+        }
+
+        sb.append("&distance=").append(distance);
+
+        if (level != null) {
+            sb.append("&level=").append(level);
+        }
+
+        if (keyword != null) {
+            sb.append("&keyword=").append(keyword);
+        }
+
+        return "redirect:" + sb.toString();
     }
 
     @GetMapping("/detail")
@@ -267,7 +288,23 @@ public class CourseController {
         condition.put("userNo", loginUser.getNo());
 
         // 2. 조회한 범위에 따라 달성한 코스 목록, 페이징 처리 정보를 가져온다.
-        ListDto<SuccessCoursesForm> dto = userCourseService.getMySuccessCourses(condition);
+        ListDto<SuccessCoursesForm> dto = userCourseService.getSuccessCourses(condition);
+
+        // 3. 달성한 코스 목록, 페이징 처리 정보를 반환한다.
+        return dto;
+    }
+
+    @GetMapping("/otherSuccessCourses")
+    @ResponseBody
+    public ListDto<SuccessCoursesForm> otherSuccessCourses (@RequestParam(name = "page") int page,
+                                                          @RequestParam(name = "userNo") int userNo) {
+        // 1. Map 객체에 페이지, 사용자 번호를 저장한다.
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("page", page);
+        condition.put("userNo", userNo);
+
+        // 2. 조회한 범위에 따라 달성한 코스 목록, 페이징 처리 정보를 가져온다.
+        ListDto<SuccessCoursesForm> dto = userCourseService.getSuccessCourses(condition);
 
         // 3. 달성한 코스 목록, 페이징 처리 정보를 반환한다.
         return dto;

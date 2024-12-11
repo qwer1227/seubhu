@@ -20,7 +20,7 @@ public interface UserCourseMapper {
     List<Records> getRecords(@Param("condition") Map<String, Object> condition); // 조회 범위 내에서 완주 기록 목록을 가져온다.
     List<Course> getCoursesToChallenge(@Param("condition") Map<String, Object> condition); // 조회 범위 내에서 로그인한 사용자가 도전 등록한 코스 목록을 가져온다.
     List<Records> getMyRecords(@Param("condition") Map<String, Object> condition); // 조회 범위 내에서 로그인한 사용자의 코스에 해당하는 완주 기록 목록을 가져온다.
-    List<SuccessCoursesForm> getMySuccessCourses(@Param("condition") Map<String, Object> condition); // 조회 범위 내에서 로그인한 사용자의 달성한 코스 목록을 가져온다.
+    List<SuccessCoursesForm> getSuccessCourses(@Param("condition") Map<String, Object> condition); // 조회 범위 내에서 로그인한 사용자의 달성한 코스 목록을 가져온다.
     List<SuccessCountRankForm> getAllSuccessCountRanks(@Param("condition") Map<String, Object> condition); // 조회 범위 내에서 모든 사용자의 코스 달성 수 순위 목록을 가져온다.
 
     UserLevel getUserLevel(@Param("userNo") int userNo); // 로그인한 사용자의 현재 도전 가능한 단계를 가져온다.
