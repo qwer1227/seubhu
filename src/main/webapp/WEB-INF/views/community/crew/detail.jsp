@@ -113,11 +113,7 @@
             </tr>
             <tr>
               <th>가 입</th>
-              <td>: ${memberCnt} / 5</td>
-            </tr>
-            <tr>
-              <th></th>
-              <td>
+              <td>: ${memberCnt} / 5
                 <security:authorize access="isAuthenticated()">
                   <security:authentication property="principal" var="loginUser"/>
                   <c:if test="${loginUser.no ne crew.user.no}">

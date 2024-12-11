@@ -71,16 +71,16 @@
         <tbody>
         <tr>
           <th>모집글 제목</th>
-          <td><input class="rounded" type="text" name="title" value="" style="width: 83%"></td>
+          <td><input class="rounded" type="text" name="title" value="test" style="width: 83%"></td>
           <th>장소</th>
           <td>
-            <input class="rounded" type="text" id="location" name="location" style="width: 70%">
+            <input class="rounded" type="text" id="location" value="test" name="location" style="width: 70%">
             <button type="button" class="btn btn-outline-dark btn-sm" onclick="searchPlaces(event)">검색</button>
           </td>
         </tr>
         <tr>
           <th>크루 이름</th>
-          <td><input class="rounded" type="text" name="name" value="" style="width: 83%"></td>
+          <td><input class="rounded" type="text" name="name" value="test" style="width: 83%"></td>
           <th></th>
           <td rowspan="3">
             <div id="map" style="width: 90%; height: 200px" class="mb-2"></div>
@@ -95,7 +95,7 @@
               <option value="매일">매일</option>
               <option value="번개">입력</option>
             </select>
-            <input type="text" class="rounded" id="schedule-detail" name="detail" value="" style="width: 70%"
+            <input type="text" class="rounded" id="schedule-detail" name="detail" value="test" style="width: 70%"
                    placeholder="상세 모임 일시를 작성해주세요.">
           </td>
         </tr>
@@ -103,13 +103,14 @@
           <th>대표 이미지</th>
           <td>
             <button type="button" class="btn btn-dark" onclick="thumbnail()">등록</button>
+            <input type="hidden" name="image" value="">
           </td>
         </tr>
         <tr>
           <th>게시글</th>
           <td colspan="3">
             <textarea style="width: 100%" class="form-control" rows="10" id="description" name="description"
-                      placeholder="내용을 입력해주세요."></textarea>
+                      placeholder="내용을 입력해주세요.">test</textarea>
             <%--            <%@include file="../write.jsp" %>--%>
           </td>
         </tr>
@@ -128,7 +129,7 @@
           </div>
           <div class="col d-flex justify-content-end">
             <button type="button" class="btn btn-outline-primary m-1">보관</button>
-            <button type="submit" id="submit" class="btn btn-primary m-1">등록</button>
+            <button type="button" id="submit" class="btn btn-primary m-1">등록</button>
           </div>
         </div>
       </div>
@@ -157,7 +158,7 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button id="btn-cropper" class="btn btn-primary">설정</button>
+          <button id="btn-cropper" class="btn btn-primary" data-bs-dismiss="modal">설정</button>
         </div>
       </div>
     </div>
@@ -171,34 +172,6 @@
     
     let cropper = null;
     let formData = new FormData();
-    
-    document.querySelector("#submit").addEventListener("click", function (){
-       let title = document.querySelector("input[name=title]").value();
-       let description = document.querySelector("input[name=description]").value();
-       let name = document.querySelector("input[name=name]").value();
-       let type = document.querySelector("input[name=schedule-type]").value();
-       let detail = document.querySelector("input[name=schedule-detail]").value();
-       let location = document.querySelector("input[name=location]").value();
-       let image = document.querySelector("input[name=image]").value();
-       let upfile = document.querySelector("input[name=upfile]").value();
-       
-       formData.append("title", title);
-       formData.append("description", description);
-       formData.append("name", name);
-       formData.append("type", type);
-       formData.append("detail", detail);
-       formData.append("location", location);
-       formData.append("image", image);
-       formData.append("upfile", upfile.files[0]);
-
-        $.ajax({
-            method: "post",
-            url: "register",
-            data: formData,
-            processData: false,
-            contentType: false,
-        })
-    });
     
     function initCropper() {
         cropper = new Cropper(image, {
@@ -224,30 +197,43 @@
                 width: 334.30,
                 height: 188.66
             }).toBlob(function (blob) {
-                formData.append('thumbnail', blob, 'crew_thumbnail.png');
+                formData.append('image', blob, 'crew_thumbnail.png');
             })
         }
     });
 
-    window.addEventListener('DOMContentLoaded', function () {
-        var image = document.getElementById('image');
-        var cropBoxData;
-        var canvasData;
-        var cropper;
 
-        $('#modal').on('shown.bs.modal', function () {
-            cropper = new Cropper(image, {
-                autoCropArea: 0.5,
-                ready: function () {
-                    //Should set crop box data first here
-                    cropper.setCropBoxData(cropBoxData).setCanvasData(canvasData);
-                }
-            });
-        }).on('hidden.bs.modal', function () {
-            cropBoxData = cropper.getCropBoxData();
-            canvasData = cropper.getCanvasData();
-            cropper.destroy();
-        });
+    document.querySelector("#submit").addEventListener("click", function (){
+        let title = document.querySelector("input[name=title]").value;
+        let description = document.querySelector("textarea[name=description]").value;
+        let name = document.querySelector("input[name=name]").value;
+        let type = document.querySelector("select[name=type]").value;
+        let detail = document.querySelector("input[name=detail]").value;
+        let location = document.querySelector("input[name=location]").value;
+        let upfile = document.querySelector("input[name=upfile]")
+
+        formData.append("title", title);
+        formData.append("description", description);
+        formData.append("name", name);
+        formData.append("type", type);
+        formData.append("detail", detail);
+        formData.append("location", location);
+        if (upfile.files.length > 0) {
+            formData.append("upfile", upfile.files[0]);
+        }
+        
+
+        $.ajax({
+            method: "post",
+            url: "register",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (crew){
+                console.log(crew); // 서버 응답을 확인
+                location.href = "detail?no=" + crew.no;
+            }
+        })
     });
     
     function readURL(input) {
@@ -259,7 +245,7 @@
             };
             reader.readAsDataURL(input.files[0]);
         } else {
-            document.getElementById('preview').src = "";
+            document.getElementById('image').src = "";
         }
     }
 

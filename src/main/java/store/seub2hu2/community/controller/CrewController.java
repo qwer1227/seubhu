@@ -67,6 +67,7 @@ public class CrewController {
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page
             , @RequestParam(name = "rows", required = false, defaultValue = "15") int rows
             , @RequestParam(name = "category", required = false) String category
+            , @RequestParam(name = "opt", required = false) String opt
             , @RequestParam(name = "keyword", required = false) String keyword
             , Model model) {
 
@@ -81,6 +82,7 @@ public class CrewController {
 
         // 검색
         if (StringUtils.hasText(keyword)) {
+            condition.put("opt", opt);
             condition.put("keyword", keyword);
         }
 
@@ -326,11 +328,6 @@ public class CrewController {
         return "redirect:detail?no=" + crewNo;
     }
 
-    @GetMapping("/image-crop")
-    public String ex() {
-        return "community/crew/image-crop";
-    }
-
     @GetMapping("report-check")
     @ResponseBody
     public String reportCheck(@RequestParam("type") String type
@@ -341,7 +338,6 @@ public class CrewController {
 
         return isReported ? "yes" : "no";
     }
-
 
 
 }

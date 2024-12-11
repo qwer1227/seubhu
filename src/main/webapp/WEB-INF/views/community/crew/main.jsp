@@ -52,47 +52,56 @@
         <a href="javascript:void(0)" onclick="changeCategory('N')">마감</a>
       </div>
       
-      <div class="row row-cols-1 row-cols-md-3 g-4">
-        <!-- 카드 1 -->
-        <c:forEach var="crew" items="${crews}">
-          <div class="col">
-            <a href="hit?no=${crew.no}" style="text-decoration-line: none">
-              <div class="card">
-                <c:choose>
-                  <c:when test="${empty crew.thumbnail}">
-                    <img src="/resources/images/community/inviting_default_main.jpg" alt="크루 대표 이미지"
-                         class="card-img-top"
-                         style="height: 220px; filter: ${crew.entered eq 'Y' ? 'grayscale(0%)' : 'grayscale(100%)'}">
-                    <c:if test="${crew.entered eq 'N'}">
-                      <div class="overlay-text ">마감</div>
-                    </c:if>
-                  </c:when>
-                  <c:otherwise>
-                    <img src="/resources/images/community/${crew.thumbnail.saveName}" alt="크루 대표 이미지"
-                         class="card-img-top"
-                         style="height: 220px; filter: ${crew.entered eq 'Y' ? 'grayscale(0%)' : 'grayscale(100%)'}">
-                    <c:if test="${crew.entered eq 'N'}">
-                      <div class="overlay-text ">마감</div>
-                    </c:if>
-                  </c:otherwise>
-                </c:choose>
-                <div class="card-body text-center">
-                  <h5 class="card-title">
-                      ${crew.title}
-                    <c:if test="${crew.replyCnt gt 0}">
-                      <span class="badge rounded-pill text-bg-danger">${crew.replyCnt}</span>
-                    </c:if>
-                  </h5>
-                  <p class="card-text">
-                      ${crew.name}
-                    | <i class="bi bi-eye"></i> ${crew.viewCnt}
-                  </p>
-                </div>
-              </div>
-            </a>
+      <c:choose>
+        <c:when test="${empty crews}">
+          <div class="col p-5" style="justify-content: center; text-align: center;">
+            <strong>해당 검색 조건에 해당하는 크루모임이 없습니다.</strong>
           </div>
-        </c:forEach>
-      </div>
+        </c:when>
+        <c:otherwise>
+          <div class="row row-cols-1 row-cols-md-3 g-4">
+            <!-- 카드 1 -->
+            <c:forEach var="crew" items="${crews}">
+              <div class="col">
+                <a href="hit?no=${crew.no}" style="text-decoration-line: none">
+                  <div class="card">
+                    <c:choose>
+                      <c:when test="${empty crew.thumbnail}">
+                        <img src="/resources/images/community/inviting_default_main.jpg" alt="크루 대표 이미지"
+                             class="card-img-top"
+                             style="height: 220px; filter: ${crew.entered eq 'Y' ? 'grayscale(0%)' : 'grayscale(100%)'}">
+                        <c:if test="${crew.entered eq 'N'}">
+                          <div class="overlay-text ">마감</div>
+                        </c:if>
+                      </c:when>
+                      <c:otherwise>
+                        <img src="/resources/images/community/${crew.thumbnail.saveName}" alt="크루 대표 이미지"
+                             class="card-img-top"
+                             style="height: 220px; filter: ${crew.entered eq 'Y' ? 'grayscale(0%)' : 'grayscale(100%)'}">
+                        <c:if test="${crew.entered eq 'N'}">
+                          <div class="overlay-text ">마감</div>
+                        </c:if>
+                      </c:otherwise>
+                    </c:choose>
+                    <div class="card-body text-center">
+                      <h5 class="card-title">
+                          ${crew.title}
+                        <c:if test="${crew.replyCnt gt 0}">
+                          <span class="badge rounded-pill text-bg-danger">${crew.replyCnt}</span>
+                        </c:if>
+                      </h5>
+                      <p class="card-text">
+                          ${crew.name}
+                        | <i class="bi bi-eye"></i> ${crew.viewCnt}
+                      </p>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </c:forEach>
+          </div>
+        </c:otherwise>
+      </c:choose>
       
       <div class="row p-3 d-flex justify-content-left">
         <div class="col-2">
@@ -100,9 +109,9 @@
             <option value="all" ${param.opt eq 'all' ? 'selected' : ''}> 제목+내용</option>
             <option value="title" ${param.opt eq 'title' ? 'selected' : ''}> 제목</option>
             <option value="content" ${param.opt eq 'content' ? 'selected' : ''}> 내용</option>
+            <option value="name" ${param.opt eq 'name' ? 'selected' : ''}> 크루명</option>
             <option value="reply" ${param.opt eq 'reply' ? 'selected' : ''}> 댓글</option>
-            <option value="nickname" ${param.opt eq 'nickname' ? 'selected' : ''}> 닉네임</option>
-            <%--        <option value="hashtag"> 해시태그</option>--%>
+            <option value="nickname" ${param.opt eq 'nickname' ? 'selected' : ''}> 크루장</option>
           </select>
         </div>
         <div class="col-4">
@@ -116,7 +125,7 @@
         </div>
         <security:authorize access="isAuthenticated()">
           <security:authentication property="principal" var="loginUser"/>
-          <c:if test="${not empty loginUser and loginUser ne null}">
+          <c:if test="${not empty loginUser}">
             <div class="col d-flex justify-content-end">
               <a href="form" type="button" class="btn btn-primary">글쓰기</a>
             </div>
@@ -128,7 +137,6 @@
   <%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
 <script>
-    // 카테고리를 선택했을 때
     function changeCategory(category) {
         let form = document.querySelector("#form-search");
         let catInput = document.querySelector("#categoryInput");
@@ -139,8 +147,15 @@
 
         form.submit();
     }
+    
+    function changePage(page, event) {
+        event.preventDefault();
+        let form = document.querySelector("#form-search");
+        let pageInput = form.querySelector("input[name=page]");
+        pageInput.value = page;
+        form.submit();
+    }
 
-    // 키워드 검색할 때
     function searchKeyword() {
         pageInput.value = 1;
         form.submit();
