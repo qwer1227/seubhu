@@ -61,20 +61,26 @@ public class CrewService {
         MultipartFile upfile = form.getUpfile();
 
         // 작성자가 대표 이미지 추가 시, crews 테이블에 저장
-        if (!image.isEmpty()) {
+        if (form.getImage() == null){
+            crew.setThumbnail(null);
+        } else if (!image.isEmpty()) {
             String originalImageName = image.getOriginalFilename();
-            String ImageName = System.currentTimeMillis() + originalImageName;
-            webContentFileUtils.saveWebContentFile(image, saveImageDirectory, ImageName);
+            String imageName = System.currentTimeMillis() + originalImageName;
+            webContentFileUtils.saveWebContentFile(image, saveImageDirectory, imageName);
 
             UploadFile uploadThumbnail = new UploadFile();
             uploadThumbnail.setOriginalName(originalImageName);
-            uploadThumbnail.setSaveName(ImageName);
+            uploadThumbnail.setSaveName(imageName);
 
             crew.setThumbnail(uploadThumbnail);
+//        } else {
+//            crew.setThumbnail(null);
         }
 
         // 첨부파일 추가 시, crews 테이블에 저장
-        if (!upfile.isEmpty()) {
+        if (form.getUpfile() == null){
+            crew.setUploadFile(null);
+        } else if (!upfile.isEmpty()) {
             String originalFileName = upfile.getOriginalFilename();
             String filename = System.currentTimeMillis() + originalFileName;
             FileUtils.saveMultipartFile(upfile, saveFileDirectory, filename);
@@ -84,6 +90,8 @@ public class CrewService {
             uploadFile.setSaveName(filename);
 
             crew.setUploadFile(uploadFile);
+//        } else {
+//            crew.setUploadFile(null);
         }
         crewMapper.insertCrew(crew);
 
@@ -103,7 +111,6 @@ public class CrewService {
             uploadMapper.insertCrewFile(uploadFile);
         }
 
-
         User user = new User();
         user.setNo(loginUser.getNo());
         user.setNickname(loginUser.getNickname());
@@ -115,7 +122,6 @@ public class CrewService {
         member.setReader("Y");
         member.setJoinDate(new Date());
         member.setJoin("Y");
-
         member.setUser(user);
         crewMapper.insertCrewMember(member);
 
@@ -291,5 +297,9 @@ public class CrewService {
         member.setUser(user);
 
         crewMapper.updateCrewMember(member);
+    }
+
+    public List<Crew> getCrewByUserNo(int userNo){
+        return crewMapper.getCrewByUserNo(userNo);
     }
 }

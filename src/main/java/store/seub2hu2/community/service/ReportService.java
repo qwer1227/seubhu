@@ -15,49 +15,26 @@ public class ReportService {
     @Autowired
     private ReportMapper reportMapper;
 
-    public void registerReportToBoard(ReportForm form
+    public void registerReport(ReportForm form
             , @AuthenticationPrincipal LoginUser loginUser) {
 
         Report report = new Report();
         report.setType(form.getType());
         report.setReason(form.getReason());
+        report.setType(form.getType());
+        report.setNo(form.getNo());
 
         User user = new User();
         user.setNo(loginUser.getNo());
         user.setNickname(loginUser.getNickname());
         report.setUser(user);
 
-        if (form.getType().equals("board")){
-            report.setBoardNo(form.getNo());
-        }
-
-        if (form.getType().equals("reply")){
-            report.setReplyNo(form.getNo());
-        }
-
-        reportMapper.insertReportToBoard(report);
+        reportMapper.insertReport(report);
     }
 
-    public void registerReportToCrew(ReportForm form
-            , @AuthenticationPrincipal LoginUser loginUser) {
-
-        Report report = new Report();
-        report.setType(form.getType());
-        report.setReason(form.getReason());
-
-        User user = new User();
-        user.setNo(loginUser.getNo());
-        user.setNickname(loginUser.getNickname());
-        report.setUser(user);
-
-        if (form.getType().equals("crew")){
-            report.setCrewNo(form.getNo());
-        }
-
-        if (form.getType().equals("reply")){
-            report.setReplyNo(form.getNo());
-        }
-
-        reportMapper.insertReportToCrew(report);
+    public boolean isReported(String type
+                              , int no
+                            , @AuthenticationPrincipal LoginUser loginUser) {
+        return reportMapper.isAlreadyReported(type, no, loginUser.getNo());
     }
 }

@@ -59,11 +59,17 @@
             q.qna_content,
             q.qna_created_date,
             q.qna_status,
-            c.category_name
+            c.category_name,
+            q.answer_content,
+            q.answer_created_date,
+            u.user_nickname,
+            q.answer_user_no
         FROM
             USER_QNA q
-                INNER JOIN
+            INNER JOIN
             QNA_CATEGORY c ON q.category_no = c.category_no
+            LEFT JOIN
+            USERS u ON q.answer_user_no = u.user_no
         WHERE
             q.qna_no = #{qnaNo}
     </select>
@@ -122,6 +128,34 @@
                 </when>
                 <when test="condition.opt == 'category'">
                     and qc.category_name like concat('%', #{condition.keyword}, '%')
+                </when>
+            </choose>
+        </if>
+    </select>
+
+    <!-- int getTotalRows2(@Param("req")RequestParamsDto requestParamsDto); -->
+
+    <select id="getTotalRows2" resultType="int">
+        select
+            count(*) as cnt
+        from
+            USER_QNA uq
+        JOIN
+            QNA_CATEGORY qc
+        ON
+            qc.category_no = uq.category_no
+        where
+            uq.qna_isdeleted = 'N'
+        <if test="req.category != null">
+            and qc.category_name = #{req.category}
+        </if>
+        <if test="req.opt != null">
+            <choose>
+                <when test="req.opt == 'title'">
+                    and uq.qna_title like concat('%', #{req.keyword}, '%')
+                </when>
+                <when test="req.opt == 'content'">
+                    and uq.qna_content like concat('%', #{req.keyword}, '%')
                 </when>
             </choose>
         </if>
@@ -187,11 +221,59 @@
         ORDER BY rn
     </select>
 
+    <!-- List<QnaResponse> getQnas2(@Param("req") RequestParamsDto requestParamsDto); -->
+
+    <select id="getQnas2" resultMap="QnaResponseMap">
+        select *
+        from (
+            select
+              uq.qna_no
+            , uq.qna_title
+            , uq.qna_content
+            , uq.qna_created_date
+            , uq.qna_updated_date
+            ,  ROW_NUMBER() OVER (ORDER BY uq.qna_created_date) AS rn
+            from
+                USER_QNA uq
+            JOIN
+                QNA_CATEGORY qc
+            ON
+                qc.category_no = uq.category_no
+            where
+                qna_isdeleted = 'N'
+        <if test="req.category != null and req.category != ''">
+            and qc.category_name = #{req.category}
+        </if>
+        <!-- 제목/내용 검색 -->
+        <if test="req.keyword != null and req.keyword != ''">
+            <choose>
+                <when test="req.opt == 'title'">
+                    AND uq.qna_title LIKE CONCAT('%', #{req.keyword}, '%')
+                </when>
+                <when test="req.opt == 'content'">
+                    AND uq.qna_content LIKE CONCAT('%', #{req.keyword}, '%')
+                </when>
+                <when test="req.opt == 'category'">
+                    AND qc.category_name LIKE CONCAT('%', #{req.keyword}, '%')
+                </when>
+                <!-- 'opt'가 'title', 'content', 'category'가 아닌 경우 기본적으로 제목과 내용을 모두 검색 -->
+                <otherwise>
+                    AND (uq.qna_title LIKE CONCAT('%', #{req.keyword}, '%')
+                    OR uq.qna_content LIKE CONCAT('%', #{req.keyword}, '%')
+                    OR qc.category_name LIKE CONCAT('%', #{req.keyword}, '%'))
+                </otherwise>
+            </choose>
+        </if>
+        ) AS qna
+        WHERE rn BETWEEN #{req.begin} AND #{req.end}
+        ORDER BY rn
+    </select>
+
     <!-- void updateAnswer(@Param("answer")AnswerDTO answerDTO); -->
 
     <update id="updateAnswer">
         update USER_QNA
-        set QNA_STATUS = #{answer.qnaStatus}, ANSWER_CONTENT = #{answer.answerContent}, ANSWER_CREATED_DATE = NOW()
+        set QNA_STATUS = #{answer.qnaStatus}, ANSWER_CONTENT = #{answer.answerContent}, ANSWER_CREATED_DATE = NOW(), ANSWER_USER_NO = #{userNo}
         where qna_no = #{answer.qnaNo}
     </update>
 

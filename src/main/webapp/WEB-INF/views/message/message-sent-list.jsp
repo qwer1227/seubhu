@@ -97,7 +97,7 @@
                 <tr>
                     <td><input type="checkbox" name="messageNo" value="${message.messageNo}"></td> <!-- 개별 체크박스 -->
                     <td>${message.messageNo}</td>
-                    <td>${message.senderNickname}</td>
+                    <td></td>
                     <td id="content-title" class="text-start">
                         <a href="/message/detail?messageNo=${message.messageNo}"
                            style="text-decoration-line: none; color: black">

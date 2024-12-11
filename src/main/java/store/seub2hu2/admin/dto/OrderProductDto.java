@@ -7,27 +7,32 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
 @Setter
-@ToString
-public class SettlementDto {
+@Getter
+public class OrderProductDto {
 
     private int payNo;
-    private String settleType;
-    private String name;
-    private String id;
-    private String title;
-    private int price;
-    private int totalPrice;
+    private int orderNo;
+    private String orderNum;
+    private int orderProdNo;
+    private String payType;
+    private String userName;
+    private String userId;
+    private String userTel;
+    private String payPrice;
+    private String payStatus;
     private String payMethod;
-    private String status;
-    private String lessonSubject;
+    private String prodName;
+    private String prodSize;
+    private int orderProdAmount;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime payDate;
     private LocalDateTime payCancelDate;
+
 
 
     public String getPayDate() {

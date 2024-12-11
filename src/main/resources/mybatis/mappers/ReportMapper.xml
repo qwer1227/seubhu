@@ -3,8 +3,8 @@
 <mapper namespace="store.seub2hu2.community.mapper.ReportMapper">
 
   <!-- void insertReportToBoard(@Param("report") Report report); -->
-  <insert id="insertReportToBoard">
-    insert into BOARD_REPORTS
+  <insert id="insertReport">
+    insert into REPORTS
     (
     report_type
     , report_no
@@ -14,12 +14,7 @@
     values
     (
     #{report.type}
-    <if test="report.type == 'board'">
-      , #{report.boardNo}
-    </if>
-    <if test="report.type == 'reply'">
-      , #{report.replyNo}
-    </if>
+    , #{report.no}
     , #{report.user.no}
     , #{report.reason}
     )
@@ -28,7 +23,7 @@
   <!-- void updateDisableBoard(@Param("report") Report report); -->
   <!-- 자세한 구현코드는 수정 필요 -->
   <update id="updateDisableBoard">
-    update BOARD_REPORTS
+    update REPORTS
     set
     (
     admin_no = #{report.adminNo}
@@ -38,31 +33,18 @@
     <if test="report.type == 'board">
       and board_no = #{report.boardNo}
     </if>
-    <if test="report.type == 'reply">
+    <if test="report.type == 'boardReply">
       and reply_no = #{report.replyNo}
     </if>
   </update>
 
-  <!-- void insertReportToCrew(@Param("report") Report report); -->
-  <insert id="insertReportToCrew">
-    insert into CREW_REPORTS
-    (
-    report_type
-    , report_no
-    , user_no
-    , report_reason
-    )
-    values
-    (
-    #{report.type}
-    <if test="report.type == 'crew'">
-      , #{report.crewNo}
-    </if>
-    <if test="report.type == 'reply'">
-      , #{report.replyNo}
-    </if>
-    , #{report.user.no}
-    , #{report.reason}
-    )
-  </insert>
+  <!-- boolean isAlreadyReported(@Param("type") String type, @Param("no") int no, @Param("userNo") int userNo); -->
+  <select id="isAlreadyReported">
+    select count(*)
+    from REPORTS
+    where
+      report_type = #{type}
+      and report_no = #{no}
+      and user_no = #{userNo}
+  </select>
 </mapper>

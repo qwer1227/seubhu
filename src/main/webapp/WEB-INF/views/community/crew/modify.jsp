@@ -110,16 +110,18 @@
             <%--            <%@include file="../write.jsp" %>--%>
           </td>
         </tr>
-        <c:if test="${crew.uploadFile.deleted eq 'N'}">
-        <tr>
-          <th>기존 첨부파일</th>
-          <td colspan="3">
-            ${crew.uploadFile.originalName}
-            <button type="button" class="btn btn-outline-dark"
-                    onclick="deleteUploadFile(${crew.no}, ${crew.uploadFile.fileNo})">
-              삭제
-            </button>
-        </tr>
+        <c:if test="${not empty crew.uploadFile}">
+          <c:if test="${crew.uploadFile.deleted eq 'N'}">
+            <tr>
+              <th>기존 첨부파일</th>
+              <td colspan="3">
+                  ${crew.uploadFile.originalName}
+                <button type="button" class="btn btn-outline-dark"
+                        onclick="deleteUploadFile(${crew.no}, ${crew.uploadFile.fileNo})">
+                  삭제
+                </button>
+            </tr>
+          </c:if>
         </c:if>
         <tr>
           <th>첨부파일</th>

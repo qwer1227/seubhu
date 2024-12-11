@@ -1,6 +1,7 @@
 package store.seub2hu2.mypage.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.web.mappings.MappingsEndpoint;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,7 @@ import store.seub2hu2.user.service.UserService;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -39,6 +41,7 @@ public class MyPageRestController {
     private UserService userService;
     @Autowired
     private WorkoutService workoutService;
+    private MappingsEndpoint mappingsEndpoint;
 
     @PostMapping("/public/insert")
     public ResponseEntity<Map<String, Object>> insertPost(@RequestParam("content") String postContent,
@@ -178,7 +181,86 @@ public class MyPageRestController {
     }
 
     @GetMapping("/getworkout")
-    public List<WorkoutDTO> workout(@AuthenticationPrincipal  LoginUser loginUser){
-        return workoutService.getWorkoutByUserNo(loginUser.getNo());
+    public List<Map<String,Object>> workout(@AuthenticationPrincipal  LoginUser loginUser){
+        // 데이터베이스에서 일정 데이터를 조회
+
+        List<WorkoutDTO> events = workoutService.getWorkoutByUserNo(loginUser.getNo());
+
+        // FullCalendar 형식으로 변환
+        return events.stream()
+                .map(event ->{
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("id", event.getWorkNo());
+                    map.put("title", event.getTitle());
+                    map.put("start", event.getStartDate());
+                    map.put("content", event.getDescription());
+                    map.put("userNo", event.getUserNo());
+                    return map;
+                })
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("/getworkoutdetail{no}")
+    public ResponseEntity<Map<String, Object>> getWorkoutDetail(@PathVariable("no") int workoutNo){
+
+        Map<String, Object> response = new HashMap<>();
+
+        try{
+            WorkoutDTO workoutDTO = workoutService.getWorkoutDetailByWorkoutNo(workoutNo);
+            response.put("message", "성공");
+            response.put("workoutDetail", workoutDTO);
+        }catch (Exception e){
+            e.printStackTrace();
+            response.put("message", "서버 오류");
+            return ResponseEntity.status(500).body(response);
+        }
+        return  ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/postworkout")
+    public ResponseEntity<Map<String,Object>> postWorkout(@RequestBody WorkoutDTO workoutDTO, @AuthenticationPrincipal LoginUser loginUser){
+
+        Map<String, Object> response = new HashMap<>();
+
+        try{
+            workoutService.insertWorkout(workoutDTO, loginUser.getNo());
+            response.put("message", "성공");
+        } catch (Exception e){
+            e.printStackTrace();
+            response.put("message", "서버 오류");
+            return ResponseEntity.status(500).body(response);
+        }
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/putworkout/{no}")
+    public ResponseEntity<Map<String, Object>> putWorkout(@PathVariable("no") int workoutNo, @RequestBody WorkoutDTO workoutDTO){
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            workoutService.updateWorkout(workoutNo,workoutDTO);
+        } catch (Exception e){
+            e.printStackTrace();
+            response.put("message", "서버 오류");
+            return ResponseEntity.status(500).body(response);
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/deleteworkout/{no}")
+    public ResponseEntity<Map<String, Object>> deleteWorkout(@PathVariable("no") int workoutNo){
+
+        Map<String, Object> response = new HashMap<>();
+
+        try{
+            workoutService.deleteWorkout(workoutNo);
+        }catch (Exception e){
+            e.printStackTrace();
+            response.put("message", "서버 오류");
+            return ResponseEntity.status(500).body(response);
+        }
+        return ResponseEntity.ok(response);
     }
 }

@@ -112,6 +112,13 @@ public class BoardService {
         return dto;
     }
 
+    public ListDto<Board> getBoardsTop(Map<String, Object> condition) {
+        List<Board> boards = boardMapper.getBoardsTopFive(condition);
+        ListDto<Board> dto = new ListDto<>(boards);
+
+        return dto;
+    }
+
     public ListDto<Notice> getNoticesTop(Map<String, Object> condition) {
         List<Notice> notices = noticeMapper.getNoticesTopFive(condition);
         ListDto<Notice> dto = new ListDto<>(notices);

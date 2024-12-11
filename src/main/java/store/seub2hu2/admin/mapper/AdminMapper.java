@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import store.seub2hu2.admin.dto.ImageUrlDto;
 import store.seub2hu2.admin.dto.LessonUsersDto;
+import store.seub2hu2.admin.dto.OrderProductDto;
 import store.seub2hu2.admin.dto.SettlementDto;
 import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.course.vo.Region;
@@ -97,6 +98,17 @@ public interface AdminMapper {
 
     void updateCourse(@Param("course") Course course);
 
+    int getTotalBreath(@Param("day")String day);
+
+    int getTotalAction(@Param("day")String day);
+
+    int getTotalExercise(@Param("day")String day);
+
+    int getTotalPriceByDay(String yesterday);
+
+    int getTotalOrderProd(@Param("condition") Map<String, Object> condition);
+
+    List<OrderProductDto> getSettleProdList(@Param("condition") Map<String, Object> condition);
 
 
 

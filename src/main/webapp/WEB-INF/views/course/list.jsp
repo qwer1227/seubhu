@@ -22,7 +22,7 @@
             <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="list">코스 목록</a>
         </div>
         <div class="col " >
-            <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="runner-ranking">런너 랭킹</a>
+            <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="shortest-record-ranking">런너 랭킹</a>
         </div>
     </div>
 
@@ -90,6 +90,7 @@
                     <a class="text-decoration-none" href="detail?no=${course.no }">
                         <div class="main_image" style="position: relative;">
                             <img src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/images/course/${course.filename }" class="card-img-top" alt="...">
+                            <%-- 해당 코스 완주를 성공한 사용자라면, 완주 성공 문구를 표시한다. --%>
                             <c:if test="${course.successWhether.courseNo == '1'}">
                                 <span class="badge bg-primary main_image_text"
                                       style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 20px;">
@@ -99,7 +100,6 @@
                         </div>
                     </a>
                     <div class="card-body">
-                        <%-- 해당 코스 완주를 성공한 사용자라면, 완주 성공 문구를 표시한다. --%>
                         <h5 class="card-title">
                             <span>${course.name }</span>
                         </h5>

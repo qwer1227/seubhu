@@ -23,20 +23,18 @@
         </foreach>
     </update>
 
-
-
-    <select id="findMessageRcvNo" resultType="int">
-        SELECT MESSAGE_RCV_NO
-        FROM MESSAGE_RECEIVERS
+    <update id="updateReceiveMessageReadStatus">
+        UPDATE MESSAGE_RECEIVERS
+        SET MESSAGE_READ      = 'Y',
+            MESSAGE_READ_DATE = NOW()
         WHERE MESSAGE_NO = #{messageNo}
           AND USER_NO = #{userNo}
-    </select>
+    </update>
 
-    <update id="updateReadStatus" parameterType="int">
-        UPDATE MESSAGE_RECEIVERS
-        SET MESSAGE_READ = 'Y',
-            MESSAGE_READ_DATE = NOW()
-        WHERE MESSAGE_RCV_NO = #{messageRcvNo}
+    <update id="updateMessageReadStatus">
+        UPDATE MESSAGES
+        SET MESSAGE_READ      = 'Y'
+        WHERE MESSAGE_NO = #{messageNo}
     </update>
 
     <update id="updateReadStatuses" parameterType="store.seub2hu2.message.dto.MessageReceived">
@@ -48,7 +46,6 @@
             #{messageRcvNo}
         </foreach>
     </update>
-
 
 
     <!-- 조건에 맞는 메시지 수 조회 -->
@@ -104,16 +101,24 @@
         VALUES (#{messageNo}, #{userNo})
     </insert>
 
+    <select id="getReceiverNickname" parameterType="int" resultType="string">
+        SELECT nickname
+        FROM users
+        WHERE no = #{userNo}
+    </select>
+
+
     <select id="getReceivedMessages" resultType="store.seub2hu2.message.dto.MessageReceived">
         SELECT
-        m.MESSAGE_NO           AS messageNo,
-        m.USER_NO              AS userNo,
-        m.MESSAGE_TITLE        AS title,
+        m.MESSAGE_NO AS messageNo,
+        m.USER_NO AS userNo,
+        m.MESSAGE_TITLE AS title,
         m.MESSAGE_CREATED_DATE AS createdDate,
         m.MESSAGE_UPDATED_DATE AS updatedDate,
-        m.MESSAGE_DELETE       AS deleted,
-        u.USER_NICKNAME        AS senderNickname, -- 발신자 닉네임 추가
-        r.MESSAGE_READ         AS readStatus
+        m.MESSAGE_DELETE AS deleted,
+        u.USER_NICKNAME AS senderNickname, -- 발신자 닉네임 추가
+        r.MESSAGE_READ AS readStatus,
+        r.MESSAGE_READ_DATE AS readDate
         FROM
         MESSAGES m
         JOIN MESSAGE_RECEIVERS r ON m.MESSAGE_NO = r.MESSAGE_NO
@@ -148,58 +153,58 @@
     </select>
 
     <!-- 보낸 메시지 조회 -->
-        <select id="getSentMessages"  resultType="store.seub2hu2.message.dto.MessageReceived">
-            SELECT MESSAGE_NO AS messageNo,
-                   USER_NO AS userNo,
-                   MESSAGE_TITLE AS title,
-                   MESSAGE_CONTENT AS content,
-                   MESSAGE_CREATED_DATE AS createdDate,
-                   MESSAGE_UPDATED_DATE AS updatedDate,
-                   MESSAGE_DELETE AS deleted
-            FROM MESSAGES
-            WHERE USER_NO = #{condition.userNo}
-              AND MESSAGE_DELETE = 'N'
-            <if test="condition.keyword != null and condition.opt != null">
-                AND (
-                <choose>
-                    <when test="condition.opt == 'title'">
-                        m.MESSAGE_TITLE LIKE CONCAT('%', #{condition.keyword}, '%')
-                    </when>
-                    <when test="condition.opt == 'content'">
-                        m.MESSAGE_CONTENT LIKE CONCAT('%', #{condition.keyword}, '%')
-                    </when>
-                    <when test="condition.opt == 'senderNickname'">
-                        u.USER_NICKNAME LIKE CONCAT('%', #{condition.keyword}, '%')
-                    </when>
-                </choose>
-                )
-            </if>
+    <select id="getSentMessages"  resultType="store.seub2hu2.message.dto.MessageReceived">
+        SELECT MESSAGE_NO AS messageNo,
+        USER_NO AS userNo,
+        MESSAGE_TITLE AS title,
+        MESSAGE_CONTENT AS content,
+        MESSAGE_CREATED_DATE AS createdDate,
+        MESSAGE_UPDATED_DATE AS updatedDate,
+        MESSAGE_DELETE AS deleted
+        FROM MESSAGES
+        WHERE USER_NO = #{condition.userNo}
+        AND MESSAGE_DELETE = 'N'
+        <if test="condition.keyword != null and condition.opt != null">
+            AND (
             <choose>
-                <when test="condition.sort == 'desc'">
-                    ORDER BY MESSAGE_CREATED_DATE DESC
+                <when test="condition.opt == 'title'">
+                    m.MESSAGE_TITLE LIKE CONCAT('%', #{condition.keyword}, '%')
                 </when>
-                <otherwise>
-                    ORDER BY MESSAGE_CREATED_DATE ASC
-                </otherwise>
+                <when test="condition.opt == 'content'">
+                    m.MESSAGE_CONTENT LIKE CONCAT('%', #{condition.keyword}, '%')
+                </when>
+                <when test="condition.opt == 'senderNickname'">
+                    u.USER_NICKNAME LIKE CONCAT('%', #{condition.keyword}, '%')
+                </when>
             </choose>
-            LIMIT #{condition.rows} OFFSET #{condition.offset}
-        </select>
+            )
+        </if>
+        <choose>
+            <when test="condition.sort == 'desc'">
+                ORDER BY MESSAGE_CREATED_DATE DESC
+            </when>
+            <otherwise>
+                ORDER BY MESSAGE_CREATED_DATE ASC
+            </otherwise>
+        </choose>
+        LIMIT #{condition.rows} OFFSET #{condition.offset}
+    </select>
+
 
 
     <!-- 메시지 상세 조회 -->
     <select id="getMessageDetailByNo" parameterType="int" resultType="store.seub2hu2.message.vo.Message">
-        SELECT
-            m.MESSAGE_NO AS messageNo,
-            m.MESSAGE_TITLE AS title,
-            m.MESSAGE_CONTENT AS content,
-            m.MESSAGE_CREATED_DATE AS createDate,
-            m.MESSAGE_UPDATED_DATE AS updatedDate,
-            u.USER_NICKNAME AS senderNickname -- 발신자 닉네임
+        SELECT m.MESSAGE_NO           AS messageNo,
+               m.MESSAGE_TITLE        AS title,
+               m.MESSAGE_CONTENT      AS content,
+               m.MESSAGE_CREATED_DATE AS createDate,
+               m.MESSAGE_UPDATED_DATE AS updatedDate,
+               u.USER_NICKNAME        AS senderNickname,
+               m.MESSAGE_READ         AS readStatus-- 발신자 닉네임
         FROM MESSAGES m
                  JOIN USERS u ON m.USER_NO = u.USER_NO -- 발신자 정보
         WHERE m.MESSAGE_NO = #{messageNo}
     </select>
-
     <!-- 읽지 않은 메시지 개수 조회 -->
     <select id="countUnreadMessages" parameterType="int" resultType="int">
         SELECT COUNT(*)
