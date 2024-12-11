@@ -69,7 +69,7 @@
                       <c:when test="${empty crew.thumbnail}">
                         <img src="/resources/images/community/inviting_default_main.jpg" alt="크루 대표 이미지"
                              class="card-img-top"
-                             style="height: 220px; filter: ${crew.entered eq 'Y' ? 'grayscale(0%)' : 'grayscale(100%)'}">
+                             style="height: 230px; filter: ${crew.entered eq 'Y' ? 'grayscale(0%)' : 'grayscale(100%)'}">
                         <c:if test="${crew.entered eq 'N'}">
                           <div class="overlay-text ">마감</div>
                         </c:if>
@@ -77,7 +77,7 @@
                       <c:otherwise>
                         <img src="/resources/images/community/${crew.thumbnail.saveName}" alt="크루 대표 이미지"
                              class="card-img-top"
-                             style="height: 220px; filter: ${crew.entered eq 'Y' ? 'grayscale(0%)' : 'grayscale(100%)'}">
+                             style="height: 230px; filter: ${crew.entered eq 'Y' ? 'grayscale(0%)' : 'grayscale(100%)'}">
                         <c:if test="${crew.entered eq 'N'}">
                           <div class="overlay-text ">마감</div>
                         </c:if>
