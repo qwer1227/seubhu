@@ -207,23 +207,29 @@
     </select>
 
     <!--
-        List<SuccessCoursesForm> getMySuccessCourses(@Param("condition") Map<String, Object> condition);
+        List<SuccessCoursesForm> getSuccessCourses(@Param("condition") Map<String, Object> condition);
     -->
-    <select id="getMySuccessCourses" resultType="store.seub2hu2.course.dto.SuccessCoursesForm">
-        select cr.course_no as no
-             , cr.course_name as name
+    <select id="getSuccessCourses" resultType="store.seub2hu2.course.dto.SuccessCoursesForm">
+        select cr.course_no as courseNo
+             , cr.course_name as courseName
              , cr.course_distance as distance
              , cr.course_level as level
+             , cr.user_no as userNo
+             , cr.user_nickname as nickname
              , cr.rn
              , cr.count as successCount
         from (select c.course_no
                    , c.course_name
                    , c.course_distance
                    , c.course_level
+                   , u.user_no
+                   , u.user_nickname
                    , row_number() over (order by c.course_no asc) as rn
                    , count(*) as count
               from COURSE_RECORDS r inner join COURSES c
               on r.course_no = c.course_no
+              inner join USERS u
+              on r.user_no = u.user_no
               where r.user_no = #{condition.userNo}
               group by c.course_no) cr
         where rn between #{condition.begin} and #{condition.end};
