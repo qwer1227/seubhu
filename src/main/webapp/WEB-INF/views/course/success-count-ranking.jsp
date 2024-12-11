@@ -275,7 +275,7 @@
         modal.show();
     }
 
-    //
+    // 모든 사용자가 달성한 코스 목록을 보여준다.
     function showOtherSuccessCourses(userNo) {
         getOtherSuccessCourses(1, userNo);
     }

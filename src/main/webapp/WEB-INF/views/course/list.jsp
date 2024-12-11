@@ -27,7 +27,6 @@
     </div>
 
     <%-- 검색 기능 --%>
-    <%-- 요청 파라미터(검색 정보) : page, sort, distance, level, keyword --%>
     <div class="row row-cols-1 row-cols-md-1 g-4 mt-3 mb-3">
         <div class="col" style="border: 1px solid black; padding: 20px">
             <form id="form-search" method="get" action="list">
@@ -115,7 +114,6 @@
                                     <c:otherwise>
                                         <c:choose>
                                             <%-- 사용자가 코스 도전 등록을 했다면 등록 취소 버튼을 표시하고, 클릭하면 코스 등록을 취소한다. --%>
-                                            <%-- page=1 --%>
                                             <c:when test="${course.challengeWhether.courseNo == '1'}">
                                                 <a href="controlChallenge?courseNo=${course.no}&page=${pagination.page}&sort=${param.sort}&distance=${param.distance}&level=${param.level}&keyword=${param.keyword}"
                                                    class="btn btn-danger" onclick="cancelChallenge(event)">등록 취소</a>
