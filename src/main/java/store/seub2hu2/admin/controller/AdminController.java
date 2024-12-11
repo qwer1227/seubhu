@@ -868,9 +868,9 @@ public class AdminController {
     }
 
     @PostMapping("/qna/answer")
-    public String qnaAnswerPage(@ModelAttribute AnswerDTO answerDTO){
+    public String qnaAnswerPage(@ModelAttribute AnswerDTO answerDTO, @AuthenticationPrincipal LoginUser loginUser){
 
-        qnaService.updateAnswer(answerDTO);
+        qnaService.updateAnswer(answerDTO, loginUser.getNo());
 
         return "redirect:/admin/qna";
     }

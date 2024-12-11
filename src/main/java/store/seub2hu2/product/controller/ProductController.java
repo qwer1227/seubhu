@@ -2,6 +2,7 @@ package store.seub2hu2.product.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -10,6 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import store.seub2hu2.product.dto.*;
 import store.seub2hu2.product.service.ProductService;
+import store.seub2hu2.security.user.LoginUser;
+import store.seub2hu2.user.service.UserService;
+import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.ListDto;
 
 
@@ -24,6 +28,9 @@ public class ProductController {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private UserService userService;
 
     // 임시 홈 페이지 이동
     @GetMapping("/")
@@ -71,7 +78,13 @@ public class ProductController {
     @GetMapping("/detail")
     public String detail(@RequestParam("no") int no,
                          @RequestParam("colorNo") int colorNo,
+                         @AuthenticationPrincipal LoginUser loginUser,
                          Model model) {
+
+        model.addAttribute("loginUser", loginUser);
+
+        User user = userService.findbyUserId(loginUser.getId());
+        model.addAttribute("user", user);
 
         ProdDetailDto prodDetailDto = productService.getProductByNo(no);
         model.addAttribute("prodDetailDto", prodDetailDto);

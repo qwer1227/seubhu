@@ -23,7 +23,7 @@
             <!-- 비밀번호 -->
             <div class="mb-3">
                 <label for="password" class="form-label">비밀번호</label>
-                <input type="password" id="password" name="password" class="form-control" placeholder="새 비밀번호" required>
+                <input type="password" id="password" name="password" class="form-control" placeholder="현재 비밀번호" required>
             </div>
             <!-- 수정 버튼 -->
             <button type="submit" class="btn btn-primary">제출하기</button>

@@ -94,7 +94,7 @@ public class BoardService {
 
     public ListDto<Board> getBoards(Map<String, Object> condition) {
         // 검색 조건에 맞는 데이터 전체 갯수 조회
-        int totalRows = boardMapper.getTotalRowsForBoard(condition);
+        int totalRows = boardMapper.getTotalRowsForHistory(condition);
 
         // pagination 객체 생성
         int page = (Integer) condition.get("page");
@@ -108,6 +108,13 @@ public class BoardService {
         // 조회범위에 맞는 데이터 조회하기
         List<Board> boards = boardMapper.getBoards(condition);
         ListDto<Board> dto = new ListDto<>(boards, pagination);
+
+        return dto;
+    }
+
+    public ListDto<Board> getBoardsTop(Map<String, Object> condition) {
+        List<Board> boards = boardMapper.getBoardsTopFive(condition);
+        ListDto<Board> dto = new ListDto<>(boards);
 
         return dto;
     }

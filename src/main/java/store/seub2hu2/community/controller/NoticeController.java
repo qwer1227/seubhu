@@ -46,6 +46,7 @@ public class NoticeController {
     @GetMapping("/main")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page
             , @RequestParam(name = "rows", required = false, defaultValue = "10") int rows
+            , @RequestParam(name = "opt", required = false) String opt
             , @RequestParam(name = "keyword", required = false) String keyword
             , Model model) {
 
@@ -54,6 +55,7 @@ public class NoticeController {
         condition.put("rows", rows);
 
         if (StringUtils.hasText(keyword)) {
+            condition.put("opt", opt);
             condition.put("keyword", keyword);
         }
 

@@ -72,7 +72,7 @@ public class BoardReplyService {
     }
 
     public void updateReply(ReplyForm form) {
-        Reply reply = boardReplyMapper.getReplyByReplyNo(form.getNo());
+        Reply reply = boardReplyMapper.getReplyByReplyNo(form.getId());
         reply.setContent(form.getContent());
 
         boardReplyMapper.updateReply(reply);

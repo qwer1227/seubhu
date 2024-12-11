@@ -16,4 +16,21 @@ public class WorkoutService {
     public List<WorkoutDTO> getWorkoutByUserNo(int userNo){
         return workoutMapper.getWorkoutByUserNo(userNo);
     }
+
+    public WorkoutDTO getWorkoutDetailByWorkoutNo(int workoutNo){
+        return workoutMapper.getWorkoutDetailByWorkoutNo(workoutNo);
+    }
+
+    public void insertWorkout(WorkoutDTO workoutDTO, int userNo){
+        workoutDTO.setUserNo(userNo);
+        workoutMapper.insertWorkout(workoutDTO);
+    }
+
+    public void updateWorkout(int workoutNo, WorkoutDTO workoutDTO){
+        workoutMapper.updateWorkout(workoutNo,workoutDTO);
+    }
+
+    public void deleteWorkout(int workoutNo){
+        workoutMapper.deleteWorkout(workoutNo);
+    }
 }

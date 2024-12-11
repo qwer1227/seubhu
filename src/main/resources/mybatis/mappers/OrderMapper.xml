@@ -65,8 +65,8 @@
     -->
     <update id="updateOrderStatus">
         UPDATE ORDERS
-            SET ORDER_STATUS = #{status}
-            WHERE ORDER_NO = #{orderNo}
+            SET ORDER_STATUS = #{order.status}
+            WHERE ORDER_NO = #{order.no}
     </update>
 
     <!--
@@ -229,11 +229,13 @@
     <select id="getOrders" resultType="store.seub2hu2.mypage.dto.OrderResponse">
         SELECT
             o.order_no AS orderNo,
+            o.order_number AS orderId,
             o.ORDER_DATE AS orderDate,
             p.prod_name AS productName,
             p.prod_img_thum AS productImage,
             o.REAL_PRICE AS productPrice,
             op.order_prod_amount AS quantity,
+            op.SIZE_NO as sizeNo,
             o.order_status AS orderStatus,
             d.deli_status AS deliveryStatus,
             d.deli_no AS deliveryNo
@@ -245,6 +247,7 @@
             PRODUCTS p ON op.PROD_NO = p.PROD_NO
                 JOIN
             DELIVERIES d ON o.ORDER_NO = d.ORDER_NO
+
         WHERE
             o.USER_NO = #{userNo}
     </select>
@@ -300,6 +303,7 @@
             <result property="orderProdAmount" column="ORDER_PROD_AMOUNT"/>
             <result property="orderUnitPrice" column="ORDER_UNIT_PRICE"/>
             <result property="orderEachPrice" column="ORDER_EACH_PRICE"/>
+            <result property="sizeNo" column="SIZE_NO"/>
             <result property="prodSize" column="PROD_SIZE"/>
             <result property="prodColor" column="COLOR_NAME"/>
         </collection>
@@ -361,6 +365,120 @@
         ON D.ORDER_NO = O.ORDER_NO
         JOIN ADDRESSES AD
         ON AD.ADDR_NO = D.ADDR_NO
+        WHERE O.ORDER_NO = #{orderNo}
+    </select>
+
+    <!--
+        List<OrderResultDto> getOrderResultItems(@Param("orderNo") int orderNo);
+    -->
+
+    <resultMap id="orderResultItemMap" type="store.seub2hu2.mypage.dto.OrderResultDto">
+        <id property="orderNo" column="ORDER_NO" />
+        <!-- 결제 관련 -->
+        <result property="payNo" column="PAY_NO"/>
+        <result property="payId" column="PAY_ID"/>
+        <result property="userId" column="USER_ID"/>
+        <result property="payDate" column="PAY_DATE"/>
+        <result property="payCancelDate" column="PAY_CANCEL_DATE"/>
+        <result property="payMethod" column="PAY_METHOD"/>
+        <result property="payPrice" column="PAY_PRICE"/>
+        <result property="payAmount" column="PAY_AMOUNT"/>
+        <result property="payType" column="PAY_TYPE"/>
+        <result property="refund" column="REFUND"/>
+
+        <!-- 주문 관련 -->
+        <result property="orderDate" column="ORDER_DATE"/>
+        <result property="orderId" column="ORDER_NUMBER"/>
+        <result property="orderStatus" column="ORDER_STATUS"/>
+        <result property="orderPrice" column="ORDER_PRICE"/>
+        <result property="delPayment" column="DEL_PAYMENT"/>
+        <result property="disPrice" column="DIS_PRICE"/>
+        <result property="realPrice" column="REAL_PRICE"/>
+
+        <!-- 배송 관련 -->
+        <result property="delNo" column="DELI_NO"/>
+        <result property="delCom" column="DELI_COM"/>
+        <result property="delStatus" column="DELI_STATUS"/>
+        <result property="delMemo" column="DELI_MEMO"/>
+        <result property="delPhoneNumber" column="DELI_PHONENUMBER"/>
+
+        <!-- 배송 주소 관련 -->
+        <result property="addrNo" column="ADDR_NO"/>
+        <result property="userNo" column="USER_NO"/>
+        <result property="addrName" column="ADDR_NAME"/>
+        <result property="postcode" column="ZIP_CODE"/>
+        <result property="addr" column="ADDR_1"/>
+        <result property="addrDetail" column="ADDR_2"/>
+        <result property="isHome" column="IS_HOME"/>
+
+        <!-- 주문 상품 리스트 -->
+        <collection property="items" ofType="store.seub2hu2.mypage.dto.OrderResultItemDto">
+            <id property="orderProdNo" column="ORDER_PROD_NO"/>
+            <result property="prodNo" column="PROD_NO"/>
+            <result property="prodName" column="PROD_NAME"/>
+            <result property="orderProdAmount" column="ORDER_PROD_AMOUNT"/>
+            <result property="orderUnitPrice" column="ORDER_UNIT_PRICE"/>
+            <result property="orderEachPrice" column="ORDER_EACH_PRICE"/>
+            <result property="prodSize" column="PROD_SIZE"/>
+            <result property="prodColor" column="COLOR_NAME"/>
+        </collection>
+    </resultMap>
+    <select id="getOrderResultItems" resultMap="orderResultItemMap">
+        SELECT
+            PA.PAY_NO
+             ,PA.PAY_ID
+             ,PA.PAY_AMOUNT
+             ,PA.PAY_CANCEL_DATE
+             ,PA.PAY_DATE
+             ,PA.PAY_METHOD
+             ,PA.PAY_PRICE
+             ,PA.PAY_TYPE
+             ,O.ORDER_NO
+             ,O.ORDER_NUMBER
+             ,O.ORDER_DATE
+             ,O.ORDER_STATUS
+             ,O.ORDER_PRICE
+             ,O.DIS_PRICE
+             ,O.DEL_PAYMENT
+             ,O.REAL_PRICE
+             ,O.ORDER_CREATED_DATE
+             ,O.ORDER_UPDATED_DATE
+             ,OP.ORDER_PROD_NO
+             ,OP.ORDER_PROD_AMOUNT
+             ,OP.ORDER_UNIT_PRICE
+             ,OP.ORDER_EACH_PRICE
+             ,PS.SIZE_NO
+             ,PS.PROD_SIZE
+             ,PS.PROD_AMOUNT
+             ,PC.COLOR_NO
+             ,PC.COLOR_NAME
+             ,P.PROD_NO
+             ,P.PROD_NAME
+             ,D.DELI_NO
+             ,D.DELI_COM
+             ,D.DELI_STATUS
+             ,D.DELI_MEMO
+             ,D.DELI_PHONENUMBER
+             ,AD.ADDR_NO
+             ,AD.ADDR_NAME
+             ,AD.ZIP_CODE
+             ,AD.ADDR_1
+             ,AD.ADDR_2
+        from PAYMENTS PA
+                 JOIN ORDERS O
+                      ON PA.PAY_NO = O.PAY_NO
+                 JOIN ORDER_PRODUCTS OP
+                      ON O.ORDER_NO = OP.ORDER_NO
+                 JOIN PROD_SIZES PS
+                      ON PS.SIZE_NO = OP.SIZE_NO
+                 JOIN PROD_COLORS PC
+                      ON PC.COLOR_NO = PS.COLOR_NO
+                 JOIN PRODUCTS P
+                      ON P.PROD_NO = PC.PROD_NO
+                 JOIN DELIVERIES D
+                      ON D.ORDER_NO = O.ORDER_NO
+                 JOIN ADDRESSES AD
+                      ON AD.ADDR_NO = D.ADDR_NO
         WHERE O.ORDER_NO = #{orderNo}
     </select>
 

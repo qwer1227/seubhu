@@ -79,7 +79,33 @@ public class QnaService {
         return dto;
     }
 
-    public void updateAnswer(AnswerDTO answerDTO){
-        qnaMapper.updateAnswer(answerDTO);
+    public ListDto<QnaResponse> getQnas2(RequestParamsDto requestParamsDto){
+
+        // 검색 조건에 맞는 전체 데이터 개수를 조회하는 기능
+        int totalRows = qnaMapper.getTotalRows2(requestParamsDto);
+
+        System.out.println("totalrows" + totalRows);
+
+        // Pagination 객체를 생성한다
+        int page = requestParamsDto.getPage();
+        int rows = requestParamsDto.getRows();
+
+        Pagination pagination = new Pagination(page, totalRows, rows);
+
+        requestParamsDto.setBegin(pagination.getBegin());
+        requestParamsDto.setEnd(pagination.getEnd());
+
+        // ProdListDto 타입의 데이터를 담는 ListDto객체를 생성한다
+        // 질문 목록 ListDto(QnaReponse), 페이징처리 정보(Pagination)을 담는다
+        List<QnaResponse> qnas = qnaMapper.getQnas2(requestParamsDto);
+        System.out.println(qnas);
+        ListDto<QnaResponse> dto = new ListDto<>(qnas,pagination);
+
+        return dto;
+    }
+
+    public void updateAnswer(AnswerDTO answerDTO, int userNo){
+
+        qnaMapper.updateAnswer(answerDTO,userNo);
     }
 }

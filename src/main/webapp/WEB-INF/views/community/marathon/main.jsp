@@ -41,47 +41,96 @@
 <div class="container-xxl text-center" id="wrap">
   
   <h2> 마라톤 정보 </h2>
-  <div class="category-nav d-flex justify-content-center mb-4">
-    <a href="#">전체</a>
-    <a href="#">진행중</a>
-    <a href="#">종료</a>
-  </div>
   
-  <div class="row row-cols-1 row-cols-md-3 g-4">
-    <!-- 카드 1 -->
-    <c:forEach var="marathon" items="${marathons}">
-      <div class="col">
-        <a href="hit?no=${marathon.no}" style="text-decoration-line: none">
-          <div class="card">
-            <img src="${marathon.thumbnail}" class="card-img-top" alt="마라톤 이미지"
-                style="height: 200px; filter: ${crew.entered eq 'Y' ? 'grayscale(0%)' : 'grayscale(100%)'};">
-            <c:if test="${marathon.marathonDate.time < now.time}">
-              <div class="overlay-text ">종료</div>
-            </c:if>
-            <div class="card-body text-center">
-              <h5 class="card-title">${marathon.title}</h5>
-              <p class="card-text"><fmt:formatDate value="${marathon.marathonDate}" pattern="yyyy-MM-dd"/></p>
-            </div>
-          </div>
-        </a>
-      </div>
-    </c:forEach>
-  </div>
-  
-  <div class="row p-3 d-flex justify-content-left">
-    <div class="col-4">
-      <input type="text" class="form-control" name="value" value="">
-    </div>
-    <div class="col-1">
-      <button class="btn btn-outline-primary">검색</button>
-    </div>
-    <div class="col d-flex justify-content-center">
+  <form id="form-search" method="get" action="main">
+    <input type="hidden" name="page" value="${param.page != null ? param.page : 1}">
+    <input type="hidden" name="category" id="categoryInput" value="${param.category }">
     
+    <div class="category-nav d-flex justify-content-center mb-4">
+      <a href="main">전체</a>
+      <a href="javascript:void(0)" onclick="changeCategory('진행중')">진행중</a>
+      <a href="javascript:void(0)" onclick="changeCategory('종료')">종료</a>
     </div>
-    <div class="col d-flex justify-content-end">
-      <a href="form" type="button" class="btn btn-primary">글쓰기</a>
+    
+    <c:choose>
+      <c:when test="${empty marathons}">
+        <div class="col p-5" style="justify-content: center; text-align: center;">
+          <strong>해당 검색 조건에 해당하는 마라톤 정보가 없습니다.</strong>
+        </div>
+      </c:when>
+      <c:otherwise>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+          <!-- 카드 1 -->
+          <c:forEach var="marathon" items="${marathons}">
+            <div class="col">
+              <a href="hit?no=${marathon.no}" style="text-decoration-line: none">
+                <div class="card">
+                  <img src="${marathon.thumbnail}" class="card-img-top" alt="마라톤 이미지"
+                       style="height: 200px; filter: ${marathon.marathonDate.time > now.time ? 'grayscale(0%)' : 'grayscale(100%)'};">
+                  <c:if test="${marathon.marathonDate.time < now.time}">
+                    <div class="overlay-text ">종료</div>
+                  </c:if>
+                  <div class="card-body text-center">
+                    <h5 class="card-title">${marathon.title}</h5>
+                    <p class="card-text"><fmt:formatDate value="${marathon.marathonDate}" pattern="yyyy-MM-dd"/></p>
+                  </div>
+                </div>
+              </a>
+            </div>
+          </c:forEach>
+        </div>
+      </c:otherwise>
+    </c:choose>
+    
+    <div class="row p-3 d-flex justify-content-left">
+      <div class="col-2">
+        <select class="form-control" name="opt">
+          <option value="all" ${param.opt eq 'all' ? 'selected' : ''}> 제목+내용</option>
+          <option value="title" ${param.opt eq 'title' ? 'selected' : ''}> 제목</option>
+          <option value="content" ${param.opt eq 'content' ? 'selected' : ''}> 내용</option>
+          <option value="organ" ${param.opt eq 'organ' ? 'selected' : ''}> 주최/주관 기관</option>
+        </select>
+      </div>
+      <div class="col-4">
+        <input type="text" class="form-control" name="keyword" value="${param.keyword}">
+      </div>
+      <div class="col-1">
+        <button class="btn btn-outline-primary" onclick="searchKeyword()">검색</button>
+      </div>
+      <div class="col d-flex justify-content-center">
+      
+      </div>
+      <div class="col d-flex justify-content-end">
+        <a href="form" type="button" class="btn btn-primary">글쓰기</a>
+      </div>
     </div>
-  </div>
-  <%@include file="/WEB-INF/views/common/footer.jsp" %>
+  </form>
+</div>
+<%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
+<script>
+    function changeCategory(category) {
+        let form = document.querySelector("#form-search");
+        let catInput = document.querySelector("#categoryInput");
+        let pageInput = document.querySelector("input[name=page]");
+
+        catInput.value = category;
+        pageInput.value = 1;
+
+        form.submit();
+    }
+
+    function changePage(page, event) {
+        event.preventDefault();
+        let form = document.querySelector("#form-search");
+        let pageInput = form.querySelector("input[name=page]");
+        pageInput.value = page;
+        form.submit();
+    }
+
+    function searchKeyword() {
+        pageInput.value = 1;
+        form.submit();
+    }
+</script>
 </html>

@@ -135,67 +135,185 @@
             </div>
         </div>
         <!-- 리뷰 -->
-        <div class="row mb-3">
-			<div class="col">
-				<div class="border p-2 bg-secondary text-white fw-bold d-flex justify-content-between">
-					<span>리뷰 리스트</span>
-						<button class="btn btn-light btn-sm" id="btn-show-review-modal" onclick="openCommentFormModal()">리뷰쓰기</button>
-				</div>
-			</div>
-		</div>
-        <div class="row mb-3">
-            <div class="col">
-                <ul class="list-group">
-                    <li class="list-group-item">
-                        <div class="row mb-1">
-                            <div class="col-10"><span class="fw-bold">너무 좋아요</span></div>
-                            <div class="col-2 text-end"><small>2024-11-19-15:16:04</small></div>
-                        </div>
-                        <div class="row">
-                            <div class="col-10">너무 좋은 제품이라 또 사고 싶습니다.</div>
-                            <div class="col-2 text-end"><a href="deleteReview?no=10&productNo=10" class="text-danger"><small><i class="fas fa-trash"></i></small></a></div>
-                        </div>
-                    </li>
-                </ul>
-            </div>
+<div class="actions d-flex justify-content-between mb-4">
+      <!-- 로그인 여부를 체크하기 위해 먼저 선언 -->
+      <security:authorize access="isAuthenticated()">
+        <div>
+          <!-- principal 프로퍼티 안의 loginUser 정보를 가져옴 -->
+          <!-- loginUser.no를 가져와서 조건문 실행 -->
+          <c:if test="${loginUser.no == user.no}">
+            <button class="btn btn-warning" onclick="updateBoard(${user.no})">수정</button>
+            <button class="btn btn-danger" onclick="deleteBoard(${user.no})">삭제</button>
+          </c:if>
+          <c:if test="${loginUser.no == user.no}">
+            <button type="button" class="btn btn-danger" onclick="report('board', )">신고</button>
+          </c:if>
+
         </div>
-        <!-- 리뷰 쓰기 모달 창 -->
-        <div class="modal fade" id="form-review-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <form id="form-review" method="post" action="addReview">
-                    <input type="hidden" name="productNo" value="">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">새 리뷰쓰기</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="text-danger" id="form-alert">제목과 내용은 필수입력값입니다.</div>
-                            <div class="row mb-1 p-2">
-                                <input type="text" class="form-control" id="review-title" name="title" placeholder="제목을 입력하세요">
-                            </div>
-                            <div class="row mb-1 p-2">
-                                <textarea rows="5" class="form-control" id="review-content" name="content" placeholder="내용을 입력하세요"></textarea>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                            <button type="submit" class="btn btn-primary" id="btn-add-review">등록</button>
-                        </div>
+        <div>
+          <button class="btn btn-outline-primary" id="likeCnt"
+                  onclick="boardLikeButton(${user.no}, ${loginUser.no})">
+            <i id="icon-heart"
+               class="bi"></i>
+          </button>
+          <a type="button" href="main" class="btn btn-secondary">목록</a>
+        </div>
+      </security:authorize>
+    </div>
+
+    <!-- 댓글 작성 -->
+    <div class="comment-form mb-4">
+      <h5 style="text-align: start">댓글 작성</h5>
+      <form method="get" action="add-reply">
+        <input type="hidden" name="boardNo" value="">
+        <input type="hidden" name="userNo" value="">
+        <div class="row">
+          <c:choose>
+            <c:when test="${empty loginUser}">
+              <div class="form-group col-11">
+                <input class="form-control" disabled placeholder="로그인 후 댓글 작성이 가능합니다."/>
+              </div>
+              <div class="col">
+                <button type="button" class="btn btn-outline-success" onclick="goLogin()">등록</button>
+              </div>
+            </c:when>
+            <c:otherwise>
+              <div class="form-group col-11">
+                <textarea name="content" class="form-control" rows="3" placeholder="댓글을 작성하세요."></textarea>
+              </div>
+              <div class="col">
+                <button type="submit" class="btn btn-success" onclick="submitReply()">등록</button>
+              </div>
+            </c:otherwise>
+          </c:choose>
+        </div>
+      </form>
+    </div>
+        <!-- 댓글 목록 -->
+    <c:if test="">
+      <div class="row comments rounded" style="background-color: #f2f2f2">
+        <!--댓글 내용 -->
+        <c:forEach var="reply" items="">
+          <c:choose>
+            <c:when test="">
+              <div class="row m-3" style="text-align: start">
+                <div class="col d-flex justify-content-between" style="text-align: start">
+                  <c:if test="">
+                    <i class="bi bi-arrow-return-right"></i>
+                  </c:if>
+                  <i class="bi bi-emoji-dizzy" style="font-size: 35px; margin-left: 5px;"></i>
+                  <div class="col" style="margin-left: 15px">
+                    <c:if test="">
+                      <strong>삭제된 댓글입니다.</strong><br/>
+                    </c:if>
+                    <c:if test="">
+                      <strong>삭제된 답글입니다.</strong><br/>
+                    </c:if>
+                    <span><fmt:formatDate value="" pattern="yyyy.MM.dd hh:mm:ss"/></span>
+                  </div>
+                </div>
+              </div>
+            </c:when>
+            <c:otherwise>
+              <div class="comment pt-3 ">
+                <div class="row">
+                  <div class="col">
+                    <div class="col d-flex justify-content-between">
+                      <div class="col-1">
+                        <c:if test="">
+                          <i class="bi bi-arrow-return-right"></i>
+                        </c:if>
+                        <img src="https://github.com/mdo.png" alt="" style="width: 50px" class="rounded-circle">
+                      </div>
+                      <div class="col" style="text-align: start">
+                        <strong></strong><br/>
+                        <span><fmt:formatDate value="" pattern="yyyy.MM.dd hh:mm:ss"/></span>
+                        <c:if test="">
+                          <button type="button" class="btn btn-danger"
+                                  style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
+                                  onclick="report('reply',)">
+                            신고
+                          </button>
+                        </c:if>
+                      </div>
+                      <div class="col-2" style="text-align: end">
+                        <security:authorize access="isAuthenticated()">
+                          <c:if test="">
+                            <button class="btn btn-outline-primary btn-sm" id="replyLikeCnt"
+                                    onclick="replyLikeButton()">
+                              <i id="icon-thumbs"
+                                 class="bi "></i>
+                            </button>
+                          </c:if>
+                          <c:if test="">
+                            <button type="button" class="btn btn-warning btn-sm" id="replyModifyButton-${reply.no}"
+                                    onclick="appendModify(${reply.no})">수정
+                            </button>
+                            <button type="button" class="btn btn-danger btn-sm"
+                                    onclick="deleteReply(${reply.no}, ${reply.boardNo})">삭제
+                            </button>
+                          </c:if>
+                        </security:authorize>
+                      </div>
                     </div>
-                </form>
-            </div>
-        </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col ${reply.no ne reply.prevNo ? 'ps-5' : ''}">
+                    <div class="comment-item m-1 rounded" style="padding-left:30px; text-align:start;">
+                        ${reply.content}
+                      <form method="post" action="modify-reply" id="box-reply-${reply.no}" class="my-3 d-none">
+                        <div class="row">
+                          <input type="hidden" name="replyNo" value="${reply.no}">
+                          <input type="hidden" name="boardNo" value="${reply.boardNo}">
+                          <div class="col-11">
+                            <textarea name="content" class="form-control" rows="2">${reply.content}</textarea>
+                          </div>
+                          <div class="col">
+                            <button class="btn btn-warning btn-sm d-flex justify-content-start" type="submit">
+                              수정
+                            </button>
+                          </div>
+                        </div>
+                      </form>
+                      <c:if test="">
+                        <button type="button" class="btn btn-outline-dark btn-sm d-flex justify-content-start mb-3"
+                                name="replyContent" onclick="appendComment()">
+                          답글
+                        </button>
+                      </c:if>
+
+                      <form method="post" action="add-comment" id="box-comments-" class="my-3 d-none">
+                        <input type="hidden" name="no" value="">
+                        <input type="hidden" name="prevNo" value="">
+                        <input type="hidden" name="boardNo" value="">
+                        <div class="row">
+                          <div class="col-11">
+                            <textarea name="content" class="form-control" rows="2" placeholder="답글을 작성하세요."></textarea>
+                          </div>
+                          <div class="col">
+                            <button type="submit" class="btn btn-success d-flex justify-content-start"
+                                    style="font-size: 15px">
+                              답글<br/>등록
+                            </button>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </c:otherwise>
+          </c:choose>
+        </c:forEach>
+      </div>
+    </c:if>
+  </div>
+
     </div>
 </div>
 <script type="text/javascript">
-    // 댓글 폼
-    const commentFormModal = new bootstrap.Modal('#form-review-modal');
 
-    // 댓글 폼 모달 열기
-    function openCommentFormModal() {
-        commentFormModal.show();
-    }
 
 
     function fn(el) {

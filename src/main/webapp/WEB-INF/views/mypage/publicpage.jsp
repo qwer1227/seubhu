@@ -104,12 +104,12 @@
             <button type="button" id="insertPost" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newPostModal">
                 새 글 작성
             </button>
-            <button class="btn btn-outline-primary btn-follow">팔로우</button>
             <button class="btn btn-outline-secondary btn-message"><a href="message/list">메시지</a></button>
             <a href="mypage/private" class="btn btn-outline-dark btn-settings">⚙️</a>
         </div>
     </div>
 
+    
     <!-- Feed -->
 <div class="container mt-4">
     <div class="row row-cols-1 row-cols-md-3 g-4">

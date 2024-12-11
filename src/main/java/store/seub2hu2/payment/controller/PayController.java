@@ -154,22 +154,17 @@ public class PayController {
 
     // 결제 취소 요청
     @PostMapping("/cancel")
-    public String payCancel(@ModelAttribute PaymentDto paymentDto
-                            ,@RequestParam("orderNo") int orderNo
+    public String payCancel(PaymentDto paymentDto
                            , @AuthenticationPrincipal LoginUser loginUser
             , Model model) {
 
         if ("레슨".equals(paymentDto.getType())){
 
             String paymentId= paymentDto.getPaymentId();
-
             // 예약 정보 조회
             LessonReservation lessonReservation = lessonReservationService.getLessonReservationByPayId(paymentId);
-
-
             // 카카오 결제 취소하기
             CancelResponse cancelResponse = kakaoPayService.payCancel(paymentDto, paymentId);
-
             // 예약 상태 변경
             if (lessonReservation != null) {
                 lessonReservationService.cancelReservation(paymentId, ReservationStatus.CANCELLED, paymentDto.getLessonNo());
@@ -180,7 +175,23 @@ public class PayController {
 
         } else if ("상품".equals(paymentDto.getType())) {
 
-            orderService.cancelOrder(paymentDto);
+            // 주문관련 정보 수정
+            OrderResultDto dto = orderService.cancelOrder(paymentDto);
+
+            String paymentId = dto.getPayId();
+            paymentDto.setTotalAmount(dto.getPayPrice());
+
+            // 카카오 결제 취소
+            CancelResponse cancelResponse = kakaoPayService.payCancel(paymentDto, paymentId);
+
+            // 결재정보를 변경
+            Payment p2 = new Payment();
+            p2.setId(paymentId);
+            p2.setStatus("취소");
+            payMapper.updateProductPayStatus(p2);
+
+
+            model.addAttribute("cancelResponse", cancelResponse);
 
             return "redirect:/mypage/orderhistory";
         }

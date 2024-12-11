@@ -167,7 +167,7 @@ public class UserService {
         return 0;
     }
 
-    public User findbyUserNo(String userId) {
+    public User findbyUserId(String userId) {
         return userMapper.getUserById(userId);
     }
 
@@ -197,5 +197,31 @@ public class UserService {
 
     public List<User> searchUsersByNickname(String nickname) {
         return userMapper.findUsersByNickname(nickname);
+    }
+
+    public boolean updateNickname(String nickname){
+
+        List<User> users = searchUsersByNickname(nickname.trim());
+
+        for (User user : users) {
+            if(user.getNickname().equals(nickname)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public User findbyUserNo(int userNo){
+        return userMapper.findByUserNo(userNo);
+    }
+
+    public boolean isSameAsOldPassword(String password, int userNo){
+
+        User user = findbyUserNo(userNo);
+
+        if(user.getPassword().equals(password)){
+            return false;
+        }
+        return true;
     }
 }

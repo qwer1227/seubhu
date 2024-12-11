@@ -32,9 +32,13 @@
         <a class="btn btn-primary" href="shortest-record-ranking" role="button">최단 기록 순위</a>
     </div>
 
+    <div class="mt-3">
+        <h4>최단 기록 순위</h4>
+    </div>
+
     <%-- 코스를 선택하면, 해당 코스에 대한 완주자 기록 목록이 화면에 나타난다. --%>
     <form id="form-select" method="get" action="shortest-record-ranking">
-        <div class="row justify-content-center mt-5">
+        <div class="row justify-content-center mt-4">
             <input type="hidden" name="myPage"/>
             <input type="hidden" name="allPage"/>
             <select class="form-select" aria-label="Default select example" style="width: 300px"

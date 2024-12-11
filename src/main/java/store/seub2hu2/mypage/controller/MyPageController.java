@@ -14,16 +14,15 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import store.seub2hu2.admin.dto.RequestParamsDto;
 import store.seub2hu2.cart.dto.CartItemDto;
 import store.seub2hu2.cart.dto.CartRegisterForm;
 import store.seub2hu2.community.dto.BoardForm;
 import store.seub2hu2.community.dto.ReplyForm;
 import store.seub2hu2.community.dto.ReportForm;
-import store.seub2hu2.community.service.BoardService;
-import store.seub2hu2.community.service.BoardReplyService;
-import store.seub2hu2.community.service.ReportService;
-import store.seub2hu2.community.service.ScrapService;
+import store.seub2hu2.community.service.*;
 import store.seub2hu2.community.vo.Board;
+import store.seub2hu2.community.vo.Crew;
 import store.seub2hu2.community.vo.Reply;
 import store.seub2hu2.lesson.view.FileDownloadView;
 import store.seub2hu2.mypage.dto.*;
@@ -87,12 +86,14 @@ public class MyPageController {
 
     @Autowired
     private FileDownloadView fileDownloadView;
+    @Autowired
+    private CrewService crewService;
 
     // URL localhost/mypage 입력 시 유저의 No를 활용해 그 유저의 페이지를 보여줌
     @GetMapping("")
     public String myPageList(Model model, @AuthenticationPrincipal LoginUser loginUser) {
         List<Post> posts = postService.getPostsByNo(loginUser.getNo());
-        User user = userService.findbyUserNo(loginUser.getId());
+        User user = userService.findbyUserId(loginUser.getId());
 
         model.addAttribute("posts",posts);
         model.addAttribute("user",user);
@@ -333,7 +334,7 @@ public class MyPageController {
             , @RequestParam("content") String replyContent
             , @AuthenticationPrincipal LoginUser loginUser){
         ReplyForm form = new ReplyForm();
-        form.setNo(replyNo);
+        form.setId(replyNo);
         form.setBoardNo(boardNo);
         form.setContent(replyContent);
         form.setUserNo(loginUser.getNo());
@@ -348,7 +349,7 @@ public class MyPageController {
     public String deleteReply(@RequestParam("rno") int replyNo,
                               @RequestParam("bno") int boardNo){
         ReplyForm form = new ReplyForm();
-        form.setNo(replyNo);
+        form.setId(replyNo);
         form.setBoardNo(boardNo);
         replyService.deleteReply(replyNo);
 
@@ -407,7 +408,7 @@ public class MyPageController {
     public String reportBoard(ReportForm form
             , @AuthenticationPrincipal LoginUser loginUser){
 
-        reportService.registerReportToBoard(form, loginUser);
+        reportService.registerReport(form, loginUser);
         return "redirect:detail?no=" + form.getNo();
     }
 
@@ -416,7 +417,7 @@ public class MyPageController {
             , @RequestParam("bno") int boardNo
             , @AuthenticationPrincipal LoginUser loginUser){
 
-        reportService.registerReportToBoard(form, loginUser);
+        reportService.registerReport(form, loginUser);
         return "redirect:detail?no=" + boardNo;
     }
 
@@ -552,11 +553,12 @@ public class MyPageController {
 
     // 문의내역 화면으로 간다
     @GetMapping("/qna")
-    public String qna(Model model, @AuthenticationPrincipal LoginUser loginUser){
+    public String qna(Model model, @AuthenticationPrincipal LoginUser loginUser, RequestParamsDto requestParamsDto){
 
-        List<QnaResponse> qnaResponses = qnaService.getQnasByUserNo(loginUser.getNo());
-
-        model.addAttribute("qna", qnaResponses);
+        ListDto<QnaResponse> qnaDto = qnaService.getQnas2(requestParamsDto);
+        
+        model.addAttribute("qna", qnaDto.getData());
+        model.addAttribute("pagination", qnaDto.getPaging());
 
         return "mypage/qna";
     }
@@ -596,7 +598,7 @@ public class MyPageController {
 
         qnaService.deleteQna(qnaNo);
 
-        return "redirect:/admin/qna";
+        return "redirect:/mypage/qna";
     }
 
     // 문의수정 화면
@@ -625,6 +627,16 @@ public class MyPageController {
     public String workout(){
 
         return "mypage/workoutdiary";
+    }
+
+    // 참여크루 화면
+    @GetMapping("/participatingcrew")
+    public String crew(Model model, @AuthenticationPrincipal LoginUser loginUser){
+
+        List<Crew> crews = crewService.getCrewByUserNo(loginUser.getNo());
+        model.addAttribute("crews", crews);
+
+        return "mypage/participatingcrew";
     }
 
 }

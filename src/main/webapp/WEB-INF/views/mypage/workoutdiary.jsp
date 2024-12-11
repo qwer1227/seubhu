@@ -19,6 +19,22 @@
         h2 {
             margin-bottom: 20px;
         }
+
+        .fc-day a {
+            color: black;
+            text-decoration: none;
+        }
+
+        .fc-day-sun a {
+            color: red;
+            text-decoration: none;
+        }
+
+        /* 토요일 날짜 파란색 */
+        .fc-day-sat a {
+            color: blue;
+            text-decoration: none;
+        }
     </style>
 </head>
 <body>
@@ -66,15 +82,88 @@
     document.addEventListener('DOMContentLoaded', function () {
         let calendarEl = document.getElementById('calendar');
         let calendar = new FullCalendar.Calendar(calendarEl, {
+            headerToolbar: {
+                left: 'prev,next,today',
+                center: 'title',
+                right: 'dayGridMonth,dayGridWeek,timeGridWeek'
+            },
+            buttonText: {
+                today: '현재날짜',
+                month: '월별',
+                week: '주별',
+                timeGridWeek: '주별시간',
+                day: '일별',
+                list: '목록',
+            },
             initialView: 'dayGridMonth',
             selectable: true,
             editable: true,
             events: '/mypage/getworkout',
+            displayEventTime: false,
             dateClick: function (info) {
                 openModal(info.dateStr);
             },
             eventClick: function (info) {
-                openModal(info.event.startStr, info.event);
+                // 이벤트 클릭 시 서버에서 상세 정보 가져오기
+                $.ajax({
+                    url: '/mypage/getworkoutdetail' + info.event.id, // 이벤트 ID를 사용해 서버 요청
+                    type: 'GET',
+                    success: function (response) {
+                        if (response.message === "성공") {
+                            // 서버에서 가져온 데이터로 모달을 채움
+                            let workoutDetail = response.workoutDetail;
+
+                            // 모달 내용 설정
+                            $('#eventTitle').val(workoutDetail.title);
+                            $('#eventDescription').val(workoutDetail.description);
+                            $('#deleteEvent').show();
+
+                            // 모달 표시
+                            var myModal = new bootstrap.Modal(document.getElementById('eventModal'));
+                            myModal.show();
+
+                            // 저장 버튼 클릭 핸들러 설정
+                            $('#saveEvent').off('click').on('click', function () {
+                                let title = $('#eventTitle').val();
+                                let description = $('#eventDescription').val();
+
+                                // 수정 요청
+                                $.ajax({
+                                    url: '/mypage/putworkout/' + info.event.id,
+                                    type: 'PUT',
+                                    contentType: 'application/json',
+                                    data: JSON.stringify({
+                                        title: title,
+                                        description: description
+                                    }),
+                                    success: function () {
+                                        calendar.refetchEvents(); // 이벤트 갱신
+                                    }
+                                });
+
+                                myModal.hide();
+                            });
+
+                            // 삭제 버튼 클릭 핸들러 설정
+                            $('#deleteEvent').off('click').on('click', function () {
+                                $.ajax({
+                                    url: '/mypage/deleteworkout/' + info.event.id,
+                                    type: 'PUT',
+                                    success: function () {
+                                        calendar.refetchEvents(); // 이벤트 갱신
+                                    }
+                                });
+
+                                myModal.hide();
+                            });
+                        } else {
+                            alert('이벤트 정보를 불러오는 데 실패했습니다.');
+                        }
+                    },
+                    error: function () {
+                        alert('서버 오류가 발생했습니다.');
+                    }
+                });
             }
         });
 
@@ -106,7 +195,7 @@
 
                 // 수정 요청
                 $.ajax({
-                    url: '/api/events/' + event.id, // 이벤트 ID를 통해 수정
+                    url: '/mypage/putworkout/' + event.id, // 이벤트 ID를 통해 수정
                     type: 'PUT',
                     contentType: 'application/json',
                     data: JSON.stringify({
@@ -120,15 +209,16 @@
             } else {
                 // 새로운 이벤트 추가
                 $.ajax({
-                    url: '/api/events',
+                    url: '/mypage/postworkout',
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify({
                         title: title,
-                        start: date,
+                        startDate: date,
                         description: description
                     }),
-                    success: function () {
+                    success: function (response) {
+                        date.response
                         calendar.refetchEvents(); // 서버 데이터 재로드
                     }
                 });

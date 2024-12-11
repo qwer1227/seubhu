@@ -16,6 +16,10 @@ public interface PayMapper {
     // tid로 결제 타입(결제방식X, 레슨 or 상품) 조회
     public String getPaymentTypeById(@Param("payId") String payId);
 
-    // 결제 상태 변경
+    // 결제 상태 변경(레슨)
     public void updateLessonPayStatus();
+
+    // 결제 상태 변경(상품)
+    void updateProductPayStatus(@Param("pay") Payment payment);
+
 }

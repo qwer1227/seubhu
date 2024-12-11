@@ -58,4 +58,13 @@
           AND R.LESSON_RESERVATION_STATUS = '예약'
           AND L.LESSON_START_DATE &lt;= NOW();
     </update>
+
+    <!--
+
+    -->
+    <update id="updateProductPayStatus">
+        UPDATE PAYMENTS
+        SET PAY_STATUS = #{pay.status}
+        WHERE PAY_ID = #{pay.id}
+    </update>
 </mapper>

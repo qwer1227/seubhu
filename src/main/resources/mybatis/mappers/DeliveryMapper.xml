@@ -14,4 +14,13 @@
                                 )
         VALUES (#{delivery.memo}, #{delivery.orderNo}, #{delivery.addrNo}, #{delivery.deliPhoneNumber})
     </insert>
+
+    <!--
+        void updateDeliveryStatus(@Param("delivery") Delivery delivery);
+    -->
+    <update id="updateDeliveryStatus">
+        UPDATE DELIVERIES
+        SET DELI_STATUS = #{delivery.status}
+        WHERE ORDER_NO = #{delivery.orderNo}
+    </update>
 </mapper>

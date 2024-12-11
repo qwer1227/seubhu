@@ -16,13 +16,10 @@ import java.util.Date;
 public class Report {
 
     private int id;
+    private int no;
     private String type;
     private String reason;
     private User user;
-    private int adminNo;
-    private int boardNo;
-    private int replyNo;
-    private int crewNo;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date createdDate;
     @JsonFormat(pattern = "yyyy-MM-dd")
