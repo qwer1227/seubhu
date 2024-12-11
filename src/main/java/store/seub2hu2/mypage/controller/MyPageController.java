@@ -93,7 +93,7 @@ public class MyPageController {
     @GetMapping("")
     public String myPageList(Model model, @AuthenticationPrincipal LoginUser loginUser) {
         List<Post> posts = postService.getPostsByNo(loginUser.getNo());
-        User user = userService.findbyUserNo(loginUser.getId());
+        User user = userService.findbyUserId(loginUser.getId());
 
         model.addAttribute("posts",posts);
         model.addAttribute("user",user);

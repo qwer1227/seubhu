@@ -263,4 +263,42 @@ public class MyPageRestController {
         }
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/edit/nickname")
+    public ResponseEntity<Map<String, Object>> editNickname(@RequestParam("nickname") String nickname){
+
+        Map<String, Object> response = new HashMap<>();
+
+        try{
+            boolean isAvailable = userService.updateNickname(nickname);
+
+            response.put("isAvailable", isAvailable);
+        }catch (Exception e){
+            e.printStackTrace();
+            response.put("message", "서버 오류");
+            return ResponseEntity.status(500).body(response);
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    // 비밀번호와 같은 민감한 데이터는 단순 데이터비교만을 한다 한들 get요청보단 post요청을 하는게 낫다
+    @PostMapping("/edit/password/check")
+    public ResponseEntity<Map<String,Object>> checkPassword(@RequestBody Map<String,String> request, @AuthenticationPrincipal LoginUser loginUser){
+
+        Map<String, Object> response = new HashMap<>();
+
+        try{
+            String newPassword = request.get("newPassword");
+
+            // 기존 비밀번호와 비교
+            boolean isSameAsOldPassword = userService.isSameAsOldPassword(newPassword, loginUser.getNo());
+
+            response.put("isSameAsOldPassword", isSameAsOldPassword);
+        }catch (Exception e){
+            e.printStackTrace();
+            response.put("message", "서버 오류");
+            return ResponseEntity.status(500).body(response);
+        }
+        return ResponseEntity.ok(response);
+    }
 }

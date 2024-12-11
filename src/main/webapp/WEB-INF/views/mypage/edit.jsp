@@ -46,7 +46,11 @@
             <!-- 닉네임 -->
             <div class="mb-3">
                 <label for="nickname" class="form-label">닉네임</label>
-                <input type="text" id="nickname" name="nickname" class="form-control" value="${user.nickname}" required>
+                <div class="d-flex">
+                    <input type="text" id="nickname" name="nickname" class="form-control me-2" value="${user.nickname}" required>
+                    <!-- 중복 확인 버튼 -->
+                    <button type="button" id="checkNickname" class="btn btn-outline-primary flex-shrink-0" style="min-width: 100px;">중복 확인</button>
+                </div>
                 <div id="nicknameFeedback"></div> <!-- 피드백 영역 -->
             </div>
 
@@ -132,6 +136,64 @@
     document.getElementById("email").addEventListener("keyup", function () {
         validateInput(this);
     });
+
+    $(document).ready(function () {
+        // 중복 확인 버튼 클릭 이벤트
+        $('#checkNickname').click(function () {
+            const nickname = $('#nickname').val().trim(); // 닉네임 값 가져오기
+
+            if (nickname === "") {
+                $('#nicknameFeedback').text('닉네임을 입력해주세요.').css('color', 'red');
+                return;
+            }
+
+            $.ajax({
+                url: '/mypage/edit/nickname', // REST 컨트롤러 URL
+                type: 'GET', // 요청 방식
+                data: { nickname: nickname }, // 쿼리 파라미터로 닉네임 전달
+                success: function (response) {
+                    // 서버 응답 처리
+                    if (response.isAvailable) {
+                        $('#nicknameFeedback').text('사용 가능한 닉네임입니다.').css('color', 'green');
+                    } else {
+                        $('#nicknameFeedback').text('이미 사용 중인 닉네임입니다.').css('color', 'red');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('AJAX 요청 실패:', error);
+                    $('#nicknameFeedback').text('중복 확인 중 오류가 발생했습니다.').css('color', 'red');
+                }
+            });
+        });
+
+        // 비밀번호 비교 이벤트 (비밀번호 입력 필드에서 포커스가 떠날 때)
+        $('#password').on('blur', function () {
+            const newPassword = $(this).val().trim();
+
+            // 새 비밀번호가 비어있지 않을 때만 요청
+            if (newPassword !== "") {
+                $.ajax({
+                    url: '/mypage/edit/password/check', // REST 컨트롤러 URL
+                    type: 'POST', // 요청 방식
+                    contentType: 'application/json', // JSON 데이터 전송
+                    data: JSON.stringify({ newPassword: newPassword }), // 요청 데이터
+                    success: function (response) {
+                        // 서버 응답 처리
+                        if (response.isSameAsOldPassword) {
+                            $('#passwordFeedback').text('이전 비밀번호와 같습니다. 다른 비밀번호를 입력해주세요.').css('color', 'red');
+                        } else {
+                            $('#passwordFeedback').text('✔ 유효한 비밀번호입니다.').css('color', 'green');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('AJAX 요청 실패:', error);
+                        $('#passwordFeedback').text('비밀번호 확인 중 오류가 발생했습니다.').css('color', 'red');
+                    }
+                });
+            }
+        });
+    });
+
 </script>
 </body>
 
