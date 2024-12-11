@@ -25,33 +25,6 @@
     #inviting-table tr {
         height: 50px;
     }
-
-    .box {
-        margin: 20px auto;
-        max-width: 640px;
-        max-height: 430px;
-    }
-
-    .box img {
-        max-width: 100%;
-    }
-
-    #photoBtn {
-        display: none;
-    }
-    
-    .them_img {
-        position: relative;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        overflow: hidden; /* 박스 밖으로 나가는 이미지 숨김 */
-        display: flex; /* Flexbox 활성화 */
-        justify-content: center; /* 수평 중앙 정렬 */
-        align-items: center; /* 수직 중앙 정렬 */
-    }
-
 </style>
 <body>
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
@@ -137,72 +110,11 @@
   </div>
   
   <!-- 썸네일 이미지 편집 모달창 -->
-  <div class="modal" tabindex="-1" id="modal-thumbnail">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">크루 대표 이미지</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <button class="upload_btn btn btn-primary">
-            <input type="file" accept="image/jpeg, image/png" capture="camera" id="photoBtn" onchange="readURL(this);">
-            <label for="photoBtn">사진 첨부하기</label>
-          </button>
-          <div class="box">
-            <div class="photo_them">
-              <div class="them_img">
-                <img src="" id="image" style="max-height: 400px">
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button id="btn-cropper" class="btn btn-primary" data-bs-dismiss="modal">설정</button>
-        </div>
-      </div>
-    </div>
-  </div>
+  <%@include file="image-crop.jsp"%>
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script type="text/javascript">
-    const myModalThumbnail = new bootstrap.Modal('#modal-thumbnail')
-    
-    let image = document.querySelector("#image")
-    
-    let cropper = null;
-    let formData = new FormData();
-    
-    function initCropper() {
-        cropper = new Cropper(image, {
-            dragMode: 'move',
-            aspectRatio: 16 / 11,
-            autoCropArea: 0.6,
-            restore: false,
-            guides: false,
-            center: false,
-            highlight: false,
-            cropBoxMovable: true,
-            cropBoxResizable: true,
-            toggleDragModeOnDblclick: false,
-        });
-    }
-    
-    $("#btn-cropper").click(function () {
-        if (cropper) {
-            let boxData = cropper.getCropBoxData();
-            console.log(boxData);
-
-            cropper.getCroppedCanvas({
-                width: 334.30,
-                height: 188.66
-            }).toBlob(function (blob) {
-                formData.append('image', blob, 'crew_thumbnail.png');
-            })
-        }
-    });
-
-
+    // 등록 버튼 클릭 시, 폼에 있는 값을 전달(이미지는 슬라이싱할 때 전달했기 때문에 따로 추가 설정 안해도 됨)
     document.querySelector("#submit").addEventListener("click", function (){
         let title = document.querySelector("input[name=title]").value;
         let description = document.querySelector("textarea[name=description]").value;
@@ -221,7 +133,6 @@
         if (upfile.files.length > 0) {
             formData.append("upfile", upfile.files[0]);
         }
-        
 
         $.ajax({
             method: "post",
@@ -230,34 +141,16 @@
             processData: false,
             contentType: false,
             success: function (crew){
-                console.log(crew); // 서버 응답을 확인
                 window.location.href = "detail?no=" + crew.no;
             }
         })
     });
     
-    function readURL(input) {
-        if (input.files && input.files[0]) {
-            var reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('image').src = e.target.result;
-                initCropper();
-            };
-            reader.readAsDataURL(input.files[0]);
-        } else {
-            document.getElementById('image').src = "";
-        }
-    }
-
     function abort() {
         let result = confirm("작성중이던 글을 임시보관하시겠습니까?");
         if (result) {
             window.location.href = "main";
         }
-    }
-
-    function thumbnail() {
-        myModalThumbnail.show();
     }
 
     var geocoder = new kakao.maps.services.Geocoder();

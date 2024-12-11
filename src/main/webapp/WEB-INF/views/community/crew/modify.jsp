@@ -93,13 +93,18 @@
                 <img src="/resources/images/community/${crew.thumbnail.saveName}" alt="크루 대표 이미지"
                      class="img" style="width: 50px">
               </div>
+              <button type="button" class="btn btn-outline-dark"
+                      onclick="deleteThumbnail(${crew.no}, ${crew.thumbnail.fileNo})">
+                삭제
+              </button>
             </td>
           </tr>
         </c:if>
         <tr>
           <th>대표 이미지</th>
           <td>
-            <input type="file" class="form-control" name="image" style="width: 450px"/>
+            <button type="button" class="btn btn-dark" onclick="thumbnail()">등록</button>
+            <input type="hidden" name="image" value="">
           </td>
         </tr>
         <tr>
@@ -138,15 +143,52 @@
           </div>
           <div class="col d-flex justify-content-end">
             <button type="button" class="btn btn-outline-primary m-1">보관</button>
-            <button type="submit" class="btn btn-primary m-1">수정</button>
+            <button type="button" id="submit" class="btn btn-primary m-1">수정</button>
           </div>
         </div>
       </div>
     </form>
   </div>
+  
+  <!-- 썸네일 이미지 편집 모달창 -->
+  <%@include file="image-crop.jsp" %>
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script type="text/javascript">
+    // 등록 버튼 클릭 시, 폼에 있는 값을 전달(이미지는 슬라이싱할 때 전달했기 때문에 따로 추가 설정 안해도 됨)
+    document.querySelector("#submit").addEventListener("click", function () {
+        let no = document.querySelector("input[name=no]").value;
+        let title = document.querySelector("input[name=title]").value;
+        let description = document.querySelector("textarea[name=description]").value;
+        let name = document.querySelector("input[name=name]").value;
+        let type = document.querySelector("select[name=type]").value;
+        let detail = document.querySelector("input[name=detail]").value;
+        let location = document.querySelector("input[name=location]").value;
+        let upfile = document.querySelector("input[name=upfile]")
+
+        formData.append(("no"), no);
+        formData.append("title", title);
+        formData.append("description", description);
+        formData.append("name", name);
+        formData.append("type", type);
+        formData.append("detail", detail);
+        formData.append("location", location);
+        if (upfile.files.length > 0) {
+            formData.append("upfile", upfile.files[0]);
+        }
+
+        $.ajax({
+            method: "post",
+            url: "modify",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (crew) {
+                window.location.href = "detail?no=" + crew.no;
+            }
+        })
+    });
+
     function abort() {
         let result = confirm("수정 중이던 글을 취소하시겠습니까?");
         if (result) {
@@ -158,6 +200,12 @@
         let result = confirm("기존에 등록된 첨부파일을 삭제하시겠습니까?");
         if (result) {
             window.location.href = `delete-file?no=\${crewNo}&fileNo=\${fileNo}`;
+        }
+    }
+    function deleteThumbnail(crewNo, thumbnailNo) {
+        let result = confirm("기존에 등록된 첨부파일을 삭제하시겠습니까?");
+        if (result) {
+            window.location.href = `delete-thumbnail?no=\${crewNo}&thumbnailNo=\${thumbnailNo}`;
         }
     }
 
