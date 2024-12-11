@@ -221,4 +221,44 @@
         WHERE SIZE_NO = #{sizeNo}
     </select>
 
+    <!--
+        Product getProductByProdNoAndColoNo(@Param("prodNo") int prodNo, @Param("colorNo") int colorNo);
+    -->
+    <resultMap id="getProductByProdColorMap" type="store.seub2hu2.product.vo.Product">
+        <id property="no" column="PROD_NO"/>
+        <result property="name" column="PROD_NAME"/>
+        <result property="price" column="PROD_PRICE"/>
+        <result property="content" column="PROD_CONTENT"/>
+        <result property="status" column="PROD_STATUS"/>
+        <result property="createdAt" column="PROD_CREATED_AT"/>
+        <result property="updatedAt" column="PROD_UPDATED_AT"/>
+        <result property="imgThum" column="PROD_IMG_THUM"/>
+        <result property="cnt" column="PROD_CNT"/>
+        <result property="rating" column="PROD_RATING"/>
+        <association property="color" javaType="store.seub2hu2.product.vo.Color">
+            <id property="no" column="COLOR_NO"/>
+            <result property="name" column="COLOR_NAME"/>
+        </association>
+    </resultMap>
+    <select id="getProductByProdNoAndColoNo" resultMap="getProductByProdColorMap">
+        SELECT
+            P.PROD_NO
+             ,P.PROD_NAME
+             ,P.PROD_PRICE
+             ,P.PROD_CONTENT
+             ,P.PROD_STATUS
+             ,P.PROD_CREATED_AT
+             ,P.PROD_UPDATED_AT
+             ,P.PROD_IMG_THUM
+             ,P.PROD_CNT
+             ,P.PROD_RATING
+             ,PC.COLOR_NO
+             ,PC.COLOR_NAME
+        FROM PRODUCTS P
+                 JOIN PROD_COLORS PC
+                      ON P.PROD_NO = PC.PROD_NO
+        WHERE P.PROD_NO = #{prodNo}
+          AND PC.COLOR_NO = #{colorNo}
+    </select>
+
 </mapper>

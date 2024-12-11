@@ -11,8 +11,14 @@ import java.util.Map;
 
 @Mapper
 public interface ProductMapper {
-
+    // 수량 증감
     void updateAmount(@Param("size") Size size);
+
+    // 조회수 증가
+    void incrementViewCount(int prodNo, int coloNo);
+
+    // 상품 조회
+    Product getProductByProdNoAndColoNo(@Param("prodNo") int prodNo, @Param("colorNo") int colorNo);
 
     // 수량 체크
     Size getSizeAmount(@Param("sizeNo") int sizeNo);
