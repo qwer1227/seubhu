@@ -2,6 +2,7 @@ package store.seub2hu2.user.controller;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,10 +10,10 @@ import org.springframework.web.bind.annotation.*;
 import store.seub2hu2.user.dto.MailDTO;
 import store.seub2hu2.user.exception.DataNotFoundException;
 import store.seub2hu2.user.service.MailService;
-import store.seub2hu2.user.service.UserService;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @Controller
 @RequiredArgsConstructor
@@ -22,27 +23,23 @@ public class FindController {
 
     // 아이디 찾기 폼
     @GetMapping("/find-id")
-    public String findIdForm(Model model) {
-        return "user/find-id"; // 아이디 찾기 페이지로 이동
+    public String findIdForm() {
+        return "user/find-id"; // JSP 폼 페이지 반환
     }
 
-    // 이메일로 아이디 찾기 처리
     @PostMapping("/find-id")
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> findId(@RequestBody Map<String, String> requestBody) {
-        String email = requestBody.get("email"); // 요청 본문에서 이메일을 추출
-
-        Map<String, Object> response = new HashMap<>();
-
-        if ("test@example.com".equals(email)) {
-            response.put("success", true);
-            response.put("userId", "user123");
-        } else {
-            response.put("success", false);
-            response.put("error", "등록된 이메일이 없습니다.");
+    public ResponseEntity<?> findIdByEmail(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        try {
+            String userId = mailService.findIdByEmail(email); // 서비스 계층에서 아이디 찾기 처리
+            return ResponseEntity.ok(Map.of("success", true, "userId", userId));
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.ok(Map.of("success", false, "error", "등록된 이메일이 없습니다."));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("success", false, "error", "서버 오류가 발생했습니다."));
         }
-
-        return ResponseEntity.ok(response);
     }
 
 

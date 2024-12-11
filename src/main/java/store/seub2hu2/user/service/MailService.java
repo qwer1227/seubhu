@@ -12,6 +12,7 @@ import store.seub2hu2.user.vo.User;
 
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -62,11 +63,11 @@ public class MailService {
      * 아이디 찾기 (이메일로 아이디 찾기)
      */
     public String findIdByEmail(String email) {
-        Optional<String> userIdOptional = userMapper.findIdByEmail(email);
-        if (userIdOptional.isEmpty()) {
-            throw new IllegalArgumentException("이메일과 일치하는 아이디가 없습니다.");
+        String userId = String.valueOf(userMapper.findIdByEmail(email));
+        if (userId == null) {
+            throw new NoSuchElementException("등록된 이메일이 없습니다.");
         }
-        return userIdOptional.get(); // Optional에서 값을 안전하게 꺼냄
+        return userId;
     }
 
     /**

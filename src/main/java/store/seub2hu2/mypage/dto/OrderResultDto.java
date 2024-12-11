@@ -5,6 +5,8 @@ import lombok.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @ToString
 @NoArgsConstructor
@@ -12,6 +14,9 @@ import java.util.List;
 @Setter
 @Getter
 public class OrderResultDto {
+    private static final AtomicInteger sequence = new AtomicInteger(0); // 전역 시퀀스
+    private static final int MAX_SEQUENCE = 999; // 시퀀스 최대값 (순환 처리)
+
     // 결제 관련
     private int payNo; // 결제 번호
     private String payId; // 결제 아이디(tid)
@@ -54,6 +59,7 @@ public class OrderResultDto {
     // 주문상품
     private List<OrderResultItemDto> items; // 주문 상품들
 
+
     public String getOrderDescription() {
         OrderResultItemDto orderResultItemDto = items.get(0);
 
@@ -74,14 +80,26 @@ public class OrderResultDto {
         return total;
     }
 
-    // 주문 아이디 생성
     public String generateOrderId() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
-        String datePart = sdf.format(payDate);
-        int sequence = 0;
-        sequence += sequence;
+        // 호출 시점의 현재 날짜로 설정
+        Date now = new Date();
 
-        return "ORD-" +datePart + "-" + String.format("%03d", sequence);
+        // 현재 날짜 부분 생성
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHH");
+        String datePart = sdf.format(now);
+
+        // UUID의 일부를 사용
+        String uuidPart = UUID.randomUUID().toString().substring(0, 8); // UUID 앞 8글자만 사용
+
+        // 시퀀스 값 증가
+        int currentSequence = sequence.incrementAndGet();
+        if (currentSequence > MAX_SEQUENCE) {
+            sequence.set(0); // 순환
+            currentSequence = sequence.incrementAndGet();
+        }
+
+        // 주문 아이디 생성
+        return String.format("ORD-%s-%s-%03d", datePart, uuidPart, currentSequence);
     }
 
 }

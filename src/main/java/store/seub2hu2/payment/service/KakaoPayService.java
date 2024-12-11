@@ -9,11 +9,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import store.seub2hu2.delivery.mapper.DeliveryMapper;
 import store.seub2hu2.delivery.vo.Delivery;
 import store.seub2hu2.mypage.dto.OrderResultDto;
 import store.seub2hu2.mypage.dto.OrderResultItemDto;
+import store.seub2hu2.mypage.dto.ResponseDTO;
+import store.seub2hu2.order.exception.*;
 import store.seub2hu2.order.mapper.OrderMapper;
 import store.seub2hu2.order.vo.Order;
 import store.seub2hu2.order.vo.OrderItem;
@@ -23,7 +26,11 @@ import store.seub2hu2.payment.dto.CancelResponse;
 import store.seub2hu2.lesson.dto.ReadyResponse;
 import store.seub2hu2.product.dto.ProdAmountDto;
 import store.seub2hu2.product.dto.ProdDetailDto;
+import store.seub2hu2.product.dto.ProdImagesDto;
+import store.seub2hu2.product.dto.ProdListDto;
 import store.seub2hu2.product.mapper.ProductMapper;
+import store.seub2hu2.product.vo.Color;
+import store.seub2hu2.product.vo.Product;
 import store.seub2hu2.product.vo.Size;
 import store.seub2hu2.user.mapper.UserMapper;
 import store.seub2hu2.user.vo.Addr;
@@ -56,6 +63,7 @@ public class KakaoPayService {
     // 카카오페이 결제 승인
     // 사용자가 결제 수단을 선택하고 비밀번호를 입력해 결제 인증을 완료한 뒤,
     // 최종적으로 결제 완료 처리를 하는 단계
+    @Transactional
     public ReadyResponse payReady(PaymentDto paymentDto) {
         log.info("Pay ready dto = {}", paymentDto);
         Map<String, String> parameters = new HashMap<>();
@@ -82,8 +90,13 @@ public class KakaoPayService {
             order.setDiscountPrice(paymentDto.getDiscountPrice());
             order.setFinalTotalPrice(paymentDto.getFinalTotalPrice());
             order.setUserNo(paymentDto.getUserNo());
+            order.setOrderId(new OrderResultDto().generateOrderId());
 
-            orderMapper.insertOrders(order);
+            try {
+                orderMapper.insertOrders(order);
+            } catch (Exception ex) {
+                throw new DatabaseSaveException("주문 정보 저장 실패", ex);
+            }
 
             int orderNo = order.getNo();
 
@@ -93,12 +106,29 @@ public class KakaoPayService {
             // 주문 상품의 이름을 가져오고 싶다.
             int prodNo = orderItems.get(0).getProdNo();
             ProdDetailDto prodDetailDto = productMapper.getProductByNo(prodNo);
+            if(prodDetailDto == null) {
+                throw new ProductNotFoundException("상품 번호 " + prodNo + "에 대한 정보가 없습니다.");
+            }
             String itemName = prodDetailDto.getName();
+
             if (orderItems.size() > 1) {
                 itemName = itemName + " 외 " + (orderItems.size() - 1) + "개" ;
             }
 
             for(OrderItem item : orderItems) {
+                Size size = productMapper.getSizeAmount(item.getSizeNo());
+
+                // 주문 상품의 재고를 확인한다.
+                if(size.getAmount() == 0) {
+                    throw new OutOfStockException("상품" + item.getSizeNo() +"는 재고가 없습니다.");
+                }
+
+                // 재고가 부족한 경우 StockInsufficientException을 던집니다.
+                if (size.getAmount() < item.getStock()) {
+                    throw new StockInsufficientException("상품 " + itemName + item.getSizeNo() + "의 재고가 부족합니다. 요청한 수량: "
+                            + item.getStock() + ", 남은 재고: " + size.getAmount());
+                }
+
                 item.setNo(item.getNo());
                 item.setOrderNo(orderNo);
                 item.setProdNo(item.getProdNo());
@@ -108,13 +138,21 @@ public class KakaoPayService {
                 item.setEachTotalPrice(item.getPrice() * item.getStock());
 
                 // 주문 상품에 대한 재고를 감소한다.
-                Size size = productMapper.getSizeAmount(item.getSizeNo());
                 size.setAmount(size.getAmount() - item.getStock());
 
-                productMapper.updateAmount(size);
+                try {
+                    productMapper.updateAmount(size);
+
+                } catch (Exception ex) {
+                    throw new DatabaseSaveException("주문 상품의 재고 업데이트 실패", ex);
+                }
             }
 
-            orderMapper.insertOrderItems(orderItems);
+            try {
+                orderMapper.insertOrderItems(orderItems);
+            } catch (Exception ex) {
+                throw new DatabaseSaveException("주문 상품 정보 저장 실패", ex);
+            }
 
 
             // 배송지
@@ -125,7 +163,11 @@ public class KakaoPayService {
             addr.setAddressDetail(paymentDto.getAddressDetail());
             addr.setUserNo(paymentDto.getUserNo());
 
-            userMapper.insertAddress(addr);
+            try {
+                userMapper.insertAddress(addr);
+            } catch (Exception ex) {
+                throw new DatabaseSaveException("배송지 정보 저장 실패", ex);
+            }
 
             int addrNo = addr.getNo();
 
@@ -135,18 +177,27 @@ public class KakaoPayService {
             delivery.setAddrNo(addrNo);
             delivery.setMemo(paymentDto.getMemo());
             delivery.setDeliPhoneNumber(paymentDto.getPhoneNumber());
-            deliveryMapper.insertDeliveryMemo(delivery);
-            
+
+            try {
+                deliveryMapper.insertDeliveryMemo(delivery);
+            } catch (Exception ex) {
+                throw new DatabaseSaveException("배송 상태 정보 저장 실패", ex);
+            }
+
 
             // 결재준비
             // item_name = paymentDto.getItem[0].getProdName()
             // item_code = 주문번호
             // total_amount = 총결재금액
-            parameters.put("item_name", itemName);
-            parameters.put("item_code", String.valueOf(orderNo));
-            parameters.put("total_amount", String.valueOf(paymentDto.getFinalTotalPrice()));
-            parameters.put("approval_url", "http://localhost/pay/completed?type=" + paymentDto.getType()
-                    + "&orderNo=" + orderNo);
+            try {
+                parameters.put("item_name", itemName);
+                parameters.put("item_code", String.valueOf(orderNo));
+                parameters.put("total_amount", String.valueOf(paymentDto.getFinalTotalPrice()));
+                parameters.put("approval_url", "http://localhost/pay/completed?type=" + paymentDto.getType()
+                        + "&orderNo=" + orderNo);
+            } catch (Exception ex) {
+                throw new PaymentSystemException("결제 준비 API 호출 중 오류 발생", ex);
+            }
 
         }
 

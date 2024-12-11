@@ -23,6 +23,7 @@ public class SettlementDto {
     private int totalPrice;
     private String payMethod;
     private String status;
+    private String lessonSubject;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime payDate;

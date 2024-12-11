@@ -12,11 +12,11 @@
         <h1>예약 레슨</h1>
     </div>
     <div class="row d-flex justify-content-center mb-3">
-        <div class="col-5 border border-dark">
-            <img src="${pageContext.request.contextPath}/resources/images/lesson/${images['THUMBNAIL']}"
+        <div class="col-5">
+            <img src="${s3}/resources/images/lesson/${images['THUMBNAIL']}"
                  alt="Thumbnail" id="Thumbnail" style="width: 100%; height: 300px;"/>
         </div>
-        <div class="col-5 border border-dark border">
+        <div class="col-5">
             <table class="table">
                 <colgroup>
                     <col width="15%">
@@ -49,8 +49,8 @@
                 <tr>
                     <th>예약상태</th>
                     <td>
-                        <c:if test="${lessonReservation.status eq '완료'}">
-                            <span class="badge bg-success">예약</span>
+                        <c:if test="${lessonReservation.status eq '수강종료'}">
+                            <span class="badge bg-secondary">수강종료</span>
                         </c:if>
                         <c:if test="${lessonReservation.status eq '예약'}">
                             <span class="badge bg-success">예약</span>

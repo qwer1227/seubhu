@@ -61,9 +61,9 @@
             <form id="form-search" method="get" action="/admin/course">
                 <input type="hidden" name="page"/>
                 <div class="row g-3 d-flex justify-content-center">
-                    <div class="col-2 text-start">
-                        <label for="customRange2" class="form-label text-start">추천순</label>
-                        <input type="checkbox"  class="form-check" name="sort" value="like" ${param.sort eq 'like' ? 'checked' : ''}>
+                    <div class="row col-2 text-start">
+                        <label for="customRange2" class="col-5 form-label text-end mt-3">추천순</label>
+                        <input type="checkbox"  class="col-1 form-check mb-1" name="sort" value="like" ${param.sort eq 'like' ? 'checked' : ''}>
                     </div>
                     <div class="col-4">
                         <label id="slider" for="customRange2" class="form-label">거리</label>
@@ -92,7 +92,7 @@
                             </c:forEach>
                         </select>
                     </div>
-                    <div class="col-3">
+                    <div class="col-2">
                         지역(구) 검색<input type="text" class="form-control" name="keyword" value="${param.keyword }">
                     </div>
                     <div class="col-1 pt-4">

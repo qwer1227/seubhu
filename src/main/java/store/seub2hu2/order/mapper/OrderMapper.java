@@ -31,4 +31,6 @@ public interface OrderMapper {
     OrderResultDto getOrderResult(@Param("orderNo") int orderNo);
 
     int updateOrder(@Param("order") OrdersDTO order);
+
+    void updateOrderStatus(@Param("orderNo") int orderNo, @Param("status") String status);
 }

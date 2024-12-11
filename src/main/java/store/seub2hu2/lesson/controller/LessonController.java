@@ -1,10 +1,14 @@
 package store.seub2hu2.lesson.controller;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -142,5 +146,10 @@ public class LessonController {
         model.addAttribute("startDate", startDate);
         model.addAttribute("startTime", startTime);
         return "lesson/lesson-reservation-detail";
+    }
+
+    @GetMapping("/error-500")
+    public void error500(HttpServletResponse response) throws IOException {
+        response.sendError(500);
     }
 }

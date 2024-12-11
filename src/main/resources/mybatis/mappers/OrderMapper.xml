@@ -31,14 +31,16 @@
     -->
     <insert id="insertOrders">
         INSERT INTO ORDERS (
-                            ORDER_PRICE
+                            ORDER_NUMBER
+                            , ORDER_PRICE
                             , DEL_PAYMENT
                             , DIS_PRICE
                             , REAL_PRICE
                             , USER_NO
                             )
                 VALUES (
-                        #{order.totalPrice}
+                        #{order.orderId}
+                        , #{order.totalPrice}
                         , #{order.deliveryPrice}
                         , #{order.discountPrice}
                         , #{order.finalTotalPrice}
@@ -57,6 +59,14 @@
         SET
             PAY_NO = #{order.payNo}
         WHERE ORDER_NO = #{order.orderNo}
+    </update>
+    <!--
+        void updateOrderStatus(@Param("orderNo") int orderNo, @Param("status") String status);
+    -->
+    <update id="updateOrderStatus">
+        UPDATE ORDERS
+            SET ORDER_STATUS = #{status}
+            WHERE ORDER_NO = #{orderNo}
     </update>
 
     <!--
