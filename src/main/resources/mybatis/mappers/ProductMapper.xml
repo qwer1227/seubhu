@@ -35,7 +35,7 @@
                 </choose>
             </if>
             <if test="condition.topNo != null and condition.topNo != ''">
-                AND PC.TOP_CAT_NO IN (#{condition.topNo}, 30)
+                AND PC.TOP_CAT_NO IN (#{condition.topNo})
             </if>
         </where>
     </select>

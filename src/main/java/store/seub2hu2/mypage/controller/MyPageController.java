@@ -475,7 +475,7 @@ public class MyPageController {
 
         cartService.addCart(cartRegisterForms);
 
-        return "mypage/cart";
+        return "redirect:cart";
     }
 
     // 위시리스트 화면으로 간다.

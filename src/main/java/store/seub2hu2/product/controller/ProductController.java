@@ -59,7 +59,7 @@ public class ProductController {
         condition.put("page", page);
         condition.put("rows", rows);
         condition.put("sort", sort);
-        if(StringUtils.hasText(opt)) {
+        if(StringUtils.hasText(opt) && StringUtils.hasText(value)) {
             condition.put("opt", opt);
             condition.put("value", value);
         }
