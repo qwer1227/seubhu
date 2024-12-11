@@ -71,6 +71,7 @@ public class KakaoPayService {
         parameters.put("partner_order_id", "1234567890");
         parameters.put("partner_user_id", "seub2hu2");
         parameters.put("quantity", String.valueOf(paymentDto.getQuantity()));
+
         // 레슨 결제
         if (paymentDto.getType().equals("레슨")) {
             parameters.put("item_name", paymentDto.getTitle());

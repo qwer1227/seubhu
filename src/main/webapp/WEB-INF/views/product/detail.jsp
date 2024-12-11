@@ -313,9 +313,6 @@
     </div>
 </div>
 <script type="text/javascript">
-
-
-
     function fn(el) {
         let prodNo = el.getAttribute("data-no"); // 상품 번호
         let size = el.getAttribute("data-size"); // 상품 사이즈
@@ -324,27 +321,37 @@
         let color = el.getAttribute("data-color"); // 상품 색상명
         let colorNum = el.getAttribute("data-color-no"); // 색상 번호
 
-        let content = `
-                 <div id="item-\${sizeNo}">
-                      <input type="hidden" name="prodNo" value="\${prodNo}"/>
-                      <input type="hidden" name="size" value="\${size}"/>
-                      <input type="hidden" name="sizeNo" value="\${sizeNo}"/>
-                      <input type="hidden" name="colorNo" value="\${colorNum}"/>
-                     <span><small>\${name} </small></span>
-                     <p><small>- \${color} / \${size}</small></p>
-                     <input type="button" value=" - " name="minus" data-no="\${sizeNo}">
-                     <input type="text" name="stock" value="1" id="stock-\${sizeNo}" size="3" max="" style="width: 3rem; text-align: center">
-                     <input type="button" value=" + " name="plus" data-no="\${sizeNo}">
-                     <div class="text-end">
-                        <small><strong id="price-\${sizeNo}"><fmt:formatNumber value="${prodDetailDto.price }"/></strong>원</small>
-                        <button type="button" class="btn btn-lg delete-button" data-target-id="#item-\${sizeNo}"><i class="bi bi-x"></i></button>
+        // 중복되어 있는 상품
+        let box = document.querySelector("#item-" + sizeNo);
+        if (box) {
+            let stockInput = box.querySelector(`#item-\${sizeNo} input[name=stock]`);
+            stockInput.value = parseInt(stockInput.value) + 1;
+        } else {
+
+            let content = `
+                     <div id="item-\${sizeNo}">
+                          <input type="hidden" name="prodNo" value="\${prodNo}"/>
+                          <input type="hidden" name="size" value="\${size}"/>
+                          <input type="hidden" name="sizeNo" value="\${sizeNo}"/>
+                          <input type="hidden" name="colorNo" value="\${colorNum}"/>
+                         <span><small>\${name} </small></span>
+                         <p><small>- \${color} / \${size}</small></p>
+                         <input type="button" value=" - " name="minus" data-no="\${sizeNo}">
+                         <input type="text" name="stock" value="1" id="stock-\${sizeNo}" size="3" max="" style="width: 3rem; text-align: center">
+                         <input type="button" value=" + " name="plus" data-no="\${sizeNo}">
+                         <div class="text-end">
+                            <small><strong id="price-\${sizeNo}"><fmt:formatNumber value="${prodDetailDto.price }"/></strong>원</small>
+                            <button type="button" class="btn btn-lg delete-button" data-target-id="#item-\${sizeNo}"><i class="bi bi-x"></i></button>
+                         </div>
+                         <hr class="bg-primary border border-1">
                      </div>
-                     <hr class="bg-primary border border-1">
-                 </div>
 
-        `
+            `
 
-        $("#cart").append(content);
+            $("#cart").append(content);
+
+        }
+        updatePrice(sizeNo);
         updateTotals();
     }
 
