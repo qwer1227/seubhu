@@ -231,7 +231,7 @@
             contentType: false,
             success: function (crew){
                 console.log(crew); // 서버 응답을 확인
-                location.href = "detail?no=" + crew.no;
+                window.location.href = "detail?no=" + crew.no;
             }
         })
     });
