@@ -18,6 +18,7 @@ public class MessageFile {
     private String savedName;   // 저장된 파일명
     private String deleted;     // 삭제 여부 (예: "Y" 또는 "N")
     private String type;
+    private long size;
     private Date createdDate;   // 파일 생성일
     private Date updatedDate;   // 파일 업데이트일
 }

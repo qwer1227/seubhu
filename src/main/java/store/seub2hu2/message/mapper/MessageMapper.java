@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import store.seub2hu2.message.dto.MessageReceived;
 import store.seub2hu2.message.vo.Message;
+import store.seub2hu2.message.vo.MessageFile;
 
 import java.util.List;
 import java.util.Map;
@@ -43,10 +44,14 @@ public interface MessageMapper {
 
 
     // 다중 메시지 삭제
-    void deleteMessages(@Param("messageNos") List<Integer> messageNos);
+    void deleteMessages(@Param("messageNos") List<Integer> messageNos, @Param("userNo") int userNo);
 
     // 다중 메시지 읽음 처리
-    void updateReadStatuses(@Param("messageNos") List<Integer> messageNos);
+    void updateReadStatuses(@Param("messageNos") List<Integer> messageNos, @Param("userNo") int userNo);
 
     String getReceiverNickname(@Param("userNo") int userNo);
+
+    void insertMessageFile(@Param("messageFile") MessageFile messageFile); // 파일 삽입
+
+    boolean hasFiles(@Param("messageNo") int messageNo);
 }

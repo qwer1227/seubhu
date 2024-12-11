@@ -6,7 +6,27 @@
     <insert id="insertMessage" parameterType="store.seub2hu2.message.vo.Message">
         INSERT INTO MESSAGES (USER_NO, MESSAGE_TITLE, MESSAGE_CONTENT, MESSAGE_CREATED_DATE)
         VALUES (#{message.userNo}, #{message.title}, #{message.content}, NOW())
+        <!-- 자동 생성된 MESSAGE_NO를 반환 -->
+        <selectKey resultType="int" keyProperty="message.messageNo" keyColumn="MESSAGE_NO" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
     </insert>
+
+    <!-- 파일 삽입 -->
+    <insert id="insertMessageFile" parameterType="store.seub2hu2.message.vo.MessageFile">
+        INSERT INTO MESSAGE_FILES (
+        FILE_UPLOAD_DATE, FILE_TYPE, MESSAGE_NO, FILE_CREATED_DATE, FILE_SAVED_NAME, FILE_ORIGINAL_NAME, FILE_SIZE, FILE_DELETED)
+        VALUES (CURRENT_TIMESTAMP,      <!-- 업로드 날짜 -->
+        #{messageFile.type},                <!-- 파일 타입 -->
+        #{messageFile.messageNo},           <!-- 메시지 번호 -->
+        CURRENT_TIMESTAMP,      <!-- 파일 생성 날짜 -->
+        #{messageFile.savedName},           <!-- 저장된 파일명 -->
+        #{messageFile.originalName},        <!-- 원본 파일명 -->
+        #{messageFile.size},                 <!-- 파일 사이즈 -->
+        'N'                    <!-- 삭제 여부 (기본값 'N') -->
+        )
+    </insert>
+
 
     <update id="deleteMessage" parameterType="store.seub2hu2.message.vo.Message">
         UPDATE MESSAGES
@@ -15,11 +35,11 @@
     </update>
 
     <update id="deleteMessages" parameterType="store.seub2hu2.message.vo.Message">
-        UPDATE MESSAGES
+        UPDATE MESSAGE_RECEIVERS
         SET MESSAGE_DELETE = 'Y'
-        WHERE MESSAGE_NO IN
+        WHERE (MESSAGE_NO, USER_NO) IN
         <foreach item="messageNo" collection="messageNos" open="(" separator="," close=")">
-            #{messageNo}
+            #{messageNo}, #{userNo}
         </foreach>
     </update>
 
@@ -33,20 +53,20 @@
 
     <update id="updateMessageReadStatus">
         UPDATE MESSAGES
-        SET MESSAGE_READ      = 'Y'
+        SET MESSAGE_READ = 'Y'
         WHERE MESSAGE_NO = #{messageNo}
     </update>
 
-    <update id="updateReadStatuses" parameterType="store.seub2hu2.message.dto.MessageReceived">
+
+    <update id="updateReadStatuses">
         UPDATE MESSAGE_RECEIVERS
         SET MESSAGE_READ = 'Y',
         MESSAGE_READ_DATE = NOW()
-        WHERE MESSAGE_RCV_NO IN
-        <foreach item="messageRcvNo" collection="messageRcvNos" open="(" separator="," close=")">
-            #{messageRcvNo}
+        WHERE (MESSAGE_NO, USER_NO) IN
+        <foreach item="messageNo" collection="messageNos" open="(" separator="," close=")">
+            #{messageNo}, #{userNo}
         </foreach>
     </update>
-
 
     <!-- 조건에 맞는 메시지 수 조회 -->
     <select id="getTotalRows" resultType="int">
@@ -152,18 +172,23 @@
         LIMIT #{condition.rows} OFFSET #{condition.offset}
     </select>
 
-    <!-- 보낸 메시지 조회 -->
-    <select id="getSentMessages"  resultType="store.seub2hu2.message.dto.MessageReceived">
-        SELECT MESSAGE_NO AS messageNo,
-        USER_NO AS userNo,
-        MESSAGE_TITLE AS title,
-        MESSAGE_CONTENT AS content,
-        MESSAGE_CREATED_DATE AS createdDate,
-        MESSAGE_UPDATED_DATE AS updatedDate,
-        MESSAGE_DELETE AS deleted
-        FROM MESSAGES
-        WHERE USER_NO = #{condition.userNo}
-        AND MESSAGE_DELETE = 'N'
+    <select id="getSentMessages" resultType="store.seub2hu2.message.dto.MessageReceived">
+        SELECT
+        m.MESSAGE_NO AS messageNo,
+        m.USER_NO AS userNo,
+        m.MESSAGE_TITLE AS title,
+        m.MESSAGE_CONTENT AS content,
+        m.MESSAGE_CREATED_DATE AS createdDate,
+        m.MESSAGE_UPDATED_DATE AS updatedDate,
+        m.MESSAGE_DELETE AS deleted,
+        r.MESSAGE_READ AS readStatus,               <!-- 수신자의 읽음 상태 -->
+        r.MESSAGE_READ_DATE AS readDate,            <!-- 수신자가 읽은 날짜 -->
+        u.USER_NICKNAME AS receiverNickname         <!-- 수신자 닉네임 -->
+        FROM MESSAGES m
+        JOIN MESSAGE_RECEIVERS r ON m.MESSAGE_NO = r.MESSAGE_NO
+        JOIN USERS u ON r.USER_NO = u.USER_NO        <!-- 수신자 정보 조회 -->
+        WHERE m.USER_NO = #{condition.userNo}
+        AND m.MESSAGE_DELETE = 'N'
         <if test="condition.keyword != null and condition.opt != null">
             AND (
             <choose>
@@ -173,7 +198,7 @@
                 <when test="condition.opt == 'content'">
                     m.MESSAGE_CONTENT LIKE CONCAT('%', #{condition.keyword}, '%')
                 </when>
-                <when test="condition.opt == 'senderNickname'">
+                <when test="condition.opt == 'receiverNickname'">
                     u.USER_NICKNAME LIKE CONCAT('%', #{condition.keyword}, '%')
                 </when>
             </choose>
@@ -181,15 +206,14 @@
         </if>
         <choose>
             <when test="condition.sort == 'desc'">
-                ORDER BY MESSAGE_CREATED_DATE DESC
+                ORDER BY m.MESSAGE_CREATED_DATE DESC
             </when>
             <otherwise>
-                ORDER BY MESSAGE_CREATED_DATE ASC
+                ORDER BY m.MESSAGE_CREATED_DATE ASC
             </otherwise>
         </choose>
         LIMIT #{condition.rows} OFFSET #{condition.offset}
     </select>
-
 
 
     <!-- 메시지 상세 조회 -->
@@ -197,14 +221,28 @@
         SELECT m.MESSAGE_NO           AS messageNo,
                m.MESSAGE_TITLE        AS title,
                m.MESSAGE_CONTENT      AS content,
-               m.MESSAGE_CREATED_DATE AS createDate,
+               m.MESSAGE_CREATED_DATE AS createdDate,
                m.MESSAGE_UPDATED_DATE AS updatedDate,
                u.USER_NICKNAME        AS senderNickname,
-               m.MESSAGE_READ         AS readStatus-- 발신자 닉네임
+               m.MESSAGE_READ         AS readStatus,
+               F.FILE_NO                AS "messageFile.fileNo",
+               F.FILE_SAVED_NAME      as "messageFile.savedName",
+               F.FILE_ORIGINAL_NAME    as "messageFile.originalName"-- 발신자 닉네임
+
         FROM MESSAGES m
                  JOIN USERS u ON m.USER_NO = u.USER_NO -- 발신자 정보
+                 LEFT OUTER JOIN  MESSAGE_FILES F ON m.MESSAGE_NO = F.MESSAGE_NO
         WHERE m.MESSAGE_NO = #{messageNo}
+
     </select>
+
+    <select id="hasFiles" resultType="boolean">
+        SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END
+        FROM MESSAGE_FILES
+        WHERE MESSAGE_NO = #{messageNo}
+          AND FILE_DELETED = 'N'
+    </select>
+
     <!-- 읽지 않은 메시지 개수 조회 -->
     <select id="countUnreadMessages" parameterType="int" resultType="int">
         SELECT COUNT(*)

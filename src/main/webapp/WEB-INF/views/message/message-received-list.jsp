@@ -31,13 +31,13 @@
     </div>
 
     <form id="form-search" action="list" method="get">
-        <input type="hidden" name="page" />
+        <input type="hidden" name="page"/>
         <!-- 쪽지 리스트 -->
         <div class="p-1 d-flex justify-content-between align-items-center mb-4">
-            <!-- 좌측: 일괄 삭제 및 읽음 처리 버튼 -->
+            <!-- 좌측: 선택 삭제 및 읽음 처리 버튼 -->
             <div class="d-flex">
-                <button type="button" class="btn btn-dark me-2" onclick="deleteMultiple()">일괄 삭제</button>
-                <button type="button" class="btn btn-dark" onclick="markMultipleAsRead()">일괄 읽음</button>
+                <button type="button" class="btn btn-dark me-2" onclick="deleteMultiple()">선택 삭제</button>
+                <button type="button" class="btn btn-dark" onclick="markMultipleAsRead()">선택 읽음</button>
             </div>
 
             <!-- 우측: 정렬 옵션 -->
@@ -107,27 +107,28 @@
                         </td>
 
                         <td>
-                        <fmt:formatDate value="${message.createdDate}" pattern="yyyy-MM-dd"/>
-                    </td>
-                    <td>${message.readStatus eq 'Y' ? '읽음' : '미읽음'}</td>
-                    <td>
-                        <c:choose>
-                            <c:when test="${message.readStatus eq 'Y'}">
-                                <fmt:formatDate value="${message.readDate}" pattern="yyyy-MM-dd"/>
-                            </c:when>
-                            <c:otherwise>
-                                -
-                            </c:otherwise>
-                        </c:choose>
-                    </td>
-                    <td>
-                        <c:if test="${not empty message.messageFile}">
-                            <i class="bi bi-file-earmark-text"></i> <!-- 파일 첨부 아이콘 -->
-                        </c:if>
-                        <c:if test="${empty message.messageFile}">
-                            <i class="bi bi-file-earmark-x"></i> <!-- 파일 첨부 없음 아이콘 -->
-                        </c:if>
-                    </td>
+                            <fmt:formatDate value="${message.createdDate}" pattern="yyyy-MM-dd"/>
+                        </td>
+                        <td>${message.readStatus eq 'Y' ? '읽음' : '미읽음'}</td>
+                        <td>
+                            <c:choose>
+                                <c:when test="${message.readStatus eq 'Y'}">
+                                    <fmt:formatDate value="${message.readDate}" pattern="yyyy-MM-dd"/>
+                                </c:when>
+                                <c:otherwise>
+                                    -
+                                </c:otherwise>
+                            </c:choose>
+                        </td>
+                        <td>
+                            <c:if test="${message.hasFile}">
+                                <i class="bi bi-file-earmark-text"></i> <!-- 파일 첨부 아이콘 -->
+                            </c:if>
+                            <c:if test="${!message.hasFile}">
+                                <i class="bi bi-file-earmark-x"></i> <!-- 파일 없음 아이콘 -->
+                            </c:if>
+                        </td>
+
                     </tr>
                 </c:forEach>
                 </tbody>
@@ -188,35 +189,17 @@
 
 <script>
     function deleteMultiple() {
-        const selectedMessages = Array.from(document.querySelectorAll('input[name="messageNo"]:checked')).map(checkbox => checkbox.value);
-        if (selectedMessages.length === 0) {
-            alert("삭제할 메시지를 선택해주세요.");
-            return;
-        }
-
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '/message/deleteMultiple';
-
-        selectedMessages.forEach(messageNo => {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'messageNo';
-            input.value = messageNo;
-            form.appendChild(input);
-        });
-
-        document.body.appendChild(form);
-        form.submit();
+        let form = document.querySelector("#form-search");
+        form.setAttribute("action", "deleteMultiple"); // 액션을 deleteMultiple로 변경
+        form.submit(); // 폼 제출
     }
 
     function markMultipleAsRead() {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '/message/markMultipleAsRead';
-        document.body.appendChild(form);
-        form.submit();
+        let form = document.querySelector("#form-search");
+        form.setAttribute("action", "markMultipleAsRead"); // 액션을 markMultipleAsRead로 변경
+        form.submit(); // 폼 제출
     }
+
 
     function toggleSelectAll(source) {
         const checkboxes = document.querySelectorAll('input[name="messageNo"]');
