@@ -142,6 +142,37 @@
 </ul>
 
 <style>
+    /* 아이콘 움직임 애니메이션 정의 */
+    @keyframes moveIcon {
+        0% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-5px);
+        }
+        100% {
+            transform: translateY(0);
+        }
+    }
+
+    /* 기본 스타일 설정 */
+    .sidebar-brand {
+        text-decoration: none;
+        color: inherit;
+        display: inline-block;
+    }
+
+    /* 마우스 오버 시 애니메이션 적용 */
+    .sidebar-brand:hover .sidebar-brand-icon {
+        animation: moveIcon 0.5s ease-in-out;
+    }
+
+    /* 아이콘 회전 유지 */
+    .sidebar-brand-icon {
+        display: inline-block;
+        transition: transform 0.3s ease-in-out;
+    }
+
     /* 아이콘의 기본 크기 설정 */
     .nav-link i {
         transition: transform 0.3s ease; /* 부드러운 애니메이션 효과 */

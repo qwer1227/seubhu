@@ -347,79 +347,54 @@
     -->
     <select id="getTotalOrderProd" resultType="int">
         select
-            count(*)
+        COUNT(*)
         from
-            (
-            SELECT
-                <if test="condition.sort != null">
-                    <choose>
-                        <when test="condition.sort == 'latest'">
-                            ROW_NUMBER() OVER (ORDER BY PM.pay_no desc) as RN ,
-                        </when>
-                        <when test="condition.sort == 'oldestDate'">
-                            ROW_NUMBER() OVER (ORDER BY PM.pay_no asc) as RN ,
-                        </when>
-                        <when test="condition.sort == 'price'">
-                            ROW_NUMBER() OVER (ORDER BY PM.pay_price desc) as RN ,
-                        </when>
-                    </choose>
-                </if>
-                PM.pay_no
-                 , O.order_no
-                 , O.order_number
-                 , OP.order_prod_no
-                 , PM.pay_type
-                 , U.user_name
-                 , U.user_id
-                 , U.user_tel
-                 , PM.pay_price
-                 , PM.pay_status
-                 , P.prod_name
-                 , PS.prod_size
-                 , OP.order_prod_amount
-                 , PM.pay_date
-            FROM
-                ORDERS O
-                    JOIN PAYMENTS PM ON O.pay_no = PM.pay_no
-                    JOIN USERS U ON O.user_no = U.user_no
-                    JOIN ORDER_PRODUCTS OP ON O.order_no = OP.order_no
-                    JOIN PRODUCTS P ON OP.prod_no = P.prod_no
-                    JOIN PROD_SIZES PS ON OP.size_no = PS.size_no
-            WHERE
-                pay_type = '상품'
-            <if test="condition.day != null">
-                and (
-                DATE_FORMAT(PM.pay_date, '%Y-%m-%d') = #{condition.day}
-                or DATE_FORMAT(PM.pay_date, '%Y-%m') = #{condition.day}
-                )
-            </if>
-            <if test="condition.opt != null">
-                <choose>
-                    <when test="condition.opt == 'all'">
+        (
+        select
+        ROW_NUMBER() OVER (PARTITION BY PM.pay_no ORDER BY OP.order_prod_no asc) as RN
+        from
+            ORDERS O
+        JOIN PAYMENTS PM ON O.pay_no = PM.pay_no
+        JOIN USERS U ON O.user_no = U.user_no
+        JOIN ORDER_PRODUCTS OP ON O.order_no = OP.order_no
+        JOIN PRODUCTS P ON OP.prod_no = P.prod_no
+        JOIN PROD_SIZES PS ON OP.size_no = PS.size_no
+        where
+        PM.pay_type = '상품'
+        <if test="condition.day != null">
+            and (
+            DATE_FORMAT(PM.pay_date, '%Y-%m-%d') = #{condition.day}
+            or DATE_FORMAT(PM.pay_date, '%Y-%m') = #{condition.day}
+            )
+        </if>
+        <if test="condition.opt != null">
+            <choose>
+                <when test="condition.opt == 'all'">
 
-                    </when>
-                    <when test="condition.opt == 'notReady'">
-                        and PM.pay_status = '결제완료'
-                    </when>
-                    <when test="condition.opt == 'cancel'">
-                        and PM.pay_status = '취소'
-                    </when>
-                </choose>
-            </if>
-            <if test="condition != null and condition.keyword != null">
-                <choose>
-                    <when test="condition.keyword == 'all'">
+                </when>
+                <when test="condition.opt == 'notReady'">
+                    and PM.pay_status = '결제완료'
+                </when>
+                <when test="condition.opt == 'cancel'">
+                    and PM.pay_status = '취소'
+                </when>
+            </choose>
+        </if>
+        <if test="condition != null and condition.keyword != null">
+            <choose>
+                <when test="condition.keyword == 'all'">
 
-                    </when>
-                    <when test="condition.keyword == 'payName'">
-                        and U.user_name like CONCAT('%',#{condition.value},'%')
-                    </when>
-                    <when test="condition.keyword == 'payId'">
-                        and U.user_id like CONCAT('%',#{condition.value},'%')
-                    </when>
-                </choose>
-            </if>
-            ) as subquery;
+                </when>
+                <when test="condition.keyword == 'payName'">
+                    and U.user_name like CONCAT('%',#{condition.value},'%')
+                </when>
+                <when test="condition.keyword == 'payId'">
+                    and U.user_id like CONCAT('%',#{condition.value},'%')
+                </when>
+            </choose>
+        </if>
+        ) as subquery
+        where RN = 1
     </select>
     <!--
         int getTotalPriceByDay(String yesterday);
