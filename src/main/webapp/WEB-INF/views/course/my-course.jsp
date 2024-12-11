@@ -215,12 +215,11 @@
     // 완주 기록 보기 Modal창을 가져온다.
     let myModal = new bootstrap.Modal('#modal-finish-records');
 
-    // 완주 기록 보기 버튼을 클릭하면, 완주 기록을 보여준다.
+    // 완주 기록 보기 버튼을 클릭하면, 로그인한 사용자의 완주 기록을 보여준다.
     function showFinishRecords() {
         getFinishRecords(1);
     }
 
-    // 완주 기록 보기 버튼을 클릭하면, 로그인한 사용자의 완주 기록을 확인한다.
     async function getFinishRecords(page, event) {
         // 1. 페이지 클릭 시 링크 이동을 방지한다.
         if (event) {

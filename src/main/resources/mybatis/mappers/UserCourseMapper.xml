@@ -28,9 +28,25 @@
     </select>
 
     <!--
-        int getTotalAllSuccessCountRanks(@Param("condition") Map<String, Object> condition);
+        int getTotalSuccessCourseRows(@Param("condition") Map<String, Object> condition);
     -->
-    <select id="getTotalAllSuccessCountRanks" resultType="int">
+    <select id="getTotalSuccessCourseRows" resultType="int">
+        select count(*)
+        from (select c.course_no
+                   , c.course_name
+                   , c.course_distance
+                   , c.course_level
+                   , count(*)
+              from COURSE_RECORDS r inner join COURSES c
+              on r.course_no = c.course_no
+              where r.user_no = #{condition.userNo}
+              group by c.course_no) cr
+    </select>
+
+    <!--
+        int getTotalAllSuccessCountRankRows(@Param("condition") Map<String, Object> condition);
+    -->
+    <select id="getTotalAllSuccessCountRankRows" resultType="int">
         select count(*)
         from (select u.user_no
                    , u.user_nickname
@@ -188,6 +204,29 @@
                                                on r.user_no = u.user_no
               group by u.user_no) cr
         where cr.user_no = #{userNo};
+    </select>
+
+    <!--
+        List<SuccessCoursesForm> getMySuccessCourses(@Param("condition") Map<String, Object> condition);
+    -->
+    <select id="getMySuccessCourses" resultType="store.seub2hu2.course.dto.SuccessCoursesForm">
+        select cr.course_no as no
+             , cr.course_name as name
+             , cr.course_distance as distance
+             , cr.course_level as level
+             , cr.rn
+             , cr.count as successCount
+        from (select c.course_no
+                   , c.course_name
+                   , c.course_distance
+                   , c.course_level
+                   , row_number() over (order by c.course_no asc) as rn
+                   , count(*) as count
+              from COURSE_RECORDS r inner join COURSES c
+              on r.course_no = c.course_no
+              where r.user_no = #{condition.userNo}
+              group by c.course_no) cr
+        where rn between #{condition.begin} and #{condition.end};
     </select>
 
     <!--
