@@ -6,6 +6,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.seub2hu2.course.dto.SuccessCountRankForm;
+import store.seub2hu2.course.dto.SuccessCoursesForm;
 import store.seub2hu2.course.mapper.CourseMapper;
 import store.seub2hu2.course.mapper.UserCourseMapper;
 import store.seub2hu2.course.vo.*;
@@ -249,7 +250,6 @@ public class UserCourseService {
     public SuccessCountRankForm getMySuccessCountRanking(int userNo) {
         // 로그인한 사용자의 코스 달성 수 순위를 가져온다.
         SuccessCountRankForm successRank = userCourseMapper.getMySuccessCountRank(userNo);
-        System.out.println("코스 달성 수 순위: " + successRank);
 
         // 로그인한 사용자의 코스 달성 수 순위를 반환한다.
         return successRank;
@@ -262,7 +262,7 @@ public class UserCourseService {
      */
     public ListDto<SuccessCountRankForm> getAllSuccessCountRanking(Map<String, Object> condition) {
         // 모든 사용자의 코스 달성 수 순위의 갯수를 가져온다.
-        int totalRows = userCourseMapper.getTotalAllSuccessCountRanks(condition);
+        int totalRows = userCourseMapper.getTotalAllSuccessCountRankRows(condition);
 
         // 페이징 처리 정보를 가져오고, Pagination 객체에 저장한다.
         int page = (Integer) condition.get("page");
@@ -277,6 +277,31 @@ public class UserCourseService {
 
         // ListDto 객체에 모든 사용자의 코스 달성 수 순위 목록, 페이징 처리 정보를 저장하고 반환한다.
         ListDto<SuccessCountRankForm> dto = new ListDto<>(allSuccessRanks, pagination);
+        return dto;
+    }
+
+    /**
+     * 로그인한 사용자가 달성한 코스 목록을 가져온다.
+     * @param condition 페이지, 사용자 번호
+     * @return 로그인한 사용자가 달성한 코스 목록
+     */
+    public ListDto<SuccessCoursesForm> getMySuccessCourses(Map<String, Object> condition) {
+        // 1. 로그인한 사용자가 달성한 코스 목록의 갯수를 가져온다.
+        int totalRows = userCourseMapper.getTotalSuccessCourseRows(condition);
+
+        // 2. 페이징 처리 정보를 가져오고, Pagination 객체에 저장한다.
+        int page = (Integer) condition.get("page");
+        Pagination pagination = new Pagination(page, totalRows, 10);
+
+        // 3. 데이터 검색 범위를 조회해서 Map 객체에 저장한다.
+        condition.put("begin", pagination.getBegin());
+        condition.put("end", pagination.getEnd());
+
+        // 4. 로그인한 사용자가 달성한 코스 목록을 가져온다.
+        List<SuccessCoursesForm> mySuccessCourses = userCourseMapper.getMySuccessCourses(condition);
+
+        // 5. ListDto 객체에 로그인한 사용자가 달성한 코스 목록, 페이징 처리 정보를 저장하고 반환한다.
+        ListDto<SuccessCoursesForm> dto = new ListDto<>(mySuccessCourses, pagination);
         return dto;
     }
 }

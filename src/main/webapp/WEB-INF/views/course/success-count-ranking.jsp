@@ -53,7 +53,7 @@
                             <th>${successCountRank.ranking}</th>
                             <td>${successCountRank.nickName}</td>
                             <td>${successCountRank.successCount}</td>
-                            <td><button class="btn btn-primary">달성한 코스 목록</button></td>
+                            <td><button class="btn btn-primary" onclick="showMySuccessCourses()">달성한 코스 목록</button></td>
                         </tr>
                         </tbody>
                     </c:when>
@@ -98,7 +98,7 @@
                     <th>${successCountRank.ranking}</th>
                     <td>${successCountRank.nickName}</td>
                     <td>${successCountRank.successCount}</td>
-                    <td><button class="btn btn-primary">달성한 코스 목록</button></td>
+                    <td><button class="btn btn-primary" onclick="showAllSuccessCourses(${successCountRank.userNo})">달성한 코스 목록</button></td>
                 </tr>
             </c:forEach>
         </tbody>
@@ -137,6 +137,47 @@
     </div>
 </div>
 
+<%-- 달성한 코스 목록 Modal창 --%>
+<div class="modal fade" id="modal-success-courses" tabindex="-1" aria-labelledby="modal-success-courses" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <%-- 달성한 코스 목록 --%>
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modal-user-success-courses">님의 코스 완주 기록</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table" id="success-courses">
+                    <thead>
+                        <tr class="table-info">
+                            <th scope="col">번호</th>
+                            <th scope="col">코스 이름</th>
+                            <th scope="col">코스 거리</th>
+                            <th scope="col">코스 난이도</th>
+                            <th scope="col">완주 횟수</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <%-- 페이징 처리 --%>
+            <div class="row mb-3">
+                <div class="col-12">
+                    <nav>
+                        <ul class="pagination justify-content-center" id="current-paging"></ul>
+                    </nav>
+                </div>
+            </div>
+
+            <%-- 닫기 버튼 --%>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script type="text/javascript">
     let form = document.querySelector("#form-pagination");
@@ -148,6 +189,81 @@
 
         pageInput.value = page;
         form.submit();
+    }
+
+    let myModal = new bootstrap.Modal("#modal-success-courses");
+
+    // 로그인한 사용자가 달성한 코스 목록을 보여준다.
+    function showMySuccessCourses() {
+        getMySuccessCourses(1);
+    }
+
+    async function getMySuccessCourses(page, event) {
+        // 1. 페이지 클릭 시, 링크 이동을 방지한다.
+        if (event) {
+            event.preventDefault();
+        }
+
+        // 2. 달성한 코스 목록, 페이징 처리 정보를 가져온다.
+        let response = await fetch("/course/mySuccessCourses?page=" + page);
+
+        // 3. 데이터를 javascript 객체로 변환한다.
+        let result = await response.json();
+        let mySuccessCourses = result.data;
+        let paging = result.paging;
+        let num = paging.begin;
+
+        // 4. 달성한 코스 목록을 화면에 표시한다.
+        let rows = "";
+
+        for (let mySuccessCourse of mySuccessCourses) {
+            rows += `
+                <tr>
+                    <th><span>\${num}</span></th>
+                    <td><a href="detail?no=\${mySuccessCourse.no}"><span>\${mySuccessCourse.name}</span></a></td>
+                    <td><span>\${mySuccessCourse.distance}KM</span></td>
+                    <td><span>\${mySuccessCourse.level}단계</span></td>
+                    <td><span>\${mySuccessCourse.successCount}회</span></td>
+                </tr>
+            `;
+            num++;
+        }
+
+        document.querySelector("#success-courses tbody").innerHTML = rows;
+
+        // 5. 페이징 처리 기능을 화면에 표시한다.
+        let pages = "";
+
+        pages += `
+            <li class="page-item \${paging.first ? 'disabled' : ''}">
+                <a class="page-link" href="" onclick="getMySuccessCourses(\${paging.prevPage}, event)">이전</a>
+            </li>
+        `;
+
+        for (let num = paging.beginPage; num <= paging.endPage; num++) {
+            pages += `
+                <li class="page-item ">
+                    <a class="page-link \${paging.page == num ? 'active' : ''}"
+                        href="" onclick="getMySuccessCourses(\${num}, event)">\${num}</a>
+                </li>
+            `;
+        }
+
+        pages += `
+            <li class="page-item \${paging.last ? 'disabled' : ''}">
+                <a class="page-link" href="" onclick="getMySuccessCourses(\${paging.nextPage}, event)">다음</a>
+            </li>
+        `;
+
+        document.querySelector("#current-paging").innerHTML = pages;
+
+        // 6. Modal창을 화면에 표시한다.
+        myModal.show();
+    }
+
+    // 모든 사용자의 달성한 코스 목록을 보여준다.
+    function showAllSuccessCourses(userNo) {
+
     }
 </script>
 </body>
