@@ -43,8 +43,6 @@ public class MarathonService {
 
         marathonMapper.insertMarathon(marathon);
 
-        System.out.println("================" + marathon.getNo());
-
         if (StringUtils.hasText(form.getHost())) {
             // hostText = "우리은행, KBS, MBC"
             String hostText = form.getHost();
@@ -52,7 +50,7 @@ public class MarathonService {
             String[] values = hostText.split(",");
             for (String value : values) {
                 MarathonOrgan organ = new MarathonOrgan();
-                organ.setMarathonNo(form.getNo());
+                organ.setMarathonNo(marathon.getNo());
                 organ.setOrganRole("host");
                 organ.setOrganName(value.trim());
                 marathonMapper.insertMarathonOrgan(organ);
@@ -64,7 +62,7 @@ public class MarathonService {
             String[] values = organizerText.split(",");
             for (String value : values) {
                 MarathonOrgan organ = new MarathonOrgan();
-                organ.setMarathonNo(form.getNo());
+                organ.setMarathonNo(marathon.getNo());
                 organ.setOrganRole("organizer");
                 organ.setOrganName(value.trim());
                 marathonMapper.insertMarathonOrgan(organ);
@@ -111,7 +109,7 @@ public class MarathonService {
         marathonMapper.updateMarathonCnt(marathon);
     }
 
-    public void updateMarathon(MarathonForm form) {
+    public Marathon updateMarathon(MarathonForm form) {
         Marathon savedMarathon = marathonMapper.getMarathonDetailByNo(form.getNo());
         savedMarathon.setTitle(form.getTitle());
         savedMarathon.setContent(form.getContent());
@@ -150,6 +148,7 @@ public class MarathonService {
                 marathonMapper.insertMarathonOrgan(organ);
             }
         }
+        return savedMarathon;
     }
 
     public void deleteMarathon(int marathonNo) {

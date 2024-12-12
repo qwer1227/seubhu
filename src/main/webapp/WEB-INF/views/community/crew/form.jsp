@@ -1,6 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="/WEB-INF/views/common/tags.jsp" %>
-<script type="text/javascript" src="../resources/static/smartEditor/js/HuskyEZCreator.js" charset="utf-8"></script>
 <script type="text/javascript"
         src="//dapi.kakao.com/v2/maps/sdk.js?appkey=3af1f449b9175825b32af2e204b65779&libraries=services,clusterer,drawing"></script>
 
@@ -44,16 +43,16 @@
         <tbody>
         <tr>
           <th>모집글 제목</th>
-          <td><input class="rounded" type="text" name="title" value="test" style="width: 83%"></td>
+          <td><input class="rounded" type="text" name="title" value="" style="width: 83%"></td>
           <th>장소</th>
           <td>
-            <input class="rounded" type="text" id="location" value="test" name="location" style="width: 70%">
+            <input class="rounded" type="text" id="location" value="" name="location" style="width: 70%">
             <button type="button" class="btn btn-outline-dark btn-sm" onclick="searchPlaces(event)">검색</button>
           </td>
         </tr>
         <tr>
           <th>크루 이름</th>
-          <td><input class="rounded" type="text" name="name" value="test" style="width: 83%"></td>
+          <td><input class="rounded" type="text" name="name" value="" style="width: 83%"></td>
           <th></th>
           <td rowspan="3">
             <div id="map" style="width: 90%; height: 200px" class="mb-2"></div>
@@ -68,7 +67,7 @@
               <option value="매일">매일</option>
               <option value="번개">입력</option>
             </select>
-            <input type="text" class="rounded" id="schedule-detail" name="detail" value="test" style="width: 70%"
+            <input type="text" class="rounded" id="schedule-detail" name="detail" value="" style="width: 70%"
                    placeholder="상세 모임 일시를 작성해주세요.">
           </td>
         </tr>
@@ -82,9 +81,7 @@
         <tr>
           <th>게시글</th>
           <td colspan="3">
-            <textarea style="width: 100%" class="form-control" rows="10" id="description" name="description"
-                      placeholder="내용을 입력해주세요.">test</textarea>
-            <%--            <%@include file="../write.jsp" %>--%>
+            <%@include file="../write.jsp" %>
           </td>
         </tr>
         <tr>
@@ -110,14 +107,16 @@
   </div>
   
   <!-- 썸네일 이미지 편집 모달창 -->
-  <%@include file="image-crop.jsp"%>
+  <%@include file="image-crop.jsp" %>
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script type="text/javascript">
     // 등록 버튼 클릭 시, 폼에 있는 값을 전달(이미지는 슬라이싱할 때 전달했기 때문에 따로 추가 설정 안해도 됨)
-    document.querySelector("#submit").addEventListener("click", function (){
+    document.querySelector("#submit").addEventListener("click", function () {
+        oEditors.getById["ir1"].exec("UPDATE_CONTENTS_FIELD", []);
+        
         let title = document.querySelector("input[name=title]").value;
-        let description = document.querySelector("textarea[name=description]").value;
+        let description = document.querySelector("textarea[name=ir1]").value;
         let name = document.querySelector("input[name=name]").value;
         let type = document.querySelector("select[name=type]").value;
         let detail = document.querySelector("input[name=detail]").value;
@@ -136,16 +135,16 @@
 
         $.ajax({
             method: "post",
-            url: "register",
+            url: "/community/crew/register",
             data: formData,
             processData: false,
             contentType: false,
-            success: function (crew){
+            success: function (crew) {
                 window.location.href = "detail?no=" + crew.no;
             }
         })
     });
-    
+
     function abort() {
         let result = confirm("작성중이던 글을 임시보관하시겠습니까?");
         if (result) {
