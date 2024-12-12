@@ -21,7 +21,7 @@
   </div>
   
   <div class="row">
-    <div class="col-4 border" style="margin: 15px; background-color: #f2f2f2">
+    <div class="col-4 border" style="margin: 15px; background-color: #f2f2f2; height: 190px">
       <table>
         <tbody>
         <tr>
@@ -46,12 +46,12 @@
       </table>
     </div>
     
-    <div class="col-4 border" style="margin: 15px; background-color: #f2f2f2">
+    <div class="col-4 border" style="margin: 15px; background-color: #f2f2f2; height: 190px">
       <table>
         <tbody>
         <tr>
           <td>
-            <div style="text-align: start" class="pt-2 pb-2">
+            <div style="text-align: start;" class="pt-2 pb-2">
               <a href="/community/crew/main" style="text-decoration-line: none; color: black; font-weight: bold">
                 [ 크루모임 ]
               </a>
@@ -79,7 +79,7 @@
               <div class="carousel-item active">
                 <div class="popup-content text-center">
                   <a href="/community/marathon/hit?no=${marathon.no}" type="button">
-                    <img src="${marathon.thumbnail}" class="d-block w-100" alt="marathon info">
+                    <img src="${marathon.thumbnail}" class="d-block w-100" style="height: 190px" alt="marathon info">
                   </a>
                 </div>
               </div>

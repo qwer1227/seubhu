@@ -11,10 +11,12 @@
             background-position: center;
             color: white;
         }
+
         .image-container {
             text-align: center;
             margin-bottom: 30px;
         }
+
         .image-container img {
             width: 100%;
             height: auto;
@@ -26,8 +28,6 @@
 <body>
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
 <div class="container-xxl my-5" id="wrap">
-
-
     <!-- Header -->
     <header class="bg-success text-white text-center py-5">
         <h1>습습후후 러닝 클래스</h1>
@@ -39,7 +39,8 @@
         </div>
     </section>
     <div>
-        <a href="/lesson/schedule" class="btn btn-success rounded-pill mb-3 text-center align-content-center" style="width: 100%; height:50px;">레슨 일정 보러가기</a>
+        <a href="/lesson/schedule" class="btn btn-success rounded-pill mb-3 text-center align-content-center"
+           style="width: 100%; height:50px;">레슨 일정 보러가기</a>
     </div>
     <!-- Breathing Section -->
     <section class="mb-5">
@@ -54,7 +55,6 @@
             </div>
         </div>
     </section>
-
     <!-- Running Posture Section -->
     <section class="mb-5">
         <div class="card">
@@ -68,7 +68,6 @@
             </div>
         </div>
     </section>
-
     <!-- Strengthening Exercises Section -->
     <section>
         <div class="card">
@@ -82,7 +81,6 @@
             </div>
         </div>
     </section>
-
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>

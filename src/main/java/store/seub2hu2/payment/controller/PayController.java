@@ -70,8 +70,6 @@ public class PayController {
     public @ResponseBody ReadyResponse payReady(@RequestBody PaymentDto paymentDto
     , @AuthenticationPrincipal LoginUser loginUser) {
 
-
-
         paymentDto.setUserNo(loginUser.getNo());
         // 카카오 결제 준비하기
         ReadyResponse readyResponse = kakaoPayService.payReady(paymentDto);
@@ -100,8 +98,6 @@ public class PayController {
             String lessonNoStr = (String) param.get("lessonNo");
             int lessonNo = Integer.parseInt(lessonNoStr);
 
-
-
             // 카카오 결제 요청하기
             ApproveResponse approveResponse = kakaoPayService.payApprove(tid, pgToken, lessonNo);
 
@@ -113,6 +109,7 @@ public class PayController {
 
             log.info("lessonReservationPay = {}", paymentDto);
             lessonReservationService.saveLessonReservation(paymentDto);
+
         }
 
         if (type.equals("상품")) {
@@ -143,11 +140,14 @@ public class PayController {
 
             // order pay 번호 update
             orderService.updateOrderPayNo(orderNo, payNo);
+            
+            // 장바구니에서 삭제
 
 
             return "redirect:/pay/success?no="+ orderNo;
 
         }
+
 
         return "redirect:/pay/success";
     }

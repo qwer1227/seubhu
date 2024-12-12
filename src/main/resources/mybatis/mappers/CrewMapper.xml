@@ -63,21 +63,24 @@
     , c.crew_location as location
     , c.crew_name as name
     , c.is_entered as entered
-    , c.crew_thumbnail as "thumbnail.saveName"
+    , coalesce ((select f.file_save_name
+    from CREW_FILES f
+    where f.crew_no = c.crew_no
+    and f.file_save_name = c.crew_thumbnail
+    and f.is_deleted = 'N'), null) as "thumbnail.saveName"
     , c.crew_view_cnt as viewCnt
     , (select count(*) from CREW_REPLIES cr where c.crew_no = cr.crew_no) as replyCnt
-
     from
     CREWS c join CREW_MEMBERS cm
-        on c.crew_no = cm.crew_no
-        join USERS u
-        on cm.user_no = u.user_no
-            <if test="condition.opt == 'reply'">
-        join CREW_REPLIES r
-        on r.crew_no = c.crew_no
-            </if>
+    on c.crew_no = cm.crew_no
+    join USERS u
+    on cm.user_no = u.user_no
+    <if test="condition.opt == 'reply'">
+      join CREW_REPLIES r
+      on r.crew_no = c.crew_no
+    </if>
     where c.is_deleted = 'N'
-        and cm.is_reader = 'Y'
+    and cm.is_reader = 'Y'
     <if test="condition.category != null">
       and c.is_entered = #{condition.category}
     </if>
@@ -125,7 +128,7 @@
           from CREWS c
           where c.is_deleted = 'N'
             and c.is_entered = 'Y') crew limit 5
-    </select>
+  </select>
 
   <!-- List<CrewMember> getCrewMembers(@Param("no") int crewNo);); -->
   <select id="getCrewMembers" resultType="store.seub2hu2.community.vo.CrewMember" parameterType="int">
@@ -233,11 +236,8 @@
 
   <!-- List<Crew> getCrewByUserNo(@Param("userNo") int userNo); -->
   <select id="getCrewByUserNo" resultType="store.seub2hu2.community.vo.Crew">
-    select
-        *
-    from (
-            select
-              c.crew_no as no
+    select *
+    from (select c.crew_no as no
             , c.crew_title as title
             , c.crew_name as name
             , c.crew_description as description
@@ -247,13 +247,12 @@
                where cm.crew_no =  c.crew_no
                and cm.is_join = 'Y'
                    ) as memberCnt
-            from CREWS c
-
-            inner join CREW_MEMBERS cm on cm.crew_no = c.crew_no
-            where c.is_deleted = 'N'
+          from CREWS c
+            inner join CREW_MEMBERS cm
+          on cm.crew_no = c.crew_no
+          where c.is_deleted = 'N'
             and cm.is_join = 'Y'
-            and cm.user_no = #{userNo}
-         ) crew
+            and cm.user_no = #{userNo}) crew
 
   </select>
 

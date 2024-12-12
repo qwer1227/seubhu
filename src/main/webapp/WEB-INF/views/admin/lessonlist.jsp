@@ -223,17 +223,32 @@
     `;
     } else {
       for (let rev of data) {
+        const formattedPhone = formatPhoneNumber(rev.tel);
+
         rows += `
         <tr>
             <td><span>\${rev.id}</span></td>
             <td><span>\${rev.name}</span></td>
             <td><span>\${rev.nickname}</span></td>
             <td><span>\${rev.email}</span></td>
-            <td><span>\${rev.tel}</span></td>
+            <td><span>\${formattedPhone}</span></td>
           </tr>
       `;
       }
     }
+    function formatPhoneNumber(phoneNumber) {
+      // 전화번호 정규식 (010-1234-5678 형식으로)
+      const phoneRegex = /^(01[0-9])(\d{3,4})(\d{4})$/;
+
+      // 정규식에 맞는 경우 포맷팅
+      if (phoneRegex.test(phoneNumber)) {
+        return phoneNumber.replace(phoneRegex, '$1-$2-$3');
+      } else {
+        // 형식에 맞지 않는 경우 그대로 반환
+        return phoneNumber;
+      }
+    }
+
     document.querySelector("#table-rev tbody").innerHTML = rows;
 
     const myModal = new bootstrap.Modal('#modal-preview-user');

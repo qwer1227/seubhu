@@ -31,4 +31,20 @@
         PROD_CNT DESC
     </select>
 
+    <select id="getTopViewedBoards" resultType="store.seub2hu2.community.vo.Board">
+        SELECT
+        B.BOARD_NO        AS no,
+        B.BOARD_TITLE           AS title,
+        U.USER_NICKNAME   AS "user.nickname", -- 작성자 닉네임
+        B.BOARD_CREATED_DATE    AS createdDate,
+        B.BOARD_VIEW_CNT        AS viewCnt
+        FROM BOARDS B
+            LEFT JOIN USERS U ON B.USER_NO = U.USER_NO
+        WHERE B.IS_DELETED = 'N'
+        ORDER BY B.BOARD_VIEW_CNT DESC
+            LIMIT 3
+    </select>
+
+
+
 </mapper>

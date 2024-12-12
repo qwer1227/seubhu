@@ -113,8 +113,7 @@
           <img src="${marathon.thumbnail}" style="height: 350px">
         </div>
         <div id="marathon-content">
-          <textarea id="content" class="form-control bg-white border-0" readonly="readonly"
-                    style="resize: none; overflow: hidden; user-select: none;">${marathon.content}</textarea>
+          <p>${marathon.content}</p>
         </div>
         <div class=" d-flex justify-content-center">
           <div class="col-6 mb-2" id="map" style="height: 250px; width: 500px"></div>

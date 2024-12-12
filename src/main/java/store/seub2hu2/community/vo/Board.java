@@ -31,7 +31,7 @@ public class Board {
     private int replyCnt;
 
     public String getOriginalFileName() {
-        if(uploadFile.getSaveName() == null){
+        if(uploadFile == null){
             return null;
         }
         return uploadFile.getSaveName().substring(13);

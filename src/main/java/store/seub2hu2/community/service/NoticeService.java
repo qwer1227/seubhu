@@ -41,7 +41,7 @@ public class NoticeService {
 
         MultipartFile multipartFile = form.getUpfile();
 
-        if (!multipartFile.isEmpty()) {
+        if (multipartFile != null && !multipartFile.isEmpty()) {
             String originalFilename = multipartFile.getOriginalFilename();
             String filename = System.currentTimeMillis() + originalFilename;
             FileUtils.saveMultipartFile(multipartFile, saveDirectory, filename);
@@ -100,7 +100,7 @@ public class NoticeService {
         noticeMapper.updateNoticeCnt(notice);
     }
 
-    public void updateNotice(NoticeForm form) {
+    public Notice updateNotice(NoticeForm form) {
         Notice savedNotice = noticeMapper.getNoticeByNo(form.getNo());
         savedNotice.setFirst(form.isFirst());
         savedNotice.setTitle(form.getTitle());
@@ -110,7 +110,7 @@ public class NoticeService {
         MultipartFile multipartFile = form.getUpfile();
 
         // 수정할 첨부파일이 있으면,
-        if (!multipartFile.isEmpty()) {
+        if (multipartFile != null && !multipartFile.isEmpty()) {
             // 기존 파일 정보 조회
             UploadFile prevFile = uploadMapper.getFileByNoticeNo(savedNotice.getNo());
             // 기존 파일이 있으면 기존 파일 삭제
@@ -133,6 +133,8 @@ public class NoticeService {
         }
 
         noticeMapper.updateNotice(savedNotice);
+
+        return savedNotice;
     }
 
     public void deleteNotice(int noticeNo) {

@@ -26,12 +26,14 @@ public class OrderProductDto {
     private String payStatus;
     private String payMethod;
     private String prodName;
+    private String colorName;
     private String prodSize;
     private int orderProdAmount;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime payDate;
     private LocalDateTime payCancelDate;
+    private int totalPrice;
 
 
 
