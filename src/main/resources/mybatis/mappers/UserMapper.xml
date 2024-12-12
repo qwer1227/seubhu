@@ -175,7 +175,7 @@
         from
         USERS
         where
-        USER_NICKNAME = #{nickname} <!-- 이메일로 사용자 정보 조회 -->
+        USER_NICKNAME = #{nickname} <!-- 닉네임으로 사용자 정보 조회 -->
     </select>
 
     <select id="findUsersByNickname" resultType="store.seub2hu2.user.vo.User">

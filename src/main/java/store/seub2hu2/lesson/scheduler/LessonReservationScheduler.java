@@ -11,7 +11,6 @@ public class LessonReservationScheduler {
 
     private final LessonReservationService lessonReservationService;
 
-
     // 매일 자정 실행
     @Scheduled(cron = "0 0 0 * * ?")
 //    @Scheduled(fixedRate = 5000)

@@ -17,21 +17,28 @@
                 <a href="" style="text-decoration-line: none">받은 쪽지</a>
             </div>
         </div>
-        <div class="title h4 d-flex justify-content-between align-items-center">
+        <div class="title h4 d-flex justify-content-left">
             <div>
                 ${message.title}
             </div>
-            <div class="ml-auto">
-                ${message.createdDate}
-            </div>
         </div>
-        <div class="meta d-flex justify-content-between mb-3">
-            <span>보낸사람: ${message.senderNickname}</span>
+        <div class="meta d-flex justify-content-left mb-3" >
+            <span>보낸사람: ${message.senderNickname}</span> /
+            <span>날짜: <fmt:formatDate value="${message.createdDate}" pattern="yyyy-MM-dd"/></span>
         </div>
 
         <div class="content mb-4">
             <p>${message.content}</p>
         </div>
+        <c:if test="${not empty message.messageFile.savedName}">
+            <div class="content mb-4">
+                첨부파일: ${message.messageFile.originalName}
+            </div>
+            <a href="/message/download?no=${message.messageNo}" class="btn btn-outline-dark btn-sm">
+                다운로드
+            </a>
+        </c:if>
+
 
         <div class="actions d-flex justify-content-end mb-4">
             <div>
@@ -42,7 +49,8 @@
                 </form>
 
                 <!-- 답장 버튼 -->
-                <a type="button" href="/message/add?receiver=${message.senderNickname}" class="btn btn-outline-dark">답장</a>
+                <a type="button" href="/message/add?receiver=${message.senderNickname}"
+                   class="btn btn-outline-dark">답장</a>
 
                 <!-- 목록 버튼 -->
                 <a type="button" href="/message/list" class="btn btn-dark">목록</a>

@@ -190,11 +190,6 @@ public class MyPageController {
         return "mypage/history";
     }
 
-    @GetMapping("write")
-    public String write(){
-        return "community/write";
-    }
-
     @GetMapping("/detail")
     public String detail(@RequestParam("no") int boardNo
             , @AuthenticationPrincipal LoginUser loginUser
@@ -250,8 +245,9 @@ public class MyPageController {
     }
 
     @PostMapping("/modify")
-    public String update(BoardForm form) {
-        boardService.updateBoard(form);
+    public String update(BoardForm form
+            , @AuthenticationPrincipal LoginUser loginUser) {
+        boardService.updateBoard(form, loginUser);
         return "redirect:detail?no=" + form.getNo();
     }
 

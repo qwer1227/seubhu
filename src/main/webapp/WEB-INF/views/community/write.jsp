@@ -10,7 +10,6 @@
 <form method="get" action="register">
   <textarea name="ir1" id="ir1" style="display:none;"></textarea>
 </form>
-// 확인 필요
 <script type="text/javascript">
     var oEditors = [];
     nhn.husky.EZCreator.createInIFrame({

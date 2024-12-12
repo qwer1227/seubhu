@@ -141,11 +141,12 @@ public class BoardController {
     }
 
     @PostMapping("/register")
-    public String register(BoardForm form
+    @ResponseBody
+    public Board register(BoardForm form
             , @AuthenticationPrincipal LoginUser loginUser) {
 
         Board board = boardService.addNewBoard(form, loginUser);
-        return "redirect:detail?no=" + board.getNo();
+        return board;
     }
 
     @GetMapping("/modify")
@@ -159,10 +160,12 @@ public class BoardController {
     }
 
     @PostMapping("/modify")
-    public String update(BoardForm form) {
+    @ResponseBody
+    public Board update(BoardForm form
+            , @AuthenticationPrincipal LoginUser loginUser) {
 
-        boardService.updateBoard(form);
-        return "redirect:detail?no=" + form.getNo();
+        Board board = boardService.updateBoard(form, loginUser);
+        return board;
     }
 
     @GetMapping("/delete")

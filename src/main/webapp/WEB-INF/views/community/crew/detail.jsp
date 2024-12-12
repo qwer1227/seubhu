@@ -136,8 +136,7 @@
           </table>
         </div>
         <div>
-          <textarea id="content" class="form-control bg-white border-0"
-                    readonly="readonly">${crew.description}</textarea>
+          <p>${crew.description}</p>
         </div>
       </div>
     </div>

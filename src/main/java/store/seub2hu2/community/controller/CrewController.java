@@ -1,11 +1,5 @@
 package store.seub2hu2.community.controller;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.MultipartConfig;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.Part;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -18,7 +12,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import store.seub2hu2.community.dto.CrewForm;
 import store.seub2hu2.community.dto.ReplyForm;
@@ -30,15 +23,10 @@ import store.seub2hu2.community.view.FileDownloadView;
 import store.seub2hu2.community.vo.Crew;
 import store.seub2hu2.community.vo.CrewMember;
 import store.seub2hu2.community.vo.Reply;
-import store.seub2hu2.community.vo.UploadFile;
 import store.seub2hu2.security.user.LoginUser;
-import store.seub2hu2.util.FileUtils;
 import store.seub2hu2.util.ListDto;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
@@ -65,7 +53,7 @@ public class CrewController {
 
     @GetMapping("/main")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page
-            , @RequestParam(name = "rows", required = false, defaultValue = "15") int rows
+            , @RequestParam(name = "rows", required = false, defaultValue = "6") int rows
             , @RequestParam(name = "category", required = false) String category
             , @RequestParam(name = "opt", required = false) String opt
             , @RequestParam(name = "keyword", required = false) String keyword
@@ -170,10 +158,11 @@ public class CrewController {
     }
 
     @PostMapping("/modify")
-    public String update(CrewForm form){
+    @ResponseBody
+    public Crew update(CrewForm form){
 
-        crewService.updateCrew(form);
-        return "redirect:detail?no=" + form.getNo();
+        Crew crew = crewService.updateCrew(form);
+        return crew;
     }
 
     @GetMapping("/delete")
@@ -190,6 +179,14 @@ public class CrewController {
                             , @RequestParam("fileNo") int fileNo){
 
         crewService.deleteCrewFile(fileNo);
+        return "redirect:modify?no=" + crewNo;
+    }
+
+    @GetMapping("/delete-thumbnail")
+    public String deleteThumbnail(@RequestParam("no") int crewNo
+                            , @RequestParam("thumbnailNo") int thumbnailNo){
+
+        crewService.deleteCrewFile(thumbnailNo);
         return "redirect:modify?no=" + crewNo;
     }
 

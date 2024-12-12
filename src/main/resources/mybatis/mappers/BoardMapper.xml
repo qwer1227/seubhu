@@ -156,7 +156,7 @@
     BOARDS
     set board_cat_name = #{board.catName}
     , board_title = #{board.title}
-    , board_content = #{board.content}
+    , board_content = #{board.content, jdbcType=VARCHAR}
     , board_updated_date = sysdate()
     , is_deleted = #{board.deleted}
     <if test="board.uploadFile != null">

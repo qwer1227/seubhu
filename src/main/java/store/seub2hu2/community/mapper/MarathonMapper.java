@@ -14,7 +14,7 @@ public interface MarathonMapper {
     void insertMarathon(@Param("marathon") Marathon marathon);
     void insertMarathonOrgan(@Param("organ") MarathonOrgan organ);
     List<Marathon> getMarathons(@Param("condition") Map<String, Object> condition);
-    List<Marathon> getMarathonTopThree(@Param("condition") Map<String, Object> condition);
+    List<Marathon> getMarathonTopFive(@Param("condition") Map<String, Object> condition);
     int getTotalMarathons(@Param("condition") Map<String, Object> condition);
     Marathon getMarathonDetailByNo(@Param("no") int marathonNo);
     List<MarathonOrgan> getMarathonOrganDetailByNo(@Param("no") int marathonNo);

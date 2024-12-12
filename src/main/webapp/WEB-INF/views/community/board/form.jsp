@@ -21,7 +21,7 @@
   <h2> 커뮤니티 글 작성 </h2>
   
   <div class="row p-3 m-3">
-    <form:form id="form-register" action="register" method="post" enctype="multipart/form-data">
+    <form id="form-register" action="register" method="post" enctype="multipart/form-data">
       <table id="community-table" style="width: 98%">
         <colgroup>
           <col width="10%">
@@ -55,12 +55,10 @@
         </tr>
         <tr class="form-group">
           <th>
-            <label class="form-label" for="content">글내용</label>
+            <label class="form-label" id="content">글내용</label>
           </th>
           <td colspan="3">
-            <textarea style="width: 100%" class="form-control" rows="10" id="content" name="content"
-                      placeholder="내용을 입력해주세요."></textarea>
-<%--            <%@include file="write.jsp" %>--%>
+            <%@include file="../write.jsp" %>
           </td>
         </tr>
         <tr class="form-group">
@@ -80,15 +78,46 @@
           </div>
           <div class="col d-flex justify-content-end">
             <button type="button" class="btn btn-outline-primary m-1" onclick="keepContent()">보관</button>
-            <button type="submit" class="btn btn-primary m-1" onclick="submitContent()">등록</button>
+            <button type="button" id="submit" class="btn btn-primary m-1">등록</button>
           </div>
         </div>
       </div>
-    </form:form>
+    </form>
   </div>
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script type="text/javascript">
+    let formData = new FormData();
+    
+    // 등록 버튼 클릭 시, 폼에 있는 값을 전달(이미지는 슬라이싱할 때 전달했기 때문에 따로 추가 설정 안해도 됨)
+    document.querySelector("#submit").addEventListener("click", function (){
+
+        oEditors.getById["ir1"].exec("UPDATE_CONTENTS_FIELD", []);
+        
+        let catName = document.querySelector("select[name=catName]").value;
+        let title = document.querySelector("input[name=title]").value;
+        let content = document.querySelector("textarea[name=ir1]").value;
+        let upfile = document.querySelector("input[name=upfile]")
+
+        formData.append("catName", catName);
+        formData.append("title", title);
+        formData.append("content", content);
+        if (upfile.files.length > 0) {
+            formData.append("upfile", upfile.files[0]);
+        }
+
+        $.ajax({
+            method: "post",
+            url: "/community/board/register",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (board){
+                window.location.href = "detail?no=" + board.no;
+            }
+        })
+    });
+    
     function abort() {
         alert("작성중이던 글을 임시보관하시겠습니까?");
 
@@ -99,9 +128,6 @@
         location.href = 'main';
     }
 
-    function submitContent(){
-
-    }
 </script>
 </body>
 </html>
