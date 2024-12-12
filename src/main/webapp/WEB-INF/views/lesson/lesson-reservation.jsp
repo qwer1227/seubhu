@@ -1,7 +1,5 @@
-<%@ page import="static store.seub2hu2.lesson.enums.LessonCategory.*" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="/WEB-INF/views/common/tags.jsp" %>
-<%@ page import="java.util.Date" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!doctype html>
 <html lang="ko">
@@ -116,6 +114,7 @@
                                 <input type="hidden" name="userId" value="${loginUser.id}">
                                 <input type="hidden" name="lessonNo" value="${reservation.lesson.lessonNo}">
                                 <input type="hidden" name="totalAmount" value="${reservation.lesson.price}">
+                                <input type="hidden" name="type" value="레슨">
                                 <button type="button" id="cancel-btn" class="btn btn-sm btn-danger"
                                         onclick="confirmCancel()">취소
                                 </button>
