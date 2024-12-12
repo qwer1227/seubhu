@@ -10,10 +10,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import store.seub2hu2.community.dto.NoticeForm;
@@ -73,9 +70,10 @@ public class NoticeController {
     }
 
     @PostMapping("/register")
-    public String register(NoticeForm form) {
+    @ResponseBody
+    public Notice register(NoticeForm form) {
         Notice notice = noticeService.addNewNotice(form);
-        return "redirect:detail?no=" + notice.getNo();
+        return notice;
     }
 
     @GetMapping("/hit")
@@ -134,9 +132,10 @@ public class NoticeController {
     }
 
     @PostMapping("/modify")
-    public String update(NoticeForm form) {
-        noticeService.updateNotice(form);
-        return "redirect:detail?no=" + form.getNo();
+    @ResponseBody
+    public Notice update(NoticeForm form) {
+        Notice notice = noticeService.updateNotice(form);
+        return notice;
     }
 
     @GetMapping("/delete")

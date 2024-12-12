@@ -23,7 +23,7 @@ public class Notice {
     private UploadFile uploadFile;
 
     public String getOriginalFileName() {
-        if(uploadFile.getSaveName() == null){
+        if(uploadFile == null){
             return null;
         }
         return uploadFile.getSaveName().substring(13);

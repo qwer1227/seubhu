@@ -58,9 +58,7 @@
             <label class="form-label" id="content">글내용</label>
           </th>
           <td colspan="3">
-<%--            <textarea style="width: 100%" class="form-control" rows="10" id="content" name="content"--%>
-<%--                      placeholder="내용을 입력해주세요."></textarea>--%>
-            <%@include file="write.jsp" %>
+            <%@include file="../write.jsp" %>
           </td>
         </tr>
         <tr class="form-group">
@@ -93,6 +91,9 @@
     
     // 등록 버튼 클릭 시, 폼에 있는 값을 전달(이미지는 슬라이싱할 때 전달했기 때문에 따로 추가 설정 안해도 됨)
     document.querySelector("#submit").addEventListener("click", function (){
+
+        oEditors.getById["ir1"].exec("UPDATE_CONTENTS_FIELD", []);
+        
         let catName = document.querySelector("select[name=catName]").value;
         let title = document.querySelector("input[name=title]").value;
         let content = document.querySelector("textarea[name=ir1]").value;
