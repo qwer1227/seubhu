@@ -109,10 +109,4 @@ public class UserController {
     public String logout() {  // 세션 무효화
         return "redirect:/main";  // 로그아웃 후 메인 페이지로 리다이렉트
     }
-
-    @GetMapping("/search")
-    public ResponseEntity<List<User>> searchUsers(@RequestParam("nickname") String nickname) {
-        List<User> users = userService.searchUsersByNickname(nickname);
-        return ResponseEntity.ok(users);
-    }
 }

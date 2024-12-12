@@ -2,6 +2,7 @@ package store.seub2hu2.message.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -13,28 +14,41 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import store.seub2hu2.community.view.FileDownloadView;
+import store.seub2hu2.community.vo.Board;
 import store.seub2hu2.message.dto.MessageForm;
 import store.seub2hu2.message.dto.MessageReceived;
 import store.seub2hu2.message.service.MessageService;
 import store.seub2hu2.message.vo.Message;
 import store.seub2hu2.security.user.LoginUser;
+import store.seub2hu2.user.service.UserService;
+import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.ListDto;
+import store.seub2hu2.util.S3Service;
 
 import java.io.File;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/message")
 public class MessageController {
 
-    @Value("C:/Users/jhta/Desktop/MessageFiles")
-    private String saveDirectory;
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucketName;
+
+    private String folder = "resources/messages";
+
+    @Autowired
+    private S3Service s3Service;
 
     @Autowired
     private MessageService messageService;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private FileDownloadView fileDownloadView;
@@ -79,7 +93,7 @@ public class MessageController {
     public String sentList(
             @RequestParam(name = "page", required = false, defaultValue = "1") int page,
             @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
-            @RequestParam(name = "sort", required = false, defaultValue = "date") String sort, // 기본값 변경
+            @RequestParam(name = "sort", required = false, defaultValue = "desc") String sort, // 기본값 변경
             @RequestParam(name = "opt", required = false) String opt,
             @RequestParam(name = "keyword", required = false) String keyword,
             @AuthenticationPrincipal LoginUser loginUser,
@@ -115,9 +129,6 @@ public class MessageController {
             @AuthenticationPrincipal LoginUser loginUser,
             Model model) {
         int userNo = loginUser.getNo();  // 로그인된 사용자 번호
-
-        // 메시지 읽음 처리
-        //messageService.markAsRead(messageNo, userNo);
 
         // 메시지 상세 조회
         Message message = messageService.getMessageDetail(messageNo);
@@ -161,13 +172,6 @@ public class MessageController {
         return "redirect:/message/sent";
     }
 
-    // 일괄 삭제
-    @PostMapping("/deleteMultiple")
-    public String deleteMessages(@RequestParam("messageNos") List<Integer> messageNos) {
-        messageService.deleteMessages(messageNos);
-        return "redirect:/message/sent";
-    }
-
     @GetMapping("/markAsRead")
     public String markAsRead(@RequestParam("messageNo") int messageNo, @AuthenticationPrincipal LoginUser loginUser) {
         int userNo = loginUser.getNo();  // 로그인된 사용자 번호
@@ -180,45 +184,37 @@ public class MessageController {
     }
 
 
-    @PostMapping("/markMultipleAsRead")
-    public String markMultipleAsRead(@RequestParam("messageNos") List<Integer> messageNos) {
-        messageService.markMultipleAsRead(messageNos);
+
+    @GetMapping("/deleteMultiple")
+    public String deleteMultiple(@RequestParam("messageNo") List<Integer> messageNo, @AuthenticationPrincipal LoginUser loginUser) {
+        messageService.deleteMessages(messageNo, loginUser.getNo());
+        return "redirect:/message/list"; // 메시지 리스트 페이지로 리다이렉트
+    }
+
+    @GetMapping("/markMultipleAsRead")
+    public String markMultipleAsRead(@RequestParam("messageNo") List<Integer> messageNos, @AuthenticationPrincipal LoginUser loginUser ) {
+        messageService.markMultipleAsRead(messageNos, loginUser.getNo());
         return "redirect:/message/list";
     }
 
-    // 파일 다운로드 요청
-    // 요청 URL : comm/filedown?no=xxx
-    @GetMapping("/filedown")
-    public ModelAndView download(@RequestParam("no") int messageNo) {
-
-        // isSent 값을 false로 설정 (받은 메시지라고 가정)
-        Message message = messageService.getMessageDetail(messageNo);
-
-        ModelAndView mav = new ModelAndView();
-
-        mav.setView(fileDownloadView);
-        mav.addObject("directory", saveDirectory);
-        mav.addObject("filename", message.getMessageFile().getSavedName());
-        mav.addObject("originalFilename", message.getMessageFile().getOriginalName());
-
-        return mav;
-    }
 
     @GetMapping("/download")
-    public ResponseEntity<Resource> downloadFile(int messageNo) throws Exception{
+    public ResponseEntity<Resource> downloadfile(@RequestParam("no") int no) throws Exception {
+        // 게시글 정보 조회
+        Message message = messageService.getMessageDetail(no);
 
-        // isSent 값을 false로 설정 (받은 메시지라고 가정)
-        Message message = messageService.getMessageDetail(messageNo);
+        // 파일명을 조회
+        String filename = message.getMessageFile().getSavedName();
+        String originalFilename = message.getMessageFile().getOriginalName();
 
-        String fileName = message.getMessageFile().getSavedName();
-        String originalFileName = message.getMessageFile().getOriginalName();
-        originalFileName = URLEncoder.encode(originalFileName, "UTF-8");
+        // 파일명을 UTF-8로 인코딩 (파일명에 한글이 있을 수 있기 때문에)
+        String encodedFilename = URLEncoder.encode(originalFilename, "UTF-8").replaceAll("\\+", "%20");
 
-        File file = new File(new File(saveDirectory), fileName);
-        FileSystemResource resource = new FileSystemResource(file);
+        ByteArrayResource resource = s3Service.downloadFile(bucketName, folder, filename);
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + originalFileName)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename*=UTF-8''" + encodedFilename)  // 파일명 인코딩 처리
                 .body(resource);
     }
+
 }
