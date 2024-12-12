@@ -54,7 +54,6 @@
     </form>
 
     <%-- 나의 현재 코스 완주 기록 및 순위 --%>
-    <%-- 해당 코스에 대한 기록이 없다면, 기록이 없다고 표시한다. --%>
     <table class="table mt-4">
         <thead>
             <tr class="table-warning">
@@ -209,27 +208,27 @@
 
     // 나의 순위 목록의 페이지 번호를 클릭했을 때, 요청 파라미터 정보를 제출한다.
     function changeMyRankPage(myPage, allPage, event) {
-        // 나의 순위 목록에서 페이지 번호를 클릭하면, 해당 페이지로 이동한다.
+        // 1. 나의 순위 목록에서 페이지 번호를 클릭하면, 해당 페이지로 이동한다.
         event.preventDefault();
         myPageInput.value = myPage;
 
-        // 모든 사용자의 순위 목록의 페이지는 1로 고정된다.
+        // 2. 모든 사용자의 순위 목록의 페이지는 1로 고정된다.
         allPageInput.value = allPage;
 
-        // 요청 파라미터 정보를 제출한다.
+        // 3. 요청 파라미터 정보를 제출한다.
         form.submit();
     }
 
     // 모든 사용자의 순위 목록의 페이지 번호를 클릭했을 때, 요청 파라미터 정보를 제출한다.
     function changeAllRankPage(allPage, myPage, event) {
-        // 모든 사용자의 순위 목록에서 페이지 번호를 클릭하면, 해당 페이지로 이동한다.
+        // 1. 모든 사용자의 순위 목록에서 페이지 번호를 클릭하면, 해당 페이지로 이동한다.
         event.preventDefault();
         allPageInput.value = allPage;
 
-        // 나의 순위 목록의 페이지는 1로 고정된다.
+        // 2. 나의 순위 목록의 페이지는 1로 고정된다.
         myPageInput.value = myPage;
 
-        // 요청 파라미터 정보를 제출한다.
+        // 3. 요청 파라미터 정보를 제출한다.
         form.submit();
     }
 </script>

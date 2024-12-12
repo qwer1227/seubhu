@@ -223,21 +223,21 @@ public class UserCourseService {
      * @return 로그인한 사용자의 완주 기록 목록
      */
     public ListDto<Records> getMyRecords(Map<String, Object> condition) {
-        // 코스에 해당하는 나의 전체 완주 기록의 갯수를 가져온다.
+        // 1. 코스에 해당하는 나의 전체 완주 기록의 갯수를 가져온다.
         int totalRows = userCourseMapper.getTotalRows(condition);
 
-        // 페이징 처리 정보를 가져오고, Pagination 객체에 저장한다.
+        // 2. 페이징 처리 정보를 가져오고, Pagination 객체에 저장한다.
         int page = (Integer) condition.get("myPage");
         Pagination pagination = new Pagination(page, totalRows, 5);
 
-        // 데이터 검색 범위를 조회해서 Map 객체에 저장한다.
+        // 3. 데이터 검색 범위를 조회해서 Map 객체에 저장한다.
         condition.put("myBegin", pagination.getBegin());
         condition.put("myEnd", pagination.getEnd());
 
-        // 조회 범위 내에서 나의 완주 기록 목록만 가져온다.
+        // 4. 조회 범위 내에서 나의 완주 기록 목록만 가져온다.
         List<Records> records = userCourseMapper.getMyRecords(condition);
 
-        // ListDto 객체에 화면에 표시할 데이터(완주 기록 목록, 페이징 처리 정보)를 담고, 반환한다.
+        // 5. ListDto 객체에 화면에 표시할 데이터(완주 기록 목록, 페이징 처리 정보)를 담고, 반환한다.
         ListDto<Records> dto = new ListDto<>(records, pagination);
         return dto;
     }
@@ -248,10 +248,10 @@ public class UserCourseService {
      * @return 로그인한 사용자의 코스 달성 수 순위
      */
     public SuccessCountRankForm getMySuccessCountRanking(int userNo) {
-        // 로그인한 사용자의 코스 달성 수 순위를 가져온다.
+        // 1. 로그인한 사용자의 코스 달성 수 순위를 가져온다.
         SuccessCountRankForm successRank = userCourseMapper.getMySuccessCountRank(userNo);
 
-        // 로그인한 사용자의 코스 달성 수 순위를 반환한다.
+        // 2. 로그인한 사용자의 코스 달성 수 순위를 반환한다.
         return successRank;
     }
 
@@ -261,21 +261,21 @@ public class UserCourseService {
      * @return 코스 달성 수 순위 목록
      */
     public ListDto<SuccessCountRankForm> getAllSuccessCountRanking(Map<String, Object> condition) {
-        // 모든 사용자의 코스 달성 수 순위의 갯수를 가져온다.
+        // 1. 모든 사용자의 코스 달성 수 순위의 갯수를 가져온다.
         int totalRows = userCourseMapper.getTotalAllSuccessCountRankRows(condition);
 
-        // 페이징 처리 정보를 가져오고, Pagination 객체에 저장한다.
+        // 2. 페이징 처리 정보를 가져오고, Pagination 객체에 저장한다.
         int page = (Integer) condition.get("page");
         Pagination pagination = new Pagination(page, totalRows, 10);
 
-        // 데이터 검색 범위를 조회해서 Map 객체에 저장한다.
+        // 3. 데이터 검색 범위를 조회해서 Map 객체에 저장한다.
         condition.put("begin", pagination.getBegin());
         condition.put("end", pagination.getEnd());
 
-        // 모든 사용자의 코스 달성 수 순위 목록을 가져온다.
+        // 4. 모든 사용자의 코스 달성 수 순위 목록을 가져온다.
         List<SuccessCountRankForm> allSuccessRanks = userCourseMapper.getAllSuccessCountRanks(condition);
 
-        // ListDto 객체에 모든 사용자의 코스 달성 수 순위 목록, 페이징 처리 정보를 저장하고 반환한다.
+        // 5. ListDto 객체에 모든 사용자의 코스 달성 수 순위 목록, 페이징 처리 정보를 저장하고 반환한다.
         ListDto<SuccessCountRankForm> dto = new ListDto<>(allSuccessRanks, pagination);
         return dto;
     }
