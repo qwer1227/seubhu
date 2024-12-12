@@ -37,7 +37,6 @@
     </div>
 
     <%-- 나의 코스 달성 수 순위 --%>
-    <%-- 기록이 없는 경우, 기록이 없다고 표시한다. / 로그인하지 않은 경우, 로그인해야 확인 가능하다고 표시한다. --%>
     <table class="table mt-4">
         <sec:authorize access="isAuthenticated()">
             <sec:authentication property="principal" var="loginUser"/>

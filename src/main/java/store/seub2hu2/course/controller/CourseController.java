@@ -144,6 +144,7 @@ public class CourseController {
             sb.append("&keyword=").append(keyword);
         }
 
+        // 2. list.jsp를 재요청한다.
         return "redirect:" + sb.toString();
     }
 
