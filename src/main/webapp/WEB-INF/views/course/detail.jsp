@@ -57,7 +57,9 @@
             <%-- 성공 표시 --%>
             <div class="row mt-3 mb-3 justify-content-center">
                 <c:if test="${isSuccess == true}">
-                    <span class="badge text-bg-primary" style="width: 100px; font-size: 20px;">완주 성공!</span>
+                    <span class="badge text-bg-primary" style="width: 100px; font-size: 20px; justify-content: center; align-items: center; display: flex;">
+                        완주 성공!
+                    </span>
                 </c:if>
             </div>
 
@@ -276,18 +278,16 @@
         let content = `
 	        <div class="card mb-3" id="review-\${review.no}">
 	            <div class="card-header">
-	                <span>\${review.title}</span>
-	                <span class="float-end">
+	                <span style="float: left;">\${review.title}</span>
+	                <span style="float: right;">
 	                    <small><strong style="color: blue;">\${review.user.nickname}</strong></small>
 	                    <small>\${review.createdDate}</small>
+                        <button class="btn btn-danger btn-sm" onclick="removeReview(\${review.no})">삭제</button>
 	                </span>
 	            </div>
 	            <div class="card-body">
 	                <div>\${review.content}</div>
 	                <div id="box-images-\${review.no}"></div>
-	            </div>
-	            <div class="card-footer text-end">
-	                <button class="btn btn-danger btn-sm" onclick="removeReview(\${review.no})">삭제</button>
 	            </div>
 	        </div>
 	    `;
