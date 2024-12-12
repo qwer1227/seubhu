@@ -78,6 +78,7 @@ public class ProductController {
     @GetMapping("/detail")
     public String detail(@RequestParam("no") int no,
                          @RequestParam("colorNo") int colorNo,
+             @AuthenticationPrincipal LoginUser loginUser,
                          Model model) {
 
         model.addAttribute("loginUser", loginUser);
