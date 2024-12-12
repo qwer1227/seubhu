@@ -14,7 +14,6 @@ import store.seub2hu2.admin.service.AdminService;
 import store.seub2hu2.course.service.CourseService;
 import store.seub2hu2.course.service.UserCourseService;
 import store.seub2hu2.course.vo.Course;
-import store.seub2hu2.course.vo.UserLevel;
 import store.seub2hu2.lesson.dto.LessonRegisterForm;
 import store.seub2hu2.lesson.dto.LessonUpdateDto;
 import store.seub2hu2.lesson.service.LessonFileService;
@@ -38,7 +37,6 @@ import store.seub2hu2.util.ListDto;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -126,7 +124,7 @@ public class AdminController {
     @GetMapping("/lesson/preview")
     @ResponseBody
     public List<LessonUsersDto> lessonPreview(@RequestParam("no") Integer lessonNo,
-                                           Model model) {
+                                              Model model) {
 
         List<LessonUsersDto> reservations = adminService.getLessonUser(lessonNo);
 
@@ -138,7 +136,7 @@ public class AdminController {
                          @RequestParam(name = "day", required = false)
                          @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate day,
                          @RequestParam(name = "value", required = false) String value,
-                               Model model) {
+                         Model model) {
 
         if (day == null) {
             day = LocalDate.now();
@@ -211,7 +209,7 @@ public class AdminController {
                          @RequestParam(name = "distance", required = false, defaultValue = "10") Double distance,
                          @RequestParam(name = "level", required = false) Integer level,
                          @RequestParam(name = "keyword", required = false) String keyword,
-                       Model model){
+                         Model model){
         // 1. 요청 파라미터 정보를 Map 객체에 담는다.
         Map<String, Object> condition = new HashMap<>();
         condition.put("page", page);
@@ -421,8 +419,8 @@ public class AdminController {
 
     @GetMapping("/image-changeThumb")
     public String getImageChangeForm(@RequestParam("no") int no,
-                                   @RequestParam("colorNo") Integer colorNo,
-                                Model model) {
+                                     @RequestParam("colorNo") Integer colorNo,
+                                     Model model) {
 
         Product product = adminService.getProductNo(no);
 
@@ -442,10 +440,10 @@ public class AdminController {
 
     @PostMapping("/image-changeThumb")
     public String imageChangeForm(@RequestParam("no") int no,
-                                @RequestParam("colorNo") Integer colorNo,
-                                @RequestParam("imgNo") Integer imgNo,
-                                @RequestParam("url") String url,
-                                Model model) {
+                                  @RequestParam("colorNo") Integer colorNo,
+                                  @RequestParam("imgNo") Integer imgNo,
+                                  @RequestParam("url") String url,
+                                  Model model) {
 
         List<Image> images = adminService.getImageByColorNo(colorNo);
 
@@ -460,7 +458,7 @@ public class AdminController {
 
     @GetMapping("/register-image")
     public String getRegisterImage(@RequestParam("no") int no,
-                                Model model) {
+                                   Model model) {
 
 
         Product product = adminService.getProductNo(no);
@@ -484,7 +482,7 @@ public class AdminController {
 
     @GetMapping("/register-color")
     public String getRegisterColor(@RequestParam("no") int no,
-                                Model model) {
+                                   Model model) {
 
         ProdDetailDto prodDetailDto = productService.getProductByNo(no);
         model.addAttribute("prodDetailDto", prodDetailDto);
@@ -554,14 +552,14 @@ public class AdminController {
 
         Category category = adminService.getCategory(form.getCategoryNo());
 
-         return "redirect:/admin/product?topNo="+ category.getTopNo();
+        return "redirect:/admin/product?topNo="+ category.getTopNo();
     }
 
     @GetMapping("/product-stock-detail")
     public String getProductStockDetail(@RequestParam("no") int no,
                                         @RequestParam("colorNo") Integer colorNo,
                                         @RequestParam(name = "colorName", required = false) String colorName,
-                                     Model model) {
+                                        Model model) {
 
         Product product = adminService.getProductNo(no);
         List<Color> colors = adminService.getColorName(no);
@@ -644,7 +642,7 @@ public class AdminController {
             condition.put("value", value);
         }
 
-        ListDto<ProdListDto> dto = productService.getProducts(condition);
+        ListDto<ProdListDto> dto = adminService.getStockProduct(condition);
         model.addAttribute("topNo", topNo);
         model.addAttribute("catNo", catNo);
         model.addAttribute("products", dto.getData());
@@ -686,12 +684,38 @@ public class AdminController {
         return "admin/productlist";
     }
 
-    @GetMapping("/order")
-    public String order(){
+    @GetMapping("/order-delivery")
+    public String order(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                        @RequestParam(name = "rows", required = false) int rows,
+                        @RequestParam(name = "day", required = false) String day,
+                        @RequestParam(name = "sort", required = false) String sort,
+                        @RequestParam(name = "opt", required = false) String opt,
+                        @RequestParam(name = "keyword", required = false) String keyword,
+                        Model model){
 
+        if (day == null || day.isEmpty()) {
+            // 현재 날짜로 기본 설정
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            day = sdf.format(new Date());
+        }
 
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("page", page);
+        condition.put("rows", rows);
+        condition.put("day", day);
+        condition.put("sort", sort);
 
-        return "admin/order";
+        if(StringUtils.hasText(opt)) {
+            condition.put("opt", opt);
+            condition.put("keyword", keyword);
+        }
+
+        ListDto<orderDeliveryDto> dto = adminService.getOrderDelivery(condition);
+
+        model.addAttribute("dto", dto.getData());
+        model.addAttribute("paging", dto.getPaging());
+
+        return "admin/order-delivery";
     }
 
 
@@ -699,7 +723,7 @@ public class AdminController {
     @GetMapping("/chart")
     public Map<String, Object> chart(@RequestParam(name = "day", required = false) String day,
 
-                        Model model) {
+                                     Model model) {
 
         if (day == null || day.isEmpty()) {
             // 현재 날짜로 기본 설정
@@ -714,6 +738,17 @@ public class AdminController {
         return conditions;
     }
 
+    @GetMapping("/p-settlement/preview")
+    @ResponseBody
+    public List<prevOrderProdDto> prodPreview(@RequestParam("orderNo") int orderNo
+    ){
+
+        List<prevOrderProdDto> dtos = adminService.getOrderProdPrev(orderNo);
+
+        System.out.println("-----------------dtos:" + dtos);
+        return dtos;
+    }
+
     @GetMapping("/p-settlement")
     public String pSettlement(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
                               @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
@@ -724,27 +759,41 @@ public class AdminController {
                               @RequestParam(name = "value", required = false) String value,
                               Model model) {
 
-        Map<String, Object> condition = new HashMap<>();
-        condition.put("page", page);
-        condition.put("rows", rows);
-        condition.put("sort", sort);
-        condition.put("opt", opt);
-
-        if (StringUtils.hasText(day)) {
-            condition.put("day", day);
+        if (day == null || day.isEmpty()) {
+            // 현재 날짜로 기본 설정
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            day = sdf.format(new Date());
         }
 
-        if (StringUtils.hasText(value)) {
-            condition.put("keyword", keyword);
-            condition.put("value", value);
-        }
+            Map<String, Object> condition = new HashMap<>();
+            condition.put("page", page);
+            condition.put("rows", rows);
+            condition.put("sort", sort);
+            condition.put("opt", opt);
 
-        ListDto<OrderProductDto> dto = adminService.getOrderProduct(condition);
+            if (StringUtils.hasText(day)) {
+                condition.put("day", day);
+            }
 
-        model.addAttribute("dto", dto.getData());
-        model.addAttribute("paging", dto.getPaging());
+            if (StringUtils.hasText(value)) {
+                condition.put("keyword", keyword);
+                condition.put("value", value);
+            }
 
-        return "admin/p-settlement";
+            ListDto<OrderProductDto> dto = adminService.getOrderProduct(condition);
+
+            int totalPriceSum = dto.getData().stream()
+                    .mapToInt(OrderProductDto::getTotalPrice)
+                    .distinct()   // 중복된 값 제거 (한 번만 합산)
+                    .limit(1)     // 첫 번째 값만 선택
+                    .sum();
+
+            model.addAttribute("totalPriceSum", totalPriceSum);
+
+            model.addAttribute("dto", dto.getData());
+            model.addAttribute("paging", dto.getPaging());
+
+            return "admin/p-settlement";
     }
 
     @GetMapping("/settlement")
@@ -758,13 +807,20 @@ public class AdminController {
                              @RequestParam(name = "value", required = false) String value,
                              Model model) {
 
-    Map<String, Object> condition = new HashMap<>();
-    condition.put("page", page);
-    condition.put("rows", rows);
-    condition.put("pType", pType);
-//    condition.put("dayType", dayType);
-    condition.put("sort", sort);
-    condition.put("opt", opt);
+        if (day == null || day.isEmpty()) {
+            // 현재 날짜로 기본 설정
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            day = sdf.format(new Date());
+        }
+
+
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("page", page);
+        condition.put("rows", rows);
+        condition.put("pType", pType);
+
+        condition.put("sort", sort);
+        condition.put("opt", opt);
 
         if (StringUtils.hasText(day)) {
             condition.put("day", day);

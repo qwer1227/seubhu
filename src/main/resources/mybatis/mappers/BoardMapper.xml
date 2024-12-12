@@ -156,7 +156,7 @@
     BOARDS
     set board_cat_name = #{board.catName}
     , board_title = #{board.title}
-    , board_content = #{board.content}
+    , board_content = #{board.content, jdbcType=VARCHAR}
     , board_updated_date = sysdate()
     , is_deleted = #{board.deleted}
     <if test="board.uploadFile != null">
@@ -236,5 +236,47 @@
       , scrap_cnt      = #{board.scrapCnt}
     where board_no = #{board.no}
   </update>
+
+  <!-- int getTotalRowsForHistory(@Param("condition") Map<String, Object> condition); -->
+  <select id="getTotalRowsForHistory" resultType="int">
+    select count(*)
+    from BOARDS board
+    where is_deleted = 'N'
+        <choose>
+          <!-- 내가 쓴 글 보기 -->
+          <when test="condition.type == 'value1'">
+            and user_no = #{condition.userNo}
+          </when>
+          <!-- 내가 쓴 댓글을 작성한 글 보기 -->
+          <when test="condition.type == 'value2'">
+            and board.board_no in (
+            select distinct board_no
+            from BOARD_REPLIES
+            where user_no = #{condition.userNo}
+            and is_deleted = 'N'
+            )
+          </when>
+          <!-- 기본 조건 (type 값이 없을 경우 등) -->
+          <otherwise>
+            and user_no = #{condition.userNo} <!-- 필요 시 기본 조건 추가 -->
+          </otherwise>
+        </choose>
+    <if test="condition.category != null">
+      and board.board_cat_name = #{condition.category}
+    </if>
+    <if test="condition.opt != null">
+      <choose>
+        <when test="condition.opt == 'title'">
+          and board.board_title like concat ('%', #{condition.keyword}, '%')
+        </when>
+        <when test="condition.opt == 'content'">
+          and board.board_content like concat('%', #{condition.keyword}, '%')
+        </when>
+        <!--        <when test="condition.opt == 'writer'">-->
+        <!--          and board.user_no like concat('%', #{condition.keyword}, '%')-->
+        <!--        </when>-->
+      </choose>
+    </if>
+  </select>
 
 </mapper>

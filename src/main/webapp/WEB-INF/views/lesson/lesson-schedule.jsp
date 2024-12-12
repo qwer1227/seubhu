@@ -7,10 +7,7 @@
     <%@include file="/WEB-INF/views/common/common.jsp" %>
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
     <script src="https://cdn.jsdelivr.net/npm/moment@2.30.1/moment.min.js"></script>
-
-
     <style>
-
         .fc-day a {
             color: black;
             text-decoration: none;
@@ -36,8 +33,8 @@
         .fc-event {
             padding: 10px 10px;
             margin: 30px 0;
-            border-radius: 8px;  /* 둥근 모서리 적용 */
-            background-color: #f0f8ff;  /* 배경 색상 */
+            border-radius: 8px; /* 둥근 모서리 적용 */
+            background-color: #f0f8ff; /* 배경 색상 */
             font-size: 14px;
             font-family: 'Noto Sans KR', sans-serif;
             color: #333;
@@ -89,7 +86,6 @@
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script>
-
     document.addEventListener('DOMContentLoaded', function () {
         var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -144,7 +140,7 @@
                 lessonDetail(info.event.extendedProps.lessonNo);
             },
 
-            eventContent: function(arg) {
+            eventContent: function (arg) {
 
                 // 이벤트 상태
                 var eventStatusText = arg.event.extendedProps.status;
@@ -176,9 +172,7 @@
                 return {domNodes: [eventEl[0]]};
             },
 
-
-
-            eventDidMount: function(info) {
+            eventDidMount: function (info) {
                 $(info.el).css({
                     'border': '10px solid ' + info.borderColor, // 경계 색상과 두께 적용
                     'border-radius': '5px'  // 둥글게 만들 수도 있음
@@ -278,9 +272,6 @@
         // Initialize the calendar
         calendar.render();
     });
-
-
-
 </script>
 </body>
 </html>

@@ -32,5 +32,4 @@ public class ReservationSearchCondition {
         return LocalDate.from(end).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }
 
-
 }

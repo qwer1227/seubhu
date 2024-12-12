@@ -32,9 +32,13 @@
         <a class="btn btn-primary" href="shortest-record-ranking" role="button">최단 기록 순위</a>
     </div>
 
+    <div class="mt-3">
+        <h4>최단 기록 순위</h4>
+    </div>
+
     <%-- 코스를 선택하면, 해당 코스에 대한 완주자 기록 목록이 화면에 나타난다. --%>
     <form id="form-select" method="get" action="shortest-record-ranking">
-        <div class="row justify-content-center mt-5">
+        <div class="row justify-content-center mt-4">
             <input type="hidden" name="myPage"/>
             <input type="hidden" name="allPage"/>
             <select class="form-select" aria-label="Default select example" style="width: 300px"
@@ -50,7 +54,6 @@
     </form>
 
     <%-- 나의 현재 코스 완주 기록 및 순위 --%>
-    <%-- 해당 코스에 대한 기록이 없다면, 기록이 없다고 표시한다. --%>
     <table class="table mt-4">
         <thead>
             <tr class="table-warning">
@@ -205,27 +208,27 @@
 
     // 나의 순위 목록의 페이지 번호를 클릭했을 때, 요청 파라미터 정보를 제출한다.
     function changeMyRankPage(myPage, allPage, event) {
-        // 나의 순위 목록에서 페이지 번호를 클릭하면, 해당 페이지로 이동한다.
+        // 1. 나의 순위 목록에서 페이지 번호를 클릭하면, 해당 페이지로 이동한다.
         event.preventDefault();
         myPageInput.value = myPage;
 
-        // 모든 사용자의 순위 목록의 페이지는 1로 고정된다.
+        // 2. 모든 사용자의 순위 목록의 페이지는 1로 고정된다.
         allPageInput.value = allPage;
 
-        // 요청 파라미터 정보를 제출한다.
+        // 3. 요청 파라미터 정보를 제출한다.
         form.submit();
     }
 
     // 모든 사용자의 순위 목록의 페이지 번호를 클릭했을 때, 요청 파라미터 정보를 제출한다.
     function changeAllRankPage(allPage, myPage, event) {
-        // 모든 사용자의 순위 목록에서 페이지 번호를 클릭하면, 해당 페이지로 이동한다.
+        // 1. 모든 사용자의 순위 목록에서 페이지 번호를 클릭하면, 해당 페이지로 이동한다.
         event.preventDefault();
         allPageInput.value = allPage;
 
-        // 나의 순위 목록의 페이지는 1로 고정된다.
+        // 2. 나의 순위 목록의 페이지는 1로 고정된다.
         myPageInput.value = myPage;
 
-        // 요청 파라미터 정보를 제출한다.
+        // 3. 요청 파라미터 정보를 제출한다.
         form.submit();
     }
 </script>

@@ -95,7 +95,7 @@
   </select>
 
   <!-- List<Marathon> getMarathonTopFive(@Param("condition") Map<String, Object> condition); -->
-  <select id="getMarathonTopThree" resultType="store.seub2hu2.community.vo.Marathon">
+  <select id="getMarathonTopFive" resultType="store.seub2hu2.community.vo.Marathon">
     select *
     from (select row_number() over(order by marathon_view_cnt desc) rn
                     , marathon_no as no
@@ -103,7 +103,7 @@
                     , marathon_thumbnail as thumbnail
                     , marathon_date as marathonDate
           from MARATHONS
-          where is_deleted = 'N') crew limit 3
+          where is_deleted = 'N') crew limit 5
   </select>
 
   <!-- int getTotalMarathons(@Param("condition") Map<String, Object> condition); -->

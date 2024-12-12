@@ -61,4 +61,9 @@ public interface UserMapper {
     List<User> findUsersByNickname(@Param("nickname") String nickname);
 
     void insertUserLevel(UserLevel userLevel);
+
+    List<User> findUsersByPassword(@Param("password") String password);
+
+    User findByUserNo(@Param("userNo") int userNo);
+
 }

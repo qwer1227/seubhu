@@ -36,7 +36,6 @@ public class LessonReservationService {
     private final LessonReservationMapper lessonReservationMapper;
     private final PayMapper payMapper;
 
-
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void saveLessonReservation(PaymentDto paymentDto) {
         try {
@@ -125,7 +124,6 @@ public class LessonReservationService {
         log.info("condition.getStart() = {}", condition.getStart());
         log.info("condition.getEnd() = {}", condition.getEnd());
         log.info("시간 테스트 = {}", LocalDateTime.now());
-
 
         // MyBatis 매퍼 호출
         return lessonReservationMapper.getReservationByCondition(condition, userId);

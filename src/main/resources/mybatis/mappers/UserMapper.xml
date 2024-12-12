@@ -175,11 +175,13 @@
         from
         USERS
         where
-        USER_NICKNAME = #{nickname} <!-- 이메일로 사용자 정보 조회 -->
+        USER_NICKNAME = #{nickname} <!-- 닉네임으로 사용자 정보 조회 -->
     </select>
 
     <select id="findUsersByNickname" resultType="store.seub2hu2.user.vo.User">
-        SELECT USER_NO, USER_NICKNAME
+        SELECT
+            USER_NO as no
+          , USER_NICKNAME as nickname
         FROM USERS
         WHERE USER_NICKNAME LIKE CONCAT('%', #{nickname}, '%')
     </select>
@@ -234,4 +236,16 @@
                             ON R.USER_NO = U.USER_NO
         WHERE R.ROLE_NO = #{roleNo}
     </select>
+
+    <!-- User findByUserNo(@Param("userNo") int userNo); -->
+    <select id="findByUserNo" parameterType="store.seub2hu2.user.vo.User">
+        select
+            user_no as no
+        ,   password as password
+        from
+            USERS
+        where
+            user_no = #{userNo}
+    </select>
+
 </mapper>

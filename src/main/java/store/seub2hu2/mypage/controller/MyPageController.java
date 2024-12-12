@@ -93,7 +93,7 @@ public class MyPageController {
     @GetMapping("")
     public String myPageList(Model model, @AuthenticationPrincipal LoginUser loginUser) {
         List<Post> posts = postService.getPostsByNo(loginUser.getNo());
-        User user = userService.findbyUserNo(loginUser.getId());
+        User user = userService.findbyUserId(loginUser.getId());
 
         model.addAttribute("posts",posts);
         model.addAttribute("user",user);
@@ -190,11 +190,6 @@ public class MyPageController {
         return "mypage/history";
     }
 
-    @GetMapping("write")
-    public String write(){
-        return "community/write";
-    }
-
     @GetMapping("/detail")
     public String detail(@RequestParam("no") int boardNo
             , @AuthenticationPrincipal LoginUser loginUser
@@ -250,8 +245,9 @@ public class MyPageController {
     }
 
     @PostMapping("/modify")
-    public String update(BoardForm form) {
-        boardService.updateBoard(form);
+    public String update(BoardForm form
+            , @AuthenticationPrincipal LoginUser loginUser) {
+        boardService.updateBoard(form, loginUser);
         return "redirect:detail?no=" + form.getNo();
     }
 
@@ -556,8 +552,6 @@ public class MyPageController {
     public String qna(Model model, @AuthenticationPrincipal LoginUser loginUser, RequestParamsDto requestParamsDto){
 
         ListDto<QnaResponse> qnaDto = qnaService.getQnas2(requestParamsDto);
-
-        //todo opt와 keyword를 활용해서 검색하는 부분이 이상함
         
         model.addAttribute("qna", qnaDto.getData());
         model.addAttribute("pagination", qnaDto.getPaging());

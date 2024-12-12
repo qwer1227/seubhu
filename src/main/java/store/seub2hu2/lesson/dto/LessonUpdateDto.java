@@ -51,4 +51,5 @@ public class LessonUpdateDto {
     public String getEndTime() {
         return LocalDateTime.from(end).format(DateTimeFormatter.ofPattern("HH:mm"));
     }
+
 }

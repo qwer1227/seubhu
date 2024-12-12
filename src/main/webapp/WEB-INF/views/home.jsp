@@ -276,55 +276,26 @@
 
     <!-- 커뮤니티 게시판 -->
     <section class="container my-5">
-        <h3 class="text-muted">커뮤니티</h3>
-        <div class="list-group">
-            <!-- 게시글 1 -->
+    <h3 class="text-muted">커뮤니티</h3>
+    <div class="list-group">
+        <c:forEach var="board" items="${topViewedBoards}">
             <a href="#" class="list-group-item list-group-item-action d-flex border-0 text-decoration-none">
                 <div class="col-9">
-                    <span class="text-muted">게시글 1</span>
+                    <span class="text-muted">${board.title}</span>
                 </div>
                 <div class="col-1 text-right">
-                    <small class="text-muted">김습후</small>
+                    <small class="text-muted">${board.user.nickname}</small>
                 </div>
                 <div class="col-1 text-right">
-                    <small class="text-muted">2024-11-07</small>
+                    <small class="text-muted"><fmt:formatDate value="${board.createdDate}" pattern="yyyy-MM-dd"/></small>
                 </div>
                 <div class="col-1 text-right">
-                    <small class="text-muted">125</small>
+                    <small class="text-muted">${board.viewCnt}</small>
                 </div>
             </a>
-            <!-- 게시글 2 -->
-            <a href="#" class="list-group-item list-group-item-action d-flex border-0 text-decoration-none">
-                <div class="col-9">
-                    <span class="text-muted">게시글 2</span>
-                </div>
-                <div class="col-1 text-right">
-                    <small class="text-muted">김습후</small>
-                </div>
-                <div class="col-1 text-right">
-                    <small class="text-muted">2024-11-07</small>
-                </div>
-                <div class="col-1 text-right">
-                    <small class="text-muted">125</small>
-                </div>
-            </a>
-            <!-- 게시글 3 -->
-            <a href="#" class="list-group-item list-group-item-action d-flex border-0 text-decoration-none">
-                <div class="col-9">
-                    <span class="text-muted">게시글 3</span>
-                </div>
-                <div class="col-1 text-right">
-                    <small class="text-muted">김습후</small>
-                </div>
-                <div class="col-1 text-right">
-                    <small class="text-muted">2024-11-07</small>
-                </div>
-                <div class="col-1 text-right">
-                    <small class="text-muted">125</small>
-                </div>
-            </a>
-        </div>
-    </section>
+        </c:forEach>
+    </div>
+</section>
 
 
     <!-- 레슨 목록 -->

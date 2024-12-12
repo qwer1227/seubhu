@@ -2,14 +2,12 @@ package store.seub2hu2.admin.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import store.seub2hu2.admin.dto.ImageUrlDto;
-import store.seub2hu2.admin.dto.LessonUsersDto;
-import store.seub2hu2.admin.dto.OrderProductDto;
-import store.seub2hu2.admin.dto.SettlementDto;
+import store.seub2hu2.admin.dto.*;
 import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.course.vo.Region;
 import store.seub2hu2.lesson.vo.Lesson;
 import store.seub2hu2.lesson.vo.LessonReservation;
+import store.seub2hu2.product.dto.ProdListDto;
 import store.seub2hu2.product.vo.*;
 import store.seub2hu2.user.vo.User;
 
@@ -109,6 +107,24 @@ public interface AdminMapper {
     int getTotalOrderProd(@Param("condition") Map<String, Object> condition);
 
     List<OrderProductDto> getSettleProdList(@Param("condition") Map<String, Object> condition);
+
+    List<prevOrderProdDto> orderProdPrev(int orderNo);
+
+    int getTotalProdPriceByDay(String yesterday);
+
+    int getTotalOrderProdAmount(String yesterday);
+
+    int getTotalProdMan(@Param("day")String day);
+
+    int getTotalProdWoman(@Param("day")String day);
+
+    int getTotalProdRun(@Param("day")String day);
+
+    List<ProdListDto> getStockProducts(@Param("condition")Map<String, Object> condition);
+
+    int getDeliveryTotalRows(Map<String, Object> condition);
+
+    List<orderDeliveryDto> getOrderDeliveries(Map<String, Object> condition);
 
 
 

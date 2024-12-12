@@ -4,28 +4,230 @@
 <mapper namespace="store.seub2hu2.admin.mapper.AdminMapper">
 
     <!--
+        List<orderDeliveryDto> getOrderDeliveries(Map<String, Object> condition);
+    -->
+
+    <!--
+        int getDeliveryTotalRows(Map<String, Object> condition);
+    -->
+<!--    <select id="getDeliveryTotalRows" resultType="int">-->
+<!--        select-->
+<!--            count(*)-->
+<!--    </select>-->
+
+    <!--
+        int getTotalProdMan(@Param("day")String day);
+
+        int getTotalProdWoman(@Param("day")String day);
+
+        int getTotalProdRun(@Param("day")String day);
+    -->
+    <select id="getTotalProdMan" resultType="int">
+        select
+            count(*)
+        from
+            (
+            select
+                CAT.top_cat_no
+            from
+                ORDERS O
+                    JOIN PAYMENTS PM ON O.pay_no = PM.pay_no
+                    JOIN USERS U ON O.user_no = U.user_no
+                    JOIN ORDER_PRODUCTS OP ON O.order_no = OP.order_no
+                    JOIN PRODUCTS P ON OP.prod_no = P.prod_no
+                    JOIN PROD_SIZES PS ON OP.size_no = PS.size_no
+                    JOIN PROD_CATEGORIES CAT ON P.cat_no = CAT.cat_no
+            where
+                PM.pay_type = '상품'
+              and
+                CAT.top_cat_no = 10
+              and
+                (
+                    DATE_FORMAT(PM.pay_date, '%Y-%m-%d') = #{day}
+                    )
+            ) as subquery;
+    </select>
+
+    <select id="getTotalProdWoman" resultType="int">
+        select
+            count(*)
+        from
+            (
+                select
+                    CAT.top_cat_no
+                from
+                    ORDERS O
+                        JOIN PAYMENTS PM ON O.pay_no = PM.pay_no
+                        JOIN USERS U ON O.user_no = U.user_no
+                        JOIN ORDER_PRODUCTS OP ON O.order_no = OP.order_no
+                        JOIN PRODUCTS P ON OP.prod_no = P.prod_no
+                        JOIN PROD_SIZES PS ON OP.size_no = PS.size_no
+                        JOIN PROD_CATEGORIES CAT ON P.cat_no = CAT.cat_no
+                where
+                    PM.pay_type = '상품'
+                  and
+                    CAT.top_cat_no = 20
+                  and
+                    (
+                        DATE_FORMAT(PM.pay_date, '%Y-%m-%d') = #{day}
+                        )
+            ) as subquery;
+    </select>
+
+    <select id="getTotalProdRun" resultType="int">
+        select
+            count(*)
+        from
+            (
+                select
+                    CAT.top_cat_no
+                from
+                    ORDERS O
+                        JOIN PAYMENTS PM ON O.pay_no = PM.pay_no
+                        JOIN USERS U ON O.user_no = U.user_no
+                        JOIN ORDER_PRODUCTS OP ON O.order_no = OP.order_no
+                        JOIN PRODUCTS P ON OP.prod_no = P.prod_no
+                        JOIN PROD_SIZES PS ON OP.size_no = PS.size_no
+                        JOIN PROD_CATEGORIES CAT ON P.cat_no = CAT.cat_no
+                where
+                    PM.pay_type = '상품'
+                  and
+                    CAT.top_cat_no = 30
+                  and
+                    (
+                        DATE_FORMAT(PM.pay_date, '%Y-%m-%d') = #{day}
+                        )
+            ) as subquery;
+    </select>
+
+    <!--
+        int getTotalOrderProdAmount(String yesterday);
+    -->
+    <select id="getTotalOrderProdAmount" resultType="int">
+        SELECT
+            COALESCE(SUM(OP.order_prod_amount), 0) as totalOrderProdAmount
+        FROM
+            ORDERS O
+                JOIN PAYMENTS PM ON O.pay_no = PM.pay_no
+                JOIN USERS U ON O.user_no = U.user_no
+                JOIN ORDER_PRODUCTS OP ON O.order_no = OP.order_no
+                JOIN PRODUCTS P ON OP.prod_no = P.prod_no
+                JOIN PROD_SIZES PS ON OP.size_no = PS.size_no
+        WHERE
+            PM.pay_type = '상품'
+          AND PM.pay_status = '결제완료'
+          AND DATE_FORMAT(PM.pay_date, '%Y-%m-%d') = #{yesterday}
+    </select>
+
+    <!--
+        int getTotalProdPriceByDay(String yesterday);
+    -->
+    <select id="getTotalProdPriceByDay" resultType="int">
+        select
+            totalSummary.totalPrice
+        from
+        (
+        select
+        ROW_NUMBER() OVER (PARTITION BY PM.pay_no ORDER BY OP.order_prod_no asc) as RN
+        , PM.pay_no               as payNo
+        , O.order_no            as orderNo
+        , O.order_number        as orderNum
+        , OP.order_prod_no      as orderProdNo
+        , PM.pay_type           as payType
+        , U.user_name           as userName
+        , U.user_id             as userId
+        , U.user_tel            as userTel
+        , PM.pay_price          as payPrice
+        , PM.pay_status         as payStatus
+        , PM.pay_method         as payMethod
+        , P.prod_name           as prodName
+        , PS.prod_size          as prodSize
+        , OP.order_prod_amount  as orderProdAmount
+        , PM.pay_date           as payDate
+        from
+        ORDERS O
+        JOIN PAYMENTS PM ON O.pay_no = PM.pay_no
+        JOIN USERS U ON O.user_no = U.user_no
+        JOIN ORDER_PRODUCTS OP ON O.order_no = OP.order_no
+        JOIN PRODUCTS P ON OP.prod_no = P.prod_no
+        JOIN PROD_SIZES PS ON OP.size_no = PS.size_no
+        where
+        PM.pay_type = '상품'
+            and (
+            DATE_FORMAT(PM.pay_date, '%Y-%m-%d') = #{yesterday}
+            or DATE_FORMAT(PM.pay_date, '%Y-%m') = #{yesterday}
+            )
+        LIMIT 1
+        ) as subquery
+        JOIN
+        (
+        SELECT
+            SUM(PM.pay_price) AS totalPrice
+        FROM
+            ORDERS O
+        JOIN PAYMENTS PM ON O.pay_no = PM.pay_no
+        WHERE
+            PM.pay_type = '상품'
+        AND
+            PM.pay_status = '결제완료'
+            and (
+            DATE_FORMAT(PM.pay_date, '%Y-%m-%d') = #{yesterday}
+            or DATE_FORMAT(PM.pay_date, '%Y-%m') = #{yesterday}
+            )
+        ) AS totalSummary ON 1 = 1
+        where RN = 1
+    </select>
+
+    <!--
+        List<prevOrderProdDto> orderProdPrev(int orderProdNo);
+    -->
+    <select id="orderProdPrev" resultType="store.seub2hu2.admin.dto.prevOrderProdDto">
+        select
+        PM.pay_no               as payNo
+        , O.order_no            as orderNo
+        , O.order_number        as orderNum
+        , OP.order_prod_no      as orderProdNo
+        , PM.pay_type           as payType
+        , U.user_name           as userName
+        , U.user_id             as userId
+        , U.user_tel            as userTel
+        , PM.pay_price          as payPrice
+        , O.order_price         as orderPrice
+        , PM.pay_status         as payStatus
+        , PM.pay_method         as payMethod
+        , P.prod_name           as prodName
+        , P.prod_price          as prodPrice
+        , PC.color_name			as colorName
+        , PS.prod_size          as prodSize
+        , OP.order_prod_amount  as orderProdAmount
+        , O.dis_price           as orderDisPrice
+        , O.real_price          as orderRealPrice
+        from
+            ORDERS O
+        JOIN PAYMENTS PM ON O.pay_no = PM.pay_no
+        JOIN USERS U ON O.user_no = U.user_no
+        JOIN ORDER_PRODUCTS OP ON O.order_no = OP.order_no
+        JOIN PRODUCTS P ON OP.prod_no = P.prod_no
+        JOIN PROD_SIZES PS ON OP.size_no = PS.size_no
+        JOIN PROD_COLORS PC ON PS.color_no = PC.color_no
+        where
+            PM.pay_type = '상품'
+        and
+            OP.order_no = #{orderNo}
+    </select>
+
+    <!--
         List<OrderProductDto> getSettleProdList(Map<String, Object> condition);
     -->
     <select id="getSettleProdList" resultType="store.seub2hu2.admin.dto.OrderProductDto">
         select
-            *
+            *,
+            totalSummary.totalPrice
         from
         (
         select
-                <if test="condition.sort != null">
-                    <choose>
-                        <when test="condition.sort == 'latest'">
-                            ROW_NUMBER() OVER (ORDER BY PM.pay_no desc) as RN ,
-                        </when>
-                        <when test="condition.sort == 'oldestDate'">
-                            ROW_NUMBER() OVER (ORDER BY PM.pay_no asc) as RN ,
-                        </when>
-                        <when test="condition.sort == 'price'">
-                            ROW_NUMBER() OVER (ORDER BY PM.pay_price desc) as RN ,
-                        </when>
-                    </choose>
-                </if>
-                PM.pay_no               as payNo
+        ROW_NUMBER() OVER (PARTITION BY PM.pay_no ORDER BY OP.order_prod_no asc) as RN
+                , PM.pay_no               as payNo
                 , O.order_no            as orderNo
                 , O.order_number        as orderNum
                 , OP.order_prod_no      as orderProdNo
@@ -48,7 +250,7 @@
                 JOIN PRODUCTS P ON OP.prod_no = P.prod_no
                 JOIN PROD_SIZES PS ON OP.size_no = PS.size_no
                 where
-                    pay_type = '상품'
+                    PM.pay_type = '상품'
                     <if test="condition.day != null">
                         and (
                         DATE_FORMAT(PM.pay_date, '%Y-%m-%d') = #{condition.day}
@@ -61,10 +263,10 @@
 
                             </when>
                             <when test="condition.opt == 'notReady'">
-                                and P.pay_status = '결제완료'
+                                and PM.pay_status = '결제완료'
                             </when>
                             <when test="condition.opt == 'cancel'">
-                                and P.pay_status = '취소'
+                                and PM.pay_status = '취소'
                             </when>
                         </choose>
                     </if>
@@ -82,96 +284,101 @@
                         </choose>
                     </if>
         ) as subquery
-    </select>
-    <!--
-        int getTotalOrderProd(condition);
-    -->
-    <select id="getTotalOrderProd" resultType="int">
-        select
-            count(*)
-        from
+        JOIN
             (
             SELECT
-                <if test="condition.sort != null">
-                    <choose>
-                        <when test="condition.sort == 'latest'">
-                            ROW_NUMBER() OVER (ORDER BY PM.pay_no desc) as RN ,
-                        </when>
-                        <when test="condition.sort == 'oldestDate'">
-                            ROW_NUMBER() OVER (ORDER BY PM.pay_no asc) as RN ,
-                        </when>
-                        <when test="condition.sort == 'price'">
-                            ROW_NUMBER() OVER (ORDER BY PM.pay_price desc) as RN ,
-                        </when>
-                    </choose>
-                </if>
-                PM.pay_no
-                 , O.order_no
-                 , O.order_number
-                 , OP.order_prod_no
-                 , PM.pay_type
-                 , U.user_name
-                 , U.user_id
-                 , U.user_tel
-                 , PM.pay_price
-                 , PM.pay_status
-                 , P.prod_name
-                 , PS.prod_size
-                 , OP.order_prod_amount
-                 , PM.pay_date
+                SUM(PM.pay_price) AS totalPrice
             FROM
-                ORDERS O
-                    JOIN PAYMENTS PM ON O.pay_no = PM.pay_no
-                    JOIN USERS U ON O.user_no = U.user_no
-                    JOIN ORDER_PRODUCTS OP ON O.order_no = OP.order_no
-                    JOIN PRODUCTS P ON OP.prod_no = P.prod_no
-                    JOIN PROD_SIZES PS ON OP.size_no = PS.size_no
+            ORDERS O
+            JOIN PAYMENTS PM ON O.pay_no = PM.pay_no
             WHERE
-                pay_type = '상품'
+                PM.pay_type = '상품'
+            AND
+                PM.pay_status = '결제완료'
             <if test="condition.day != null">
                 and (
                 DATE_FORMAT(PM.pay_date, '%Y-%m-%d') = #{condition.day}
                 or DATE_FORMAT(PM.pay_date, '%Y-%m') = #{condition.day}
                 )
             </if>
-            <if test="condition.opt != null">
-                <choose>
-                    <when test="condition.opt == 'all'">
-
-                    </when>
-                    <when test="condition.opt == 'notReady'">
-                        and P.pay_status = '결제완료'
-                    </when>
-                    <when test="condition.opt == 'cancel'">
-                        and P.pay_status = '취소'
-                    </when>
-                </choose>
-            </if>
-            <if test="condition != null and condition.keyword != null">
-                <choose>
-                    <when test="condition.keyword == 'all'">
-
-                    </when>
-                    <when test="condition.keyword == 'payName'">
-                        and U.user_name like CONCAT('%',#{condition.value},'%')
-                    </when>
-                    <when test="condition.keyword == 'payId'">
-                        and U.user_id like CONCAT('%',#{condition.value},'%')
-                    </when>
-                    <when test="condition.keyword == 'lessonName'">
-                        and L.lesson_title like CONCAT('%',#{condition.value},'%')
-                    </when>
-                </choose>
-            </if>
-            ) as subquery;
+            ) AS totalSummary ON 1 = 1
+        where RN = 1
+        <if test="condition.sort != null">
+            <choose>
+                <when test="condition.sort == 'latest'">
+                    order by payNo desc
+                </when>
+                <when test="condition.sort == 'oldestDate'">
+                    order by payNo asc
+                </when>
+                <when test="condition.sort == 'price'">
+                    order by payPrice desc
+                </when>
+            </choose>
+        </if>
     </select>
+    <!--
+        int getTotalOrderProd(condition);
+    -->
+    <select id="getTotalOrderProd" resultType="int">
+        select
+        COUNT(*)
+        from
+        (
+        select
+        ROW_NUMBER() OVER (PARTITION BY PM.pay_no ORDER BY OP.order_prod_no asc) as RN
+        from
+            ORDERS O
+        JOIN PAYMENTS PM ON O.pay_no = PM.pay_no
+        JOIN USERS U ON O.user_no = U.user_no
+        JOIN ORDER_PRODUCTS OP ON O.order_no = OP.order_no
+        JOIN PRODUCTS P ON OP.prod_no = P.prod_no
+        JOIN PROD_SIZES PS ON OP.size_no = PS.size_no
+        where
+        PM.pay_type = '상품'
+        <if test="condition.day != null">
+            and (
+            DATE_FORMAT(PM.pay_date, '%Y-%m-%d') = #{condition.day}
+            or DATE_FORMAT(PM.pay_date, '%Y-%m') = #{condition.day}
+            )
+        </if>
+        <if test="condition.opt != null">
+            <choose>
+                <when test="condition.opt == 'all'">
+
+                </when>
+                <when test="condition.opt == 'notReady'">
+                    and PM.pay_status = '결제완료'
+                </when>
+                <when test="condition.opt == 'cancel'">
+                    and PM.pay_status = '취소'
+                </when>
+            </choose>
+        </if>
+        <if test="condition != null and condition.keyword != null">
+            <choose>
+                <when test="condition.keyword == 'all'">
+
+                </when>
+                <when test="condition.keyword == 'payName'">
+                    and U.user_name like CONCAT('%',#{condition.value},'%')
+                </when>
+                <when test="condition.keyword == 'payId'">
+                    and U.user_id like CONCAT('%',#{condition.value},'%')
+                </when>
+            </choose>
+        </if>
+        ) as subquery
+        where RN = 1
+    </select>
+
     <!--
         int getTotalPriceByDay(String yesterday);
     -->
     <select id="getTotalPriceByDay" resultType="int">
         select
             (
-                select SUM(P2.pay_price)
+                select COALESCE(SUM(P2.pay_price), 0)
                 from PAYMENTS P2, USERS U2, LESSON_RESERVATIONS R2, LESSONS L2
                 where P2.user_id = U2.user_id
                   and P2.pay_id = R2.lesson_reservation_pay_id
@@ -224,7 +431,6 @@
                 select
                     L.lesson_subject
                 from PAYMENTS P, USERS U, LESSON_RESERVATIONS R, LESSONS L
-
                 where
                     P.user_id = U.user_id
                   and
@@ -636,6 +842,67 @@
     </update>
 
     <!--
+        List<ProdListDto> getStockProducts(Map<String, Object> condition);
+    -->
+
+        <select id="getStockProducts" resultType="store.seub2hu2.product.dto.ProdListDto">
+            SELECT *
+            FROM(
+            SELECT
+            <if test="condition != null">
+            <choose>
+                <when test="condition.sort == 'date'">
+                    ROW_NUMBER() OVER(ORDER BY P.PROD_CREATED_AT DESC) AS RN
+                </when>
+                <when test="condition.sort == 'name'">
+                    ROW_NUMBER() OVER(ORDER BY P.PROD_NAME ASC) AS RN
+                </when>
+                <when test="condition.sort == 'price'">
+                    ROW_NUMBER() OVER(ORDER BY P.PROD_PRICE ASC) AS RN
+                </when>
+            </choose>
+            </if>
+            , P.PROD_NO AS no,
+            P.PROD_NAME AS name,
+            P.PROD_PRICE AS price,
+            P.PROD_STATUS AS status,
+            P.PROD_COLOR_NUM AS colorNum,
+            P.PROD_CREATED_AT AS createdAt,
+            P.PROD_IMG_THUM AS imgThum,
+            PC.CAT_NO AS "category.no",
+            PC.CAT_NAME AS "category.name",
+            PB.BRAND_NAME AS "brand.name",
+            PL.COLOR_NO   AS "color.no",
+            PL.COLOR_NAME AS "color.name"
+            FROM PRODUCTS P
+            JOIN PROD_CATEGORIES PC ON P.CAT_NO = PC.CAT_NO
+            JOIN PROD_BRANDS PB ON P.BRAND_NO = PB.BRAND_NO
+            LEFT OUTER JOIN PROD_COLORS PL ON P.PROD_COLOR_NUM = PL.COLOR_NO
+            <if test="condition != null">
+                <choose>
+                    <when test="condition.opt == 'name'">
+                        AND P.PROD_NAME LIKE CONCAT ('%', #{condition.value},'%')
+                    </when>
+                    <when test="condition.opt == 'minPrice'">
+                        AND P.PROD_PRICE >= #{condition.value}
+                    </when>
+                    <when test="condition.opt == 'maxPrice'">
+                        AND P.PROD_PRICE &lt;= #{condition.value}
+                    </when>
+                </choose>
+            </if>
+            <if test="condition.topNo != null and condition.topNo != ''">
+                AND PC.TOP_CAT_NO IN (#{condition.topNo})
+            </if>
+            <if test="condition.catNo != null and condition.catNo != ''">
+                AND PC.CAT_NO IN (#{condition.catNo})
+            </if>
+            ) AS subquery
+            WHERE
+            RN BETWEEN #{condition.begin} AND #{condition.end}
+        </select>
+
+    <!--
         상품번호와 색상명으로 재고수량 조회
         List<Color> getStockByColorNumber(Map<String, Object> condition);
     -->
@@ -951,7 +1218,7 @@
     -->
     <select id="getUsers" resultType="store.seub2hu2.user.vo.User">
         select
-            *,
+            *
         from (
             select
              user_no               as no

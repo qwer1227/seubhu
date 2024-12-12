@@ -103,6 +103,8 @@
                       <option value="22">여성 상의</option>
                       <option value="23">여성 하의</option>
                       <option value="24">여성 아우터</option>
+                      <option value="31">양말</option>
+                      <option value="32">모자</option>
                     </select>
                   </div>
                 </div>

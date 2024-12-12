@@ -2,6 +2,7 @@
 <%@include file="/WEB-INF/views/common/tags.jsp" %>
 <!doctype html>
 <html lang="ko">
+<script type="text/javascript" src="/resources/se2/js/service/HuskyEZCreator.js" charset="utf-8"></script>
 <head>
   <%@include file="/WEB-INF/views/common/common.jsp" %>
 </head>
@@ -58,28 +59,28 @@
         </tr>
         <tr class="form-group">
           <th>
-            <label class="form-label" for="content">글내용</label>
+            <label class="form-label" id="ir">글내용</label>
           </th>
           <td colspan="3">
-            <textarea style="width: 100%" class="form-control" rows="10" id="content"
-                      name="content">${board.content}</textarea>
-            
-<%--            <!-- <%@include file="write.jsp" %> -->--%>
+            <form method="get" action="modify">
+              <textarea name="ir1" id="ir1" style="display:none;">${board.content}</textarea>
+            </form>
           </td>
         </tr>
         <c:if test="${not empty board.uploadFile}">
           <c:if test="${board.uploadFile.deleted eq 'N'}">
-          <tr class="form-group">
-            <th>
-              <label class="form-label">기존파일명</label>
-            </th>
-            <td colspan="3" style="text-align: start">
-                ${board.uploadFile.originalName}
-              <button type="button" class="btn btn-outline-dark" onclick="deleteUploadFile(${board.no}, ${board.uploadFile.no})">
-                삭제
-              </button>
-            </td>
-          </tr>
+            <tr class="form-group">
+              <th>
+                <label class="form-label">기존파일명</label>
+              </th>
+              <td colspan="3" style="text-align: start">
+                  ${board.uploadFile.originalName}
+                <button type="button" class="btn btn-outline-dark"
+                        onclick="deleteUploadFile(${board.no}, ${board.uploadFile.no})">
+                  삭제
+                </button>
+              </td>
+            </tr>
           </c:if>
         </c:if>
         <tr class="form-group">
@@ -98,7 +99,7 @@
             <button type="button" class="btn btn-secondary m-1" onclick="abort()">취소</button>
           </div>
           <div class="col d-flex justify-content-end">
-            <button type="submit" class="btn btn-primary m-1">수정</button>
+            <button type="button" id="submit" class="btn btn-primary m-1">수정</button>
           </div>
         </div>
       </div>
@@ -107,6 +108,47 @@
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script type="text/javascript">
+    var oEditors = [];
+    nhn.husky.EZCreator.createInIFrame({
+        oAppRef: oEditors,
+        elPlaceHolder: "ir1",
+        sSkinURI: "/resources/se2/SmartEditor2Skin_ko_KR.html",
+        fCreator: "createSEditor2"
+    });
+
+    let formData = new FormData();
+
+    // 등록 버튼 클릭 시, 폼에 있는 값을 전달(이미지는 슬라이싱할 때 전달했기 때문에 따로 추가 설정 안해도 됨)
+    document.querySelector("#submit").addEventListener("click", function () {
+
+        oEditors.getById["ir1"].exec("UPDATE_CONTENTS_FIELD", []);
+
+        let no = document.querySelector("input[name=no]").value;
+        let catName = document.querySelector("select[name=catName]").value;
+        let title = document.querySelector("input[name=title]").value;
+        let content = document.querySelector("#ir1").value;
+        let upfile = document.querySelector("input[name=upfile]")
+
+        formData.append("no", no);
+        formData.append("catName", catName);
+        formData.append("title", title);
+        formData.append("content", content);
+        if (upfile.files.length > 0) {
+            formData.append("upfile", upfile.files[0]);
+        }
+
+        $.ajax({
+            method: "post",
+            url: "/community/board/modify",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (board) {
+                window.location.href = "detail?no=" + board.no;
+            }
+        })
+    });
+
     function abort() {
         let result = confirm("수정 중이던 글을 취소하시겠습니까?");
         if (result) {

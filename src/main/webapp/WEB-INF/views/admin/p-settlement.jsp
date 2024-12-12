@@ -22,6 +22,8 @@
           rel="stylesheet">
   <!-- Bootstrap CSS 링크 예시 페이지네이션-->
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+  <!-- 모달창 x표시(아이콘 같은) 보임 대신 select option 화살표 표시 안보이고 radio버튼 문제 생김-->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Custom styles for this template-->
   <link href="${pageContext.request.contextPath}/resources/css/sb-admin-2.min.css" rel="stylesheet">
 
@@ -58,7 +60,7 @@
               <input type="hidden" name="page" />
               <input type="hidden" name="rows" />
               <div class="row g-3">
-                <div class="row col-2 align-items-center pr-2 pb-1">
+                <div class="row col-2 align-items-center pr-2 pt-3">
                   <label for="dateInput" class="col-auto col-form-label">날짜</label>
                   <div class="col">
                     <%
@@ -124,9 +126,9 @@
                 </div>
                 <div class="col-1">
                   <select class="form-control" name="keyword">
-                    <option value="all">선택안함</option>
-                    <option value="payName">결제자</option>
-                    <option value="payId">결제자 ID</option>
+                    <option value="all" ${param.keyword eq 'all' ? 'selected' : ''}>선택안함</option>
+                    <option value="payName" ${param.keyword eq 'payName' ? 'selected' : ''}>결제자</option>
+                    <option value="payId" ${param.keyword eq 'payId' ? 'selected' : ''}>결제자 ID</option>
                   </select>
                 </div>
                 <div class="col-3">
@@ -153,8 +155,8 @@
                   <col width="10%">
                   <col width="*%">
                   <col width="10%">
-                  <col width="7%">
                   <col width="8%">
+                  <col width="7%">
                   <col width="10%">
                   <col width="10%">
                 </colgroup>
@@ -177,7 +179,11 @@
                       <td>${d.payType}</td>
                       <td>${d.userName}</td>
                       <td>${d.userId}</td>
-                      <td>${d.prodName}</td>
+                      <td>
+                        <a href="javascript:void(0);" onclick="previewProd(${d.orderNo})">
+                          ${d.prodName}
+                        </a>
+                      </td>
                       <td><fmt:formatNumber value="${d.payPrice }"/> 원</td>
                       <td>${d.payMethod}</td>
                       <td>${d.payStatus}</td>
@@ -193,7 +199,7 @@
               </table>
               <div class="row mb-3">
                 <div class="col">
-                  <div class="border p-2 bg-dark text-white fw-bold">${param.day} | 매출액: <fmt:formatNumber value=""/> 원</div>
+                  <div class="border p-2 bg-dark text-white fw-bold">${param.day} | 매출액: <fmt:formatNumber value="${totalPriceSum}"/> 원</div>
                 </div>
               </div>
             </div>
@@ -230,7 +236,54 @@
       <!-- end Page Content -->
     </div>
   </div>
+<!-- 모달 창 -->
+<div class="modal fade" id="modal-preview-prod" tabindex="-1" aria-labelledby="modal-preview-prod" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="modal-title-preview-prod">주문상품 보기</h1>
+        <button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close">
+        </button>
+      </div>
+      <div class="modal-body">
+        <table class="table" id="table-rev">
+          <colgroup>
+            <col width="30%">
+            <col width="13%">
+            <col width="12%">
+            <col width="12%">
+            <col width="18%">
+            <col width="1%">
+          </colgroup>
+          <thead>
+          <tr>
+            <th>상품명</th>
+            <th>가격</th>
+            <th>색상</th>
+            <th>사이즈</th>
+            <th>수량</th>
+            <th></th>
+          </tr>
+          </thead>
+          <tbody>
+
+          </tbody>
+          <tbody id="tbody2">
+
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+      </div>
+    </div>
+
+  </div>
+
+
 </div>
+
+
 <!-- Footer -->
 <%@include file="/WEB-INF/views/admincommon/footer.jsp" %>
 <!-- End of Footer -->
@@ -239,6 +292,52 @@
 <script>
   const form =document.querySelector("#form-search");
   const pageInput = document.querySelector("input[name=page]");
+
+  async function previewProd(orderNo) {
+    let response = await fetch("/admin/p-settlement/preview?orderNo=" + orderNo);
+    let data = await response.json();
+
+    let rows = "";
+
+    if (data.length === 0) {
+      rows = `
+      <tr>
+        <td colspan="5" class="text-center">상품이 없습니다.</td>
+      </tr>
+    `;
+    } else {
+      for (let rev of data) {
+        rows += `
+        <tr>
+            <td><span>\${rev.prodName}</span></td>
+            <td><span>\${new Intl.NumberFormat().format(rev.prodPrice)}원</span></td>
+            <td><span>\${rev.colorName}</span></td>
+            <td><span>\${rev.prodSize}</span></td>
+            <td><span>\${rev.orderProdAmount}</span></td>
+            <td><span></span></td>
+        </tr>
+      `;
+      }
+      let rev2 = data[0];
+      let summaryRows =`
+          <tr>
+              <th>합계 :&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\${new Intl.NumberFormat().format(rev2.orderPrice)}원</th>
+              <td>할인가 :</td>
+              <th>\${new Intl.NumberFormat().format(rev2.orderDisPrice)}원</th>
+              <td>결제금액 : </td>
+              <th><span>\${new Intl.NumberFormat().format(rev2.orderRealPrice)}원</span></th>
+              <td></td>
+          </tr>
+        `;
+      document.querySelector("#tbody2").innerHTML = summaryRows;
+    }
+    document.querySelector("#table-rev tbody").innerHTML = rows;
+
+
+    const myModal = new bootstrap.Modal('#modal-preview-prod');
+
+    myModal.show();
+  }
 
   function changeSort() {
     pageInput.value = 1;
