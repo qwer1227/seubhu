@@ -160,7 +160,7 @@ public class MarathonService {
     }
 
     public ListDto<Marathon> getMarathonTop(Map<String, Object> condition) {
-        List<Marathon> marathons = marathonMapper.getMarathonTopThree(condition);
+        List<Marathon> marathons = marathonMapper.getMarathonTopFive(condition);
         ListDto<Marathon> dto = new ListDto<>(marathons);
 
         return dto;
