@@ -15,7 +15,7 @@ public interface ProductMapper {
     void updateAmount(@Param("size") Size size);
 
     // 조회수 증가
-    void incrementViewCount(int prodNo, int coloNo);
+    void incrementViewCount(@Param("product") Product product);
 
     // 상품 조회
     Product getProductByProdNoAndColoNo(@Param("prodNo") int prodNo, @Param("colorNo") int colorNo);

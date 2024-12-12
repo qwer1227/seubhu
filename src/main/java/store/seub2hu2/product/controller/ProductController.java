@@ -94,4 +94,10 @@ public class ProductController {
 
         return "product/detail";
     }
+
+    @GetMapping("/hit")
+    public String hit(@RequestParam("no") int prodNo, @RequestParam("colorNo") int colorNo){
+        productService.updateProdDetailViewCnt(prodNo, colorNo);
+        return "redirect:detail?no=" + prodNo +"&colorNo="+colorNo;
+    }
 }

@@ -16,6 +16,7 @@ import store.seub2hu2.delivery.vo.Delivery;
 import store.seub2hu2.mypage.dto.OrderResultDto;
 import store.seub2hu2.mypage.dto.OrderResultItemDto;
 import store.seub2hu2.mypage.dto.ResponseDTO;
+import store.seub2hu2.mypage.mapper.CartMapper;
 import store.seub2hu2.order.exception.*;
 import store.seub2hu2.order.mapper.OrderMapper;
 import store.seub2hu2.order.vo.Order;
@@ -59,6 +60,8 @@ public class KakaoPayService {
     
     @Value("${kakaopay.secretKey}")
     String secretKey;
+    @Autowired
+    private CartMapper cartMapper;
 
     // 카카오페이 결제 승인
     // 사용자가 결제 수단을 선택하고 비밀번호를 입력해 결제 인증을 완료한 뒤,
@@ -116,6 +119,9 @@ public class KakaoPayService {
                 itemName = itemName + " 외 " + (orderItems.size() - 1) + "개" ;
             }
 
+            
+            List<Integer> cartNos = new ArrayList<>();
+            List<Integer> invalidCartNos = new ArrayList<>(); // 유효하지 않은 값 수집
             for(OrderItem item : orderItems) {
                 Size size = productMapper.getSizeAmount(item.getSizeNo());
 
@@ -141,6 +147,14 @@ public class KakaoPayService {
                 // 주문 상품에 대한 재고를 감소한다.
                 size.setAmount(size.getAmount() - item.getStock());
 
+                // 장바구니에서 상품 삭제
+                if(item.getCartNo() <= 0) {
+                    invalidCartNos.add(item.getCartNo());
+                } else {
+                    cartNos.add(item.getCartNo());
+                }
+
+
                 try {
                     productMapper.updateAmount(size);
 
@@ -148,6 +162,14 @@ public class KakaoPayService {
                     throw new DatabaseSaveException("주문 상품의 재고 업데이트 실패", ex);
                 }
             }
+
+            if(!invalidCartNos.isEmpty()) {
+                throw new IllegalArgumentException("유효하지 않은 장바구니 번호" + invalidCartNos);
+            }
+
+            // 주문이 된 카트 번호 삭제
+            cartMapper.deleteCartItems(cartNos);
+            
 
             try {
                 orderMapper.insertOrderItems(orderItems);
@@ -186,7 +208,7 @@ public class KakaoPayService {
             }
 
 
-            // 결재준비
+            // 결제준비
             // item_name = paymentDto.getItem[0].getProdName()
             // item_code = 주문번호
             // total_amount = 총결재금액

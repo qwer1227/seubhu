@@ -9,6 +9,14 @@
     </update>
 
     <!--
+
+    -->
+    <update id="incrementViewCount">
+        UPDATE PRODUCTS
+        SET PROD_CNT = #{product.cnt}
+    </update>
+
+    <!--
     int getTotalRows(@Param("condition") Map<String, Object> condition);
     -->
 

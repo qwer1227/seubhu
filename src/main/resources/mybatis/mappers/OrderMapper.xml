@@ -81,6 +81,7 @@
              , PS.SIZE_NO  AS "SIZE.NO"
              , PS.PROD_SIZE "SIZE.SIZE"
              , PI.IMG_URL AS imgThum
+             , C.CART_NO AS no
         FROM PRODUCTS P
                  JOIN PROD_COLORS PC
                       ON P.PROD_NO = PC.PROD_NO
@@ -88,8 +89,10 @@
                       ON PC.COLOR_NO = PS.COLOR_NO
                  JOIN PROD_IMGS PI
                       ON PC.COLOR_NO = PI.COLOR_NO
+                 JOIN CARTS C
+                      ON P.PROD_NO = C.PROD_NO
         WHERE PI.IMG_THUM = 'Y'
-          AND SIZE_NO IN
+          AND PS.SIZE_NO IN
               <foreach collection="sizeNoList" item="sizeNo" open="(" separator="," close=")">
                 #{sizeNo}
               </foreach>

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.seub2hu2.cart.dto.CartItemDto;
 import store.seub2hu2.cart.dto.CartRegisterForm;
+import store.seub2hu2.cart.vo.Cart;
 import store.seub2hu2.mypage.mapper.CartMapper;
 
 
@@ -44,6 +45,18 @@ public class CartService {
      */
     public void addCart(List<CartRegisterForm> cartRegisterForm) {
 
-        cartMapper.addCart(cartRegisterForm);
+        for(CartRegisterForm form : cartRegisterForm){
+            Cart cart = cartMapper.getCartByUserNoAndSizeNo(form.getUserNo(), form.getSizeNo());
+
+            if(cart == null) {
+                cartMapper.addCart(cartRegisterForm);
+            } else {
+                System.out.println("기존 상품 수량: " + cart.getAmount());
+                System.out.println("증가시킬 수량: " + form.getStock());
+                cart.setAmount(cart.getAmount() + form.getStock());
+                cartMapper.updateCart(cart);
+            }
+
+        }
     }
 }
