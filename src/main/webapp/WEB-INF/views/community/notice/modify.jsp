@@ -82,7 +82,7 @@
   <div class="row p-3">
     <div class="col d-flex justify-content-between">
       <div class="col d-flex" style="text-align: start">
-        <button type="button" class="btn btn-secondary m-1" onclick="abort()">취소</button>
+        <button type="button" class="btn btn-secondary m-1" onclick="abort(${notice.no})">취소</button>
       </div>
       <div class="col d-flex justify-content-end">
         <button type="button" class="btn btn-outline-primary m-1">보관</button>
@@ -141,10 +141,10 @@
         checked.value = document.querySelector("#first-check").checked ? "true" : "false";
     }
 
-    function abort() {
+    function abort(noticeNo) {
         let result = confirm("수정 중이던 글을 취소하시겠습니까?");
         if (result) {
-            window.location.href = "detail?no=${notice.no}";
+            window.location.href = "detail?no=" + noticeNo;
         }
     }
 

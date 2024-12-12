@@ -84,7 +84,6 @@
             <button type="button" class="btn btn-secondary m-1" onclick="abort(${marathon.no})">취소</button>
           </div>
           <div class="col d-flex justify-content-end">
-            <button type="button" class="btn btn-outline-primary m-1">보관</button>
             <button type="button" id="submit" class="btn btn-primary m-1">수정</button>
           </div>
         </div>

@@ -73,10 +73,9 @@
       <div class="row p-3">
         <div class="col d-flex justify-content-between">
           <div class="col d-flex" style="text-align: start">
-            <button type="button" class="btn btn-secondary m-1">취소</button>
+            <button type="button" class="btn btn-secondary m-1" onclick="abort()">취소</button>
           </div>
           <div class="col d-flex justify-content-end">
-            <button type="button" class="btn btn-outline-primary m-1">보관</button>
             <button type="button" id="submit" class="btn btn-primary m-1">등록</button>
           </div>
         </div>
@@ -127,5 +126,12 @@
             }
         })
     });
+
+    function abort() {
+        alert("글 작성을 취소하시겠습니까? 작성중이던 글은 저장되지 않습니다.");
+
+        location.href = "main";
+    }
+
 </script>
 </html>
