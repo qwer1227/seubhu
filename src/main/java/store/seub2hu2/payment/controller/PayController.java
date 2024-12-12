@@ -100,8 +100,6 @@ public class PayController {
             String lessonNoStr = (String) param.get("lessonNo");
             int lessonNo = Integer.parseInt(lessonNoStr);
 
-
-
             // 카카오 결제 요청하기
             ApproveResponse approveResponse = kakaoPayService.payApprove(tid, pgToken, lessonNo);
 
@@ -113,6 +111,7 @@ public class PayController {
 
             log.info("lessonReservationPay = {}", paymentDto);
             lessonReservationService.saveLessonReservation(paymentDto);
+
         }
 
         if (type.equals("상품")) {
@@ -148,6 +147,7 @@ public class PayController {
             return "redirect:/pay/success?no="+ orderNo;
 
         }
+
 
         return "redirect:/pay/success";
     }
