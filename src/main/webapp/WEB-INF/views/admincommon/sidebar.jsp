@@ -106,7 +106,7 @@
         <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">배송&재고&정산</h6>
-                <a class="collapse-item" href="order">배송</a>
+                <a class="collapse-item" href="order-delivery">배송</a>
                 <a class="collapse-item" href="product-stock?topNo=0">상품 재고 등록하기</a>
                 <a class="collapse-item" href="settlement">레슨정산관리</a>
                 <a class="collapse-item" href="p-settlement">상품정산관리</a>

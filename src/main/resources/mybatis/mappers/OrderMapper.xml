@@ -81,6 +81,7 @@
              , PS.SIZE_NO  AS "SIZE.NO"
              , PS.PROD_SIZE "SIZE.SIZE"
              , PI.IMG_URL AS imgThum
+             , C.CART_NO AS no
         FROM PRODUCTS P
                  JOIN PROD_COLORS PC
                       ON P.PROD_NO = PC.PROD_NO
@@ -88,8 +89,10 @@
                       ON PC.COLOR_NO = PS.COLOR_NO
                  JOIN PROD_IMGS PI
                       ON PC.COLOR_NO = PI.COLOR_NO
+                 JOIN CARTS C
+                      ON P.PROD_NO = C.PROD_NO
         WHERE PI.IMG_THUM = 'Y'
-          AND SIZE_NO IN
+          AND PS.SIZE_NO IN
               <foreach collection="sizeNoList" item="sizeNo" open="(" separator="," close=")">
                 #{sizeNo}
               </foreach>
@@ -135,6 +138,7 @@
     <resultMap id="ordersResultMap" type="store.seub2hu2.mypage.dto.OrdersDTO">
         <id property="orderNo" column="order_no"/>
         <result property="payNo" column="pay_no"/>
+        <result property="orderId" column="order_number"/>
         <result property="orderDate" column="order_date"/>
         <result property="orderStatus" column="order_status"/>
         <result property="orderPrice" column="order_price"/>
@@ -184,6 +188,7 @@
         p.pay_type,
         p.refund,
         o.order_no,
+        o.order_number,
         o.order_date,
         o.order_status,
         o.order_price,

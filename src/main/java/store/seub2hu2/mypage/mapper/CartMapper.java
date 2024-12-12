@@ -20,4 +20,7 @@ public interface CartMapper {
     // 장바구니 삭제
     void deleteCartItems(@Param("cartNoList") List<Integer> cartNoList);
 
+    Cart getCartByUserNoAndSizeNo(@Param("userNo") int userNo, @Param("sizeNo") int sizeNo);
+
+    void updateCart(@Param("cart") Cart cart);
 }

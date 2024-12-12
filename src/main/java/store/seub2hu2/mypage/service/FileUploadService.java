@@ -5,6 +5,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import store.seub2hu2.mypage.mapper.PostMapper;
+import store.seub2hu2.user.mapper.UserMapper;
+import store.seub2hu2.user.vo.UserImage;
+import store.seub2hu2.util.S3Service;
 
 import java.io.IOException;
 import java.util.*;
@@ -12,11 +15,22 @@ import java.util.*;
 @Service
 public class FileUploadService {
 
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucketName;
+
+    @Value("${upload.directory.userImage}")
+    private String saveDirectory;
+
+    @Autowired
+    private S3Service s3Service;
+
     @Value("${file.upload-dir}")
     private String uploadDir;
 
     @Autowired
     private PostMapper postMapper;
+    @Autowired
+    private UserMapper userMapper;
 
     public Map<String, Object> saveFile(List<MultipartFile> files, int postNo, String thumb) {
         List<Map<String, Object>> images = new ArrayList<>();
@@ -38,6 +52,8 @@ public class FileUploadService {
             images.add(param);
         }
 
+
+
         // 이미지 정보 DB에 삽입
         postMapper.insertPostImages(images);
 
@@ -45,6 +61,30 @@ public class FileUploadService {
         Map<String, Object> response = new HashMap<>();
         response.put("thumbnailBase64", thumbnailBase64);  // 썸네일 base64 반환
         return response;
+    }
+
+    public String userImageUpload(MultipartFile file, int userNo){
+
+        UserImage userImage = new UserImage();
+
+        if(file != null){
+            String originalFilename = file.getOriginalFilename();
+            String filename = System.currentTimeMillis() + originalFilename;
+
+            s3Service.uploadFile(file, bucketName, saveDirectory, filename);
+
+            userImage.setUserNo(userNo);
+            userImage.setImgName(filename);
+
+        }
+
+        //1. 기존 isprimary 값을 n으로 변경
+        userMapper.updatePrimaryToN(userNo);
+
+        //2. 새 이미지를 INSERT하면서 isprimary값을 Y로 설정
+        userMapper.insertUserImage(userImage);
+
+        return userImage.getImgName();
     }
 
     // 파일을 base64로 변환하는 메소드 (MIME 타입 포함)

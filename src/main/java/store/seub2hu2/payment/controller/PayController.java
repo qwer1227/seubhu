@@ -70,8 +70,6 @@ public class PayController {
     public @ResponseBody ReadyResponse payReady(@RequestBody PaymentDto paymentDto
     , @AuthenticationPrincipal LoginUser loginUser) {
 
-
-
         paymentDto.setUserNo(loginUser.getNo());
         // 카카오 결제 준비하기
         ReadyResponse readyResponse = kakaoPayService.payReady(paymentDto);
@@ -142,6 +140,8 @@ public class PayController {
 
             // order pay 번호 update
             orderService.updateOrderPayNo(orderNo, payNo);
+            
+            // 장바구니에서 삭제
 
 
             return "redirect:/pay/success?no="+ orderNo;

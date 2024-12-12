@@ -59,7 +59,7 @@ public class ProductController {
         condition.put("page", page);
         condition.put("rows", rows);
         condition.put("sort", sort);
-        if(StringUtils.hasText(opt)) {
+        if(StringUtils.hasText(opt) && StringUtils.hasText(value)) {
             condition.put("opt", opt);
             condition.put("value", value);
         }
@@ -78,7 +78,6 @@ public class ProductController {
     @GetMapping("/detail")
     public String detail(@RequestParam("no") int no,
                          @RequestParam("colorNo") int colorNo,
-                         @AuthenticationPrincipal LoginUser loginUser,
                          Model model) {
 
         model.addAttribute("loginUser", loginUser);
@@ -99,5 +98,11 @@ public class ProductController {
         model.addAttribute("prodImagesDto", prodImagesDto);
 
         return "product/detail";
+    }
+
+    @GetMapping("/hit")
+    public String hit(@RequestParam("no") int prodNo, @RequestParam("colorNo") int colorNo){
+        productService.updateProdDetailViewCnt(prodNo, colorNo);
+        return "redirect:detail?no=" + prodNo +"&colorNo="+colorNo;
     }
 }

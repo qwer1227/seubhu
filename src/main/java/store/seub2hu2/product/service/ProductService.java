@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import store.seub2hu2.product.dto.*;
 import store.seub2hu2.product.mapper.ProductMapper;
+import store.seub2hu2.product.vo.Product;
 import store.seub2hu2.util.ListDto;
 import store.seub2hu2.util.Pagination;
 
@@ -19,6 +20,12 @@ public class ProductService {
 
     @Autowired
     ProductMapper productMapper;
+
+    public void updateProdDetailViewCnt(int prodNo, int colorNo) {
+         Product product = productMapper.getProductByProdNoAndColoNo(prodNo, colorNo);
+         product.setCnt(product.getCnt() + 1);
+         productMapper.incrementViewCount(product);
+    }
 
     /**
      * 색상 번호에 따른 다양한 이미지 조회하기

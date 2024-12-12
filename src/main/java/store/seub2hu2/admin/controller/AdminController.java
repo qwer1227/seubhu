@@ -14,7 +14,6 @@ import store.seub2hu2.admin.service.AdminService;
 import store.seub2hu2.course.service.CourseService;
 import store.seub2hu2.course.service.UserCourseService;
 import store.seub2hu2.course.vo.Course;
-import store.seub2hu2.course.vo.UserLevel;
 import store.seub2hu2.lesson.dto.LessonRegisterForm;
 import store.seub2hu2.lesson.dto.LessonUpdateDto;
 import store.seub2hu2.lesson.service.LessonFileService;
@@ -38,7 +37,6 @@ import store.seub2hu2.util.ListDto;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -644,7 +642,7 @@ public class AdminController {
             condition.put("value", value);
         }
 
-        ListDto<ProdListDto> dto = productService.getProducts(condition);
+        ListDto<ProdListDto> dto = adminService.getStockProduct(condition);
         model.addAttribute("topNo", topNo);
         model.addAttribute("catNo", catNo);
         model.addAttribute("products", dto.getData());
@@ -686,12 +684,38 @@ public class AdminController {
         return "admin/productlist";
     }
 
-    @GetMapping("/order")
-    public String order(){
+    @GetMapping("/order-delivery")
+    public String order(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                        @RequestParam(name = "rows", required = false) int rows,
+                        @RequestParam(name = "day", required = false) String day,
+                        @RequestParam(name = "sort", required = false) String sort,
+                        @RequestParam(name = "opt", required = false) String opt,
+                        @RequestParam(name = "keyword", required = false) String keyword,
+                        Model model){
 
+        if (day == null || day.isEmpty()) {
+            // 현재 날짜로 기본 설정
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            day = sdf.format(new Date());
+        }
 
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("page", page);
+        condition.put("rows", rows);
+        condition.put("day", day);
+        condition.put("sort", sort);
 
-        return "admin/order";
+        if(StringUtils.hasText(opt)) {
+            condition.put("opt", opt);
+            condition.put("keyword", keyword);
+        }
+
+        ListDto<orderDeliveryDto> dto = adminService.getOrderDelivery(condition);
+
+        model.addAttribute("dto", dto.getData());
+        model.addAttribute("paging", dto.getPaging());
+
+        return "admin/order-delivery";
     }
 
 

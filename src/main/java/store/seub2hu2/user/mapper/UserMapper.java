@@ -3,10 +3,7 @@ package store.seub2hu2.user.mapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import store.seub2hu2.course.vo.UserLevel;
-import store.seub2hu2.user.vo.Addr;
-import store.seub2hu2.user.vo.User;
-import store.seub2hu2.user.vo.Role;
-import store.seub2hu2.user.vo.UserRole;
+import store.seub2hu2.user.vo.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -65,5 +62,9 @@ public interface UserMapper {
     List<User> findUsersByPassword(@Param("password") String password);
 
     User findByUserNo(@Param("userNo") int userNo);
+
+    void insertUserImage(@Param("user")UserImage userImage);
+
+    void updatePrimaryToN(@Param("userNo") int userNo);
 
 }
