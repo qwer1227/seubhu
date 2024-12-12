@@ -9,7 +9,6 @@
     <%@include file="/WEB-INF/views/common/common.jsp" %>
 </head>
 <body>
-
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
 <security:authentication property="principal" var="loginUser"/>
 <div class="container-xxl" id="wrap">

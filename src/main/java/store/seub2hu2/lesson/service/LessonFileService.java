@@ -20,20 +20,16 @@ import java.util.*;
 @Slf4j
 public class LessonFileService {
 
-    private final S3Service s3Service;
-
     @Value("${upload.directory.lesson}")
     private String saveDirectory;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucketName;
 
-
-
+    private final S3Service s3Service;
     private final LessonFileMapper lessonFileMapper;
 
     public void saveLessonImages(Integer lessonNo, MultipartFile thumbnail, MultipartFile mainImage) {
-        System.out.println("saveLessonImages lessonNo: " + lessonNo);
 
         if (thumbnail != null && !thumbnail.isEmpty()) {
             try {
@@ -42,7 +38,7 @@ public class LessonFileService {
 
                 // 저장할 파일명 생성
                 String thumbnailFileName = UUID.randomUUID() + thumbnail.getOriginalFilename();
-                s3Service.uploadFile(thumbnail, bucketName,saveDirectory, thumbnailFileName);
+                s3Service.uploadFile(thumbnail, bucketName, saveDirectory, thumbnailFileName);
 
                 // LessonFile 객체 생성 (Base64 데이터를 저장소나 DB에 저장 가능)
                 LessonFile thumbnailFile = new LessonFile(
@@ -89,8 +85,8 @@ public class LessonFileService {
                 images.put("THUMBNAIL", file.getFileName());
                 log.info("THUMBNAIL = {}", file.getFileName());
             } else if ("MAIN_IMAGE".equals(file.getFileType())) {
-                images.put("MAIN_IMAGE",  file.getFileName());
-                log.info("MAIN_IMAGE = {}",  file.getFileName());
+                images.put("MAIN_IMAGE", file.getFileName());
+                log.info("MAIN_IMAGE = {}", file.getFileName());
             }
         }
 
@@ -100,7 +96,7 @@ public class LessonFileService {
         return images;
     }
 
-    public void updateLessonImages(Integer lessonNo, MultipartFile thumbnail, MultipartFile mainImage)  {
+    public void updateLessonImages(Integer lessonNo, MultipartFile thumbnail, MultipartFile mainImage) {
         System.out.println("saveLessonImages lessonNo: " + lessonNo);
 
         log.info("updateLessonImages mainImage: " + mainImage.getOriginalFilename());
@@ -112,7 +108,7 @@ public class LessonFileService {
 
                 // 저장할 파일명 생성
                 String thumbnailFileName = UUID.randomUUID() + thumbnail.getOriginalFilename();
-                s3Service.uploadFile(thumbnail, bucketName,saveDirectory, thumbnailFileName);
+                s3Service.uploadFile(thumbnail, bucketName, saveDirectory, thumbnailFileName);
 
                 // LessonFile 객체 생성 (Base64 데이터를 저장소나 DB에 저장 가능)
                 LessonFile thumbnailFile = new LessonFile(
@@ -133,7 +129,7 @@ public class LessonFileService {
 
                 // 저장할 파일명 생성
                 String mainImageFileName = UUID.randomUUID() + mainImage.getOriginalFilename();
-                s3Service.uploadFile(thumbnail, bucketName,saveDirectory, mainImageFileName);
+                s3Service.uploadFile(thumbnail, bucketName, saveDirectory, mainImageFileName);
 
                 // LessonFile 객체 생성 (Base64 데이터를 저장소나 DB에 저장 가능)
                 LessonFile mainImageFile = new LessonFile(
@@ -149,24 +145,22 @@ public class LessonFileService {
 
         if (thumbnail != null && !thumbnail.isEmpty()) {
             String thumbnailFileName = UUID.randomUUID() + thumbnail.getOriginalFilename();
-            s3Service.uploadFile(thumbnail, bucketName,saveDirectory, thumbnailFileName);
+            s3Service.uploadFile(thumbnail, bucketName, saveDirectory, thumbnailFileName);
             LessonFile thumbnailFile = new LessonFile(
-                    lessonNo, thumbnailFileName , "THUMBNAIL", saveDirectory
+                    lessonNo, thumbnailFileName, "THUMBNAIL", saveDirectory
             );
             lessonFileMapper.updateLessonFile(thumbnailFile);
         }
 
         if (mainImage != null && !mainImage.isEmpty()) {
             String mainImageFileName = UUID.randomUUID() + mainImage.getOriginalFilename();
-            s3Service.uploadFile(thumbnail, bucketName,saveDirectory, mainImageFileName);
+            s3Service.uploadFile(thumbnail, bucketName, saveDirectory, mainImageFileName);
             LessonFile mainImageFile = new LessonFile(
-                    lessonNo,  mainImageFileName, "MAIN_IMAGE", saveDirectory
+                    lessonNo, mainImageFileName, "MAIN_IMAGE", saveDirectory
             );
             lessonFileMapper.updateLessonFile(mainImageFile);
         }
 
     }
-
-
 
 }

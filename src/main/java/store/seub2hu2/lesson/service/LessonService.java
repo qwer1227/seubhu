@@ -67,7 +67,6 @@ public class LessonService {
 
     }
 
-
     public int getMostLatelyLessonNo() {
         return lessonFileMapper.lastInsertedLessonNo();
     }
