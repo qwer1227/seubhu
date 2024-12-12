@@ -13,6 +13,8 @@ import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.course.vo.Region;
 import store.seub2hu2.lesson.mapper.LessonMapper;
 import store.seub2hu2.lesson.vo.Lesson;
+import store.seub2hu2.product.dto.ProdListDto;
+import store.seub2hu2.product.mapper.ProductMapper;
 import store.seub2hu2.product.vo.*;
 import store.seub2hu2.user.mapper.UserMapper;
 import store.seub2hu2.user.vo.User;
@@ -57,6 +59,8 @@ public class AdminService {
 
     @Autowired
     private CourseMapper courseMapper;
+    @Autowired
+    private ProductMapper productMapper;
 
 
     public List<Lesson> getLessons(Map<String, Object> condition) {
@@ -432,6 +436,7 @@ public class AdminService {
 
         int totalPrice = adminMapper.getTotalPriceByDay(yesterday);
 
+
         Map<String, Object> condition = new HashMap<>();
         condition.put("totalPrice", totalPrice);
 
@@ -478,6 +483,8 @@ public class AdminService {
     public Map<String, Object> getTotalProdAmount(String yesterday) {
         int totalProdAmount = adminMapper.getTotalOrderProdAmount(yesterday);
 
+
+
         Map<String, Object> condition = new HashMap<>();
         condition.put("totalProdAmount", totalProdAmount);
 
@@ -498,5 +505,43 @@ public class AdminService {
         condition.put("run", run);
 
         return condition;
+    }
+
+    public ListDto<ProdListDto> getStockProduct(Map<String, Object> condition) {
+
+        // 검색 조건에 맞는 전체 데이터 갯수를 조회하는 기능
+        int totalRows = productMapper.getTotalRows(condition);
+
+        // Pagination 객체를 생성한다.
+        int page = (Integer) condition.get("page");
+        int rows = (Integer) condition.get("rows");
+
+        Pagination pagination = new Pagination(page, totalRows, rows);
+
+        // 데이터 검색 범위를 조회해서 Map에 저장한다.
+        condition.put("begin", pagination.getBegin());
+        condition.put("end", pagination.getEnd());
+
+        List<ProdListDto> products = adminMapper.getStockProducts(condition);
+
+        ListDto<ProdListDto> dto = new ListDto<>(products, pagination);
+
+        return dto;
+    }
+
+    public ListDto<orderDeliveryDto> getOrderDelivery(Map<String, Object> condition) {
+
+        int totalRows = adminMapper.getDeliveryTotalRows(condition);
+
+        int page = (Integer) condition.get("page");
+        int rows = (Integer) condition.get("rows");
+
+        Pagination pagination = new Pagination(page, totalRows, rows);
+
+        List<orderDeliveryDto> deliveryDtos = adminMapper.getOrderDeliveries(condition);
+
+        ListDto<orderDeliveryDto> dtos = new ListDto<>(deliveryDtos, pagination);
+
+        return dtos;
     }
 }
