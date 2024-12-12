@@ -135,6 +135,7 @@
     <resultMap id="ordersResultMap" type="store.seub2hu2.mypage.dto.OrdersDTO">
         <id property="orderNo" column="order_no"/>
         <result property="payNo" column="pay_no"/>
+        <result property="orderId" column="order_number"/>
         <result property="orderDate" column="order_date"/>
         <result property="orderStatus" column="order_status"/>
         <result property="orderPrice" column="order_price"/>
@@ -184,6 +185,7 @@
         p.pay_type,
         p.refund,
         o.order_no,
+        o.order_number,
         o.order_date,
         o.order_status,
         o.order_price,

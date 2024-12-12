@@ -106,7 +106,6 @@
         <div class="answer-detail">
             <h3>답변</h3>
             <p>${qna.answerContent}</p>
-            <p>answerUserNo:${qna.answerUserNo}</p>
             <p><strong>작성일:</strong> <fmt:formatDate value="${qna.answerCreatedDate}" pattern="yyyy-MM-dd" timeZone="Asia/Seoul" /></p>
             <p><strong>답변자:</strong> ${qna.user.nickname}</p>
         </div>

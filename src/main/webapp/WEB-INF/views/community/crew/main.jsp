@@ -102,7 +102,7 @@
           </div>
         </c:otherwise>
       </c:choose>
-      
+
       <div class="row p-3 d-flex justify-content-left">
         <div class="col-2">
           <select class="form-control" name="opt">
@@ -121,7 +121,7 @@
           <button class="btn btn-outline-primary" onclick="searchKeyword()">검색</button>
         </div>
         <div class="col d-flex justify-content-center">
-        
+
         </div>
         <security:authorize access="isAuthenticated()">
           <security:authentication property="principal" var="loginUser"/>
@@ -147,7 +147,7 @@
 
         form.submit();
     }
-    
+
     function changePage(page, event) {
         event.preventDefault();
         let form = document.querySelector("#form-search");

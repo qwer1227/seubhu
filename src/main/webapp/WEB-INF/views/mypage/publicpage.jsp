@@ -33,6 +33,13 @@
             width: 100%;
             border-radius: 8px;
         }
+
+        .card-img-top {
+            height: 200px; /* 카드 이미지 높이 고정 */
+            object-fit: cover; /* 중앙을 유지하며 슬라이싱 */
+            width: 100%; /* 너비는 카드에 맞춤 */
+        }
+
         .feed-card {
             cursor: pointer;
         }
@@ -71,6 +78,16 @@
             border-radius: 8px;
         }
 
+        .modal-lg-custom {
+            max-width: 65%; /* 너비를 90%로 설정 */
+            height: 70%; /* 높이를 80%로 설정 */
+        }
+
+        .modal-lg-postcustom {
+            max-width: 40%; /* 너비를 90%로 설정 */
+            height: 80%; /* 높이를 80%로 설정 */
+        }
+
         /* 이미지 미리보기 */
         .image-preview-container {
             display: flex;
@@ -98,7 +115,22 @@
 
     <!-- User Profile -->
     <div class="profile-header">
-        <img src="https://via.placeholder.com/120" alt="User Image">
+            <c:if test="${user.imgName != null}">
+            <img id="profileImage"
+             src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/images/userImage/${user.imgName}"
+             alt="User Image"
+             style="cursor: pointer;">
+            </c:if>
+            <c:if test="${user.imgName == null}">
+                 <img id="profileImage"
+                 src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/images/userImage/primaryImage.jpg"
+                 alt="User Image"
+                 style="cursor: pointer;">
+            </c:if>
+        <input id="profileImageInput"
+               type="file"
+               style="display: none;"
+               accept="image/*">
         <div class="name">${user.nickname}<span class="badge">Verified</span></div>
         <div>
             <button type="button" id="insertPost" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newPostModal">
@@ -136,7 +168,7 @@
 
     <!-- 새 글 작성 모달 -->
     <div class="modal fade" id="newPostModal" tabindex="-1" aria-labelledby="newPostModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg-postcustom">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="newPostModalLabel">새 글 작성</h5>
@@ -165,7 +197,7 @@
 
     <!-- Feed Modal -->
     <div class="modal fade" id="feedModal" tabindex="-1" aria-labelledby="feedModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-lg modal-lg-custom">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="feedModalLabel">게시글 상세</h5>
@@ -257,7 +289,7 @@
                 // 서버에서 받은 게시글 정보로 모달 내용 채우기
                 $("#detailPostContent").text(response.postContent);
                 $("#detailCreatedDate").text(formattedDate);
-                $("#detailPostWriter").text(response.user.name);
+                $("#detailPostWriter").text(response.user.nickname);
 
                 // 서버에서 받은 댓글 데이터를 반복하면서 화면에 추가
                 const comments = response.postComment; // 서버에서 받은 댓글
@@ -708,6 +740,45 @@
             }
         });
     }
+
+    $(document).ready(function () {
+        // 이미지 클릭 시 파일 선택 창 열기
+        $('#profileImage').on('click', function () {
+            $('#profileImageInput').click();
+        });
+
+        // 파일 선택 후 서버로 전송
+        $('#profileImageInput').on('change', function () {
+            const file = this.files[0];
+            if (!file) {
+                return;
+            }
+
+            const formData = new FormData();
+            const userNo = 1; // 현재 사용자의 번호로 변경 필요
+            formData.append("file", file);
+
+            $.ajax({
+                url: `/mypage/userImageInsert/${user.no}`,
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    if (response.success) {
+                        // 새 프로필 이미지로 업데이트
+                        $('#profileImage').attr('src', response.imageUrl);
+                        alert("프로필 사진이 업데이트되었습니다.");
+                    } else {
+                        alert("업데이트 실패: " + response.message);
+                    }
+                },
+                error: function () {
+                    alert("서버와 통신 중 문제가 발생했습니다.");
+                }
+            });
+        });
+    });
 
 </script>
 
