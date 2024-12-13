@@ -63,9 +63,13 @@
       </c:if>
     </div>
     
+    <div style="margin-top: 10px; border-bottom: 1px solid #ccc; margin-bottom: 10px;"></div>
+    
     <div class="content mt-3" style="text-align: start">
       <p>${notice.content}</p>
     </div>
+    
+    <div style="border-bottom: 1px solid #ccc; margin-bottom: 10px;"></div>
     
     <div class="actions d-flex justify-content-between mb-4">
       <div>

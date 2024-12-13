@@ -104,7 +104,7 @@
           and br.reply_content like concat ('%', #{condition.keyword}, '%')
         </when>
         <when test="condition.opt == 'nickname'">
-          and b.user_nickname like concat('%', #{condition.keyword}, '%')
+          and u.user_nickname like concat('%', #{condition.keyword}, '%')
         </when>
       </choose>
     </if>
@@ -135,6 +135,8 @@
     select count(*)
     from BOARDS b join BOARD_REPLIES br
     on b.board_no = br.board_no
+    join USERS u
+    on b.user_no = u.user_no
     where b.is_deleted = 'N'
     <if test="condition.category != null">
       and b.board_cat_name = #{condition.category}
@@ -155,7 +157,7 @@
           and br.reply_content like concat ('%', #{condition.keyword}, '%')
         </when>
         <when test="condition.opt == 'nickname'">
-          and b.user_nickname like concat('%', #{condition.keyword}, '%')
+          and u.user_nickname like concat('%', #{condition.keyword}, '%')
         </when>
       </choose>
     </if>
