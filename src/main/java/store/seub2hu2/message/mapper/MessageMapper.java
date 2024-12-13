@@ -19,7 +19,8 @@ public interface MessageMapper {
     void insertMessageReceiver(@Param("messageNo") int messageNo, @Param("userNo") int userNo);
 
     // 조건에 맞는 메시지 수 조회
-    int getTotalRows(@Param("condition") Map<String, Object> condition);
+    int getMessageTotalRows(@Param("condition") Map<String, Object> condition);
+    int getMessageRcvTotalRows(@Param("condition") Map<String, Object> condition);
 
     // 조건에 맞는 메시지 목록 조회
     List<MessageReceived> getMessages(@Param("condition") Map<String, Object> condition);
@@ -32,24 +33,16 @@ public interface MessageMapper {
 
     Message getMessageDetailByNo(@Param("messageNo") int messageNo);
 
-    // unread 메시지 개수 조회
-    int countUnreadMessages(@Param("userNo") int userNo);
-
     // 단일 메시지 삭제
     void deleteMessage(@Param("messageNo") int messageNo);
 
-    // 단일 메시지 읽음 처리
-    void updateReceiveMessageReadStatus(@Param("messageNo") int messageNo, @Param("userNo") int userNo);
-    void updateMessageReadStatus(@Param("messageNo") int messageNo);
+    // 단일 받은 메세지 읽음 처리
+    void updateReadMarkMessageRcv(@Param("messageNo") int messageNo, @Param("userNo") int userNo);
+    // 메세지 읽음 처리
+    void updateReadMarkMessage(@Param("messageNo") int messageNo);
+    // 단일 받은 메세지 삭제
+    void deleteMessageRcv(@Param("messageNo") int messageNos, @Param("userNo") int userNo);
 
-
-    // 다중 메시지 삭제
-    void deleteMessages(@Param("messageNos") List<Integer> messageNos, @Param("userNo") int userNo);
-
-    // 다중 메시지 읽음 처리
-    void updateReadStatuses(@Param("messageNos") List<Integer> messageNos, @Param("userNo") int userNo);
-
-    String getReceiverNickname(@Param("userNo") int userNo);
 
     void insertMessageFile(@Param("messageFile") MessageFile messageFile); // 파일 삽입
 

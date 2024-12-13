@@ -88,27 +88,41 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <c:forEach var="courseToChallenge" items="${coursesToChallenge}" varStatus="loop">
-                            <tr>
-                                <td><span>${pagination.begin + loop.index}</span></td>
-                                <td><a href="detail?no=${courseToChallenge.no}"><span>${courseToChallenge.name}</span></a></td>
-                                <td><span>${courseToChallenge.region.si} ${courseToChallenge.region.gu} ${courseToChallenge.region.dong}</span></td>
-                                <td><span>${courseToChallenge.distance}KM</span></td>
-                                <td><span>${courseToChallenge.level}단계</span></td>
-                                <td>
-                                    <span>
-                                        <a href="cancelChallenge?courseNo=${courseToChallenge.no}&page=${pagination.page}"
-                                         class="btn btn-danger" onclick="cancelChallenge(event)">삭제</a>
-                                    </span>
-                                </td>
-                            </tr>
-                        </c:forEach>
+                        <c:choose>
+                            <c:when test="${not empty coursesToChallenge}">
+                                <c:forEach var="courseToChallenge" items="${coursesToChallenge}" varStatus="loop">
+                                    <tr>
+                                        <td><span>${pagination.begin + loop.index}</span></td>
+                                        <td><a href="detail?no=${courseToChallenge.no}"><span>${courseToChallenge.name}</span></a></td>
+                                        <td><span>${courseToChallenge.region.si} ${courseToChallenge.region.gu} ${courseToChallenge.region.dong}</span></td>
+                                        <td><span>${courseToChallenge.distance}KM</span></td>
+                                        <td><span>${courseToChallenge.level}단계</span></td>
+                                        <td>
+                                            <span>
+                                                <a href="cancelChallenge?courseNo=${courseToChallenge.no}&page=${pagination.page}"
+                                                   class="btn btn-danger" onclick="cancelChallenge(event)">삭제</a>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                            </c:when>
+                            <c:otherwise>
+                                <tr>
+                                    <td colspan="6">
+                                        <div>
+                                            등록한 코스가 없습니다.
+                                            코스 목록에서 도전할 코스를 등록할 수 있습니다 <a href="list" class="btn btn-primary">코스 목록</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </c:otherwise>
+                        </c:choose>
                         </tbody>
                     </table>
                 </c:when>
                 <c:otherwise>
                     <table class="table table-bordered">
-                        <th colspan="4">로그인하면 나의 배지와 코스 기록을 확인할 수 있어요!</th>
+                        <th colspan="4">로그인하면 나의 배지와 코스 기록을 확인할 수 있습니다.</th>
                     </table>
                 </c:otherwise>
             </c:choose>
@@ -117,36 +131,38 @@
 </div>
 
 <!-- 페이징 내비게이션 -->
-<div class="row mb-3">
-    <div class="col-12">
-        <nav>
-            <form id="form-myCoursesToChallenge" method="get" action="my-course">
-                <input type="hidden" name="page"/>
-                <ul class="pagination justify-content-center">
-                    <li class="page-item ${pagination.first ? 'disabled' : '' }">
-                        <a class="page-link"
-                           onclick="changePage(${pagination.prevPage}, event)"
-                           href="my-course?page=${pagination.prevPage}">이전</a>
-                    </li>
-
-                    <c:forEach var="num" begin="${pagination.beginPage }" end="${pagination.endPage }">
-                        <li class="page-item ${pagination.page eq num ? 'active' : '' }">
+<c:if test="${not empty coursesToChallenge}">
+    <div class="row mb-3">
+        <div class="col-12">
+            <nav>
+                <form id="form-myCoursesToChallenge" method="get" action="my-course">
+                    <input type="hidden" name="page"/>
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item ${pagination.first ? 'disabled' : '' }">
                             <a class="page-link"
-                               onclick="changePage(${num }, event)"
-                               href="my-course?page=${num }">${num }</a>
+                               onclick="changePage(${pagination.prevPage}, event)"
+                               href="my-course?page=${pagination.prevPage}">이전</a>
                         </li>
-                    </c:forEach>
 
-                    <li class="page-item ${pagination.last ? 'disabled' : '' }">
-                        <a class="page-link"
-                           onclick="changePage(${pagination.nextPage}, event)"
-                           href="my-course?page=${pagination.nextPage}">다음</a>
-                    </li>
-                </ul>
-            </form>
-        </nav>
+                        <c:forEach var="num" begin="${pagination.beginPage }" end="${pagination.endPage }">
+                            <li class="page-item ${pagination.page eq num ? 'active' : '' }">
+                                <a class="page-link"
+                                   onclick="changePage(${num }, event)"
+                                   href="my-course?page=${num }">${num }</a>
+                            </li>
+                        </c:forEach>
+
+                        <li class="page-item ${pagination.last ? 'disabled' : '' }">
+                            <a class="page-link"
+                               onclick="changePage(${pagination.nextPage}, event)"
+                               href="my-course?page=${pagination.nextPage}">다음</a>
+                        </li>
+                    </ul>
+                </form>
+            </nav>
+        </div>
     </div>
-</div>
+</c:if>
 
 <%-- 완주 기록 보기 Modal창 --%>
 <div class="modal fade" id="modal-finish-records" tabindex="-1" aria-labelledby="modal-finish-records" aria-hidden="true">
@@ -206,7 +222,7 @@
     // 등록 취소 버튼을 클릭하면, 확인창이 표시된다.
     function cancelChallenge(event) {
         if (confirm("도전할 코스 목록에서 제외하시겠습니까?")) {
-            alert("도전할 코스 목록에서 제외되었습니다!");
+            alert("도전할 코스 목록에서 제외되었습니다.");
         } else {
             event.preventDefault();
         }
@@ -235,50 +251,61 @@
         let paging = result.paging;
         let num = paging.begin;
 
-        // 4. 완주 기록 목록을 화면에 표시한다.
-        let rows = "";
+        // 4. 완주 기록이 있다면, 완주 기록 목록을 표시하고 페이징 처리 기능을 구현한다.
+        if (records.length > 0) {
+            // 완주 기록 목록 표시
+            let rows = "";
 
-        for (let record of records) {
-            rows += `
-                <tr>
-                    <th><span>\${num}</span></th>
-                    <td><a href="detail?no=\${record.course.no}"><span>\${record.course.name}</span></a></td>
-                    <td><span>\${record.course.distance}KM</span></td>
-                    <td><span>\${record.course.level}단계</span></td>
-                    <td><span>\${record.finishedDate}</span></td>
-                    <td><span>\${record.finishedTime}분</span></td>
-                </tr>
-            `;
-            num++;
-        }
+            for (let record of records) {
+                rows += `
+                    <tr>
+                        <th><span>\${num}</span></th>
+                        <td><a href="detail?no=\${record.course.no}"><span>\${record.course.name}</span></a></td>
+                        <td><span>\${record.course.distance}KM</span></td>
+                        <td><span>\${record.course.level}단계</span></td>
+                        <td><span>\${record.finishedDate}</span></td>
+                        <td><span>\${record.finishedTime}분</span></td>
+                    </tr>
+                `;
+                num++;
+            }
 
-        document.querySelector("#finish-records tbody").innerHTML = rows;
+            document.querySelector("#finish-records tbody").innerHTML = rows;
 
-        // 5. 페이징 처리 기능을 화면에 표시한다.
-        let pages = "";
+            // 페이징 처리 기능 구현
+            let pages = "";
 
-        pages += `
-            <li class="page-item \${paging.first ? 'disabled' : ''}">
-                <a class="page-link" href="" onclick="getFinishRecords(\${paging.prevPage}, event)">이전</a>
-            </li>
-        `
-
-        for (let num = paging.beginPage; num <= paging.endPage; num++) {
             pages += `
-                <li class="page-item ">
-                    <a class="page-link \${paging.page == num ? 'active' : ''}"
-                        href="" onclick="getFinishRecords(\${num}, event)">\${num}</a>
+                <li class="page-item \${paging.first ? 'disabled' : ''}">
+                    <a class="page-link" href="" onclick="getFinishRecords(\${paging.prevPage}, event)">이전</a>
+                </li>
+            `
+
+            for (let num = paging.beginPage; num <= paging.endPage; num++) {
+                pages += `
+                    <li class="page-item ">
+                        <a class="page-link \${paging.page == num ? 'active' : ''}"
+                            href="" onclick="getFinishRecords(\${num}, event)">\${num}</a>
+                    </li>
+                `;
+            }
+
+            pages += `
+                <li class="page-item \${paging.last ? 'disabled' : ''}">
+                    <a class="page-link" href="" onclick="getFinishRecords(\${paging.nextPage}, event)">다음</a>
                 </li>
             `;
+
+            document.querySelector("#current-paging").innerHTML = pages;
+        } else {
+            let notice = `
+                <tr class="text-center">
+                    <td colspan="6">완주한 코스가 없어서 기록이 없습니다.</td>
+                </tr>
+            `
+
+            document.querySelector("#finish-records tbody").innerHTML = notice;
         }
-
-        pages += `
-            <li class="page-item \${paging.last ? 'disabled' : ''}">
-                <a class="page-link" href="" onclick="getFinishRecords(\${paging.nextPage}, event)">다음</a>
-            </li>
-        `;
-
-        document.querySelector("#current-paging").innerHTML = pages;
 
         // 6. Modal창을 화면에 표시한다.
         myModal.show();

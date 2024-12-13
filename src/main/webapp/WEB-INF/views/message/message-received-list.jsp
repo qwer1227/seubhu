@@ -190,7 +190,7 @@
 <script>
     function deleteMultiple() {
         let form = document.querySelector("#form-search");
-        form.setAttribute("action", "deleteMultiple"); // 액션을 deleteMultiple로 변경
+        form.setAttribute("action", "deleteMultiple"); // 액션을 deleteMessage로 변경
         form.submit(); // 폼 제출
     }
 

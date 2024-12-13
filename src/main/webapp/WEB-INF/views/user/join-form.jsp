@@ -53,9 +53,14 @@
 
             <!-- 비밀번호 -->
             <div class="form-group mb-3">
-                <form:password class="form-control" placeholder="비밀번호*" path="password" required="required"
-                               id="user-password" onblur="checkPassword()"/>
-                <div class="invalid-feedback">비밀번호는 10~16자, 문자, 숫자, 특수문자 조합이어야 합니다."</div>
+                <div class="input-group">
+                    <form:password class="form-control" placeholder="비밀번호*" path="password" required="required"
+                                   id="user-password" onblur="checkPassword()"/>
+                    <button type="button" class="btn btn-outline-dark" id="togglePassword">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
+                <div class="invalid-feedback">비밀번호는 10~16자, 문자, 숫자, 특수문자 조합이어야 합니다.</div>
                 <div class="valid-feedback">비밀번호가 유효합니다.</div>
                 <form:errors path="password" cssClass="text-danger fst-italic"/>
             </div>
@@ -124,17 +129,87 @@
 
             <!-- 이용약관 동의 -->
             <div class="form-group text-start mb-3">
-                <form:checkbox path="terms" required="required"/>
-                <label for="terms"><a href="/terms" target="_blank">이용약관*</a>에 동의합니다.</label>
+                <input type="checkbox" id="terms" name="terms" class="form-check-input" data-bs-toggle="collapse"
+                       data-bs-target="#termsContent" aria-expanded="false" aria-controls="termsContent"
+                       required="required"/>
+                <label for="terms" class="form-check-label">
+                    이용약관에 동의합니다.
+                </label>
+                <div class="collapse mt-2" id="termsContent">
+                    <div class="card card-body" style="max-height: 200px; overflow-y: auto;">
+                        <!-- 여기에 약관 내용을 작성 -->
+                        <p>
+                            <strong>제1조 (목적)</strong><br>
+                            이 약관은 회사(이하 "회사")가 제공하는 서비스의 이용 조건 및 절차, 회사와 이용자의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.
+                        </p>
+
+                        <p>
+                            <strong>제2조 (정의)</strong><br>
+                            1. "서비스"란 회사가 제공하는 모든 웹사이트 및 모바일 애플리케이션에서 제공되는 서비스를 의미합니다.<br>
+                            2. "이용자"란 회사의 서비스를 이용하는 모든 고객을 의미합니다.
+                        </p>
+
+                        <p>
+                            <strong>제3조 (서비스 이용)</strong><br>
+                            1. 이용자는 본 약관에 따라 서비스를 이용할 수 있습니다.<br>
+                            2. 회사는 서비스 이용과 관련하여 필요하다고 판단되는 경우 공지사항 또는 전자우편을 통해 공지합니다.
+                        </p>
+
+                        <p>
+                            <strong>제4조 (책임 제한)</strong><br>
+                            회사는 천재지변, 시스템 오류, 이용자의 고의 또는 과실로 인해 발생하는 손해에 대해 책임을 지지 않습니다.
+                        </p>
+                    </div>
+                </div>
                 <form:errors path="terms" cssClass="text-danger fst-italic"/>
             </div>
 
             <!-- 개인정보 수집 및 이용 동의 -->
             <div class="form-group text-start mb-3">
-                <form:checkbox path="privacy" required="required"/>
-                <label for="privacy"><a href="/privacy" target="_blank">개인정보 수집 및 이용*</a>에 동의합니다.</label>
+                <input type="checkbox" id="privacy" name="privacy" class="form-check-input" data-bs-toggle="collapse"
+                       data-bs-target="#privacyContent" aria-expanded="false" aria-controls="privacyContent"
+                       required="required"/>
+                <label for="privacy" class="form-check-label">
+                    개인정보 수집 및 이용에 동의합니다.
+                </label>
+                <div class="collapse mt-2" id="privacyContent">
+                    <div class="card card-body" style="max-height: 200px; overflow-y: auto;">
+                        <!-- 여기에 개인정보 수집 및 이용 내용 작성 -->
+                        <p>
+                            <strong>제1조 (수집하는 개인정보의 항목)</strong><br>
+                            회사는 서비스 제공을 위해 다음과 같은 개인정보를 수집합니다.<br>
+                            1. 필수 항목: 이름, 이메일, 전화번호<br>
+                            2. 선택 항목: 생년월일, 주소
+                        </p>
+
+                        <p>
+                            <strong>제2조 (개인정보의 수집 및 이용 목적)</strong><br>
+                            회사는 다음의 목적을 위해 개인정보를 이용합니다.<br>
+                            1. 회원 가입 및 관리<br>
+                            2. 서비스 제공 및 요금 결제<br>
+                            3. 고객 상담 및 민원 처리
+                        </p>
+
+                        <p>
+                            <strong>제3조 (개인정보의 보유 및 이용 기간)</strong><br>
+                            회사는 원칙적으로 개인정보의 수집 및 이용 목적이 달성된 후에는 해당 정보를 지체 없이 파기합니다. 단, 관련 법령에 따라 일정 기간 보관이 필요한 경우에는 해당
+                            기간 동안 보관합니다.<br>
+                            1. 계약 또는 청약철회 등에 관한 기록: 5년 (전자상거래 등에서의 소비자 보호에 관한 법률)<br>
+                            2. 대금결제 및 재화 등의 공급에 관한 기록: 5년 (전자상거래 등에서의 소비자 보호에 관한 법률)
+                        </p>
+
+                        <p>
+                            <strong>제4조 (개인정보의 제3자 제공)</strong><br>
+                            회사는 이용자의 동의 없이 개인정보를 제3자에게 제공하지 않습니다. 단, 다음의 경우에는 예외로 합니다.<br>
+                            1. 법령에 의한 요구가 있는 경우<br>
+                            2. 서비스 제공을 위해 필요한 범위 내에서 최소한의 정보만 제공하는 경우
+                        </p>
+
+                    </div>
+                </div>
                 <form:errors path="privacy" cssClass="text-danger fst-italic"/>
             </div>
+
 
             <!-- 가입하기 버튼 -->
             <button type="submit" class="btn btn-dark w-100">가입하기</button>
@@ -214,6 +289,17 @@
             isPasswordValid = true;
         }
     }
+
+        document.getElementById("togglePassword").addEventListener("click", function () {
+        const passwordField = document.getElementById("user-password");
+        const type = passwordField.getAttribute("type") === "password" ? "text" : "password";
+        passwordField.setAttribute("type", type);
+
+        // 아이콘 변경
+        const icon = this.querySelector("i");
+        icon.classList.toggle("bi-eye");
+        icon.classList.toggle("bi-eye-slash");
+    });
 
     // 비밀번호 확인 유효성 검사
     function checkPasswordConfirm() {

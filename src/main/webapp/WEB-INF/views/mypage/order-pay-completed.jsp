@@ -125,6 +125,7 @@
             </table>
         </div>
     </div>
+    <button type="button" class="btn btn-outline-info">주문내역으로</button>
 </div>
 <script>
     $(document).ready(function() {

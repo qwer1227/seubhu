@@ -527,10 +527,12 @@ public class MyPageController {
     @PostMapping("/order")
     public String addOrder(@RequestParam("sizeNo") List<Integer> sizeNoList
             ,@RequestParam("stock") List<Integer> stock
+            , @AuthenticationPrincipal LoginUser loginUser
             ,Model model) {
 
 
-        List<CartItemDto> orderItems = orderService.getOrderItemBySizeNo(sizeNoList, stock);
+
+        List<CartItemDto> orderItems = orderService.getOrderItemBySizeNo(sizeNoList, stock, loginUser.getNo());
         model.addAttribute("orderItems", orderItems);
 
         return "mypage/order";

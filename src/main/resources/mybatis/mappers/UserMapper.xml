@@ -184,14 +184,6 @@
         USER_NICKNAME = #{nickname} <!-- 닉네임으로 사용자 정보 조회 -->
     </select>
 
-    <select id="findUsersByNickname" resultType="store.seub2hu2.user.vo.User">
-        SELECT
-            USER_NO as no
-          , USER_NICKNAME as nickname
-        FROM USERS
-        WHERE USER_NICKNAME LIKE CONCAT('%', #{nickname}, '%')
-    </select>
-
     <!-- 비밀번호 수정: 사용자의 비밀번호를 갱신 -->
     <update id="updatePassword">
         UPDATE USERS

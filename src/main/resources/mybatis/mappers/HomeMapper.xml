@@ -16,7 +16,8 @@
           AND PROD_CREATED_AT BETWEEN CURDATE() - INTERVAL 7 DAY
           AND CURDATE()
         ORDER BY
-            PROD_RATING DESC
+            PROD_CNT DESC
+            LIMIT 3
     </select>
 
     <!-- 주간 베스트 상품 - 조회수 순으로 조회 (러닝화 기준) -->
@@ -25,10 +26,9 @@
         FROM PRODUCTS
         WHERE PROD_STATUS = '판매중'
         AND CAT_NO = 11  <!-- 러닝화 카테고리 -->
-        AND PROD_CREATED_AT BETWEEN CURDATE() - INTERVAL 7 DAY
-        AND CURDATE()
         ORDER BY
         PROD_CNT DESC
+        LIMIT 5
     </select>
 
     <select id="getTopViewedBoards" resultType="store.seub2hu2.community.vo.Board">
@@ -42,6 +42,34 @@
             LEFT JOIN USERS U ON B.USER_NO = U.USER_NO
         WHERE B.IS_DELETED = 'N'
         ORDER BY B.BOARD_VIEW_CNT DESC
+            LIMIT 3
+    </select>
+
+    <select id="getLatestMarathons" resultType="store.seub2hu2.community.vo.Marathon">
+        SELECT
+        MARATHON_NO        AS no,
+        MARATHON_TITLE           AS title,
+        MARATHON_DATE    AS marathonDate,
+        APPLY_START_DATE        AS startDate,
+        APPLY_END_DATE        AS endDate
+        FROM MARATHONS
+        WHERE IS_DELETED = 'N'
+        ORDER BY MARATHON_CREATED_DATE DESC
+            LIMIT 5
+    </select>
+
+    <select id="getOngoingLessons" resultType="store.seub2hu2.lesson.vo.Lesson">
+        SELECT
+        LESSON_NO        AS lessonNo,
+        LESSON_TITLE           AS title,
+        LESSON_SUBJECT    AS subject,
+        LESSON_PLACE    AS place,
+        PARTICIPANT as participant,
+        LESSON_START_DATE        AS start,
+        LESSON_END_DATE        AS end
+        FROM LESSONS
+        WHERE LESSON_STATUS = '모집중'
+        ORDER BY LESSON_CREATED_DATE DESC
             LIMIT 3
     </select>
 
