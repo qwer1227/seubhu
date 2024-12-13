@@ -249,8 +249,8 @@
                         </a>
                         <p class="card-text text-muted">${lesson.subject}</p>
                         <p class="card-text text-muted">${lesson.place}</p>
-                        <p class="card-text text-muted"><fmt:formatDate value="${lesson.start}" pattern="yyyy-MM-dd"/>
-                        ~<fmt:formatDate value="${lesson.end}" pattern="yyyy-MM-dd"/></p>
+                        <p class="card-text text-muted">${lesson.start}"
+                        ~${lesson.end}"</p>
                         <a href="/lesson/detail?lessonNo=${lesson.lessonNo}" class="btn btn-dark text-white">예약하기</a>
                     </div>
                 </div>
