@@ -71,7 +71,7 @@
                         </thead>
                         <tbody>
                         <tr>
-                            <th colspan="4">완주한 코스가 없어서 기록이 존재하지 않습니다!</th>
+                            <th colspan="4">완주한 코스가 없어서 기록이 존재하지 않습니다.</th>
                         </tr>
                         </tbody>
                     </c:otherwise>
@@ -80,7 +80,7 @@
         </sec:authorize>
         <c:if test="${empty loginUser}">
             <tr>
-                <td>로그인 후 나의 순위를 확인할 수 있습니다!</td>
+                <td>로그인 후 나의 순위를 확인할 수 있습니다.</td>
             </tr>
         </c:if>
     </table>
