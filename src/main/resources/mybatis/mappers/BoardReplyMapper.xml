@@ -3,7 +3,7 @@
 <mapper namespace="store.seub2hu2.community.mapper.BoardReplyMapper">
 
   <update id="updateReply">
-        update BOARD_REPLIES
+        update REPLIES
         set
             prev_reply_no = #{reply.prevNo}
             , reply_content = #{reply.content}
@@ -16,7 +16,7 @@
   <!-- void insertReply(@Param("reply") Reply reply); -->
   <insert id="insertReply" >
 
-    insert into BOARD_REPLIES
+    insert into REPLIES
     (
     board_no
     , reply_content
@@ -47,7 +47,7 @@
       , br.is_report             as report
       , br.board_reply_like      as replyLike
       , br.is_deleted            as deleted
-    from BOARDS b join BOARD_REPLIES br
+    from BOARDS b join REPLIES br
          on b.board_no = br.board_no
       join USERS u
          on br.user_no = u.user_no
@@ -70,7 +70,7 @@
         , br.board_reply_like       as replyLike
         , br.is_deleted             as deleted
     from
-        BOARD_REPLIES br join BOARDS b
+        REPLIES br join BOARDS b
             on br.board_no = b.board_no
         join USERS u
             on br.user_no = u.user_no
@@ -84,13 +84,13 @@
     select
         count(*)
     from
-        BOARD_REPLIES
+        REPLIES
     where board_no = #{no}
   </select>
 
   <!-- void deleteReplyByNo(@Param("no") int replyNo); -->
   <update id="deleteReplyByNo" parameterType="int">
-    update BOARD_REPLIES
+    update REPLIES
     set is_deleted = 'Y'
     where reply_no = #{no}
   </update>
