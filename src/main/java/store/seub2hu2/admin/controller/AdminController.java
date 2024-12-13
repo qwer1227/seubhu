@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import store.seub2hu2.admin.dto.*;
 import store.seub2hu2.admin.service.AdminService;
@@ -169,7 +170,28 @@ public class AdminController {
     }
 
     @PostMapping("/course-edit-form")
-    public String courseEditForm(@RequestParam("no") int courseNo,CourseRegisterForm form) {
+    public String courseEditForm(@RequestParam Map<String, String> params,
+                                @RequestParam("no") int courseNo, CourseRegisterForm form,
+                                @RequestParam(value = "image", required = false) MultipartFile image,
+                                RedirectAttributes redirectAttributes) {
+
+//        try {
+//            adminService.getUpdateCourse(form);
+//        } catch (IllegalArgumentException e) {
+//            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+//            return "redirect:/admin/course-edit?no=" + courseNo;
+//        }
+
+        // 유효성 검사
+        if (params.get("name").isEmpty() ||
+                params.get("time").isEmpty() ||
+                params.get("level").isEmpty() ||
+                params.get("distance").isEmpty() ||
+                (image == null || image.isEmpty())) {
+
+            redirectAttributes.addFlashAttribute("errorMessage", "모든 입력값을 입력해주세요.");
+            return "redirect:/admin/course-edit";
+        }
 
         adminService.getUpdateCourse(form);
 
@@ -297,7 +319,7 @@ public class AdminController {
         adminService.getUpdateProduct(product);
 
 
-        return "redirect:/admin/product-detail?no=" + product.getNo() + "&colorNo=" + product.getColorNum();
+        return "redirect:/admin/register-editform?no=" + product.getNo() + "&colorNo=" + product.getColorNum();
     }
 
     @GetMapping("/delete-size")
@@ -431,6 +453,12 @@ public class AdminController {
         List<Image> images = adminService.getImageByColorNo(colorNo);
         model.addAttribute("images", images);
 
+        if (images.isEmpty()) {
+            model.addAttribute("noImages", true); // 이미지가 없다는 플래그 추가
+        } else {
+            model.addAttribute("images", images);
+        }
+
         model.addAttribute("color", color);
         model.addAttribute("colors", colors);
         model.addAttribute("product", product);
@@ -493,25 +521,25 @@ public class AdminController {
     @PostMapping("/register-color")
     public String registerColor(@RequestParam(name="no", required = false) Integer no,
                                 @RequestParam(name="name", required = false) String name,
+                                RedirectAttributes redirectAttributes,
                                 Model model) {
-
         if (no == null || name == null || name.isEmpty()) {
-            throw new IllegalArgumentException("상품 번호와 색상은 필수 입력 값입니다.");
+            redirectAttributes.addFlashAttribute("errorMessage", "상품 번호와 색상은 필수 입력 값입니다.");
+            return "redirect:/admin/register-color?no=" + no;
         }
 
         Map<String, Object> condition = new HashMap<>();
         condition.put("no", no);
         condition.put("name", name);
 
-
-
-
         model.addAttribute("condition", condition);
         adminService.addColor(condition);
 
         int colorNo = adminService.getColor(condition);
 
-        return "redirect:/admin/product-detail?no=" + condition.get("no") + "&colorNo=" + colorNo;
+        redirectAttributes.addFlashAttribute("successMessage", "등록되었습니다.");
+
+        return "redirect:/admin/register-color?no=" + condition.get("no") + "&colorNo=" + colorNo;
     }
 
     @GetMapping("/product-detail")
@@ -626,6 +654,7 @@ public class AdminController {
                                   @RequestParam(name = "sort" , required = false, defaultValue = "date") String sort,
                                   @RequestParam(name = "opt", required = false) String opt,
                                   @RequestParam(name = "value", required = false) String value,
+
                                   Model model) {
 
         Map<String, Object> condition = new HashMap<>();
@@ -649,6 +678,37 @@ public class AdminController {
         model.addAttribute("paging", dto.getPaging());
 
         return "admin/product-stock";
+    }
+
+    @PostMapping("/product-stock")
+    public String productStock(@RequestParam("Y") String Y,
+                               @RequestParam("no") int no,
+                               @RequestParam("topNo") int topNo){
+
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("Y", Y);
+        condition.put("no", no);
+
+        adminService.getDeletedProd(condition);
+
+        return  "redirect:/admin/product-stock?topNo=" + topNo;
+    }
+
+    @PostMapping("/product-show")
+    public String productShow(@RequestParam("no") int no,
+                              @RequestParam("topNo") int topNo,
+                              @RequestParam("show") String show) {
+
+        System.out.println("show:" + show);
+
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("no", no);
+        condition.put("show", show);
+
+        // 노출 상태 변경 처리
+        adminService.updateProductShowStatus(condition);
+
+        return "redirect:/admin/product-stock?topNo=" + topNo;
     }
 
     @GetMapping("/product")

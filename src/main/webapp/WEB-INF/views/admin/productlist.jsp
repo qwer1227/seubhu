@@ -167,10 +167,10 @@
                 <div class="container-xxl text-center" id="wrap">
                     <div class="row row-cols-1 row-cols-md-3 g-4 mt-3 mb-5">
                         <c:forEach var="prod"  items="${products }">
-                            <div class="col">
+                            <div class="col mb-3">
                                 <div class="card h-100">
                                     <a class="text-decoration-none" href="product-detail?no=${prod.no}&colorNo=${prod.colorNum}">
-                                        <img src="${prod.imgThum}" class="card-img-top" alt="...">
+                                        <img src="${prod.imgThum}" class="card-img-top" alt="..." style="object-fit: cover;">
                                     </a>
                                     <div class="card-body">
                                         <h5 class="card-title">${prod.name}</h5>

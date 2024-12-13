@@ -29,5 +29,7 @@ public class ProdListDto {
     private Category category; // 카테고리 객체
     private Brand brand; // 브랜드 객체
     private Color color;
+    private String isDeleted;
+    private String isShow;
 
 }

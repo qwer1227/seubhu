@@ -348,72 +348,42 @@ public class AdminService {
     }
 
     public void getUpdateCourse(CourseRegisterForm form) {
+        MultipartFile multipartFile = form.getImage();
+
+        if (multipartFile == null || multipartFile.isEmpty()) {
+            throw new IllegalArgumentException("이미지가 업로드되지 않았습니다.");
+        }
+
+        // 기존 코드 유지
         Region region = new Region();
         region.setSi(form.getSi());
         region.setGu(form.getGu());
         region.setDong(form.getDong());
 
         Region savedRegion = adminMapper.checkRegion(region);
-
         Course course = new Course();
 
         if (savedRegion == null) {
-
             adminMapper.insertRegion(region);
-
             course.setRegion(adminMapper.getRegions(region));
-
-            course.setNo(form.getNo());
-            course.setName(form.getName());
-            course.setTime(form.getTime());
-            course.setLevel(form.getLevel());
-            Double distance = form.getDistance();
-
-            if (distance == null) {
-                distance = 0.0; // 기본값 설정 (필요에 따라 변경)
-            }
-            course.setDistance(distance);
-
-            MultipartFile multipartFile = form.getImage();
-            if (multipartFile != null) {
-                String originalFilename = multipartFile.getOriginalFilename();
-                String filename = System.currentTimeMillis() + originalFilename;
-
-                //FileUtils.saveMultipartFile(multipartFile, saveDirectory, filename);
-                s3Service.uploadFile(multipartFile, bucketName, saveDirectory, filename);
-
-                course.setFilename(filename);
-            }
-
-            adminMapper.updateCourse(course);
         } else {
-
             course.setRegion(savedRegion);
-
-            course.setNo(form.getNo());
-            course.setName(form.getName());
-            course.setTime(form.getTime());
-            course.setLevel(form.getLevel());
-            Double distance = form.getDistance();
-
-            if (distance == null) {
-                distance = 0.0; // 기본값 설정 (필요에 따라 변경)
-            }
-            course.setDistance(distance);
-
-            MultipartFile multipartFile = form.getImage();
-            if (multipartFile != null) {
-                String originalFilename = multipartFile.getOriginalFilename();
-                String filename = System.currentTimeMillis() + originalFilename;
-
-                //FileUtils.saveMultipartFile(multipartFile, saveDirectory, filename);
-                s3Service.uploadFile(multipartFile, bucketName, saveDirectory, filename);
-
-                course.setFilename(filename);
-            }
-
-            adminMapper.updateCourse(course);
         }
+
+        course.setNo(form.getNo());
+        course.setName(form.getName());
+        course.setTime(form.getTime());
+        course.setLevel(form.getLevel());
+        Double distance = form.getDistance() != null ? form.getDistance() : 0.0;
+        course.setDistance(distance);
+
+        String originalFilename = multipartFile.getOriginalFilename();
+        String filename = System.currentTimeMillis() + originalFilename;
+
+        s3Service.uploadFile(multipartFile, bucketName, saveDirectory, filename);
+        course.setFilename(filename);
+
+        adminMapper.updateCourse(course);
     }
 
     public Map<String, Object> getTotalSubject(String day) {
@@ -543,5 +513,15 @@ public class AdminService {
         ListDto<orderDeliveryDto> dtos = new ListDto<>(deliveryDtos, pagination);
 
         return dtos;
+    }
+
+    public void getDeletedProd(Map<String, Object> condition) {
+
+        adminMapper.getDeletedProds(condition);
+    }
+
+    public void updateProductShowStatus(Map<String, Object> condition) {
+
+        adminMapper.getUpdateShows(condition);
     }
 }

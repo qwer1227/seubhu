@@ -84,14 +84,6 @@
                   </div>
                 </div>
                 <div class="row row-cols-1 p-3">
-                  <%--<div class="col-2">
-                    <label for="topCategory">상위 카테고리</label>
-                    <select name="topNo" class="form-control" id="topCategory" onchange="updateCategoryDetails()">
-                      <option value="10">남성</option>
-                      <option value="20">여성</option>
-                      <option value="30">러닝용품</option>
-                    </select>
-                  </div>--%>
                   <div class="col-3">
                     <label for="category">카테고리</label>
                     <select name="categoryNo" class="form-control" id="category" <%--onchange="updateSize()"--%>>

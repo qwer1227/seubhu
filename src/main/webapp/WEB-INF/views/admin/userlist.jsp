@@ -95,7 +95,7 @@
                                 <col width="10%">
                                 <col width="10%">
                             </colgroup>
-                            <thead>
+                            <thead class="text-center">
                                 <tr>
                                     <th>회원번호</th>
                                     <th>이름</th>
@@ -106,7 +106,7 @@
                                     <th>블랙현황</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody class="text-center">
                                 <c:forEach var="u" items="${users }">
                                     <tr>
                                         <td>${u.no}</td>

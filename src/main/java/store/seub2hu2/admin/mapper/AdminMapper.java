@@ -126,6 +126,10 @@ public interface AdminMapper {
 
     List<orderDeliveryDto> getOrderDeliveries(Map<String, Object> condition);
 
+    void getDeletedProds(@Param("condition") Map<String, Object> condition);
+
+    void getUpdateShows(@Param("condition") Map<String, Object> condition);
+
 
 
 

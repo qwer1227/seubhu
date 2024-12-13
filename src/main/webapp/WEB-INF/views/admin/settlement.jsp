@@ -159,7 +159,7 @@
                   <col width="10%">
                   <col width="10%">
                 </colgroup>
-                <thead>
+                <thead class="text-center">
                   <tr>
                     <th>결제타입</th>
                     <th>결제자</th>
@@ -172,13 +172,17 @@
                     <th>시간</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody class="text-center">
                   <c:forEach var="d" items="${dto}">
                     <tr>
                       <td>${d.settleType}</td>
                       <td>${d.name}</td>
                       <td>${d.id}</td>
-                      <td>${d.title}</td>
+                      <td>
+                        <a href="/lesson/detail?lessonNo=${d.lessonNo}">
+                          ${d.title}
+                        </a>
+                      </td>
                       <td><fmt:formatNumber value="${d.price }"/> 원</td>
                       <td>${d.payMethod}</td>
                       <td>${d.status}</td>
@@ -232,6 +236,7 @@
     </div>
   </div>
 </div>
+
 <!-- Footer -->
 <%@include file="/WEB-INF/views/admincommon/footer.jsp" %>
 <!-- End of Footer -->

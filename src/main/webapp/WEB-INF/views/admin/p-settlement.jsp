@@ -160,7 +160,7 @@
                   <col width="10%">
                   <col width="10%">
                 </colgroup>
-                <thead>
+                <thead class="text-center">
                   <tr>
                     <th>결제타입</th>
                     <th>결제자</th>
@@ -173,7 +173,7 @@
                     <th>시간</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody class="text-center">
                   <c:forEach var="d" items="${dto}">
                     <tr>
                       <td>${d.payType}</td>
@@ -277,12 +277,9 @@
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
       </div>
     </div>
-
   </div>
-
-
 </div>
-
+</div>
 
 <!-- Footer -->
 <%@include file="/WEB-INF/views/admincommon/footer.jsp" %>

@@ -121,24 +121,30 @@
                                     <col width="7%">
                                     <col width="10%">
                                     <col width="*%">
+                                    <col width="8%">
                                     <col width="10%">
-                                    <col width="10%">
-                                    <col width="10%">
-                                    <col width="10%">
+                                    <col width="7%">
+                                    <col width="8%">
+                                    <col width="8%">
+                                    <col width="6%">
+                                    <col width="8%">
                                 </colgroup>
-                                <thead>
+                                <thead class="text-center">
                                     <tr>
                                         <th>상품번호</th>
                                         <th>브랜드</th>
                                         <th>카테고리</th>
                                         <th>상품명</th>
+                                        <th>상품노출여부</th>
                                         <th>가격</th>
                                         <th>대표색상</th>
                                         <th>상태</th>
                                         <th>설정</th>
+                                        <th>삭제</th>
+                                        <th>노출설정</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody class="text-center">
                                     <c:forEach var="p" items="${products}">
                                         <tr>
                                             <td>${p.no}</td>
@@ -149,13 +155,30 @@
                                                     ${p.name}
                                                 </a>
                                             </td>
-                                            <td><fmt:formatNumber value="${p.price }"/> 원</td>
+                                            <td class="text-center">${p.isShow}</td>
+                                            <td><fmt:formatNumber value="${p.price}"/> 원</td>
                                             <td>${p.color.name}</td>
                                             <td>${p.status}</td>
                                             <td>
                                                 <a href="/admin/product-stock-detail?no=${p.no}&colorNo=${p.color.no}">
                                                     <button type="button" class="btn btn-success">재고추가</button>
                                                 </a>
+                                            </td>
+                                            <td>
+                                                <form method="post" action="/admin/product-stock">
+                                                    <input type="hidden" name="no" value="${p.no}">
+                                                    <input type="hidden" name="topNo" value="${param.topNo}">
+                                                    <input type="hidden" name="Y" value="${p.isDeleted}">
+                                                    <button type="button" class="btn btn-danger" onclick="confirmDelete(this)">삭제</button>
+                                                </form>
+                                            </td>
+                                            <td>
+                                                <form method="post" action="/admin/product-show">
+                                                    <input type="hidden" name="no" value="${p.no}">
+                                                    <input type="hidden" name="topNo" value="${param.topNo}">
+                                                    <input type="hidden" name="show" value="${p.isShow}">
+                                                    <button type="button" class="btn btn-warning" onclick="openShowModal(this)">노출설정</button>
+                                                </form>
                                             </td>
                                         </tr>
                                     </c:forEach>
@@ -195,6 +218,25 @@
         </div>
     </div>
 </div>
+<!-- Modal -->
+<div class="modal fade" id="showModal" tabindex="-1" role="dialog" aria-labelledby="showModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="showModalLabel">노출 상태 변경</h5>
+            </div>
+            <div class="modal-body">
+                노출 상태를 변경하시겠습니까?
+                <button type="button" class="btn btn-success ml-2" id="setShowY">게시 (Y)</button>
+                <button type="button" class="btn btn-danger ml-2" id="setShowN">숨기기 (N)</button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Footer -->
 <%@include file="/WEB-INF/views/admincommon/footer.jsp" %>
 <!-- End of Footer -->
@@ -204,8 +246,6 @@
 <script>
     const form =document.querySelector("#form-search");
     const pageInput = document.querySelector("input[name=page]");
-
-
 
     function changeSort() {
         pageInput.value = 1;
@@ -231,6 +271,43 @@
 
         form.submit();
     }
+    function confirmDelete(button) {
+        // 삭제 확인창 띄우기
+        const confirmResult = confirm("정말 삭제하시겠습니까?");
+
+        // 사용자가 '확인'을 클릭하면
+        if (confirmResult) {
+            // 부모 폼을 찾아서 submit을 실행
+            button.closest('form').submit();
+        }
+        // 취소를 클릭하면 아무 작업도 하지 않음
+    }
+
+    let currentForm;
+
+    // 노출 설정 모달 열기
+    function openShowModal(button) {
+        currentForm = button.closest('form');
+        $('#showModal').modal('show');
+    }
+
+    // 노출 설정 (Y)
+    document.getElementById('setShowY').addEventListener('click', function() {
+        if (currentForm) {
+            currentForm.querySelector('input[name="show"]').value = "Y";
+            currentForm.submit();
+        }
+        $('#showModal').modal('hide');
+    });
+
+    // 숨기기 설정 (N)
+    document.getElementById('setShowN').addEventListener('click', function() {
+        if (currentForm) {
+            currentForm.querySelector('input[name="show"]').value = "N";
+            currentForm.submit();
+        }
+        $('#showModal').modal('hide');
+    });
 </script>
 
 </html>

@@ -69,12 +69,17 @@
                     <div class="form-group mb-3 col-4">
                         <label class="form-label">색상 : ${color.name}</label>
                     </div>
-                    <div class="row justify-content-end">
-                        <div class="text-end" style="text-align: right">
-                            <a type="button" class="btn btn-success mr-2" href="/admin/product-detail?no=${param.no}&colorNo=${param.colorNo}">뒤로가기</a>
+                    <div class="row">
+                        <div class="col-6 text-left ml-1" style="text-align: right">
+                            <a type="button" class="btn btn-success mr-2" href="/admin/product-detail?no=${param.no}&colorNo=${param.colorNo}">해당상품 보기</a>
                         </div>
-                        <div class="text-end" style="text-align: right">
-                            <button type="button" id="getSubmitButton" class="btn btn-primary">조회</button>
+                        <div class="col-6 row justify-content-end">
+                            <div class="text-end" style="text-align: right">
+                                <a type="button" class="btn btn-dark mr-2" href="/admin/register-image?no=${param.no}&colorNo=${param.colorNo}">뒤로가기</a>
+                            </div>
+                            <div class="text-end" style="text-align: right">
+                                <button type="button" id="getSubmitButton" class="btn btn-primary ">조회</button>
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -84,6 +89,12 @@
                     <input type="hidden" name="no" value="${param.no}">
                     <input type="hidden" name="colorNo" value="${param.colorNo}"/>
                     <div id="imageContainer">
+                    <c:if test="${not empty noImages}">
+                        <script>
+                            alert("해당 상품의 이미지가 없습니다.");
+                            window.location.href = '/admin/register-image?no=${param.no}&colorNo=${param.colorNo}';
+                        </script>
+                    </c:if>
                         <c:forEach var="img" items="${images}">
                             <div class="form-group col mb-3">
                                 <label class="form-label mb-3 mr-2">대표 이미지</label>
@@ -94,13 +105,11 @@
                     </div>
                     <div class="row justify-content-end">
                         <div class="text-end" style="text-align: right">
-                            <a type="button" class="btn btn-success mr-2" href="/admin/product-detail?no=${param.no}&colorNo=${param.colorNo}">뒤로가기</a>
-                        </div>
-                        <div class="text-end" style="text-align: right">
-                            <button type="submit" class="btn btn-primary">등록</button>
+                            <button type="submit" class="btn btn-primary mr-1">등록</button>
                         </div>
                     </div>
                 </form>
+
             </div>
         </div>
     </div>

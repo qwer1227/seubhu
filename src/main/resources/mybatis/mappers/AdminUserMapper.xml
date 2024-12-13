@@ -615,6 +615,7 @@
                  , P.pay_method as payMethod
                  , P.pay_status as status
                  , L.lesson_subject as lessonSubject
+                 , L.lesson_no      as lessonNo
             from
                 PAYMENTS P, USERS U, LESSON_RESERVATIONS R, LESSONS L
             where
@@ -842,6 +843,28 @@
     </update>
 
     <!--
+        void getUpdateShows(@Param("condition") Map<String, Object> condition);
+    -->
+    <update id="getUpdateShows">
+        update PRODUCTS
+        set
+            ISSHOW = #{condition.show}
+        where
+            prod_no = #{condition.no}
+    </update>
+
+    <!--
+        void getDeletedProds(@Param("condition") Map<String, Object> condition);
+    -->
+    <update id="getDeletedProds">
+        update PRODUCTS
+        set
+            prod_deleted = 'Y'
+        where
+            prod_no = #{condition.no}
+    </update>
+
+    <!--
         List<ProdListDto> getStockProducts(Map<String, Object> condition);
     -->
 
@@ -873,11 +896,14 @@
             PC.CAT_NAME AS "category.name",
             PB.BRAND_NAME AS "brand.name",
             PL.COLOR_NO   AS "color.no",
-            PL.COLOR_NAME AS "color.name"
+            PL.COLOR_NAME AS "color.name",
+            P.ISSHOW AS "isShow"
             FROM PRODUCTS P
             JOIN PROD_CATEGORIES PC ON P.CAT_NO = PC.CAT_NO
             JOIN PROD_BRANDS PB ON P.BRAND_NO = PB.BRAND_NO
             LEFT OUTER JOIN PROD_COLORS PL ON P.PROD_COLOR_NUM = PL.COLOR_NO
+            WHERE
+                P.prod_deleted = 'N'
             <if test="condition != null">
                 <choose>
                     <when test="condition.opt == 'name'">
