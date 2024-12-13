@@ -78,7 +78,13 @@ public class ProductController {
     @GetMapping("/detail")
     public String detail(@RequestParam("no") int no,
                          @RequestParam("colorNo") int colorNo,
+             @AuthenticationPrincipal LoginUser loginUser,
                          Model model) {
+
+        model.addAttribute("loginUser", loginUser);
+
+        User user = userService.findbyUserId(loginUser.getId());
+        model.addAttribute("user", user);
 
         ProdDetailDto prodDetailDto = productService.getProductByNo(no);
         model.addAttribute("prodDetailDto", prodDetailDto);

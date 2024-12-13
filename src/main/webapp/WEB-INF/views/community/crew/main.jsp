@@ -102,7 +102,7 @@
           </div>
         </c:otherwise>
       </c:choose>
-      
+
       <c:if test="${paging.totalRows > 6}">
         <div class="mt-3">
           <ul class="pagination justify-content-center">
@@ -111,7 +111,7 @@
                  onclick="changePage(${paging.prevPage}, event)"
                  href="javascript:void(0)"><<</a>
             </li>
-            
+
             <c:forEach var="num" begin="${paging.beginPage }" end="${paging.endPage }">
               <li class="page-item ${paging.page eq num ? 'active' : '' }">
                 <a class="page-link"
@@ -119,7 +119,7 @@
                    href="javascript:void(0)">${num }</a>
               </li>
             </c:forEach>
-            
+
             <li class="page-item ${paging.last ? 'disabled' : '' }">
               <a class="page-link"
                  onclick="changePage(${paging.nextPage}, event)"
@@ -128,7 +128,7 @@
           </ul>
         </div>
       </c:if>
-      
+
       <div class="row p-3 d-flex justify-content-left">
         <div class="col-2">
           <select class="form-control" name="opt">
@@ -147,7 +147,7 @@
           <button class="btn btn-outline-primary" onclick="searchKeyword()">검색</button>
         </div>
         <div class="col d-flex justify-content-center">
-        
+
         </div>
         <security:authorize access="isAuthenticated()">
           <security:authentication property="principal" var="loginUser"/>
@@ -160,7 +160,6 @@
       </div>
     </form>
   </div>
-  
   <%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
 <script>

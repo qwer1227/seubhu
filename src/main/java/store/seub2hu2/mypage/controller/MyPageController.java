@@ -32,6 +32,7 @@ import store.seub2hu2.mypage.service.QnaService;
 import store.seub2hu2.mypage.service.WorkoutService;
 import store.seub2hu2.mypage.vo.Post;
 import store.seub2hu2.order.service.OrderService;
+import store.seub2hu2.order.vo.Order;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.service.UserService;
 import store.seub2hu2.user.vo.User;
@@ -183,7 +184,7 @@ public class MyPageController {
             condition.put("keyword", keyword);
         }
 
-        ListDto<Board> dto = boardService.getBoards(condition);
+        ListDto<Board> dto = boardService.getHistoryBoards(condition);
 
         model.addAttribute("boards", dto.getData());
         model.addAttribute("paging", dto.getPaging());
@@ -505,6 +506,12 @@ public class MyPageController {
     @GetMapping("/orderhistorydetail/{orderNo}")
     public String orderHistoryDetail(@PathVariable("orderNo") int orderNo, Model model, @AuthenticationPrincipal LoginUser loginUser) {
 
+        ResponseDTO order = orderService.getOrderDetails(orderNo);
+
+        double totalPrice = order.getOrders().getOrderPrice()-order.getOrders().getDisPrice();
+
+        model.addAttribute("order", order);
+        model.addAttribute("totalPrice", totalPrice);
 
         return "mypage/orderhistorydetail";
     }

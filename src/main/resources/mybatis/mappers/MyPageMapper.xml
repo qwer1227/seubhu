@@ -17,6 +17,7 @@
         <association property="user" javaType="store.seub2hu2.user.vo.User">
             <id property="no" column="USER_NO"/> <!-- 유저 번호 -->
             <result property="name" column="USER_NAME"/> <!-- 유저 이름 -->
+            <result property="nickname" column="USER_NICKNAME"/>
         </association>
         <!-- PostImage 리스트 매핑 -->
         <collection property="images" ofType="store.seub2hu2.mypage.vo.PostImage">
@@ -40,6 +41,7 @@
             p.created_date,
             u.user_no ,
             u.user_name,
+            u.user_nickname,
             i.image_no,
             i.image_url,
             c.comment_no,

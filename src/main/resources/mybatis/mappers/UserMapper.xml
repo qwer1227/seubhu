@@ -114,22 +114,28 @@
 
     <!-- 사용자 ID로 사용자 정보 조회 -->
     <select id="getUserById" resultMap="UserResultMap">
-        SELECT
-        USER_NO,
-        USER_ID,
-        USER_NAME,
-        PASSWORD,
-        USER_EMAIL,
-        USER_NICKNAME,
-        USER_TEL,
-        USER_TYPE,
-        PROVIDER,
-        USER_CREATED_DATE,
-        USER_UPDATED_DATE,
-        USER_TERMS,
-        USER_PRIVACY
+        SELECT DISTINCT
+        u.USER_NO,
+        u.USER_ID,
+        u.USER_NAME,
+        u.PASSWORD,
+        u.USER_EMAIL,
+        u.USER_NICKNAME,
+        u.USER_TEL,
+        u.USER_TYPE,
+        u.PROVIDER,
+        u.USER_CREATED_DATE,
+        u.USER_UPDATED_DATE,
+        u.USER_TERMS,
+        u.USER_PRIVACY,
+        ui.user_img_url as imgName,
+        ui.img_isprimary as isPrimary
         from
-        USERS
+        USERS u
+        LEFT OUTER JOIN
+        USER_IMGS ui
+        ON
+        u.user_no = ui.user_no
         where
         USER_ID = #{id} <!-- 사용자 ID로 사용자 정보 조회 -->
     </select>
@@ -247,5 +253,36 @@
         where
             user_no = #{userNo}
     </select>
+
+    <!-- void insertUserImage(@Param("user")UserImage userImage); -->
+    <insert id="insertUserImage">
+        insert into USER_IMGS
+        (
+        img_created_date
+        , img_isprimary
+        , user_no
+        <if test="user.imgName != null">
+            , user_img_url
+        </if>
+        )
+        values
+        (
+        NOW()
+        , 'Y'
+        , #{user.userNo}
+        <if test="user.imgName != null">
+            , #{user.imgName}
+        </if>
+        )
+    </insert>
+
+    <!-- void updatePrimaryToN(@Param("userNo") int userNo); -->
+
+    <!-- 기존 ISPRIMARY 값을 N으로 업데이트 -->
+    <update id="updatePrimaryToN">
+        UPDATE USER_IMGS
+        SET IMG_ISPRIMARY = 'N'
+        WHERE USER_NO = #{userNo}
+    </update>
 
 </mapper>
