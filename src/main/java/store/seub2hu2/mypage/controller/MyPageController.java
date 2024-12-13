@@ -548,8 +548,8 @@ public class MyPageController {
 //    }
     
     // 레슨예약내역 화면으로 간다
-    @GetMapping("/reservation/{userId}")
-    public String reservation(@PathVariable("userId") String userId , @AuthenticationPrincipal LoginUser loginUser){
+    @GetMapping("/reservation")
+    public String reservation(){
 
         return "lesson/lesson-reservation";
     }
@@ -558,7 +558,7 @@ public class MyPageController {
     @GetMapping("/qna")
     public String qna(Model model, @AuthenticationPrincipal LoginUser loginUser, RequestParamsDto requestParamsDto){
 
-        ListDto<QnaResponse> qnaDto = qnaService.getQnas2(requestParamsDto);
+        ListDto<QnaResponse> qnaDto = qnaService.getQnas(requestParamsDto, loginUser.getNo());
         
         model.addAttribute("qna", qnaDto.getData());
         model.addAttribute("pagination", qnaDto.getPaging());
@@ -597,11 +597,20 @@ public class MyPageController {
 
     // 문의삭제 기능 POST
     @PostMapping("/qna/delete/{qnaNo}")
-    public String postQnaDelete(@PathVariable("qnaNo") int qnaNo){
+    public String postQnaDelete(@PathVariable("qnaNo") int qnaNo, @AuthenticationPrincipal LoginUser loginUser){
+
+        String userName = loginUser.getNickname();
+
+        boolean isAdmin = "관리자".equals(userName);
 
         qnaService.deleteQna(qnaNo);
 
-        return "redirect:/mypage/qna";
+        // 역할에 따른 리다이렉트 분류
+        if(isAdmin){
+            return "redirect:/admin/qna";
+        } else {
+            return "redirect:/mypage/qna";
+        }
     }
 
     // 문의수정 화면

@@ -219,9 +219,10 @@ public class UserService {
 
         User user = findbyUserNo(userNo);
 
-        if(user.getPassword().equals(password)){
+        if(passwordEncoder.matches(password, user.getPassword())){
+            return true;
+        } else {
             return false;
         }
-        return true;
     }
 }

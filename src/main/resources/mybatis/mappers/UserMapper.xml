@@ -246,8 +246,9 @@
     <!-- User findByUserNo(@Param("userNo") int userNo); -->
     <select id="findByUserNo" parameterType="store.seub2hu2.user.vo.User">
         select
-            user_no as no
-        ,   password as password
+          user_no as no
+        , password as password
+        , user_nickname as nickname
         from
             USERS
         where

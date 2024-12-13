@@ -157,7 +157,6 @@
           <div class="btn-group">
             <a href="/mypage/reviews/${item.prodNo}" class="btn btn-reviews">후기 작성</a>
             <a href="/mypage/tracking/${item.prodNo}" class="btn btn-tracking">배송 조회</a>
-            <a href="/mypage/repurchase/${item.prodNo}" class="btn btn-repurchase">재구매</a>
           </div>
         </div>
       </div>

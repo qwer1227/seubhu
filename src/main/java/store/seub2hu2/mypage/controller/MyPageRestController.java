@@ -202,7 +202,7 @@ public class MyPageRestController {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/getworkoutdetail{no}")
+    @GetMapping("/getworkoutdetail/{no}")
     public ResponseEntity<Map<String, Object>> getWorkoutDetail(@PathVariable("no") int workoutNo){
 
         Map<String, Object> response = new HashMap<>();

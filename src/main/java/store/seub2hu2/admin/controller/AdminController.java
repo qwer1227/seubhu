@@ -847,33 +847,22 @@ public class AdminController {
     }
 
     @GetMapping("/qna")
-    public String qna(@ModelAttribute RequestParamsDto dto ,Model model) {
+    public String qna(@ModelAttribute RequestParamsDto dto ,Model model, @AuthenticationPrincipal LoginUser loginUser) {
 
-        Map<String, Object> condition = new HashMap<>();
-        condition.put("page", dto.getPage());
-        condition.put("rows", dto.getRows());
-        condition.put("sort", dto.getSort());
+//        // 검색 조건이 'status'일 때, keyword 값을 0, 1, 2로 변환
+//        if ("status".equals(dto.getOpt()) && StringUtils.hasText(dto.getKeyword())) {
+//            String status = dto.getKeyword();
+//            // "대기", "완료", "삭제"를 0, 1, 2로 변환
+//            if ("대기".equals(status)) {
+//                condition.put("keyword", 0);
+//            } else if ("완료".equals(status)) {
+//                condition.put("keyword", 1);
+//            } else if ("삭제".equals(status)) {
+//                condition.put("keyword", 2);
+//            }
+//        }
 
-        // 검색 조건이 'status'일 때, keyword 값을 0, 1, 2로 변환
-        if ("status".equals(dto.getOpt()) && StringUtils.hasText(dto.getKeyword())) {
-            String status = dto.getKeyword();
-            condition.put("opt", dto.getOpt());
-            // "대기", "완료", "삭제"를 0, 1, 2로 변환
-            if ("대기".equals(status)) {
-                condition.put("keyword", 0);
-            } else if ("완료".equals(status)) {
-                condition.put("keyword", 1);
-            } else if ("삭제".equals(status)) {
-                condition.put("keyword", 2);
-            }
-        } else {
-            if (StringUtils.hasText(dto.getKeyword())) {
-                condition.put("opt", dto.getOpt());
-                condition.put("keyword", dto.getKeyword());
-            }
-        }
-
-        ListDto<QnaResponse> qnaDto = qnaService.getQnas(condition);
+        ListDto<QnaResponse> qnaDto = qnaService.getQnas(dto,loginUser.getNo());
 
         model.addAttribute("qnaList", qnaDto.getData());
         model.addAttribute("pagination", qnaDto.getPaging());
