@@ -81,9 +81,6 @@ public class BoardReplyService {
     public int getCheckLike(int replyNo
                             , @AuthenticationPrincipal LoginUser loginUser) {
 
-        System.out.println("getCheckLike replyNo:" + replyNo);
-        System.out.println("getCheckLike loginUser:" + loginUser.getNo());
-
         return boardReplyMapper.hasUserLikedReply(replyNo, loginUser.getNo());
     }
 

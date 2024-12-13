@@ -46,8 +46,9 @@
           <td><input class="rounded" type="text" name="title" value="" style="width: 83%"></td>
           <th>장소</th>
           <td>
-            <input class="rounded" type="text" id="location" value="" name="location" style="width: 70%">
-            <button type="button" class="btn btn-outline-dark btn-sm" onclick="searchPlaces(event)">검색</button>
+            <input class="rounded" type="text" id="location" value="" name="location" style="width: 90%; vertical-align: middle;">
+            <a type="button" class="btn btn-outline-dark btn-sm"
+               onclick="searchPlaces(event)" style="vertical-align: middle; width: 50px">검색</a>
           </td>
         </tr>
         <tr>
@@ -55,7 +56,7 @@
           <td><input class="rounded" type="text" name="name" value="" style="width: 83%"></td>
           <th></th>
           <td rowspan="3">
-            <div id="map" style="width: 90%; height: 200px" class="mb-2"></div>
+            <div id="map" style="width: 100%; height: 200px" class="mb-2"></div>
           </td>
         </tr>
         <tr>

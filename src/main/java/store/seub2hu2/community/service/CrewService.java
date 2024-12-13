@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import store.seub2hu2.community.dto.CrewForm;
 import store.seub2hu2.community.exception.CommunityException;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@Transactional
 public class CrewService {
 
     @Value("${upload.directory.community}")
@@ -45,7 +47,6 @@ public class CrewService {
 
     @Autowired
     private CrewReplyMapper crewReplyMapper;
-
 
     public Crew addNewCrew(CrewForm form
             , @AuthenticationPrincipal LoginUser loginUser) {
@@ -164,6 +165,11 @@ public class CrewService {
         crew.setReply(reply);
         crew.setMember(member);
 
+        User user = new User();
+        user.setNo(crew.getUser().getNo());
+        user.setNickname(crew.getUser().getNickname());
+        crew.setUser(user);
+
         return crew;
     }
 
@@ -173,6 +179,7 @@ public class CrewService {
         crewMapper.updateCrewCnt(crew);
     }
 
+    @Transactional
     public Crew updateCrew(CrewForm form) {
         Crew savedCrew = crewMapper.getCrewDetailByNo(form.getNo());
         savedCrew.setNo(form.getNo());

@@ -65,21 +65,14 @@
     
     <div style="margin-top: 10px; border-bottom: 1px solid #ccc; margin-bottom: 10px;"></div>
     
-    <div class="content mt-3" style="text-align: start">
+    <div class="content m-3" style="text-align: start">
       <p>${notice.content}</p>
     </div>
     
     <div style="border-bottom: 1px solid #ccc; margin-bottom: 10px;"></div>
     
-    <div class="actions d-flex justify-content-between mb-4">
-      <div>
-        <!-- 관리자만 볼 수 있는 버튼 -->
-        <button class="btn btn-warning" onclick="updateNotice(${notice.no})">수정</button>
-        <button class="btn btn-danger" onclick="deleteNotice(${notice.no})">삭제</button>
-      </div>
-      <div>
+    <div class="actions d-flex justify-content-end mb-4">
         <a type="button" href="main" class="btn btn-secondary">목록</a>
-      </div>
     </div>
   </div>
   <%@include file="/WEB-INF/views/common/footer.jsp" %>
