@@ -98,16 +98,6 @@
         </div>
     </section>
 
-    <!-- 알림형 광고배너 -->
-    <section class="container my-5">
-        <div class="alert alert-warning alert-dismissible fade show" role="alert">
-            <strong>특별 할인!</strong> 이번 주 한정, 모든 제품에 20% 할인 혜택이 제공됩니다. 지금 쇼핑하세요!
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    </section>
-
     <section class="container my-5">
         <div class="row">
             <div class="col-10 d-flex align-items-center">
@@ -133,7 +123,7 @@
                         <c:forEach var="product" items="${bestByRating}">
                         <div class="col-md-3">
                             <div class="card position-relative border-0">
-                                <a href="detail?no=${product.no}&colorNo=${product.colorNum}">
+                                <a href="/product/hit?no=${product.no}">
                                     <img src="${product.imgThum}" class="card-img-top" alt="상품 1">
                                 </a>
                                 <div class="icon-overlay d-flex justify-content-center">
@@ -159,7 +149,7 @@
                         <c:forEach var="product" items="${bestByRating}">
                         <div class="col-md-3">
                             <div class="card position-relative border-0">
-                                <a href="detail?no=${product.no}&colorNo=${product.colorNum}">
+                                <a href="/product/hit?no=${product.no}">
                                     <img src="${product.imgThum}" class="card-img-top" alt="상품 5">
                                 </a>
                                 <div class="icon-overlay d-flex justify-content-center">
@@ -187,89 +177,36 @@
         <div class="row">
             <div class="col-md-6 mb-4">
                 <h3>러닝화 주간 랭킹</h3>
+                <c:forEach var="product" items="${bestByViewCount}">
                 <ul class="list-group border-0">
-                    <c:forEach var="product" items="${bestByViewCount}">
                     <li class="list-group-item d-flex align-items-center border-0">
                         <span class="fw-bold me-3">${product.rankByViewCount}</span>
-                        <a href="detail?no=${product.no}&colorNo=${product.colorNum}" class="text-decoration-none">
+                        <a href="/product/hit?no=${product.no}" class="text-decoration-none">
                             <img src="${product.imgThum}" alt="러닝화 1" width="50" class="me-3">
                             <span class="text-muted">${product.name}</span>
                         </a>
                         <span class="ms-auto"><i class="bi bi-arrow-up"></i></span>
                     </li>
-                    </c:forEach>
-                    <li class="list-group-item d-flex align-items-center border-0">
-                        <span class="fw-bold me-3">2</span>
-                        <a href="#" class="text-decoration-none">
-                            <img src="../../resources/img/nikeS.jpeg" alt="러닝화 2" width="50" class="me-3">
-                            <span class="text-muted">러닝화 2</span>
-                        </a>
-                        <span class="ms-auto"><i class="bi bi-arrow-down"></i></span>
-                    </li>
-                    <li class="list-group-item d-flex align-items-center border-0">
-                        <span class="fw-bold me-3">3</span>
-                        <a href="#" class="text-decoration-none">
-                            <img src="../../resources/img/nikeS.jpeg" alt="러닝화 3" width="50" class="me-3">
-                            <span class="text-muted">러닝화 3</span>
-                        </a>
-                        <span class="ms-auto"><i class="bi bi-arrow-up"></i></span>
-                    </li>
-                    <li class="list-group-item d-flex align-items-center border-0">
-                        <span class="fw-bold me-3">4</span>
-                        <a href="#" class="text-decoration-none">
-                            <img src="../../resources/img/nikeS.jpeg" alt="러닝화 4" width="50" class="me-3">
-                            <span class="text-muted">러닝화 4</span>
-                        </a>
-                        <span class="ms-auto"><i class="bi bi-arrow-down"></i></span>
-                    </li>
-                    <li class="list-group-item d-flex align-items-center border-0">
-                        <span class="fw-bold me-3">5</span>
-                        <a href="#" class="text-decoration-none">
-                            <img src="../../resources/img/nikeS.jpeg" alt="러닝화 5" width="50" class="me-3">
-                            <span class="text-muted">러닝화 5</span>
-                        </a>
-                        <span class="ms-auto"><i class="bi bi-arrow-down"></i></span>
-                    </li>
                 </ul>
+                </c:forEach>
             </div>
 
             <!-- 이벤트 게시판 섹션 -->
             <div class="col-md-6 mb-4">
                 <h3 class="d-flex align-items-center">
-                    <span class="ms-3 text-muted">이벤트 게시판</span>
+                    <span class="ms-3 text-muted">마라톤 정보</span>
                 </h3>
+                <c:forEach var="marathon" items="${latestMarathons}">
                 <ul class="list-group border-0">
                     <li class="list-group-item d-flex justify-content-between align-items-center border-0">
-                        <span class="text-muted">2024-11-01</span>
-                        <span class="text-muted">이벤트 제목 1</span>
-                        <a href="#" class="btn btn-sm btn-dark text-decoration-none">바로가기</a>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center border-0">
-                        <span class="text-muted">2024-11-02</span>
-                        <span class="text-muted">이벤트 제목 2</span>
-                        <a href="#" class="btn btn-sm btn-dark text-decoration-none">바로가기</a>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center border-0">
-                        <span class="text-muted">2024-11-03</span>
-                        <span class="text-muted">이벤트 제목 3</span>
-                        <a href="#" class="btn btn-sm btn-dark text-decoration-none">바로가기</a>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center border-0">
-                        <span class="text-muted">2024-11-05</span>
-                        <span class="text-muted">이벤트 제목 4</span>
-                        <a href="#" class="btn btn-sm btn-dark text-decoration-none">바로가기</a>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center border-0">
-                        <span class="text-muted">2024-11-06</span>
-                        <span class="text-muted">이벤트 제목 5</span>
-                        <a href="#" class="btn btn-sm btn-dark text-decoration-none">바로가기</a>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center border-0">
-                        <span class="text-muted">2024-11-08</span>
-                        <span class="text-muted">이벤트 제목 6</span>
-                        <a href="#" class="btn btn-sm btn-dark text-decoration-none">바로가기</a>
+                        <span class="text-muted"><fmt:formatDate value="${marathon.marathonDate}" pattern="yyyy-MM-dd"/></span>
+                        <span class="text-muted">${marathon.title}</span>
+                        <span class="text-muted"><fmt:formatDate value="${marathon.startDate}" pattern="yyyy-MM-dd"/>
+                        ~<fmt:formatDate value="${marathon.endDate}" pattern="yyyy-MM-dd"/></span>
+                        <a href="/community/marathon/hit?no=${marathon.no}" class="btn btn-sm btn-dark text-decoration-none">바로가기</a>
                     </li>
                 </ul>
+                </c:forEach>
             </div>
         </div>
     </section>
@@ -279,7 +216,7 @@
     <h3 class="text-muted">커뮤니티</h3>
     <div class="list-group">
         <c:forEach var="board" items="${topViewedBoards}">
-            <a href="#" class="list-group-item list-group-item-action d-flex border-0 text-decoration-none">
+            <a href="/community/board/hit?no=${board.no}" class="list-group-item list-group-item-action d-flex border-0 text-decoration-none">
                 <div class="col-9">
                     <span class="text-muted">${board.title}</span>
                 </div>
@@ -302,43 +239,24 @@
     <section class="container my-5">
         <h3 class="text-muted">레슨 목록</h3>
         <div class="row">
+            <c:forEach var="lesson" items="${ongoingLessons}">
             <div class="col-md-4">
                 <div class="card border-0">
                     <div class="card-body">
                         <a href="#" class="text-decoration-none">
                             <img src="../../resources/img/adidas.jpeg" class="d-block w-100" alt="SEUB2HU2 ls">
-                            <h5 class="card-title text-muted">레슨 1</h5>
+                            <h5 class="card-title text-muted">${lesson.title}</h5>
                         </a>
-                        <p class="card-text text-muted">내용 1</p>
-                        <a href="#" class="btn btn-dark text-white">예약하기</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card border-0">
-                    <div class="card-body">
-                        <a href="#" class="text-decoration-none">
-                            <img src="../../resources/img/adidas.jpeg" class="d-block w-100" alt="SEUB2HU2 ls">
-                            <h5 class="card-title text-muted">레슨 2</h5>
-                        </a>
-                        <p class="card-text text-muted">내용 2</p>
-                        <a href="#" class="btn btn-dark text-white">예약하기</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card border-0">
-                    <div class="card-body">
-                        <a href="#" class="text-decoration-none">
-                            <img src="../../resources/img/adidas.jpeg" class="d-block w-100" alt="SEUB2HU2 ls">
-                            <h5 class="card-title text-muted">레슨 3</h5>
-                        </a>
-                        <p class="card-text text-muted">내용 3</p>
-                        <a href="#" class="btn btn-dark text-white">예약하기</a>
+                        <p class="card-text text-muted">${lesson.subject}</p>
+                        <p class="card-text text-muted">${lesson.place}</p>
+                        <p class="card-text text-muted"><fmt:formatDate value="${lesson.start}" pattern="yyyy-MM-dd"/>
+                        ~<fmt:formatDate value="${lesson.end}" pattern="yyyy-MM-dd"/></p>
+                        <a href="/lesson/detail?lessonNo=${lesson.lessonNo}" class="btn btn-dark text-white">예약하기</a>
                     </div>
                 </div>
             </div>
         </div>
+        </c:forEach>
     </section>
 
 
