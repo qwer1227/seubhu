@@ -82,7 +82,12 @@ public class CrewReplyService {
     public int getCheckLike(int replyNo
                             , @AuthenticationPrincipal LoginUser loginUser) {
 
-        return crewReplyMapper.hasUserLikedReply(replyNo, loginUser.getNo());
+        if (loginUser != null) {
+            return crewReplyMapper.hasUserLikedReply(replyNo, loginUser.getNo());
+        } else {
+            return 0;
+        }
+
     }
 
     public void updateReplyLike(int replyNo

@@ -232,7 +232,12 @@ public class BoardService {
 
     public int getCheckLike(int boardNo
                             , @AuthenticationPrincipal LoginUser loginUser) {
-         return boardMapper.hasUserLikedBoard(boardNo, loginUser.getNo());
+
+        if (loginUser != null) {
+            return boardMapper.hasUserLikedBoard(boardNo, loginUser.getNo());
+        } else {
+            return 0;
+        }
     }
 
     public void updateBoardLike(int boardNo

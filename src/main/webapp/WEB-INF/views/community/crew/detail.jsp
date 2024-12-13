@@ -120,18 +120,25 @@
                 <security:authorize access="isAuthenticated()">
                   <security:authentication property="principal" var="loginUser"/>
                   <c:if test="${loginUser.no ne crew.user.no}">
-                    <c:choose>
-                      <c:when test="${isExists}">
-                        <button id="btn-crew-leave" class="btn btn-danger btn-sm" onclick="crewLeaveButton(${crew.no})">
-                          모임 탈퇴
-                        </button>
-                      </c:when>
-                      <c:otherwise>
-                        <button id="btn-crew_join" class="btn btn-primary btn-sm" onclick="crewJoinButton(${crew.no})">
-                          모임 가입
-                        </button>
-                      </c:otherwise>
-                    </c:choose>
+                    <c:if test="${memberCnt == 5}">
+                      <button class="btn btn-secondary btn-sm">모임 마감</button>
+                    </c:if>
+                    <c:if test="${memberCnt < 5}">
+                      <c:choose>
+                        <c:when test="${isExists}">
+                          <button id="btn-crew-leave" class="btn btn-danger btn-sm"
+                                  onclick="crewLeaveButton(${crew.no})">
+                            모임 탈퇴
+                          </button>
+                        </c:when>
+                        <c:otherwise>
+                          <button id="btn-crew_join" class="btn btn-primary btn-sm"
+                                  onclick="crewJoinButton(${crew.no})">
+                            모임 가입
+                          </button>
+                        </c:otherwise>
+                      </c:choose>
+                    </c:if>
                   </c:if>
                 </security:authorize></td>
             </tr>
@@ -149,20 +156,18 @@
     <div class="row mb-4">
       <div class="col d-flex justify-content-between">
         <!-- 로그인 여부를 체크하기 위해 먼저 선언 -->
-        <security:authorize access="isAuthenticated()">
-          <div class="d-flex justify-content-start">
-            <!-- principal 프로퍼티 안의 loginUser 정보를 가져옴 -->
-            <!-- loginUser.no를 가져와서 조건문 실행 -->
-            <c:if test="${loginUser.no eq crew.user.no and loginUser ne null}">
-              <button class="btn btn-warning" onclick="updateCrew(${crew.no})" style="margin-right: 10px;">수정</button>
-              <button class="btn btn-danger" onclick="deleteCrew(${crew.no})" style="margin-right: 10px;">삭제</button>
-            </c:if>
-            <c:if test="${loginUser.no ne crew.user.no}">
-              <button type="button" class="btn btn-danger" onclick="report('crew', ${crew.no})">신고</button>
-            </c:if>
-          </div>
-        </security:authorize>
-        <div class="d-flex justify-content-end">
+        <div class="col-6 d-flex justify-content-start">
+          <!-- principal 프로퍼티 안의 loginUser 정보를 가져옴 -->
+          <!-- loginUser.no를 가져와서 조건문 실행 -->
+          <c:if test="${loginUser.no eq crew.user.no and loginUser ne null}">
+            <button class="btn btn-warning" onclick="updateCrew(${crew.no})" style="margin-right: 10px;">수정</button>
+            <button class="btn btn-danger" onclick="deleteCrew(${crew.no})" style="margin-right: 10px;">삭제</button>
+          </c:if>
+          <c:if test="${loginUser.no ne crew.user.no and loginUser ne null}">
+            <button type="button" class="btn btn-danger" onclick="report('crew', ${crew.no})">신고</button>
+          </c:if>
+        </div>
+        <div class="col d-flex justify-content-end">
           <a type="button" href="main" class="btn btn-secondary">목록</a>
         </div>
       </div>
@@ -249,7 +254,7 @@
                         <security:authorize access="isAuthenticated()">
                           <c:if test="${loginUser.no ne reply.user.no}">
                             <button class="btn btn-outline-primary btn-sm" id="replyLikeCnt"
-                                    onclick="replyLikeButton(${crew.no}, ${reply.no}, ${loginUser.getNo()})">
+                                    onclick="replyLikeButton(${crew.no}, ${reply.no})">
                               <i id="icon-thumbs"
                                  class="bi ${replyLiked == '1' ? 'bi-hand-thumbs-up-fill' : (replyLiked == '0' ? 'bi-hand-thumbs-up' : 'bi-hand-thumbs-up')}"></i>
                             </button>
@@ -423,12 +428,12 @@
         }
     }
 
-    function replyLikeButton(crewNo, replyNo, userNo) {
+    function replyLikeButton(crewNo, replyNo) {
         let heart = document.querySelector("#icon-thumbs");
         if (heart.classList.contains("bi-hand-thumbs-up")) {
-            window.location.href = `update-reply-like?no=\${crewNo}&rno=\${replyNo}&userNo=\${userNo}`;
+            window.location.href = `update-reply-like?no=\${crewNo}&rno=\${replyNo}`;
         } else {
-            window.location.href = `delete-reply-like?no=\${crewNo}&rno=\${replyNo}&userNo=\${userNo}`;
+            window.location.href = `delete-reply-like?no=\${crewNo}&rno=\${replyNo}`;
         }
     }
 

@@ -118,7 +118,8 @@ public class BoardController {
 
             for (Reply reply : replyList) {
                 int replyResult = replyService.getCheckLike(reply.getNo(), loginUser);
-                model.addAttribute("replyLiked", replyResult);
+                //model.addAttribute("replyLiked", replyResult);
+                reply.setReplyLike(replyResult);
             }
         }
 

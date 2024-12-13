@@ -61,7 +61,7 @@
         <security:authorize access="isAuthenticated()">
           <security:authentication property="principal" var="loginUser"/>
           <button class="btn btn-outline-success btn-lg" id="scrapButton"
-                  onclick="scrapButton(${board.no}, ${loginUser.getNo()})">
+                  onclick="scrapButton(${board.no})">
             <i id="icon-scrap"
                class="bi ${Scrapped == '1' ? 'bi-bookmark-fill' : (Scrapped == '0' ? 'bi-bookmark' : 'bi-bookmark')}"></i>
           </button>
@@ -96,8 +96,7 @@
     <div class="row mb-4">
       <div class="col d-flex justify-content-between">
         <!-- 로그인 여부를 체크하기 위해 먼저 선언 -->
-        <security:authorize access="isAuthenticated()">
-        <div class="d-flex justify-content-start">
+        <div class="col-6 d-flex justify-content-start">
           <!-- principal 프로퍼티 안의 loginUser 정보를 가져옴 -->
           <!-- loginUser.no를 가져와서 조건문 실행 -->
           <c:if test="${loginUser.no == board.user.no}">
@@ -109,14 +108,14 @@
             <button type="button" class="btn btn-danger" onclick="report('board', ${board.no})">신고</button>
           </c:if>
         </div>
-        
-        <div class="d-flex justify-content-end">
+        <div class="col d-flex justify-content-end">
+          <c:if test="${not empty loginUser}">
           <button class="btn btn-outline-primary" id="likeCnt" style="margin-right: 10px;"
-                  onclick="boardLikeButton(${board.no}, ${loginUser.getNo()})">
+                  onclick="boardLikeButton(${board.no})">
             <i id="icon-heart"
                class="bi ${boardLiked == '1' ? 'bi-heart-fill' : (boardLiked == '0' ? 'bi-heart' : 'bi-heart')}"></i>
           </button>
-          </security:authorize>
+          </c:if>
           <a type="button" href="main" class="btn btn-secondary">목록</a>
         </div>
       </div>
@@ -191,7 +190,7 @@
                       <div class="col" style="text-align: start">
                         <strong>${reply.user.nickname}</strong><br/>
                         <span><fmt:formatDate value="${reply.createdDate}" pattern="yyyy.MM.dd hh:mm:ss"/></span>
-                        <c:if test="${loginUser.no ne reply.user.no}">
+                        <c:if test="${loginUser.no ne reply.user.no and not empty loginUser}">
                           <button type="button" class="btn btn-danger"
                                   style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
                                   onclick="report('boardReply', ${reply.no})">
@@ -203,9 +202,10 @@
                         <security:authorize access="isAuthenticated()">
                           <c:if test="${loginUser.no ne reply.user.no}">
                             <button class="btn btn-outline-primary btn-sm" id="replyLikeCnt"
-                                    onclick="replyLikeButton(${board.no}, ${reply.no}, ${loginUser.getNo()})">
-                              <i id="icon-thumbs"
-                                 class="bi ${replyLiked == '1' ? 'bi-hand-thumbs-up-fill' : (replyLiked == '0' ? 'bi-hand-thumbs-up' : 'bi-hand-thumbs-up')}"></i>
+                                    onclick="replyLikeButton(${board.no}, ${reply.no})">
+                                ${reply.replyLike}
+                              <i id="icon-thumbs-${reply.no}"
+                                 class="bi ${reply.replyLike == '1' ? 'bi-hand-thumbs-up-fill' : (reply.replyLike == '0' ? 'bi-hand-thumbs-up' : 'bi-hand-thumbs-up')}"></i>
                             </button>
                           </c:if>
                           <c:if test="${loginUser.no eq reply.user.no}">
@@ -239,7 +239,7 @@
                           </div>
                         </div>
                       </form>
-                      <c:if test="${not empty loginUser}">
+                      <c:if test="${not empty loginUser and loginUser ne null}">
                         <button type="button" class="btn btn-outline-dark btn-sm d-flex justify-content-start mb-3"
                                 name="replyContent" onclick="appendComment(${reply.no})">
                           답글
@@ -271,7 +271,30 @@
         </c:forEach>
       </div>
     </c:if>
+    <div class="pb-3">
+      <table style="width: 100%">
+        <colgroup>
+          <col width="10%">
+          <col width="*">
+        </colgroup>
+        <tbody>
+        <tr>
+          <td> ▲ 이전글</td>
+          <td style="text-align: start">
+            <a href="hit?no=${board.no -1}">${board.title}</a>
+          </td>
+        </tr>
+        <tr>
+          <td> ▼ 다음글</td>
+          <td style="text-align: start">
+            <a href="hit?no=${board.no -1}">${board.title}</a>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
+  
   
   <div class="rounded border" style="padding: 10px; background-color: #f2f2f2">
     <table style="width: 100%">
@@ -370,30 +393,30 @@
 
       }
 
-      function scrapButton(boardNo, userNo) {
+      function scrapButton(boardNo) {
           let scrap = document.querySelector("#icon-scrap");
           if (scrap.classList.contains("bi-bookmark")) {
-              window.location.href = `update-board-scrap?no=\${boardNo}&userNo=\${userNo}`;
+              window.location.href = `update-board-scrap?no=\${boardNo}`;
           } else {
-              window.location.href = `delete-board-scrap?no=\${boardNo}&userNo=\${userNo}`;
+              window.location.href = `delete-board-scrap?no=\${boardNo}`;
           }
       }
 
-      function boardLikeButton(boardNo, userNo) {
+      function boardLikeButton(boardNo) {
           let heart = document.querySelector("#icon-heart");
           if (heart.classList.contains("bi-heart")) {
-              window.location.href = `update-board-like?no=\${boardNo}&userNo=\${userNo}`;
+              window.location.href = `update-board-like?no=\${boardNo}`;
           } else {
-              window.location.href = `delete-board-like?no=\${boardNo}&userNo=\${userNo}`;
+              window.location.href = `delete-board-like?no=\${boardNo}`;
           }
       }
 
-      function replyLikeButton(boardNo, replyNo, userNo) {
-          let heart = document.querySelector("#icon-thumbs");
+      function replyLikeButton(boardNo, replyNo) {
+          let heart = document.querySelector("#icon-thumbs-" + replyNo);
           if (heart.classList.contains("bi-hand-thumbs-up")) {
-              window.location.href = `update-reply-like?no=\${boardNo}&rno=\${replyNo}&userNo=\${userNo}`;
+              window.location.href = `update-reply-like?no=\${boardNo}&rno=\${replyNo}`;
           } else {
-              window.location.href = `delete-reply-like?no=\${boardNo}&rno=\${replyNo}&userNo=\${userNo}`;
+              window.location.href = `delete-reply-like?no=\${boardNo}&rno=\${replyNo}`;
           }
       }
 

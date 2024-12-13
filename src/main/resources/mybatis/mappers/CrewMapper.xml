@@ -146,9 +146,32 @@
   <!-- int getTotalRowsForCrew(@Param("condition") Map<String, Object> condition); -->
   <select id="getTotalRowsForCrew" resultType="int">
     select count(*)
-    from CREWS crew
-    where is_deleted = 'N'
-
+    from CREWS c join CREW_REPLIES cr
+        on c.crew_no = cr.crew_no
+    where c.is_deleted = 'N'
+    <if test="condition.category != null">
+      and c.is_entered = #{condition.category}
+    </if>
+    <if test="condition.opt != null">
+      <choose>
+        <when test="condition.opt == 'all'">
+          and c.crew_title like concat ('%', #{condition.keyword}, '%')
+          || c.crew_description like concat('%', #{condition.keyword}, '%')
+        </when>
+        <when test="condition.opt == 'title'">
+          and c.crew_title like concat ('%', #{condition.keyword}, '%')
+        </when>
+        <when test="condition.opt == 'content'">
+          and c.crew_description like concat('%', #{condition.keyword}, '%')
+        </when>
+        <when test="condition.opt == 'name'">
+          and c.crew_name like concat('%', #{condition.keyword}, '%')
+        </when>
+        <when test="condition.opt == 'reply'">
+          and cr.reply_content like concat ('%', #{condition.keyword}, '%')
+        </when>
+      </choose>
+    </if>
   </select>
 
   <!-- Crew getCrewDetailByNo(@Param("no") int crewNo); -->
