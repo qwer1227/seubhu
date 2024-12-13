@@ -1,12 +1,16 @@
 package store.seub2hu2.admin.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.tags.shaded.org.apache.xpath.operations.Mod;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import store.seub2hu2.admin.dto.*;
@@ -65,12 +69,10 @@ public class AdminController {
     }
 
     @GetMapping("/lesson-edit-form")
-    public String lessonEditForm(@RequestParam("lessonNo")Integer lessonNo, Model model) {
-
+    public String lessonEditForm(@RequestParam("lessonNo") Integer lessonNo, Model model) {
         try {
-
             // 강사 정보 가져오기
-            List<User> lecturers =  userService.findUsersByUserRoleNo(3);
+            List<User> lecturers = userService.findUsersByUserRoleNo(3);
 
             // Lesson 정보 가져오기
             Lesson lesson = lessonService.getLessonByNo(lessonNo);
@@ -93,7 +95,50 @@ public class AdminController {
     }
 
     @PostMapping("/lesson-edit-form")
-    public String lessonEditForm(@ModelAttribute("dto") LessonUpdateDto dto) {
+    public String lessonEditForm(@Validated @ModelAttribute("dto") LessonUpdateDto dto, BindingResult result, Model model) {
+
+        if ((dto.getPlan() == null || dto.getPlan().trim().isEmpty()) && dto.getMainImage() == null) {
+            List<User> lecturers = userService.findUsersByUserRoleNo(3);
+
+            // Lesson 정보 가져오기
+            int lessonNo = dto.getLessonNo();
+            Lesson lesson = lessonService.getLessonByNo(lessonNo);
+
+            // 이미지 파일 정보 가져오기
+            Map<String, String> images = lessonFileService.getImagesByLessonNo(lessonNo);
+
+            // 모델에 레슨, 이미지, 강사 정보 추가
+            model.addAttribute("lecturers", lecturers);
+            model.addAttribute("lesson", lesson);
+            model.addAttribute("lessonNo", lessonNo);
+            model.addAttribute("images", images);
+
+            log.info("lesson start = {}", lesson);
+            result.reject(null, "계획이나 메인 이미지를 첨부 해주세요");
+            return "admin/lesson-edit-form";
+        }
+
+        if (result.hasErrors()) {
+            // 강사 정보 가져오기
+            List<User> lecturers = userService.findUsersByUserRoleNo(3);
+
+            // Lesson 정보 가져오기
+            int lessonNo = dto.getLessonNo();
+            Lesson lesson = lessonService.getLessonByNo(lessonNo);
+
+            // 이미지 파일 정보 가져오기
+            Map<String, String> images = lessonFileService.getImagesByLessonNo(lessonNo);
+
+            // 모델에 레슨, 이미지, 강사 정보 추가
+            model.addAttribute("lecturers", lecturers);
+            model.addAttribute("lesson", lesson);
+            model.addAttribute("lessonNo", lessonNo);
+            model.addAttribute("images", images);
+
+            log.info("lesson start = {}", lesson);
+
+            return "admin/lesson-edit-form";
+        }
 
         log.info("레슨 수정 정보 {} ", dto);
         lessonService.updateLesson(dto);
@@ -101,26 +146,41 @@ public class AdminController {
         return "redirect:/admin/lesson";
     }
 
+    //@ModelAttribute
+    //public List<User> lectures() {
+    //    return userService.findUsersByUserRoleNo(3);
+    //}
+
     @GetMapping("/lesson-register-form")
     public String lessonRegisterForm(Model model) {
 
         // 사용자 권한이 강사인 사용자 목록을 조회한다.
-        List<User> lecturers =  userService.findUsersByUserRoleNo(3);
+        List<User> lecturers = userService.findUsersByUserRoleNo(3);
         model.addAttribute("lecturers", lecturers);
+        model.addAttribute("form", new LessonRegisterForm());
 
         return "admin/lesson-register-form";
     }
 
     @PostMapping("/lesson-register-form")
-    public String form(@ModelAttribute("form") LessonRegisterForm form, Model model) throws IOException {
+    public String form(@Validated @ModelAttribute("form") LessonRegisterForm form, BindingResult result, Model model) throws IOException {
 
+        if (!StringUtils.hasText(form.getPlan()) && form.getMainImage().isEmpty()) {
+            result.rejectValue("plan", null, "계획이나 메인 이미지를 첨부 해주세요.");
+            result.rejectValue("mainImage", null, "계획이나 메인 이미지를 첨부 해주세요.");
+        }
 
+        if (result.hasErrors()) {
+            // 강사 목록 전달
+            List<User> lecturers = userService.findUsersByUserRoleNo(3);
+            model.addAttribute("lecturers", lecturers);
+
+            return "admin/lesson-register-form"; // 오류가 있는 경우 다시 폼 페이지로 리턴
+        }
 
         lessonService.registerLesson(form);
 
-        // Redirect after successful form submission
         return "redirect:/admin/lesson";
-
     }
 
     @GetMapping("/lesson/preview")
@@ -171,7 +231,7 @@ public class AdminController {
     }
 
     @PostMapping("/course-edit-form")
-    public String courseEditForm(@RequestParam("no") int courseNo,CourseRegisterForm form) {
+    public String courseEditForm(@RequestParam("no") int courseNo, CourseRegisterForm form) {
 
         adminService.getUpdateCourse(form);
 
@@ -211,7 +271,7 @@ public class AdminController {
                          @RequestParam(name = "distance", required = false, defaultValue = "10") Double distance,
                          @RequestParam(name = "level", required = false) Integer level,
                          @RequestParam(name = "keyword", required = false) String keyword,
-                         Model model){
+                         Model model) {
         // 1. 요청 파라미터 정보를 Map 객체에 담는다.
         Map<String, Object> condition = new HashMap<>();
         condition.put("page", page);
@@ -255,7 +315,7 @@ public class AdminController {
             @RequestParam(name = "page", required = false, defaultValue = "1") int page,
             @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
             @RequestParam(name = "opt", required = false) String opt,
-            @RequestParam(name= "value", required = false) String value,
+            @RequestParam(name = "value", required = false) String value,
             Model model) {
 
         Map<String, Object> condition = new HashMap<>();
@@ -360,6 +420,7 @@ public class AdminController {
 
         return "admin/product-size-register-form";
     }
+
     @PostMapping("/register-size")
     public String registerSize(@RequestParam("no") int no,
                                @RequestParam("colorNo") Integer colorNo,
@@ -377,7 +438,6 @@ public class AdminController {
 
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
-
 
 
         return "redirect:/admin/register-size?no=" + no + "&colorNo=" + colorNo;
@@ -493,8 +553,8 @@ public class AdminController {
     }
 
     @PostMapping("/register-color")
-    public String registerColor(@RequestParam(name="no", required = false) Integer no,
-                                @RequestParam(name="name", required = false) String name,
+    public String registerColor(@RequestParam(name = "no", required = false) Integer no,
+                                @RequestParam(name = "name", required = false) String name,
                                 Model model) {
 
         if (no == null || name == null || name.isEmpty()) {
@@ -504,8 +564,6 @@ public class AdminController {
         Map<String, Object> condition = new HashMap<>();
         condition.put("no", no);
         condition.put("name", name);
-
-
 
 
         model.addAttribute("condition", condition);
@@ -554,7 +612,7 @@ public class AdminController {
 
         Category category = adminService.getCategory(form.getCategoryNo());
 
-        return "redirect:/admin/product?topNo="+ category.getTopNo();
+        return "redirect:/admin/product?topNo=" + category.getTopNo();
     }
 
     @GetMapping("/product-stock-detail")
@@ -593,6 +651,7 @@ public class AdminController {
 
         return "admin/product-stock-detail";
     }
+
     @PostMapping("/product-stock-detail")
     public String productStockDetail(@RequestParam("no") int no,
                                      @RequestParam(name = "colorNo") Integer colorNo,
@@ -605,13 +664,12 @@ public class AdminController {
         condition.put("no", no);
         condition.put("colorName", colorName);
 
-        for (int i =0; i< size.size(); i++) {
+        for (int i = 0; i < size.size(); i++) {
             String currentSize = size.get(i);
             Integer currentAmount = amount.get(i);
 
             condition.put("size", currentSize);
             condition.put("amount", currentAmount);
-
 
 
             adminService.getInsertStock(condition);
@@ -621,25 +679,25 @@ public class AdminController {
     }
 
     @GetMapping("/product-stock")
-    public String getProductStock(@RequestParam(name= "topNo") int topNo,
+    public String getProductStock(@RequestParam(name = "topNo") int topNo,
                                   @RequestParam(name = "catNo", required = false, defaultValue = "0") int catNo,
                                   @RequestParam(name = "page", required = false, defaultValue = "1") int page,
                                   @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
-                                  @RequestParam(name = "sort" , required = false, defaultValue = "date") String sort,
+                                  @RequestParam(name = "sort", required = false, defaultValue = "date") String sort,
                                   @RequestParam(name = "opt", required = false) String opt,
                                   @RequestParam(name = "value", required = false) String value,
                                   Model model) {
 
         Map<String, Object> condition = new HashMap<>();
         condition.put("topNo", topNo);
-        if(catNo != 0) {
+        if (catNo != 0) {
             condition.put("catNo", catNo);
         }
 
         condition.put("page", page);
         condition.put("rows", rows);
         condition.put("sort", sort);
-        if(StringUtils.hasText(opt)) {
+        if (StringUtils.hasText(opt)) {
             condition.put("opt", opt);
             condition.put("value", value);
         }
@@ -654,25 +712,25 @@ public class AdminController {
     }
 
     @GetMapping("/product")
-    public String list(@RequestParam(name= "topNo") int topNo,
+    public String list(@RequestParam(name = "topNo") int topNo,
                        @RequestParam(name = "catNo", required = false, defaultValue = "0") int catNo,
                        @RequestParam(name = "page", required = false, defaultValue = "1") int page,
                        @RequestParam(name = "rows", required = false, defaultValue = "6") int rows,
-                       @RequestParam(name = "sort" , required = false, defaultValue = "date") String sort,
+                       @RequestParam(name = "sort", required = false, defaultValue = "date") String sort,
                        @RequestParam(name = "opt", required = false) String opt,
                        @RequestParam(name = "value", required = false) String value,
                        Model model) {
 
         Map<String, Object> condition = new HashMap<>();
         condition.put("topNo", topNo);
-        if(catNo != 0) {
+        if (catNo != 0) {
             condition.put("catNo", catNo);
         }
 
         condition.put("page", page);
         condition.put("rows", rows);
         condition.put("sort", sort);
-        if(StringUtils.hasText(opt)) {
+        if (StringUtils.hasText(opt)) {
             condition.put("opt", opt);
             condition.put("value", value);
         }
@@ -687,13 +745,11 @@ public class AdminController {
     }
 
     @GetMapping("/order")
-    public String order(){
-
+    public String order() {
 
 
         return "admin/order";
     }
-
 
 
     @GetMapping("/chart")
@@ -717,7 +773,7 @@ public class AdminController {
     @GetMapping("/p-settlement/preview")
     @ResponseBody
     public List<prevOrderProdDto> prodPreview(@RequestParam("orderNo") int orderNo
-    ){
+    ) {
 
         List<prevOrderProdDto> dtos = adminService.getOrderProdPrev(orderNo);
 
@@ -741,35 +797,35 @@ public class AdminController {
             day = sdf.format(new Date());
         }
 
-            Map<String, Object> condition = new HashMap<>();
-            condition.put("page", page);
-            condition.put("rows", rows);
-            condition.put("sort", sort);
-            condition.put("opt", opt);
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("page", page);
+        condition.put("rows", rows);
+        condition.put("sort", sort);
+        condition.put("opt", opt);
 
-            if (StringUtils.hasText(day)) {
-                condition.put("day", day);
-            }
+        if (StringUtils.hasText(day)) {
+            condition.put("day", day);
+        }
 
-            if (StringUtils.hasText(value)) {
-                condition.put("keyword", keyword);
-                condition.put("value", value);
-            }
+        if (StringUtils.hasText(value)) {
+            condition.put("keyword", keyword);
+            condition.put("value", value);
+        }
 
-            ListDto<OrderProductDto> dto = adminService.getOrderProduct(condition);
+        ListDto<OrderProductDto> dto = adminService.getOrderProduct(condition);
 
-            int totalPriceSum = dto.getData().stream()
-                    .mapToInt(OrderProductDto::getTotalPrice)
-                    .distinct()   // 중복된 값 제거 (한 번만 합산)
-                    .limit(1)     // 첫 번째 값만 선택
-                    .sum();
+        int totalPriceSum = dto.getData().stream()
+                .mapToInt(OrderProductDto::getTotalPrice)
+                .distinct()   // 중복된 값 제거 (한 번만 합산)
+                .limit(1)     // 첫 번째 값만 선택
+                .sum();
 
-            model.addAttribute("totalPriceSum", totalPriceSum);
+        model.addAttribute("totalPriceSum", totalPriceSum);
 
-            model.addAttribute("dto", dto.getData());
-            model.addAttribute("paging", dto.getPaging());
+        model.addAttribute("dto", dto.getData());
+        model.addAttribute("paging", dto.getPaging());
 
-            return "admin/p-settlement";
+        return "admin/p-settlement";
     }
 
     @GetMapping("/settlement")
@@ -777,7 +833,7 @@ public class AdminController {
                              @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
                              @RequestParam(name = "pType", required = false, defaultValue = "lesson") String pType,
                              @RequestParam(name = "day", required = false) String day,
-                             @RequestParam(name = "sort", required = false, defaultValue ="latest") String sort,
+                             @RequestParam(name = "sort", required = false, defaultValue = "latest") String sort,
                              @RequestParam(name = "opt", required = false, defaultValue = "all") String opt,
                              @RequestParam(name = "keyword", required = false) String keyword,
                              @RequestParam(name = "value", required = false) String value,
@@ -823,7 +879,7 @@ public class AdminController {
     }
 
     @GetMapping("/qna")
-    public String qna(@ModelAttribute RequestParamsDto dto ,Model model) {
+    public String qna(@ModelAttribute RequestParamsDto dto, Model model) {
 
         Map<String, Object> condition = new HashMap<>();
         condition.put("page", dto.getPage());
@@ -858,17 +914,17 @@ public class AdminController {
     }
 
     @GetMapping("/qna/{qnaNo}")
-    public String qnaDetailPage(@PathVariable("qnaNo") int qnaNo, Model model){
+    public String qnaDetailPage(@PathVariable("qnaNo") int qnaNo, Model model) {
 
         QnaResponse qnaResponse = qnaService.getQnaByQnaNo(qnaNo);
 
-        model.addAttribute("qna",qnaResponse);
+        model.addAttribute("qna", qnaResponse);
 
         return "admin/answer-form";
     }
 
     @PostMapping("/qna/answer")
-    public String qnaAnswerPage(@ModelAttribute AnswerDTO answerDTO, @AuthenticationPrincipal LoginUser loginUser){
+    public String qnaAnswerPage(@ModelAttribute AnswerDTO answerDTO, @AuthenticationPrincipal LoginUser loginUser) {
 
         qnaService.updateAnswer(answerDTO, loginUser.getNo());
 
