@@ -164,6 +164,11 @@ public class CrewService {
         crew.setReply(reply);
         crew.setMember(member);
 
+        User user = new User();
+        user.setNo(crew.getUser().getNo());
+        user.setNickname(crew.getUser().getNickname());
+        crew.setUser(user);
+
         return crew;
     }
 

@@ -85,7 +85,10 @@
         </c:if>
       </div>
     </div>
-    <div class="content mb-3" style="text-align: start">
+    
+    <div style="margin-top: 10px; border-bottom: 1px solid #ccc; margin-bottom: 10px;"></div>
+    
+    <div class="content m-3" style="text-align: start">
       <div class="row">
         <div class="col-6 mb-2" id="map" style="height: 250px; width: 500px"></div>
         <div class="col-6">
@@ -141,26 +144,28 @@
       </div>
     </div>
     
-    <div class="row actions mb-4">
-
-      <!-- 로그인 여부를 체크하기 위해 먼저 선언 -->
-      <security:authorize access="isAuthenticated()">
-        <div class="col-6 d-flex justify-content-start">
-          <!-- principal 프로퍼티 안의 loginUser 정보를 가져옴 -->
-          <!-- loginUser.no를 가져와서 조건문 실행 -->
-          <c:if test="${loginUser.no eq crew.user.no and loginUser ne null}">
-            <button class="btn btn-warning" onclick="updateCrew(${crew.no})">수정</button>
-            <button class="btn btn-danger" onclick="deleteCrew(${crew.no})">삭제</button>
-          </c:if>
-          <c:if test="${loginUser.no ne crew.user.no}">
-            <button type="button" class="btn btn-danger" onclick="report('crew', ${crew.no})">신고</button>
-          </c:if>
+    <div style="margin-top: 10px; border-bottom: 1px solid #ccc; margin-bottom: 10px;"></div>
+    
+    <div class="row mb-4">
+      <div class="col d-flex justify-content-between">
+        <!-- 로그인 여부를 체크하기 위해 먼저 선언 -->
+        <security:authorize access="isAuthenticated()">
+          <div class="d-flex justify-content-start">
+            <!-- principal 프로퍼티 안의 loginUser 정보를 가져옴 -->
+            <!-- loginUser.no를 가져와서 조건문 실행 -->
+            <c:if test="${loginUser.no eq crew.user.no and loginUser ne null}">
+              <button class="btn btn-warning" onclick="updateCrew(${crew.no})" style="margin-right: 10px;">수정</button>
+              <button class="btn btn-danger" onclick="deleteCrew(${crew.no})" style="margin-right: 10px;">삭제</button>
+            </c:if>
+            <c:if test="${loginUser.no ne crew.user.no}">
+              <button type="button" class="btn btn-danger" onclick="report('crew', ${crew.no})">신고</button>
+            </c:if>
+          </div>
+        </security:authorize>
+        <div class="d-flex justify-content-end">
+          <a type="button" href="main" class="btn btn-secondary">목록</a>
         </div>
-      </security:authorize>
-      <div class="col-6 d-flex justify-content-end">
-        <a type="button" href="main" class="btn btn-secondary">목록</a>
       </div>
-
     </div>
     
     <!-- 댓글 작성 -->
@@ -176,7 +181,8 @@
                 <input class="form-control" disabled placeholder="로그인 후 댓글 작성이 가능합니다."/>
               </div>
               <div class="col">
-                <button type="button" class="btn btn-outline-success" onclick="goLogin()">등록</button>
+                <button type="button" class="btn btn-outline-success" style="width: 85px" onclick="goLogin()">등록
+                </button>
               </div>
             </c:when>
             <c:otherwise>
@@ -184,7 +190,7 @@
                 <textarea name="content" class="form-control" rows="3" placeholder="댓글을 작성하세요."></textarea>
               </div>
               <div class="col">
-                <button type="submit" class="btn btn-success" onclick="submitReply()">등록</button>
+                <button type="submit" class="btn btn-success" style="width: 85px" onclick="submitReply()">등록</button>
               </div>
             </c:otherwise>
           </c:choose>
@@ -194,7 +200,7 @@
     
     <!-- 댓글 목록 -->
     <c:if test="${not empty crew.reply}">
-      <div class="row comments rounded" style="background-color: #f2f2f2">
+      <div class="row comments rounded mb-4" style="margin-left: 2px; width: 100%; background-color: #f2f2f2">
         <!--댓글 내용 -->
         <c:forEach var="reply" items="${replies}">
           <c:choose>
