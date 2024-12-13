@@ -48,10 +48,10 @@
                         <a href="controlLikeCount?courseNo=${course.no}" class="btn btn-outline-primary ${isSuccess ? "" : "disabled"}" style="width: 100px;">
                             <i class="bi bi-hand-thumbs-up">좋아요!</i>
                         </a>
+                        <span>( 코스 완주자만 좋아요!를 클릭할 수 있습니다. )</span>
                     </c:if>
                 </sec:authorize>
                 <span>좋아요 수 : ${course.likeCnt}개</span>
-                <span>( 코스 완주자만 좋아요!를 클릭할 수 있습니다! )</span>
             </div>
 
             <%-- 성공 표시 --%>
@@ -224,10 +224,17 @@
         let reviews = result.data.data;
         let paging = result.data.paging;
 
-        for (let review of reviews) {
-            appendReview(review);
+        // 4. 리뷰가 있는 경우와 없는 경우를 구분해서 처리한다.
+        if (reviews.length > 0) {
+            for (let review of reviews) {
+                appendReview(review);
+            }
+            pagingReviews(paging);
+        } else {
+            let box = document.querySelector("#box-reviews");
+            box.innerHTML = "리뷰가 없습니다.";
         }
-        pagingReviews(paging);
+
     }
 
     getReviews(1);
@@ -285,7 +292,7 @@
                         <button class="btn btn-danger btn-sm" onclick="removeReview(\${review.no})">삭제</button>
 	                </span>
 	            </div>
-	            <div class="card-body">
+	            <div class="card-body" style="display: flex; flex-direction: column; align-items: flex-start;">
 	                <div>\${review.content}</div>
 	                <div id="box-images-\${review.no}"></div>
 	            </div>

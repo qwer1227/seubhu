@@ -18,7 +18,7 @@ public class Review {
     private String title; // 리뷰 제목
     private String content; // 리뷰 내용
     private int likeCnt; // 좋아요 수
-    @JsonFormat(pattern = "yyyy년 MM월 dd일")
+    @JsonFormat(pattern = "yyyy년 MM월 dd일 HH시 mm분")
     private Date createdDate; // 작성날짜
     @JsonFormat(pattern = "yyyy년 MM월 dd일")
     private Date updatedDate; // 수정날짜
