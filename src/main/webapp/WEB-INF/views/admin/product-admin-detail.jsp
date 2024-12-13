@@ -21,7 +21,7 @@
 
   <!-- Custom styles for this template-->
   <link href="${pageContext.request.contextPath}/resources/css/sb-admin-2.min.css" rel="stylesheet">
-
+    <%@include file="/WEB-INF/views/common/common.jsp" %>
 </head>
 
 <body id="page-top">
@@ -173,7 +173,7 @@
                         <div class="row m-2">
                             <div class="mr-2">
                                 <a href="delete-size?no=${param.no}&colorNo=${param.colorNo}">
-                                    <button class="btn btn-outline btn-success btn-sm">상품 사이즈 삭제</button>
+                                    <button class="btn btn-outline btn-success btn-sm">상품 사이즈 편집</button>
                                 </a>
                             </div>
                         </div>
@@ -184,6 +184,14 @@
                                 </a>
                             </div>
                         </div>
+                        <div class="row m-2">
+                            <div class="mr-2">
+                                <a href="/admin/product-stock?topNo=0">
+                                    <button class="btn btn-outline btn-success btn-sm">재고현황보기</button>
+                                </a>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -199,13 +207,6 @@
 <%@include file="/WEB-INF/views/admincommon/common.jsp" %>
 </body>
 <script>
-    // 댓글 폼
-    const commentFormModal = new bootstrap.Modal('#form-review-modal');
-
-    // 댓글 폼 모달 열기
-    function openCommentFormModal() {
-        commentFormModal.show();
-    }
 
     function fn(el) {
         let sizeAmount = el.getAttribute("data-amount");

@@ -93,7 +93,6 @@
                                 <col width="10%">
                                 <col width="20%">
                                 <col width="10%">
-                                <col width="10%">
                             </colgroup>
                             <thead class="text-center">
                                 <tr>
@@ -103,7 +102,6 @@
                                     <th>닉네임</th>
                                     <th>이메일</th>
                                     <th>보기</th>
-                                    <th>블랙현황</th>
                                 </tr>
                             </thead>
                             <tbody class="text-center">
@@ -117,12 +115,6 @@
                                         <td>
                                             <button class="btn btn-outline btn-success btn-sm"
                                                     onclick="previewUser(${u.no})">미리보기</button>
-                                        </td>
-                                        <td>
-                                            <a href="userblack?user_no=${u.no}">
-                                                <button class="btn btn-outline btn-danger btn-sm "
-                                                        >블랙</button>
-                                            </a>
                                         </td>
                                     </tr>
                                 </c:forEach>

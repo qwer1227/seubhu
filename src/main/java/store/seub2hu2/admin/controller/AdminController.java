@@ -159,6 +159,14 @@ public class AdminController {
         return "admin/lessonlist";
     }
 
+    @PostMapping("/course-delete")
+    public String courseDelete(@RequestParam("no") int courseNo){
+
+        adminService.getDeletedCourse(courseNo);
+
+        return "redirect:/admin/course";
+    }
+
     @GetMapping("/course-edit-form")
     public String getCourseEditForm(@RequestParam("no") int courseNo, Model model) {
 
@@ -505,7 +513,7 @@ public class AdminController {
 
         adminService.addThumb(form, links);
 
-        return "redirect:/admin/product-detail?no=" + form.getProdNo() + "&colorNo=" + form.getColorNo();
+        return "redirect:/admin/register-image?no=" + form.getProdNo() + "&colorNo=" + form.getColorNo();
     }
 
     @GetMapping("/register-color")
@@ -735,7 +743,7 @@ public class AdminController {
             condition.put("value", value);
         }
 
-        ListDto<ProdListDto> dto = productService.getProducts(condition);
+        ListDto<ProdListDto> dto = adminService.getStockProduct(condition);
         model.addAttribute("topNo", topNo);
         model.addAttribute("catNo", catNo);
         model.addAttribute("products", dto.getData());

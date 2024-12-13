@@ -100,20 +100,6 @@
                     </select>
                   </div>
                 </div>
-<%--                <div class="row row-cols-1 p-3">--%>
-<%--                  <div class="col-2">--%>
-<%--                    <label for="size">사이즈</label>--%>
-<%--                    <select name="sizeNo" class="form-control" id="size">--%>
-<%--                      <!-- 사이즈 옵션이 JavaScript로 동적으로 설정됩니다. -->--%>
-<%--                    </select>--%>
-<%--                  </div>--%>
-<%--                </div>--%>
-<%--                <div class="row row-cols-1 p-3">--%>
-<%--                  <div class="col-2">--%>
-<%--                    <label for="color">색상</label>--%>
-<%--                    <input type="text" class="form-control" name="color" id="color">--%>
-<%--                  </div>--%>
-<%--                </div>--%>
                 <div class="row row-cols-1 p-3">
                   <div class="col-2 pb-3">
                     상품설명
@@ -302,6 +288,41 @@
 
   // 페이지 로드 시 초기화
   document.addEventListener("DOMContentLoaded", updateCategoryDetails);
+
+  document.forms['form'].addEventListener('submit', function (event) {
+    const fields = [
+      { id: 'name', message: '상품명을 입력하세요.' },
+      { id: 'price', message: '가격을 입력하세요.' },
+      { id: 'brand', message: '브랜드를 선택하세요.' },
+      { id: 'category', message: '카테고리를 선택하세요.' },
+      { id: 'thumbnail', message: '썸네일 URL를 입력하세요.' }
+    ];
+
+    // 필수 항목 확인
+    for (const field of fields) {
+      const input = document.getElementById(field.id);
+      if (!input.value) {
+        alert(field.message);
+        input.focus();
+        event.preventDefault();
+        return;
+      }
+    }
+
+    // 숫자 입력 필드 확인
+    const numericFields = [
+      { id: 'price', message: '가격은 숫자로 입력하세요.' }
+    ];
+    for (const field of numericFields) {
+      const input = document.getElementById(field.id);
+      if (isNaN(input.value)) {
+        alert(field.message);
+        input.focus();
+        event.preventDefault();
+        return;
+      }
+    }
+  });
 
 </script>
 

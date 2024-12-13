@@ -130,6 +130,8 @@ public interface AdminMapper {
 
     void getUpdateShows(@Param("condition") Map<String, Object> condition);
 
+    void getDeletedCourses(@Param("courseNo")int courseNo);
+
 
 
 

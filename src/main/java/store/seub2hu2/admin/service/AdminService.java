@@ -524,4 +524,9 @@ public class AdminService {
 
         adminMapper.getUpdateShows(condition);
     }
+
+    public void getDeletedCourse(int courseNo) {
+
+        adminMapper.getDeletedCourses(courseNo);
+    }
 }

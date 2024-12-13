@@ -1069,6 +1069,16 @@
     </insert>
 
     <!--
+        void getDeletedCourses(@Param("courseNo")int courseNo);
+    -->
+    <update id="getDeletedCourses">
+        update COURSES
+        set
+            IS_DELETED = 'Y'
+        where
+            course_no = #{courseNo}
+    </update>
+    <!--
         void updateCourse(@Param("course") Course course);
     -->
     <update id="updateCourse">

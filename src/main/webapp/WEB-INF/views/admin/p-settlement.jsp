@@ -22,8 +22,6 @@
           rel="stylesheet">
   <!-- Bootstrap CSS 링크 예시 페이지네이션-->
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
-  <!-- 모달창 x표시(아이콘 같은) 보임 대신 select option 화살표 표시 안보이고 radio버튼 문제 생김-->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Custom styles for this template-->
   <link href="${pageContext.request.contextPath}/resources/css/sb-admin-2.min.css" rel="stylesheet">
 
@@ -60,7 +58,7 @@
               <input type="hidden" name="page" />
               <input type="hidden" name="rows" />
               <div class="row g-3">
-                <div class="row col-2 align-items-center pr-2 pt-3">
+                <div class="row col-2 align-items-center pr-2 ">
                   <label for="dateInput" class="col-auto col-form-label">날짜</label>
                   <div class="col">
                     <%
@@ -148,7 +146,7 @@
         <div class="row mb-3">
           <div class="col-12">
             <div class="border-bottom pt-4 pr-4 pl-4 bg-light">
-              <table class="table">
+              <table class="table border-bottom">
                 <colgroup>
                   <col width="7%">
                   <col width="8%">
@@ -213,19 +211,19 @@
                   <li class="page-item ${paging.first? 'disabled' : ''}">
                       <a class="page-link"
                       onclick="changePage(${paging.prevPage}, event)"
-                      href="settlement?page=${paging.prevPage}">이전</a>
+                      href="p-settlement?page=${paging.prevPage}">이전</a>
                   </li>
                   <c:forEach var="num" begin="${paging.beginPage}" end="${paging.endPage}">
                       <li class="page-item ${paging.page eq num ? 'active' : ''}">
                           <a class="page-link"
                           onclick="changePage(${num}, event)"
-                          href="settlement?page=${num}">${num}</a>
+                          href="p-settlement?page=${num}">${num}</a>
                       </li>
                   </c:forEach>
                   <li class="page-item ${paging.last ? 'disabled' : ''}" >
                       <a class="page-link"
                       onclick="changePage(${paging.nextPage}, event)"
-                      href="settlement?page=${paging.nextPage}">다음</a>
+                      href="p-settlement?page=${paging.nextPage}">다음</a>
                   </li>
                 </ul>
               </nav>
@@ -242,11 +240,9 @@
     <div class="modal-content">
       <div class="modal-header">
         <h1 class="modal-title fs-5" id="modal-title-preview-prod">주문상품 보기</h1>
-        <button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close">
-        </button>
       </div>
       <div class="modal-body">
-        <table class="table" id="table-rev">
+        <table class="table border-bottom" id="table-rev">
           <colgroup>
             <col width="30%">
             <col width="13%">
@@ -268,9 +264,18 @@
           <tbody>
 
           </tbody>
-          <tbody id="tbody2">
+        </table>
+      </div>
+      <div class="modal-body">
+        <table class="table" id="table-rev2">
+          <thead>
+            <col width="30%">
+            <col width="30%">
+            <col width="30%">
+          </thead>
+        <tbody style="background: #4d4d59">
 
-          </tbody>
+        </tbody>
         </table>
       </div>
       <div class="modal-footer">
@@ -317,16 +322,13 @@
       }
       let rev2 = data[0];
       let summaryRows =`
-          <tr>
-              <th>합계 :&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\${new Intl.NumberFormat().format(rev2.orderPrice)}원</th>
-              <td>할인가 :</td>
-              <th>\${new Intl.NumberFormat().format(rev2.orderDisPrice)}원</th>
-              <td>결제금액 : </td>
-              <th><span>\${new Intl.NumberFormat().format(rev2.orderRealPrice)}원</span></th>
-              <td></td>
+          <tr class="bg-dark text-white fw-bold">
+              <th>합계 : \${new Intl.NumberFormat().format(rev2.orderPrice)}원</th>
+              <th>할인가 : \${new Intl.NumberFormat().format(rev2.orderDisPrice)}원</th>
+              <th>결제금액 : \${new Intl.NumberFormat().format(rev2.orderRealPrice)}원</th>
           </tr>
         `;
-      document.querySelector("#tbody2").innerHTML = summaryRows;
+      document.querySelector("#table-rev2 tbody").innerHTML = summaryRows;
     }
     document.querySelector("#table-rev tbody").innerHTML = rows;
 

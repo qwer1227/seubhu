@@ -191,7 +191,7 @@
 
     // 숫자 입력 필드 유효성 검사
     const numericFields = [
-      { id: "time", message: "걸리는 시간을 숫자로 입력하세요." },
+      { id: "time", message: "소요 시간을 숫자로 입력하세요." },
       { id: "distance", message: "거리를 숫자로 입력하세요." }
     ];
 
