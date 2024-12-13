@@ -26,10 +26,7 @@ import store.seub2hu2.community.vo.Crew;
 import store.seub2hu2.community.vo.Reply;
 import store.seub2hu2.lesson.view.FileDownloadView;
 import store.seub2hu2.mypage.dto.*;
-import store.seub2hu2.mypage.service.CartService;
-import store.seub2hu2.mypage.service.PostService;
-import store.seub2hu2.mypage.service.QnaService;
-import store.seub2hu2.mypage.service.WorkoutService;
+import store.seub2hu2.mypage.service.*;
 import store.seub2hu2.mypage.vo.Post;
 import store.seub2hu2.order.service.OrderService;
 import store.seub2hu2.order.vo.Order;
@@ -37,6 +34,7 @@ import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.service.UserService;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.ListDto;
+import store.seub2hu2.wish.dto.WishItemDto;
 
 import java.io.File;
 import java.net.URLEncoder;
@@ -87,8 +85,12 @@ public class MyPageController {
 
     @Autowired
     private FileDownloadView fileDownloadView;
+
     @Autowired
     private CrewService crewService;
+
+    @Autowired
+    private WishListService wishListService;
 
     // URL localhost/mypage 입력 시 유저의 No를 활용해 그 유저의 페이지를 보여줌
     @GetMapping("")
@@ -477,7 +479,14 @@ public class MyPageController {
 
     // 위시리스트 화면으로 간다.
     @GetMapping("/wish")
-    public String wish() {
+    public String wish(@AuthenticationPrincipal LoginUser loginUser
+                        , Model model) {
+
+        User user = User.builder().no(loginUser.getNo()).build();
+
+        List<WishItemDto> wishItemDtoList = wishListService.getWishListByUserNo(user.getNo());
+
+        model.addAttribute("wishItemDtoList",wishItemDtoList);
 
         return "mypage/wish";
     }

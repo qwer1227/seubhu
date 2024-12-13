@@ -15,74 +15,32 @@
     <hr class="bg-primary border border-1">
 
     <div class="row row-cols-1 row-cols-md-3 g-4 mt-5 mb-5">
-        <div class="col">
-            <div class="card h-100">
-                <a class="text-decoration-none" href="/product/detail?no=17&colorNo=17">
-                    <img src="https://static.nike.com/a/images/t_PDP_936_v1/f_auto,q_auto:eco/12a2f74f-b392-4ff1-8d15-480de194bd0c/AIR+ZOOM+PEGASUS+41.png" class="card-img-top" alt="...">
-                </a>
-                <div class="card-body">
-                    <h5 class="card-title">나이키 페가수스 41</h5>
-                    <div>
-                        <p>남성 로드 러닝화</p>
-                        <p>169,000 원</p>
+        <c:forEach var="item" items="${wishItemDtoList}">
+            <input type="hidden" name="prodNo" value="${item.product.no}"/>
+            <input type="hidden" name="sizeNo" value="${item.size.no}"/>
+            <input type="hidden" name="colorNo" value="${item.color.no}"/>
+            <input type="hidden" name="userNo" value="${item.user.no}">
+            <div class="col">
+                <div class="card h-100">
+                    <a class="text-decoration-none" href="/product/detail?no=${item.product.no}&colorNo=${item.color.no}">
+                    <c:forEach var="img" items="${item.images}">
+                        <img src="${img.url}" class="card-img-top" alt="...">
+                    </c:forEach>
+                    </a>
+                    <div class="card-body">
+                        <h5 class="card-title">${item.product.name}</h5>
+                        <h5>[${item.color.name}/${item.size.size}]</h5>
+                        <div>
+                            <p>${item.category.name}</p>
+                            <p><strong><fmt:formatNumber value="${item.product.price}"/> 원</strong></p>
+                        </div>
+                        <hr class="bg-primary border border-1">
+                        <button class="btn btn-outline-secondary">장바구니 추가</button>
+                        <button class="btn btn-outline-secondary"><i class="bi bi-heart"></i></button>
                     </div>
-                    <hr class="bg-primary border border-1">
-                    <button class="btn btn-outline-secondary">장바구니 추가</button>
-                    <button class="btn btn-outline-secondary"><i class="bi bi-heart"></i></button>
                 </div>
             </div>
-        </div>
-        <div class="col">
-            <div class="card h-100">
-                <a class="text-decoration-none" href="/product/detail?no=17&colorNo=17">
-                    <img src="https://static.nike.com/a/images/t_PDP_936_v1/f_auto,q_auto:eco/12a2f74f-b392-4ff1-8d15-480de194bd0c/AIR+ZOOM+PEGASUS+41.png" class="card-img-top" alt="...">
-                </a>
-                <div class="card-body">
-                    <h5 class="card-title">나이키 페가수스 41</h5>
-                    <div>
-                        <p>남성 로드 러닝화</p>
-                        <p>169,000 원</p>
-                    </div>
-                    <hr class="bg-primary border border-1">
-                    <button class="btn btn-outline-secondary">장바구니 추가</button>
-                    <button class="btn btn-outline-secondary"><i class="bi bi-heart"></i></button>
-                </div>
-            </div>
-        </div>
-        <div class="col">
-            <div class="card h-100">
-                <a class="text-decoration-none" href="/product/detail?no=17&colorNo=17">
-                    <img src="https://static.nike.com/a/images/t_PDP_936_v1/f_auto,q_auto:eco/12a2f74f-b392-4ff1-8d15-480de194bd0c/AIR+ZOOM+PEGASUS+41.png" class="card-img-top" alt="...">
-                </a>
-                <div class="card-body">
-                    <h5 class="card-title">나이키 페가수스 41</h5>
-                    <div>
-                        <p>남성 로드 러닝화</p>
-                        <p>169,000 원</p>
-                    </div>
-                    <hr class="bg-primary border border-1">
-                    <button class="btn btn-outline-secondary">장바구니 추가</button>
-                    <button class="btn btn-outline-secondary"><i class="bi bi-heart"></i></button>
-                </div>
-            </div>
-        </div>
-        <div class="col">
-            <div class="card h-100">
-                <a class="text-decoration-none" href="/product/detail?no=17&colorNo=17">
-                    <img src="https://static.nike.com/a/images/t_PDP_936_v1/f_auto,q_auto:eco/12a2f74f-b392-4ff1-8d15-480de194bd0c/AIR+ZOOM+PEGASUS+41.png" class="card-img-top" alt="...">
-                </a>
-                <div class="card-body">
-                    <h5 class="card-title">나이키 페가수스 41</h5>
-                    <div>
-                        <p>남성 로드 러닝화</p>
-                        <p>169,000 원</p>
-                    </div>
-                    <hr class="bg-primary border border-1">
-                    <button class="btn btn-outline-secondary">장바구니 추가</button>
-                    <button class="btn btn-outline-secondary"><i class="bi bi-heart"></i></button>
-                </div>
-            </div>
-        </div>
+        </c:forEach>
     </div>
 </div>
 
