@@ -84,6 +84,8 @@
                         <td class="text-end">
                             <span id="price-${item.size.no}" data-price="${item.product.price}"><fmt:formatNumber
                                     value="${item.product.price * item.stock}"/> 원</span>
+                            <button type="button" class="btn btn-lg delete-button"
+                                    data-target-id="#item-${item.size.no}}"><i class="bi bi-x"></i></button>
                         </td>
                     </tr>
                 </c:forEach>
