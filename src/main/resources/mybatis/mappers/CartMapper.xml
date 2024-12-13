@@ -26,6 +26,27 @@
     </insert>
 
     <!--
+        void addToCart(@Param("cart") Cart cart);
+    -->
+    <insert id="addToCart">
+        INSERT INTO CARTS (
+        SIZE_NO
+        , PROD_NO
+        , USER_NO
+        , CART_AMOUNT
+        , COLOR_NO
+        )
+        values
+            (
+            #{cart.sizeNo}
+            , #{cart.prodNo}
+            , #{cart.userNo}
+            , #{cart.stock}
+            , #{cart.colorNo}
+            )
+    </insert>
+
+    <!--
         void updateCart(@Param("cart") Cart cart);
     -->
     <update id="updateCart">

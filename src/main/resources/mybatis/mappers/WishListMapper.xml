@@ -3,6 +3,27 @@
 <mapper namespace="store.seub2hu2.mypage.mapper.WishMapper">
 
     <!--
+        void insertWishItems(@Param("wishLists") List<WishList> wishLists);
+    -->
+    <insert id="insertWishItems">
+        INSERT INTO WISHLISTS
+        (PROD_NO, USER_NO, COLOR_NO, SIZE_NO)
+        VALUES
+        <foreach collection="wishLists" item="item" index="index" separator=",">
+            (#{item.product.no}, #{item.user.no}, #{item.color.no}, #{item.size.no})
+        </foreach>
+
+    </insert>
+
+    <!--
+        void deleteWishItem(@Param("wishNo") int wishNo);
+    -->
+    <delete id="deleteWishItem">
+        DELETE FROM WISHLISTS
+        WHERE WISH_NO = #{wishNo}
+    </delete>
+
+    <!--
         List<WishItemDto> getWishListByUserNo(@Param("userNo") int userNo);
     -->
     <resultMap id="wishItemDtoResultMap" type="store.seub2hu2.wish.dto.WishItemDto">
@@ -76,6 +97,7 @@
                  JOIN PROD_IMGS PI
                       ON PC.COLOR_NO = PI.COLOR_NO
         WHERE PI.IMG_THUM = 'Y'
-          AND U.USER_NO = #{userNo};
+          AND U.USER_NO = #{userNo}
+        ORDER BY W.WISH_NO DESC
     </select>
 </mapper>
