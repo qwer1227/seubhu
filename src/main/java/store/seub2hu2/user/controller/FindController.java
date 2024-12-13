@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import store.seub2hu2.user.dto.MailDTO;
 import store.seub2hu2.user.exception.DataNotFoundException;
 import store.seub2hu2.user.service.MailService;
+import store.seub2hu2.user.vo.User;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,16 +30,12 @@ public class FindController {
 
     @PostMapping("/find-id")
     @ResponseBody
-    public ResponseEntity<?> findIdByEmail(@RequestBody Map<String, String> request) {
-        String email = request.get("email");
+    public ResponseEntity<?> findIdByEmail(@RequestParam("email") String email) {
         try {
-            String userId = mailService.findIdByEmail(email); // 서비스 계층에서 아이디 찾기 처리
-            return ResponseEntity.ok(Map.of("success", true, "userId", userId));
+            User user = mailService.findIdByEmail(email); // 서비스 계층에서 아이디 찾기 처리
+            return ResponseEntity.ok(Map.of("success", true, "userId", user.getId()));
         } catch (NoSuchElementException e) {
             return ResponseEntity.ok(Map.of("success", false, "error", "등록된 이메일이 없습니다."));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("success", false, "error", "서버 오류가 발생했습니다."));
         }
     }
 

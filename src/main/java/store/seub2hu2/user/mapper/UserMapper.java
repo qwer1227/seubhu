@@ -35,8 +35,6 @@ public interface UserMapper {
     // 사용자 닉네임으로 사용자 조회
     User getUserByNickname(@Param("nickname") String nickname);
 
-    // 이메일로 아이디 찾기 (아이디 찾기용)
-    String findIdByEmail(@Param("email") String email);
 
     // 사용자 번호로 역할 정보 조회
     List<Role> getRolesByUserNo(@Param("userNo") int userNo);
