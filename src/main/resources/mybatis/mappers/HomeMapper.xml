@@ -5,29 +5,31 @@
 
     <!-- 주간 베스트 상품 - 별점 순으로 조회 -->
     <select id="getWeeklyBestProductsByRating" resultType="store.seub2hu2.product.dto.ProdListDto">
-        SELECT PROD_NO,
-               PROD_NAME,
-               PROD_PRICE,
-               PROD_RATING,
-               PROD_IMG_THUM,
-               PROD_CNT
+        SELECT PROD_NO        AS no,
+               PROD_NAME        AS name,
+               PROD_PRICE        AS price,
+               PROD_IMG_THUM        AS imgThum,
+               PROD_COLOR_NUM        AS colorNum
         FROM PRODUCTS
         WHERE PROD_STATUS = '판매중'
           AND PROD_CREATED_AT BETWEEN CURDATE() - INTERVAL 7 DAY
           AND CURDATE()
         ORDER BY
             PROD_CNT DESC
-            LIMIT 3
+            LIMIT 4
     </select>
 
     <!-- 주간 베스트 상품 - 조회수 순으로 조회 (러닝화 기준) -->
     <select id="getWeeklyBestProductsByViewCount" resultType="store.seub2hu2.product.dto.ProdListDto">
-        SELECT PROD_NO, PROD_NAME, PROD_PRICE, PROD_RATING, PROD_IMG_THUM, PROD_CNT
+        SELECT PROD_NO        AS no,
+        PROD_NAME        AS name,
+        PROD_PRICE        AS price,
+        PROD_IMG_THUM        AS imgThum,
+        PROD_COLOR_NUM        AS colorNum
         FROM PRODUCTS
         WHERE PROD_STATUS = '판매중'
         AND CAT_NO = 11  <!-- 러닝화 카테고리 -->
-        ORDER BY
-        PROD_CNT DESC
+        ORDER BY PROD_CNT DESC
         LIMIT 5
     </select>
 

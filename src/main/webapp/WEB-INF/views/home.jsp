@@ -121,24 +121,24 @@
                 <div class="carousel-item active">
                     <div class="row">
                         <c:forEach var="product" items="${bestByRating}">
-                        <div class="col-md-3">
-                            <div class="card position-relative border-0">
-                                <a href="/product/hit?no=${product.no}">
-                                    <img src="${product.imgThum}" class="card-img-top" alt="상품 1">
-                                </a>
-                                <div class="icon-overlay d-flex justify-content-center">
-                                    <button class="icon-button btn-sm">
-                                        <i class="bi bi-heart"></i>
-                                    </button>
-                                </div>
-                                <div class="card-body">
-                                    <span class="badge bg-dark">#${product.status}</span>
-                                    <h5 class="card-title">${product.name}</h5>
-                                    <p class="card-text">${product.price}</p>
-                                    <p>${product.brand.name}</p>
+                            <div class="col-md-3">
+                                <div class="card position-relative border-0">
+                                    <a href="/product/hit?no=${product.no}&colorNo=${product.colorNum}">
+                                        <img src="${product.imgThum}" class="card-img-top" alt="상품 1">
+                                    </a>
+                                    <div class="icon-overlay d-flex justify-content-center">
+                                        <button class="icon-button btn-sm">
+                                            <i class="bi bi-heart"></i>
+                                        </button>
+                                    </div>
+                                    <div class="card-body">
+                                        <span class="badge bg-dark">#${product.status}</span>
+                                        <h5 class="card-title">${product.name}</h5>
+                                        <p class="card-text">${product.price}</p>
+                                        <p>${product.brand.name}</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
                         </c:forEach>
                     </div>
                 </div>
@@ -147,24 +147,24 @@
                 <div class="carousel-item">
                     <div class="row">
                         <c:forEach var="product" items="${bestByRating}">
-                        <div class="col-md-3">
-                            <div class="card position-relative border-0">
-                                <a href="/product/hit?no=${product.no}">
-                                    <img src="${product.imgThum}" class="card-img-top" alt="상품 5">
-                                </a>
-                                <div class="icon-overlay d-flex justify-content-center">
-                                    <button class="icon-button btn-sm">
-                                        <i class="bi bi-heart"></i>
-                                    </button>
-                                </div>
-                                <div class="card-body">
-                                    <span class="badge bg-dark">#${product.status}</span>
-                                    <h5 class="card-title">${product.name}</h5>
-                                    <p class="card-text">${product.price}</p>
-                                    <p>${product.brand.name}</p>
+                            <div class="col-md-3">
+                                <div class="card position-relative border-0">
+                                    <a href="/product/hit?no=${product.no}&colorNo=${product.colorNum}">
+                                        <img src="${product.imgThum}" class="card-img-top" alt="상품 5">
+                                    </a>
+                                    <div class="icon-overlay d-flex justify-content-center">
+                                        <button class="icon-button btn-sm">
+                                            <i class="bi bi-heart"></i>
+                                        </button>
+                                    </div>
+                                    <div class="card-body">
+                                        <span class="badge bg-dark">#${product.status}</span>
+                                        <h5 class="card-title">${product.name}</h5>
+                                        <p class="card-text">${product.price}</p>
+                                        <p>${product.brand.name}</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
                         </c:forEach>
                     </div>
                 </div>
@@ -172,67 +172,86 @@
         </div>
     </section>
 
-    <!-- 러닝화 주간 랭킹 -->
     <section class="container">
         <div class="row">
             <div class="col-md-6 mb-4">
                 <h3>러닝화 주간 랭킹</h3>
-                <c:forEach var="product" items="${bestByViewCount}">
                 <ul class="list-group border-0">
-                    <li class="list-group-item d-flex align-items-center border-0">
-                        <span class="fw-bold me-3">${product.rankByViewCount}</span>
-                        <a href="/product/hit?no=${product.no}" class="text-decoration-none">
-                            <img src="${product.imgThum}" alt="러닝화 1" width="50" class="me-3">
-                            <span class="text-muted">${product.name}</span>
-                        </a>
-                        <span class="ms-auto"><i class="bi bi-arrow-up"></i></span>
-                    </li>
+                    <c:forEach var="product" items="${bestByViewCount}" varStatus="status">
+                        <li class="list-group-item d-flex align-items-center border-0">
+                            <!-- 자동 순위 표시 -->
+                            <span class="fw-bold me-3">#${status.index + 1}</span>
+                            <a href="/product/hit?no=${product.no}&colorNo=${product.colorNum}"
+                               class="text-decoration-none">
+                                <img src="${product.imgThum}" alt="러닝화 ${status.index + 1}" width="50" class="me-3">
+                                <span class="text-muted">${product.name}</span>
+                            </a>
+                            <!-- 순위 변동 아이콘 -->
+                            <span class="ms-auto">
+                            <c:choose>
+                                <c:when test="${product.rankChange > 0}">
+                                    <i class="bi bi-arrow-up text-success"></i>
+                                </c:when>
+                                <c:when test="${product.rankChange < 0}">
+                                    <i class="bi bi-arrow-down text-danger"></i>
+                                </c:when>
+                                <c:otherwise>
+                                    <i class="bi bi-dash text-muted"></i>
+                                </c:otherwise>
+                            </c:choose>
+                        </span>
+                        </li>
+                    </c:forEach>
                 </ul>
-                </c:forEach>
             </div>
+        </div>
 
-            <!-- 이벤트 게시판 섹션 -->
-            <div class="col-md-6 mb-4">
-                <h3 class="d-flex align-items-center">
-                    <span class="ms-3 text-muted">마라톤 정보</span>
-                </h3>
-                <c:forEach var="marathon" items="${latestMarathons}">
+        <!-- 이벤트 게시판 섹션 -->
+        <div class="col-md-6 mb-4">
+            <h3 class="d-flex align-items-center">
+                <span class="ms-3 text-muted">마라톤 정보</span>
+            </h3>
+            <c:forEach var="marathon" items="${latestMarathons}">
                 <ul class="list-group border-0">
                     <li class="list-group-item d-flex justify-content-between align-items-center border-0">
-                        <span class="text-muted"><fmt:formatDate value="${marathon.marathonDate}" pattern="yyyy-MM-dd"/></span>
+                        <span class="text-muted"><fmt:formatDate value="${marathon.marathonDate}"
+                                                                 pattern="yyyy-MM-dd"/></span>
                         <span class="text-muted">${marathon.title}</span>
                         <span class="text-muted"><fmt:formatDate value="${marathon.startDate}" pattern="yyyy-MM-dd"/>
                         ~<fmt:formatDate value="${marathon.endDate}" pattern="yyyy-MM-dd"/></span>
-                        <a href="/community/marathon/hit?no=${marathon.no}" class="btn btn-sm btn-dark text-decoration-none">바로가기</a>
+                        <a href="/community/marathon/hit?no=${marathon.no}"
+                           class="btn btn-sm btn-dark text-decoration-none">바로가기</a>
                     </li>
                 </ul>
-                </c:forEach>
-            </div>
+            </c:forEach>
+        </div>
         </div>
     </section>
 
     <!-- 커뮤니티 게시판 -->
     <section class="container my-5">
-    <h3 class="text-muted">커뮤니티</h3>
-    <div class="list-group">
-        <c:forEach var="board" items="${topViewedBoards}">
-            <a href="/community/board/hit?no=${board.no}" class="list-group-item list-group-item-action d-flex border-0 text-decoration-none">
-                <div class="col-9">
-                    <span class="text-muted">${board.title}</span>
-                </div>
-                <div class="col-1 text-right">
-                    <small class="text-muted">${board.user.nickname}</small>
-                </div>
-                <div class="col-1 text-right">
-                    <small class="text-muted"><fmt:formatDate value="${board.createdDate}" pattern="yyyy-MM-dd"/></small>
-                </div>
-                <div class="col-1 text-right">
-                    <small class="text-muted">${board.viewCnt}</small>
-                </div>
-            </a>
-        </c:forEach>
-    </div>
-</section>
+        <h3 class="text-muted">커뮤니티</h3>
+        <div class="list-group">
+            <c:forEach var="board" items="${topViewedBoards}">
+                <a href="/community/board/hit?no=${board.no}"
+                   class="list-group-item list-group-item-action d-flex border-0 text-decoration-none">
+                    <div class="col-9">
+                        <span class="text-muted">${board.title}</span>
+                    </div>
+                    <div class="col-1 text-right">
+                        <small class="text-muted">${board.user.nickname}</small>
+                    </div>
+                    <div class="col-1 text-right">
+                        <small class="text-muted"><fmt:formatDate value="${board.createdDate}"
+                                                                  pattern="yyyy-MM-dd"/></small>
+                    </div>
+                    <div class="col-1 text-right">
+                        <small class="text-muted">${board.viewCnt}</small>
+                    </div>
+                </a>
+            </c:forEach>
+        </div>
+    </section>
 
 
     <!-- 레슨 목록 -->
@@ -250,7 +269,7 @@
                         <p class="card-text text-muted">${lesson.subject}</p>
                         <p class="card-text text-muted">${lesson.place}</p>
                         <p class="card-text text-muted">${lesson.start}"
-                        ~${lesson.end}"</p>
+                            ~${lesson.end}"</p>
                         <a href="/lesson/detail?lessonNo=${lesson.lessonNo}" class="btn btn-dark text-white">예약하기</a>
                     </div>
                 </div>
