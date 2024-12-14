@@ -42,7 +42,7 @@ public class BoardController {
     public FileDownloadView fileDownloadView;
 
     @Autowired
-    public BoardReplyService replyService;
+    public ReplyService replyService;
 
     @Autowired
     public ScrapService scrapService;
@@ -95,7 +95,6 @@ public class BoardController {
         return "community/board/main";
     }
 
-
     @GetMapping("/detail")
     public String detail(@RequestParam("no") int boardNo
                          , @AuthenticationPrincipal LoginUser loginUser
@@ -118,7 +117,7 @@ public class BoardController {
 
             for (Reply reply : replyList) {
                 int replyResult = replyService.getCheckLike(reply.getNo(), loginUser);
-                //model.addAttribute("replyLiked", replyResult);
+                model.addAttribute("replyLiked", replyResult);
                 reply.setReplyLike(replyResult);
             }
         }
@@ -227,21 +226,18 @@ public class BoardController {
     }
 
     @PostMapping("/add-reply")
-    @PreAuthorize("isAuthenticated()")
     public String addReply(ReplyForm form
             , @AuthenticationPrincipal LoginUser loginUser) {
-
         replyService.addNewReply(form, loginUser);
-        return "redirect:detail?no=" + form.getBoardNo();
+        return "redirect:detail?no=" + form.getTypeNo();
     }
 
     @PostMapping("/add-comment")
-    @PreAuthorize("isAuthenticated()")
     public String addComment(ReplyForm form
             , @AuthenticationPrincipal LoginUser loginUser){
 
         replyService.addNewComment(form, loginUser);
-        return "redirect:detail?no=" + form.getBoardNo();
+        return "redirect:detail?no=" + form.getTypeNo();
     }
 
     @PostMapping("/modify-reply")
@@ -252,14 +248,14 @@ public class BoardController {
                               , @AuthenticationPrincipal LoginUser loginUser){
 
         ReplyForm form = new ReplyForm();
-        form.setId(replyNo);
-        form.setBoardNo(boardNo);
+        form.setNo(replyNo);
+        form.setTypeNo(boardNo);
         form.setContent(replyContent);
         form.setUserNo(loginUser.getNo());
 
         replyService.updateReply(form);
 
-        return "redirect:detail?no=" + form.getBoardNo();
+        return "redirect:detail?no=" + form.getTypeNo();
     }
 
     @GetMapping("/delete-reply")
@@ -268,11 +264,11 @@ public class BoardController {
                               @RequestParam("bno") int boardNo){
 
         ReplyForm form = new ReplyForm();
-        form.setId(replyNo);
-        form.setBoardNo(boardNo);
+        form.setNo(replyNo);
+        form.setTypeNo(boardNo);
         replyService.deleteReply(replyNo);
 
-        return "redirect:detail?no=" + form.getBoardNo();
+        return "redirect:detail?no=" + form.getTypeNo();
     }
 
     @GetMapping("/update-board-like")

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="store.seub2hu2.community.mapper.ReplyMapper">
+
+  <!-- void insertReply(@Param("reply") Reply reply); -->
+  <insert id="insertReply">
+    insert into REPLIES
+    (
+    prev_reply_no
+    , reply_type
+    , reply_type_no
+    , reply_content
+    , user_no
+    )
+    values
+    (
+    #{reply.prevNo}
+    , #{reply.type}
+    , #{reply.typeNo}
+    , #{reply.content}
+    , #{reply.user.no}
+    )
+    <selectKey resultType="int" keyProperty="reply.no" keyColumn="reply_no" order="AFTER">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+  </insert>
+
+  <!-- List<Reply> getRepliesByTypeNo(@Param("no") int typeNo); -->
+  <select id="getRepliesByTypeNo" resultType="store.seub2hu2.community.vo.Reply" parameterType="int">
+    select r.reply_no           as `no`
+         , r.prev_reply_no      as prevNo
+         , r.reply_content      as content
+         , u.user_no            as "usesr.no"
+         , u.user_nickname      as "usesr.nickname"
+         , r.reply_created_date as createdDate
+         , r.is_report          as report
+         , r.is_deleted         as deleted
+         , r.reply_like_cnt     as replyLike
+    from REPLIES r
+           join USERS u
+                on r.user_no = u.user_no
+    where reply_type_no = #{no}
+  </select>
+
+  <!-- Reply getReplyByReplyNo(@Param("no") int replyNo); -->
+  <select id="getReplyByReplyNo" parameterType="int">
+    select r.reply_no as no
+        , r.prev_reply_no as prevNo
+        , r.reply_type as type
+        , r.reply_type_no as typeNo
+        , r.reply_content as content
+        , u.user_no as "user.no"
+        , u.user_nickname as "user.nickname"
+        , r.reply_created_date as createdDate
+        , r.reply_updated_date as upadtedDate
+        , r.is_report as report
+        , r.is_deleted as deleted
+        , r.reply_like_cnt as replyLike
+    from REPLIES r join USERS u
+    on r.user_no = u.user_no
+    where r.reply_no = #{no}
+  </select>
+
+  <!-- int getReplyCntByTypeNo(@Param("no") int typeNo); -->
+  <select id="getReplyCntByTypeNo" parameterType="int">
+    select count(*)
+    from REPLIES
+    where reply_type_no = #{no}
+  </select>
+
+  <!-- void updateReply(@Param("reply") Reply reply); -->
+  <update id="updateReply">
+    update REPLIES
+    set prev_reply_no      = #{reply.prevNo}
+      , reply_content      = #{reply.content}
+      , is_deleted         = #{reply.deleted}
+      , reply_updated_date = sysdate()
+    where reply_no = #{reply.no}
+  </update>
+
+  <!-- int hasUserLikedReply(@Param("rno") int replyNo, @Param("userNo") int userNo); -->
+  <select id="hasUserLikedReply" resultType="int">
+    select EXISTS (SELECT 1
+                   FROM REPLY_LIKES
+                   WHERE reply_no = #{rno}
+                     and user_no = #{userNo})
+  </select>
+
+  <!-- void insertReplyLike(@Param("reply") Reply reply); -->
+  <insert id="insertReplyLike">
+    insert into REPLY_LIKES
+    ( reply_type
+    , reply_no
+    , user_no)
+    values ( #{reply.type}
+           , #{reply.no}
+           , #{userNo})
+  </insert>
+
+  <!-- void deleteReplyLike(@Param("rno") int replyNo, @Param("userNo") int userNo); -->
+  <delete id="deleteReplyLike">
+    delete
+    from REPLY_LIKES
+    where reply_no = #{rno}
+      and user_no = #{userNo}
+  </delete>
+</mapper>

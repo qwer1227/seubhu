@@ -16,8 +16,8 @@ import java.util.Date;
 public class Reply {
     private int no;
     private int prevNo;
-    private int boardNo;
-    private int crewNo;
+    private String type; // board, crew, course
+    private int typeNo;  // board의 게시글 번호, crew의 게시글 번호, course의 게시글 번호
     private String content;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date createdDate;

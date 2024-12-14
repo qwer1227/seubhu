@@ -21,7 +21,7 @@ public class CrewReplyService {
     public void addNewReply(ReplyForm form
             , @AuthenticationPrincipal LoginUser loginUser) {
         Reply reply = new Reply();
-        reply.setCrewNo(form.getCrewNo());
+        reply.setTypeNo(form.getTypeNo());
         reply.setContent(form.getContent());
         reply.setDeleted("N");
 
@@ -40,7 +40,7 @@ public class CrewReplyService {
     public void addNewComment(ReplyForm form
             , @AuthenticationPrincipal LoginUser loginUser) {
         Reply reply = new Reply();
-        reply.setCrewNo(form.getCrewNo());
+        reply.setTypeNo(form.getTypeNo());
         reply.setContent(form.getContent());
         reply.setDeleted("N");
 
@@ -68,12 +68,12 @@ public class CrewReplyService {
 
     public void deleteReply(int replyNo) {
         Reply reply = crewReplyMapper.getReplyByReplyNo(replyNo);
-        reply.setCrewNo(reply.getCrewNo());
+        reply.setTypeNo(reply.getTypeNo());
         crewReplyMapper.deleteReplyByNo(replyNo);
     }
 
     public void updateReply(ReplyForm form) {
-        Reply reply = crewReplyMapper.getReplyByReplyNo(form.getId());
+        Reply reply = crewReplyMapper.getReplyByReplyNo(form.getNo());
         reply.setContent(form.getContent());
 
         crewReplyMapper.updateReply(reply);

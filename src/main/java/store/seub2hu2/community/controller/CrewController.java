@@ -18,6 +18,7 @@ import store.seub2hu2.community.dto.ReplyForm;
 import store.seub2hu2.community.dto.ReportForm;
 import store.seub2hu2.community.service.CrewReplyService;
 import store.seub2hu2.community.service.CrewService;
+import store.seub2hu2.community.service.ReplyService;
 import store.seub2hu2.community.service.ReportService;
 import store.seub2hu2.community.view.FileDownloadView;
 import store.seub2hu2.community.vo.Crew;
@@ -46,7 +47,7 @@ public class CrewController {
     public FileDownloadView fileDownloadView;
 
     @Autowired
-    private CrewReplyService crewReplyService;
+    private ReplyService replyService;
 
     @Autowired
     private ReportService reportService;
@@ -95,9 +96,9 @@ public class CrewController {
                         , Model model) {
         Crew crew = crewService.getCrewDetail(crewNo);
 
-        List<Reply> replyList = crewReplyService.getReplies(crewNo);
+        List<Reply> replyList = replyService.getReplies(crewNo);
         crew.setReply(replyList);
-        int replyCnt = crewReplyService.getReplyCnt(crewNo);
+        int replyCnt = replyService.getReplyCnt(crewNo);
 
         List<CrewMember> members = crewService.getCrewMembers(crewNo);
         crew.setMember(members);
@@ -109,10 +110,10 @@ public class CrewController {
         model.addAttribute("members", members);
         model.addAttribute("memberCnt", memberCnt);
 
-        for (Reply reply : replyList) {
-            int replyResult = crewReplyService.getCheckLike(reply.getNo(), loginUser);
-            model.addAttribute("replyLiked", replyResult);
-        }
+//        for (Reply reply : replyList) {
+//            int replyResult = replyService.getCheckLike(reply.getNo(), loginUser);
+//            model.addAttribute("replyLiked", replyResult);
+//        }
 
         if (loginUser != null) {
             boolean isExists = false;
@@ -234,8 +235,8 @@ public class CrewController {
     public String addReply(ReplyForm form
             , @AuthenticationPrincipal LoginUser loginUser) {
 
-        crewReplyService.addNewReply(form, loginUser);
-        return "redirect:detail?no=" + form.getCrewNo();
+        replyService.addNewReply(form, loginUser);
+        return "redirect:detail?no=" + form.getTypeNo();
     }
 
     @PostMapping("/add-comment")
@@ -243,26 +244,16 @@ public class CrewController {
     public String addComment(ReplyForm form
             , @AuthenticationPrincipal LoginUser loginUser){
 
-        crewReplyService.addNewComment(form, loginUser);
-        return "redirect:detail?no=" + form.getCrewNo();
+        replyService.addNewComment(form, loginUser);
+        return "redirect:detail?no=" + form.getTypeNo();
     }
 
     @PostMapping("/modify-reply")
-    @PreAuthorize("isAuthenticated()")
-    public String modifyReply(@RequestParam("replyNo") int replyNo
-            , @RequestParam("crewNo") int crewNo
-            , @RequestParam("content") String replyContent
+    public String modifyReply(ReplyForm form
             , @AuthenticationPrincipal LoginUser loginUser){
 
-        ReplyForm form = new ReplyForm();
-        form.setId(replyNo);
-        form.setCrewNo(crewNo);
-        form.setContent(replyContent);
-        form.setUserNo(loginUser.getNo());
-
-        crewReplyService.updateReply(form);
-
-        return "redirect:detail?no=" + form.getCrewNo();
+        replyService.updateReply(form);
+        return "redirect:detail?no=" + form.getTypeNo();
     }
 
     @GetMapping("/delete-reply")
@@ -271,30 +262,30 @@ public class CrewController {
                               @RequestParam("cno") int crewNo){
 
         ReplyForm form = new ReplyForm();
-        form.setId(replyNo);
-        form.setCrewNo(crewNo);
-        crewReplyService.deleteReply(replyNo);
+        form.setNo(replyNo);
+        form.setTypeNo(crewNo);
+        replyService.deleteReply(replyNo);
 
-        return "redirect:detail?no=" + form.getCrewNo();
+        return "redirect:detail?no=" + form.getTypeNo();
     }
 
-    @GetMapping("/update-reply-like")
-    public String updateReplyLke(@RequestParam("no") int crewNo
-            , @RequestParam("rno") int replyNo
-            , @AuthenticationPrincipal LoginUser loginUser){
-
-        crewReplyService.updateReplyLike(replyNo, loginUser);
-        return "redirect:detail?no=" + crewNo;
-    }
-
-    @GetMapping("/delete-reply-like")
-    public String updateReplyUnlike(@RequestParam("no") int crewNo
-            , @RequestParam("rno") int replyNo
-            , @AuthenticationPrincipal LoginUser loginUser){
-
-        crewReplyService.deleteReplyLike(replyNo, loginUser);
-        return "redirect:detail?no=" + crewNo;
-    }
+//    @GetMapping("/update-reply-like")
+//    public String updateReplyLke(@RequestParam("no") int crewNo
+//            , @RequestParam("rno") int replyNo
+//            , @AuthenticationPrincipal LoginUser loginUser){
+//
+//        replyService.updateReplyLike(replyNo, loginUser);
+//        return "redirect:detail?no=" + crewNo;
+//    }
+//
+//    @GetMapping("/delete-reply-like")
+//    public String updateReplyUnlike(@RequestParam("no") int crewNo
+//            , @RequestParam("rno") int replyNo
+//            , @AuthenticationPrincipal LoginUser loginUser){
+//
+//        replyService.deleteReplyLike(replyNo, loginUser);
+//        return "redirect:detail?no=" + crewNo;
+//    }
 
     @PostMapping("/report-crew")
     public String reportCrew(ReportForm form
@@ -337,6 +328,5 @@ public class CrewController {
 
         return isReported ? "yes" : "no";
     }
-
 
 }
