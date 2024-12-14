@@ -7,6 +7,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -64,12 +66,10 @@ public class AdminController {
     }
 
     @GetMapping("/lesson-edit-form")
-    public String lessonEditForm(@RequestParam("lessonNo")Integer lessonNo, Model model) {
-
+    public String lessonEditForm(@RequestParam("lessonNo") Integer lessonNo, Model model) {
         try {
-
             // 강사 정보 가져오기
-            List<User> lecturers =  userService.findUsersByUserRoleNo(3);
+            List<User> lecturers = userService.findUsersByUserRoleNo(3);
 
             // Lesson 정보 가져오기
             Lesson lesson = lessonService.getLessonByNo(lessonNo);
@@ -92,22 +92,75 @@ public class AdminController {
     }
 
     @PostMapping("/lesson-edit-form")
-    public String lessonEditForm(@ModelAttribute("dto") LessonUpdateForm dto) {
+    public String lessonEditForm(@Validated @ModelAttribute("dto") LessonUpdateForm form, BindingResult result, Model model) {
+        if (!StringUtils.hasText(form.getPlan()) && form.getMainImage().isEmpty()) {
+            result.rejectValue("plan", null, "계획을 작성하거나 메인 이미지를 첨부 해주세요.");
+            result.rejectValue("mainImage", null, "계획을 작성하거나 메인 이미지를 첨부 해주세요.");
+        }
 
-        log.info("레슨 수정 정보 {} ", dto);
-        lessonService.updateLesson(dto);
+        if (result.hasErrors()) {
+            // 강사 정보 가져오기
+            List<User> lecturers = userService.findUsersByUserRoleNo(3);
+
+            // Lesson 정보 가져오기
+            int lessonNo = form.getLessonNo();
+            Lesson lesson = lessonService.getLessonByNo(lessonNo);
+
+            // 이미지 파일 정보 가져오기
+            Map<String, String> images = lessonFileService.getImagesByLessonNo(lessonNo);
+
+            // 모델에 레슨, 이미지, 강사 정보 추가
+            model.addAttribute("lecturers", lecturers);
+            model.addAttribute("lesson", lesson);
+            model.addAttribute("lessonNo", lessonNo);
+            model.addAttribute("images", images);
+
+            log.info("lesson start = {}", lesson);
+
+            return "admin/lesson-edit-form";
+        }
+
+        log.info("레슨 수정 정보 {} ", form);
+        lessonService.updateLesson(form);
 
         return "redirect:/admin/lesson";
     }
+
+    //@ModelAttribute
+    //public List<User> lectures() {
+    //    return userService.findUsersByUserRoleNo(3);
+    //}
 
     @GetMapping("/lesson-register-form")
     public String lessonRegisterForm(Model model) {
 
         // 사용자 권한이 강사인 사용자 목록을 조회한다.
-        List<User> lecturers =  userService.findUsersByUserRoleNo(3);
+        List<User> lecturers = userService.findUsersByUserRoleNo(3);
         model.addAttribute("lecturers", lecturers);
+        model.addAttribute("form", new LessonRegisterForm());
 
         return "admin/lesson-register-form";
+    }
+
+    @PostMapping("/lesson-register-form")
+    public String form(@Validated @ModelAttribute("form") LessonRegisterForm form, BindingResult result, Model model) throws IOException {
+
+        if (!StringUtils.hasText(form.getPlan()) && form.getMainImage().isEmpty()) {
+            result.rejectValue("plan", null, "계획을 작성하거나 메인 이미지를 첨부 해주세요.");
+            result.rejectValue("mainImage", null, "계획을 작성하거나 메인 이미지를 첨부 해주세요.");
+        }
+
+        if (result.hasErrors()) {
+            // 강사 목록 전달
+            List<User> lecturers = userService.findUsersByUserRoleNo(3);
+            model.addAttribute("lecturers", lecturers);
+
+            return "admin/lesson-register-form"; // 오류가 있는 경우 다시 폼 페이지로 리턴
+        }
+
+        lessonService.registerLesson(form);
+
+        return "redirect:/admin/lesson";
     }
 
     @PostMapping("/lesson-register-form")
