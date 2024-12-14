@@ -508,7 +508,15 @@ public class AdminService {
 
         Pagination pagination = new Pagination(page, totalRows, rows);
 
+        int begin = pagination.getBegin();
+        int end = pagination.getEnd();
+
+        // 데이터 검색 범위를 조회해서 Map에 저장한다.
+        condition.put("begin", begin);
+        condition.put("end", end);
+
         List<orderDeliveryDto> deliveryDtos = adminMapper.getOrderDeliveries(condition);
+
 
         ListDto<orderDeliveryDto> dtos = new ListDto<>(deliveryDtos, pagination);
 
@@ -528,5 +536,23 @@ public class AdminService {
     public void getDeletedCourse(int courseNo) {
 
         adminMapper.getDeletedCourses(courseNo);
+    }
+
+    public void getUpdateDelivery(Map<String, Object> condition) {
+
+        if(condition.get("deliStatus").equals("배송준비중")) {
+
+            adminMapper.getUpdateDeliverySetReady(condition);
+
+        } else if (condition.get("deliStatus").equals("배송출발")) {
+
+            adminMapper.getUpdateDeliverySetShipped(condition);
+
+        } else if (condition.get("deliStatus").equals("배송완료")) {
+
+            adminMapper.getUpdateDeliverySetDelivered(condition);
+        }
+
+
     }
 }

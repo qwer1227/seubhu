@@ -120,17 +120,23 @@ public interface AdminMapper {
 
     int getTotalProdRun(@Param("day")String day);
 
-    List<ProdListDto> getStockProducts(@Param("condition")Map<String, Object> condition);
+    List<ProdListDto> getStockProducts(@Param("condition") Map<String, Object> condition);
 
-    int getDeliveryTotalRows(Map<String, Object> condition);
+    int getDeliveryTotalRows(@Param("condition")Map<String, Object> condition);
 
-    List<orderDeliveryDto> getOrderDeliveries(Map<String, Object> condition);
+    List<orderDeliveryDto> getOrderDeliveries(@Param("condition") Map<String, Object> condition);
 
     void getDeletedProds(@Param("condition") Map<String, Object> condition);
 
     void getUpdateShows(@Param("condition") Map<String, Object> condition);
 
     void getDeletedCourses(@Param("courseNo")int courseNo);
+
+    void getUpdateDeliverySetReady(@Param("condition") Map<String, Object> condition);
+
+    void getUpdateDeliverySetShipped(@Param("condition") Map<String, Object> condition);
+
+    void getUpdateDeliverySetDelivered(@Param("condition") Map<String, Object> condition);
 
 
 

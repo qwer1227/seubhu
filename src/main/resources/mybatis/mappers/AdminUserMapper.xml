@@ -4,16 +4,206 @@
 <mapper namespace="store.seub2hu2.admin.mapper.AdminMapper">
 
     <!--
-        List<orderDeliveryDto> getOrderDeliveries(Map<String, Object> condition);
+        void getUpdateDeliverySetDelivered(@Param("condition") Map<String, Object> condition);
     -->
+    <update id="getUpdateDeliverySetDelivered">
+        UPDATE DELIVERIES D
+            JOIN ORDERS O ON D.ORDER_NO = O.ORDER_NO
+            JOIN ADDRESSES A ON D.ADDR_NO = A.ADDR_NO
+            JOIN PAYMENTS P ON O.PAY_NO = P.PAY_NO
+            SET
+                D.DELI_STATUS = #{condition.deliStatus}
+                , O.ORDER_STATUS = '상품배송완료'
+                , P.PAY_STATUS = '결제완료'
+        WHERE
+            DELI_NO = #{condition.deliNo}
+    </update>
+    <!--
+        void getUpdateDeliverySetShipped(@Param("condition") Map<String, Object> condition);
+    -->
+    <update id="getUpdateDeliverySetShipped">
+        UPDATE DELIVERIES D
+            JOIN ORDERS O ON D.ORDER_NO = O.ORDER_NO
+            JOIN ADDRESSES A ON D.ADDR_NO = A.ADDR_NO
+            JOIN PAYMENTS P ON O.PAY_NO = P.PAY_NO
+            SET
+                D.DELI_STATUS = #{condition.deliStatus}
+                    , O.ORDER_STATUS = '상품배송중'
+        WHERE
+            DELI_NO = #{condition.deliNo}
+    </update>
+    <!--
+        void getUpdateDeliverySetReady(@Param("condition")Map<String, Object> condition);
+    -->
+    <update id="getUpdateDeliverySetReady">
+        UPDATE DELIVERIES D
+            JOIN ORDERS O ON D.ORDER_NO = O.ORDER_NO
+            JOIN ADDRESSES A ON D.ADDR_NO = A.ADDR_NO
+            JOIN PAYMENTS P ON O.PAY_NO = P.PAY_NO
+            SET
+                D.DELI_STATUS = #{condition.deliStatus}
+                , O.ORDER_STATUS = '상품준비중'
+        WHERE
+            DELI_NO = #{condition.deliNo}
+    </update>
 
     <!--
-        int getDeliveryTotalRows(Map<String, Object> condition);
+        List<orderDeliveryDto> getOrderDeliveries(@Param("condition") Map<String, Object> condition);
     -->
-<!--    <select id="getDeliveryTotalRows" resultType="int">-->
-<!--        select-->
-<!--            count(*)-->
-<!--    </select>-->
+    <select id="getOrderDeliveries" resultType="store.seub2hu2.admin.dto.orderDeliveryDto">
+        SELECT
+            *
+        FROM (
+              SELECT
+                <if test="condition.sort != null">
+                    <choose>
+                        <when test="condition.sort == 'latest'">
+                            ROW_NUMBER() OVER (ORDER BY D.DELI_NO desc) as RN ,
+                        </when>
+                        <when test="condition.sort == 'oldestDate'">
+                            ROW_NUMBER() OVER (ORDER BY D.DELI_NO asc) as RN ,
+                        </when>
+                    </choose>
+                </if>
+                   D.DELI_NO          as deliNo
+                   , D.DELI_COM         as deliCom
+                   , D.DELI_STATUS      as deliStatus
+                   , D.DELI_MEMO        as deliMemo
+                   , D.DELI_PHONENUMBER as deliPhone
+                   , O.ORDER_NUMBER     as orderNumber
+                   , O.ORDER_STATUS     as orderStatus
+                   , O.ORDER_DATE       as orderDate
+                   , O.DEL_PAYMENT      as deliPay
+                   , A.ZIP_CODE         as zipCode
+                   , A.ADDR_NAME        as addrName
+                   , A.ADDR_1           as addr1
+                   , A.ADDR_2           as addr2
+                   , P.PAY_STATUS       as payStatus
+                FROM
+                    DELIVERIES D
+                JOIN ORDERS O ON D.ORDER_NO = O.ORDER_NO
+                JOIN ADDRESSES A ON D.ADDR_NO = A.ADDR_NO
+                JOIN PAYMENTS P ON O.PAY_NO = P.PAY_NO
+                JOIN USERS U ON O.USER_NO = U.USER_NO
+                WHERE
+                    P.pay_type = '상품'
+                    <if test="condition.keyword != null">
+                        <choose>
+                            <when test="condition.keyword == 'all'">
+                                and A.ADDR_NAME like CONCAT('%',#{condition.value},'%')
+                            </when>
+                            <when test="condition.keyword == 'orderName'">
+                                and A.ADDR_NAME like CONCAT('%',#{condition.value},'%')
+                            </when>
+                        </choose>
+                    </if>
+                    <if test="condition.opt != null">
+                        <choose>
+                            <when test="condition.opt == 'all'">
+
+                            </when>
+                            <when test="condition.opt == 'notReady'">
+                                and O.ORDER_STATUS = '상품준비중'
+                            </when>
+                            <when test="condition.opt == 'ready'">
+                                and O.ORDER_STATUS = '상품배송중'
+                            </when>
+                            <when test="condition.opt == 'complete'">
+                                and O.ORDER_STATUS = '상품배송완료'
+                            </when>
+                            <when test="condition.opt == 'cancel'">
+                                and O.ORDER_STATUS = '주문취소'
+                            </when>
+                        </choose>
+                    </if>
+        <if test="condition.day != null and condition.day != ''">
+            AND (
+            DATE_FORMAT(O.order_date, '%Y-%m-%d') = #{condition.day}
+            OR DATE_FORMAT(O.order_date, '%Y-%m') = #{condition.day}
+            )
+        </if>
+              ) AS SUBQUERY
+             WHERE
+                 RN BETWEEN #{condition.begin} AND #{condition.end}
+    </select>
+
+        <!--
+            int getDeliveryTotalRows(@Param("condition")Map<String, Object> condition);
+        -->
+    <select id="getDeliveryTotalRows" resultType="int">
+        SELECT
+        count(*)
+        FROM (
+        SELECT
+        <if test="condition.sort != null">
+            <choose>
+                <when test="condition.sort == 'latest'">
+                    ROW_NUMBER() OVER (ORDER BY D.DELI_NO desc) as RN ,
+                </when>
+                <when test="condition.sort == 'oldestDate'">
+                    ROW_NUMBER() OVER (ORDER BY D.DELI_NO asc) as RN ,
+                </when>
+            </choose>
+        </if>
+        D.DELI_NO          as deliNo
+        , D.DELI_COM         as deliCom
+        , D.DELI_STATUS      as deliStatus
+        , D.DELI_MEMO        as deliMemo
+        , D.DELI_PHONENUMBER as deliPhone
+        , O.ORDER_NUMBER     as orderNumber
+        , O.ORDER_STATUS     as orderStatus
+        , O.ORDER_DATE       as orderDate
+        , O.DEL_PAYMENT      as deliPay
+        , A.ZIP_CODE         as zipCode
+        , A.ADDR_NAME        as addrName
+        , A.ADDR_1           as addr1
+        , A.ADDR_2           as addr2
+        , P.PAY_STATUS       as payStatus
+        FROM
+        DELIVERIES D
+        JOIN ORDERS O ON D.ORDER_NO = O.ORDER_NO
+        JOIN ADDRESSES A ON D.ADDR_NO = A.ADDR_NO
+        JOIN PAYMENTS P ON O.PAY_NO = P.PAY_NO
+        JOIN USERS U ON O.USER_NO = U.USER_NO
+        WHERE
+        P.pay_type = '상품'
+        <if test="condition.keyword != null">
+            <choose>
+                <when test="condition.keyword == 'all'">
+                    and A.ADDR_NAME like CONCAT('%',#{condition.value},'%')
+                </when>
+                <when test="condition.keyword == 'orderName'">
+                    and A.ADDR_NAME like CONCAT('%',#{condition.value},'%')
+                </when>
+            </choose>
+        </if>
+        <if test="condition.opt != null">
+            <choose>
+                <when test="condition.opt == 'all'">
+
+                </when>
+                <when test="condition.opt == 'notReady'">
+                    and O.ORDER_STATUS = '상품준비중'
+                </when>
+                <when test="condition.opt == 'ready'">
+                    and O.ORDER_STATUS = '상품배송중'
+                </when>
+                <when test="condition.opt == 'complete'">
+                    and O.ORDER_STATUS = '상품배송완료'
+                </when>
+                <when test="condition.opt == 'cancel'">
+                    and O.ORDER_STATUS = '주문취소'
+                </when>
+            </choose>
+        </if>
+        <if test="condition.day != null and condition.day != ''">
+            AND (
+            DATE_FORMAT(O.order_date, '%Y-%m-%d') = #{condition.day}
+            OR DATE_FORMAT(O.order_date, '%Y-%m') = #{condition.day}
+            )
+        </if>
+        ) AS SUBQUERY
+    </select>
 
     <!--
         int getTotalProdMan(@Param("day")String day);
@@ -123,59 +313,19 @@
         int getTotalProdPriceByDay(String yesterday);
     -->
     <select id="getTotalProdPriceByDay" resultType="int">
-        select
-            totalSummary.totalPrice
-        from
-        (
-        select
-        ROW_NUMBER() OVER (PARTITION BY PM.pay_no ORDER BY OP.order_prod_no asc) as RN
-        , PM.pay_no               as payNo
-        , O.order_no            as orderNo
-        , O.order_number        as orderNum
-        , OP.order_prod_no      as orderProdNo
-        , PM.pay_type           as payType
-        , U.user_name           as userName
-        , U.user_id             as userId
-        , U.user_tel            as userTel
-        , PM.pay_price          as payPrice
-        , PM.pay_status         as payStatus
-        , PM.pay_method         as payMethod
-        , P.prod_name           as prodName
-        , PS.prod_size          as prodSize
-        , OP.order_prod_amount  as orderProdAmount
-        , PM.pay_date           as payDate
-        from
-        ORDERS O
-        JOIN PAYMENTS PM ON O.pay_no = PM.pay_no
-        JOIN USERS U ON O.user_no = U.user_no
-        JOIN ORDER_PRODUCTS OP ON O.order_no = OP.order_no
-        JOIN PRODUCTS P ON OP.prod_no = P.prod_no
-        JOIN PROD_SIZES PS ON OP.size_no = PS.size_no
-        where
-        PM.pay_type = '상품'
-            and (
-            DATE_FORMAT(PM.pay_date, '%Y-%m-%d') = #{yesterday}
-            or DATE_FORMAT(PM.pay_date, '%Y-%m') = #{yesterday}
-            )
-        LIMIT 1
-        ) as subquery
-        JOIN
-        (
         SELECT
-            SUM(PM.pay_price) AS totalPrice
+            COALESCE(SUM(PM.pay_price), 0) as totalPrice
         FROM
             ORDERS O
-        JOIN PAYMENTS PM ON O.pay_no = PM.pay_no
+                JOIN PAYMENTS PM ON O.pay_no = PM.pay_no
+                JOIN USERS U ON O.user_no = U.user_no
+                JOIN ORDER_PRODUCTS OP ON O.order_no = OP.order_no
+                JOIN PRODUCTS P ON OP.prod_no = P.prod_no
+                JOIN PROD_SIZES PS ON OP.size_no = PS.size_no
         WHERE
             PM.pay_type = '상품'
-        AND
-            PM.pay_status = '결제완료'
-            and (
-            DATE_FORMAT(PM.pay_date, '%Y-%m-%d') = #{yesterday}
-            or DATE_FORMAT(PM.pay_date, '%Y-%m') = #{yesterday}
-            )
-        ) AS totalSummary ON 1 = 1
-        where RN = 1
+          AND PM.pay_status = '결제완료'
+          AND DATE_FORMAT(PM.pay_date, '%Y-%m-%d') = #{yesterday}
     </select>
 
     <!--

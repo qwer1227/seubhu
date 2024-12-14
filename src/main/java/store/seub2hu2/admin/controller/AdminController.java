@@ -607,17 +607,16 @@ public class AdminController {
 
         List<Color> colorSize = adminService.getStockByColorNum(condition);
 
-        System.out.println("--------------------colorSize:" + colorSize);
 
         if (colorSize == null || colorSize.isEmpty()) {
             model.addAttribute("colorSize", null);
             model.addAttribute("sizeMessage", "사이즈 정보가 없습니다.");
-            System.out.println("-----------------------------------------------model1:" + model);
+
         } else {
             model.addAttribute("colorSize", colorSize);
             model.addAttribute("sizeMessage", null);
 
-            System.out.println("-----------------------------------------------model2:" + model);
+
         }
 
         model.addAttribute("colorSize", colorSize);
@@ -707,7 +706,6 @@ public class AdminController {
                               @RequestParam("topNo") int topNo,
                               @RequestParam("show") String show) {
 
-        System.out.println("show:" + show);
 
         Map<String, Object> condition = new HashMap<>();
         condition.put("no", no);
@@ -724,7 +722,7 @@ public class AdminController {
                        @RequestParam(name = "catNo", required = false, defaultValue = "0") int catNo,
                        @RequestParam(name = "page", required = false, defaultValue = "1") int page,
                        @RequestParam(name = "rows", required = false, defaultValue = "6") int rows,
-                       @RequestParam(name = "sort" , required = false, defaultValue = "date") String sort,
+                       @RequestParam(name = "sort" , required = false) String sort,
                        @RequestParam(name = "opt", required = false) String opt,
                        @RequestParam(name = "value", required = false) String value,
                        Model model) {
@@ -752,13 +750,33 @@ public class AdminController {
         return "admin/productlist";
     }
 
+    @PostMapping("/updateDeliveryStatus")
+    public String updateDeliveryStatus(@RequestParam(name="page", required = false,defaultValue ="1") int page,
+                                       @RequestParam(name="rows", required = false,defaultValue ="10") int rows,
+                                       @RequestParam(name="day", required = false) String day,
+                                       @RequestParam("deliNo") int deliNo,
+                                       @RequestParam("deliStatus") String deliStatus) {
+
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("deliNo", deliNo);
+        condition.put("deliStatus", deliStatus);
+
+        System.out.println("----------------condition" + condition);
+
+        adminService.getUpdateDelivery(condition);
+
+
+        return "redirect:/admin/order-delivery?page=" + page + "&rows" + rows + "&day=" + day;
+    }
+
     @GetMapping("/order-delivery")
     public String order(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
-                        @RequestParam(name = "rows", required = false) int rows,
+                        @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
                         @RequestParam(name = "day", required = false) String day,
-                        @RequestParam(name = "sort", required = false) String sort,
+                        @RequestParam(name = "sort", required = false, defaultValue = "latest") String sort,
                         @RequestParam(name = "opt", required = false) String opt,
                         @RequestParam(name = "keyword", required = false) String keyword,
+                        @RequestParam(name = "value", required = false) String value,
                         Model model){
 
         if (day == null || day.isEmpty()) {
@@ -776,7 +794,9 @@ public class AdminController {
         if(StringUtils.hasText(opt)) {
             condition.put("opt", opt);
             condition.put("keyword", keyword);
+            condition.put("value", value);
         }
+
 
         ListDto<orderDeliveryDto> dto = adminService.getOrderDelivery(condition);
 
@@ -813,7 +833,7 @@ public class AdminController {
 
         List<prevOrderProdDto> dtos = adminService.getOrderProdPrev(orderNo);
 
-        System.out.println("-----------------dtos:" + dtos);
+
         return dtos;
     }
 

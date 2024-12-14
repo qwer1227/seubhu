@@ -24,10 +24,11 @@ public class orderDeliveryDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime orderDate;
+    private int deliPay;
+    private int zipCode;
     private String addrName;
     private String addr1;
     private String addr2;
-    private String userTel;
     private String payStatus;
 
 
