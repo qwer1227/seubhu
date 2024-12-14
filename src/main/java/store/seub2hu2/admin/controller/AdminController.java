@@ -1,9 +1,7 @@
 package store.seub2hu2.admin.controller;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.tags.shaded.org.apache.xpath.operations.Mod;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -18,9 +16,8 @@ import store.seub2hu2.admin.service.AdminService;
 import store.seub2hu2.course.service.CourseService;
 import store.seub2hu2.course.service.UserCourseService;
 import store.seub2hu2.course.vo.Course;
-import store.seub2hu2.course.vo.UserLevel;
 import store.seub2hu2.lesson.dto.LessonRegisterForm;
-import store.seub2hu2.lesson.dto.LessonUpdateDto;
+import store.seub2hu2.lesson.dto.LessonUpdateForm;
 import store.seub2hu2.lesson.service.LessonFileService;
 import store.seub2hu2.lesson.service.LessonService;
 import store.seub2hu2.lesson.vo.Lesson;
@@ -42,7 +39,6 @@ import store.seub2hu2.util.ListDto;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -95,27 +91,10 @@ public class AdminController {
     }
 
     @PostMapping("/lesson-edit-form")
-    public String lessonEditForm(@Validated @ModelAttribute("dto") LessonUpdateDto dto, BindingResult result, Model model) {
-
-        if ((dto.getPlan() == null || dto.getPlan().trim().isEmpty()) && dto.getMainImage() == null) {
-            List<User> lecturers = userService.findUsersByUserRoleNo(3);
-
-            // Lesson 정보 가져오기
-            int lessonNo = dto.getLessonNo();
-            Lesson lesson = lessonService.getLessonByNo(lessonNo);
-
-            // 이미지 파일 정보 가져오기
-            Map<String, String> images = lessonFileService.getImagesByLessonNo(lessonNo);
-
-            // 모델에 레슨, 이미지, 강사 정보 추가
-            model.addAttribute("lecturers", lecturers);
-            model.addAttribute("lesson", lesson);
-            model.addAttribute("lessonNo", lessonNo);
-            model.addAttribute("images", images);
-
-            log.info("lesson start = {}", lesson);
-            result.reject(null, "계획이나 메인 이미지를 첨부 해주세요");
-            return "admin/lesson-edit-form";
+    public String lessonEditForm(@Validated @ModelAttribute("dto") LessonUpdateForm form, BindingResult result, Model model) {
+        if (!StringUtils.hasText(form.getPlan()) && form.getMainImage().isEmpty()) {
+            result.rejectValue("plan", null, "계획을 작성하거나 메인 이미지를 첨부 해주세요.");
+            result.rejectValue("mainImage", null, "계획을 작성하거나 메인 이미지를 첨부 해주세요.");
         }
 
         if (result.hasErrors()) {
@@ -123,7 +102,7 @@ public class AdminController {
             List<User> lecturers = userService.findUsersByUserRoleNo(3);
 
             // Lesson 정보 가져오기
-            int lessonNo = dto.getLessonNo();
+            int lessonNo = form.getLessonNo();
             Lesson lesson = lessonService.getLessonByNo(lessonNo);
 
             // 이미지 파일 정보 가져오기
@@ -140,8 +119,8 @@ public class AdminController {
             return "admin/lesson-edit-form";
         }
 
-        log.info("레슨 수정 정보 {} ", dto);
-        lessonService.updateLesson(dto);
+        log.info("레슨 수정 정보 {} ", form);
+        lessonService.updateLesson(form);
 
         return "redirect:/admin/lesson";
     }
@@ -166,8 +145,8 @@ public class AdminController {
     public String form(@Validated @ModelAttribute("form") LessonRegisterForm form, BindingResult result, Model model) throws IOException {
 
         if (!StringUtils.hasText(form.getPlan()) && form.getMainImage().isEmpty()) {
-            result.rejectValue("plan", null, "계획이나 메인 이미지를 첨부 해주세요.");
-            result.rejectValue("mainImage", null, "계획이나 메인 이미지를 첨부 해주세요.");
+            result.rejectValue("plan", null, "계획을 작성하거나 메인 이미지를 첨부 해주세요.");
+            result.rejectValue("mainImage", null, "계획을 작성하거나 메인 이미지를 첨부 해주세요.");
         }
 
         if (result.hasErrors()) {

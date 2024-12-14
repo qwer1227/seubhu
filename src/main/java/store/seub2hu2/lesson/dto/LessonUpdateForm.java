@@ -4,23 +4,20 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
-import store.seub2hu2.user.vo.User;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Map;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class LessonUpdateDto {
+public class LessonUpdateForm {
 
     private int lessonNo;
 
