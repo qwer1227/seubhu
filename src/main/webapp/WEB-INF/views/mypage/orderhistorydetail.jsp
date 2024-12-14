@@ -135,18 +135,18 @@
   <div class="order-info">
     <div class="info-title">주문 정보</div>
     <div class="info-content">
-      <p><span>주문일:</span> ${orderDetail.orders.orderDate}</p>
-      <p><span>주문번호:</span> ${orderDetail.orders.orderNo}</p>
-      <p><span>받는 사람:</span> ${orderDetail.orders.receiverName}</p>
-      <p><span>배송 주소:</span> ${orderDetail.orders.deliveryAddress}</p>
-      <p><span>연락처:</span> ${orderDetail.orders.receiverPhone}</p>
+      <p><span>주문일:</span> <fmt:formatDate value="${order.orders.orderDate}" pattern="yyyy-MM-dd" timeZone="Asia/Seoul"/></p>
+      <p><span>주문번호:</span> ${order.orders.orderId}</p>
+      <p><span>받는 사람:</span> ${order.addrDto.addrName}</p>
+      <p><span>배송 주소:</span> ${order.addrDto.addr}</p>
+      <p><span>연락처:</span> ${order.orders.receiverPhone}</p>
     </div>
   </div>
 
   <!-- 주문 상품 -->
   <div class="product-list">
     <div class="info-title">주문 상품</div>
-    <c:forEach var="item" items="${orderDetail.products}">
+    <c:forEach var="item" items="${order.products}">
       <div class="product-item">
         <img src="${item.prodImgUrl}" alt="상품 이미지">
         <div class="product-details">
@@ -168,22 +168,11 @@
   <div class="payment-info">
     <div class="info-title">결제 정보</div>
     <div class="info-content">
-      <p><span>상품 금액:</span> ${orderDetail.orders.orderPrice}원</p>
-      <p><span>할인 금액:</span> ${orderDetail.orders.disPrice}원</p>
-      <p><span>배송비:</span> ${orderDetail.orders.delPayment}원</p>
-      <p><span>결제 금액:</span> ${orderDetail.payments.payAmount}원</p>
-      <p><span>결제 방법:</span> ${orderDetail.payments.payMethod}</p>
-    </div>
-  </div>
-
-  <!-- 혜택 정보 -->
-  <div class="benefit-info">
-    <div class="info-title">이번 주문으로 받은 혜택</div>
-    <div class="info-content">
-      <p><span>총 할인 금액:</span> ${orderDetail.orders.orderPrice-orderDetail.orders.disPrice}원</p>
-      <p><span>배송비 무료:</span> </p>
-      <p><span>후기 작성 적립:</span> </p>
-      <p><span>받은 총 혜택:</span> ${orderDetail.orders.disPrice}원</p>
+      <p><span>상품 금액:</span> ${order.orders.orderPrice}원</p>
+      <p><span>할인 금액:</span> ${order.orders.disPrice}원</p>
+      <p><span>배송비:</span> ${order.orders.delPayment}원</p>
+      <p><span>결제 금액:</span> ${totalPrice}원</p>
+      <p><span>결제 방법:</span> ${order.payments.payMethod}</p>
     </div>
   </div>
 </div>

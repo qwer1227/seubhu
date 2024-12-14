@@ -7,6 +7,7 @@ import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.course.vo.Region;
 import store.seub2hu2.lesson.vo.Lesson;
 import store.seub2hu2.lesson.vo.LessonReservation;
+import store.seub2hu2.product.dto.ProdListDto;
 import store.seub2hu2.product.vo.*;
 import store.seub2hu2.user.vo.User;
 
@@ -118,6 +119,24 @@ public interface AdminMapper {
     int getTotalProdWoman(@Param("day")String day);
 
     int getTotalProdRun(@Param("day")String day);
+
+    List<ProdListDto> getStockProducts(@Param("condition") Map<String, Object> condition);
+
+    int getDeliveryTotalRows(@Param("condition")Map<String, Object> condition);
+
+    List<orderDeliveryDto> getOrderDeliveries(@Param("condition") Map<String, Object> condition);
+
+    void getDeletedProds(@Param("condition") Map<String, Object> condition);
+
+    void getUpdateShows(@Param("condition") Map<String, Object> condition);
+
+    void getDeletedCourses(@Param("courseNo")int courseNo);
+
+    void getUpdateDeliverySetReady(@Param("condition") Map<String, Object> condition);
+
+    void getUpdateDeliverySetShipped(@Param("condition") Map<String, Object> condition);
+
+    void getUpdateDeliverySetDelivered(@Param("condition") Map<String, Object> condition);
 
 
 

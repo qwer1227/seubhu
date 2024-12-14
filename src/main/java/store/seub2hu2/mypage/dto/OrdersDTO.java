@@ -11,6 +11,7 @@ import java.util.Date;
 @Setter
 public class OrdersDTO {
     private int orderNo;
+    private String orderId;
     private Date orderDate;
     private String orderStatus;
     private String receiverName;

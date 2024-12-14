@@ -74,6 +74,7 @@
                             <img src="${item.imgThum}" class="rounded mx-auto d-block" width="90">
                         </td>
                         <td>
+                            <input type="hidden" name="cartNo" data-cartNo="${item.no}">
                             <div data-prodNo="${item.product.no}"></div>
                             <span data-prodName="${item.product.name}">${item.product.name}</span>
                             <p class="text-secondary" id="stock-${item.size.no}" data-sizeNo="${item.size.no}"
@@ -240,15 +241,15 @@
                 <tr>
                     <th><label>쿠폰</label></th>
                     <td>
-                        <input type="text" class="form-control mb-3">
+                        <input type="text" class="form-control mb-3" value="신입 러너들 10% 할인" disabled>
                     </td>
                 </tr>
                 <tr>
                     <th><label>적립금</label></th>
                     <td>
                         <div class="d-flex align-items-center mb-3">
-                            <input type="text" class="form-control me-2"/>
-                            <input type="button" class="btn btn-secondary" value="모두 사용">
+                            <input type="text" class="form-control me-2" disabled/>
+                            <input type="button" class="btn btn-secondary" value="모두 사용" disabled>
                         </div>
                     </td>
                 </tr>
@@ -323,9 +324,52 @@
                 </tbody>
             </table>
             <div class="d-grid gap-2">
-                <button class="col btn btn-dark" type="button" disabled>주문취소하기</button>
+                <button class="col btn btn-dark" type="button" id="cancelOrderBtn">주문취소하기</button>
                 <button class="col btn btn-dark" id="submit-button" type="button">결제하기 <small
                         id="total-quantity"></small></button>
+            </div>
+        </div>
+    </div>
+
+    <!--
+        주문 취소 모달
+    -->
+    <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cancelModalLabel">주문 취소</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    정말 주문을 취소하시겠습니까?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-primary">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--
+        결제
+    -->
+    <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="paymentModalLabel">결제 확인</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>총 결제 금액: <span id="totalAmount"></span> 원</p>
+                    <p>결제를 진행하시겠습니까?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-primary" id="payBtn">결제</button>
+                </div>
             </div>
         </div>
     </div>
@@ -550,8 +594,8 @@
                 deliveryPrice = 3000; // 예시 배송비 3000원
             }
 
-            // 할인금액 계산 (예시: 할인율 50%)
-            discountPrice = totalPrice * 0.5;
+            // 할인금액 계산 (예시: 할인율 10%)
+            discountPrice = totalPrice * 0.1;
 
             // 최종 결제 금액 계산
             let finalTotalPrice = totalPrice + deliveryPrice - discountPrice;
@@ -578,6 +622,7 @@
                 // 주문 상품 정보 가져오기
                 $("#order-items tr").each(function () {
                     const item = {
+                        cartNo: $(this).find("[data-cartNo]").data("cartno"),
                         prodNo: $(this).find("[data-prodNo]").data("prodno"),
                         prodName: $(this).find("[data-prodName]").data("prodname"),
                         sizeNo: $(this).find('[data-sizeNo]').data('sizeno'),
@@ -645,26 +690,42 @@
 
                 console.log("Final Order Data:", orderData);
 
+                // 모달 열기
+                $('#paymentModal').modal('show');
 
-                // 서버에 요청
-                $.ajax({
-                    url: '/pay/ready', // 서버 URL
-                    method: 'POST', // HTTP 요청 방식
-                    contentType: 'application/json', // JSON 형식으로 데이터 전송
-                    data: JSON.stringify(orderData), // JSON.stringify()로 객체를 JSON 문자열로 변환
+                const formattedPrice = finalTotalPrice.toLocaleString();
+                // 모달 내 총 결제 금액 표시
+                $('#totalAmount').text(formattedPrice);
 
-                    success: function (response) {
-                        // 성공적으로 응답 받았을 때
-                        if (response && response.next_redirect_pc_url) {
-                            location.href = response.next_redirect_pc_url;
-                        } else {
-                            alert("결제 준비에 문제가 발생했습니다. 응답 데이터를 확인하세요.");
+                // 카카오페이 버튼 클릭 이벤트
+                $('#payBtn').click(function() {
+                    // 카카오페이 결제 요청
+                    $.ajax({
+                        url: '/pay/ready',
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(orderData),
+                        success: function(response) {
+                            // 카카오페이 결제 승인 URL을 받아와 결제 페이지로 이동
+                            if (response.next_redirect_pc_url) {
+                                location.href = response.next_redirect_pc_url;
+                            } else {
+                                alert("결제 준비 중 오류가 발생했습니다.");
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            alert('결제 요청 실패: ' + error);
                         }
-                    },
-                    error: function (xhr, status, error) {
-                        alert('결제 준비 중 문제가 발생했습니다: ' + error);
-                    }
+                    });
                 });
+            });
+        });
+
+        $(document).ready(function() {
+            $('#cancelOrderBtn').click(function() {
+                if (confirm('정말 주문을 취소하시겠습니까?')) {
+                    window.location.href = 'http://localhost/mypage/cart';
+                }
             });
         });
 

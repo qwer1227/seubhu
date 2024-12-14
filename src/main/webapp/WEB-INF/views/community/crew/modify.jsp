@@ -1,8 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="/WEB-INF/views/common/tags.jsp" %>
-<script type="text/javascript" src="../resources/static/smartEditor/js/HuskyEZCreator.js" charset="utf-8"></script>
 <script type="text/javascript"
         src="//dapi.kakao.com/v2/maps/sdk.js?appkey=3af1f449b9175825b32af2e204b65779&libraries=services,clusterer,drawing"></script>
+<script type="text/javascript" src="/resources/se2/js/service/HuskyEZCreator.js" charset="utf-8"></script>
 <!doctype html>
 <html lang="ko">
 <head>
@@ -110,9 +110,9 @@
         <tr>
           <th>게시글</th>
           <td colspan="3">
-            <textarea style="width: 100%" class="form-control" rows="10" id="description" name="description"
-                      placeholder="내용을 입력해주세요.">${crew.description}</textarea>
-            <%--            <%@include file="../write.jsp" %>--%>
+            <form method="get" action="modify">
+              <textarea name="ir1" id="ir1" style="display:none;">${crew.description}</textarea>
+            </form>
           </td>
         </tr>
         <c:if test="${not empty crew.uploadFile}">
@@ -139,10 +139,9 @@
       <div class="row p-3">
         <div class="col d-flex justify-content-between">
           <div class="col d-flex" style="text-align: start">
-            <button type="button" class="btn btn-secondary m-1" onclick="abort()">취소</button>
+            <button type="button" class="btn btn-secondary m-1" onclick="abort(${crew.no})">취소</button>
           </div>
           <div class="col d-flex justify-content-end">
-            <button type="button" class="btn btn-outline-primary m-1">보관</button>
             <button type="button" id="submit" class="btn btn-primary m-1">수정</button>
           </div>
         </div>
@@ -155,11 +154,22 @@
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script type="text/javascript">
+    var oEditors = [];
+    nhn.husky.EZCreator.createInIFrame({
+        oAppRef: oEditors,
+        elPlaceHolder: "ir1",
+        sSkinURI: "/resources/se2/SmartEditor2Skin_ko_KR.html",
+        fCreator: "createSEditor2"
+    });
+    
     // 등록 버튼 클릭 시, 폼에 있는 값을 전달(이미지는 슬라이싱할 때 전달했기 때문에 따로 추가 설정 안해도 됨)
     document.querySelector("#submit").addEventListener("click", function () {
+
+        oEditors.getById["ir1"].exec("UPDATE_CONTENTS_FIELD", []);
+        
         let no = document.querySelector("input[name=no]").value;
         let title = document.querySelector("input[name=title]").value;
-        let description = document.querySelector("textarea[name=description]").value;
+        let description = document.querySelector("textarea[name=ir1]").value;
         let name = document.querySelector("input[name=name]").value;
         let type = document.querySelector("select[name=type]").value;
         let detail = document.querySelector("input[name=detail]").value;
@@ -189,10 +199,10 @@
         })
     });
 
-    function abort() {
+    function abort(crewNo) {
         let result = confirm("수정 중이던 글을 취소하시겠습니까?");
         if (result) {
-            window.location.href = "detail?no=${crew.no}";
+            window.location.href = "detail?no=" + crewNo;
         }
     }
 
@@ -202,6 +212,7 @@
             window.location.href = `delete-file?no=\${crewNo}&fileNo=\${fileNo}`;
         }
     }
+
     function deleteThumbnail(crewNo, thumbnailNo) {
         let result = confirm("기존에 등록된 첨부파일을 삭제하시겠습니까?");
         if (result) {

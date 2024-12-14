@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import retrofit2.http.Path;
 import store.seub2hu2.community.service.BoardService;
 import store.seub2hu2.mypage.dto.CommentRequest;
 import store.seub2hu2.mypage.dto.ImageDeleteRequest;
@@ -16,6 +17,7 @@ import store.seub2hu2.mypage.service.WorkoutService;
 import store.seub2hu2.mypage.vo.Post;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.service.UserService;
+import store.seub2hu2.user.vo.UserImage;
 
 import java.util.HashMap;
 import java.util.List;
@@ -294,6 +296,24 @@ public class MyPageRestController {
             boolean isSameAsOldPassword = userService.isSameAsOldPassword(newPassword, loginUser.getNo());
 
             response.put("isSameAsOldPassword", isSameAsOldPassword);
+        }catch (Exception e){
+            e.printStackTrace();
+            response.put("message", "서버 오류");
+            return ResponseEntity.status(500).body(response);
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/userImageInsert/{no}")
+    public ResponseEntity<Map<String, Object>> userImageInsert(@PathVariable("no") int userNo, @RequestParam("file") MultipartFile file){
+
+        Map<String, Object> response = new HashMap<>();
+
+        try{
+            String filename = fileUploadService.userImageUpload(file, userNo);
+
+            response.put("success", true);
+            response.put("imageUrl", "https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/images/userImage/"+filename);
         }catch (Exception e){
             e.printStackTrace();
             response.put("message", "서버 오류");

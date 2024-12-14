@@ -58,9 +58,7 @@
             <label class="form-label" id="content">글내용</label>
           </th>
           <td colspan="3">
-<%--            <textarea style="width: 100%" class="form-control" rows="10" id="content" name="content"--%>
-<%--                      placeholder="내용을 입력해주세요."></textarea>--%>
-            <%@include file="write.jsp" %>
+            <%@include file="../write.jsp" %>
           </td>
         </tr>
         <tr class="form-group">
@@ -79,7 +77,6 @@
             <button type="button" class="btn btn-secondary m-1" onclick="abort()">취소</button>
           </div>
           <div class="col d-flex justify-content-end">
-            <button type="button" class="btn btn-outline-primary m-1" onclick="keepContent()">보관</button>
             <button type="button" id="submit" class="btn btn-primary m-1">등록</button>
           </div>
         </div>
@@ -93,6 +90,9 @@
     
     // 등록 버튼 클릭 시, 폼에 있는 값을 전달(이미지는 슬라이싱할 때 전달했기 때문에 따로 추가 설정 안해도 됨)
     document.querySelector("#submit").addEventListener("click", function (){
+
+        oEditors.getById["ir1"].exec("UPDATE_CONTENTS_FIELD", []);
+        
         let catName = document.querySelector("select[name=catName]").value;
         let title = document.querySelector("input[name=title]").value;
         let content = document.querySelector("textarea[name=ir1]").value;
@@ -118,13 +118,9 @@
     });
     
     function abort() {
-        alert("작성중이던 글을 임시보관하시겠습니까?");
+        alert("글 작성을 취소하시겠습니까? 작성중이던 글은 저장되지 않습니다.");
 
         location.href = "main";
-    }
-
-    function keepContent() {
-        location.href = 'main';
     }
 
 </script>

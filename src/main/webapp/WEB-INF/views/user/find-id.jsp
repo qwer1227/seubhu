@@ -78,9 +78,9 @@
         fetch("/find-id", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/x-www-form-urlencoded",
             },
-            body: JSON.stringify({email: email})
+            body: "email=" + email,
         })
             .then(response => {
                 return response.json();
@@ -89,20 +89,14 @@
                 // 모달 본문에 결과 메시지 추가
                 const modalBody = document.getElementById("modalBody");
                 if (data.success) {
-                    modalBody.innerHTML = `<p>가입하신 아이디는 <b>${data.userId}</b>입니다.</p>`;
+                    modalBody.innerHTML = `<p>가입하신 아이디는 <b>\${data.userId}</b>입니다.</p>`;
                 } else {
-                    modalBody.innerHTML = `<p>${data.error}</p>`;
+                    modalBody.innerHTML = `<p>\${data.error}</p>`;
                 }
                 // 모달 띄우기
                 var myModal = new bootstrap.Modal(document.getElementById('idFindModal'));
                 myModal.show();
             })
-            .catch(error => {
-                const modalBody = document.getElementById("modalBody");
-                modalBody.innerHTML = `<p>서버 오류: ${error.message}</p>`;
-                var myModal = new bootstrap.Modal(document.getElementById('idFindModal'));
-                myModal.show();
-            });
     });
 </script>
 

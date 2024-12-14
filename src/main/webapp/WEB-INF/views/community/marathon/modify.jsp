@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="/WEB-INF/views/common/tags.jsp" %>
-<script type="text/javascript" src="../resources/static/smartEditor/js/HuskyEZCreator.js" charset="utf-8"></script>
+<script type="text/javascript" src="/resources/se2/js/service/HuskyEZCreator.js" charset="utf-8"></script>
 <!doctype html>
 <html lang="ko">
 <head>
@@ -67,9 +67,9 @@
         <tr>
           <th>게시글</th>
           <td colspan="3">
-            <textarea style="width: 100%" class="form-control" rows="10" id="description"
-                      name="content">${marathon.content}</textarea>
-            <%--              <%@include file="../write.jsp" %>--%>
+            <form method="get" action="modify">
+              <textarea name="ir1" id="ir1" style="display:none;">${marathon.content}</textarea>
+            </form>
           </td>
         </tr>
         <tr>
@@ -84,8 +84,7 @@
             <button type="button" class="btn btn-secondary m-1" onclick="abort(${marathon.no})">취소</button>
           </div>
           <div class="col d-flex justify-content-end">
-            <button type="button" class="btn btn-outline-primary m-1">보관</button>
-            <button type="submit" class="btn btn-primary m-1">수정</button>
+            <button type="button" id="submit" class="btn btn-primary m-1">수정</button>
           </div>
         </div>
       </div>
@@ -95,6 +94,57 @@
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
 <script>
+    var oEditors = [];
+    nhn.husky.EZCreator.createInIFrame({
+        oAppRef: oEditors,
+        elPlaceHolder: "ir1",
+        sSkinURI: "/resources/se2/SmartEditor2Skin_ko_KR.html",
+        fCreator: "createSEditor2"
+    });
+
+    let formData = new FormData();
+
+    // 등록 버튼 클릭 시, 폼에 있는 값을 전달(이미지는 슬라이싱할 때 전달했기 때문에 따로 추가 설정 안해도 됨)
+    document.querySelector("#submit").addEventListener("click", function () {
+
+        oEditors.getById["ir1"].exec("UPDATE_CONTENTS_FIELD", []);
+
+        let no = document.querySelector("input[name=no]").value;
+        let title = document.querySelector("input[name=title]").value;
+        let content = document.querySelector("textarea[name=ir1]").value;
+        let marathonDate = document.querySelector("input[name=marathonDate]").value;
+        let startDate = document.querySelector("input[name=startDate]").value;
+        let endDate = document.querySelector("input[name=endDate]").value;
+        let host = document.querySelector("input[name=host]").value;
+        let organizer = document.querySelector("input[name=organizer]").value;
+        let url = document.querySelector("input[name=url]").value;
+        let place = document.querySelector("input[name=place]").value;
+        let thumbnail = document.querySelector("input[name=thumbnail]").value;
+        
+        formData.append("no", no);
+        formData.append("title", title);
+        formData.append("content", content);
+        formData.append("marathonDate", marathonDate);
+        formData.append("startDate", startDate);
+        formData.append("endDate", endDate);
+        formData.append("host", host);
+        formData.append("organizer", organizer);
+        formData.append("url", url);
+        formData.append("place", place);
+        formData.append("thumbnail", thumbnail);
+        
+        $.ajax({
+            method: "post",
+            url: "/community/marathon/modify",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (board) {
+                window.location.href = "detail?no=" + board.no;
+            }
+        })
+    });
+    
     function abort(marathonNo) {
         let result = confirm("수정 중이던 글을 취소하시겠습니까?");
         if (result) {

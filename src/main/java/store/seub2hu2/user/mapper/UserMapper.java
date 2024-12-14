@@ -3,10 +3,7 @@ package store.seub2hu2.user.mapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import store.seub2hu2.course.vo.UserLevel;
-import store.seub2hu2.user.vo.Addr;
-import store.seub2hu2.user.vo.User;
-import store.seub2hu2.user.vo.Role;
-import store.seub2hu2.user.vo.UserRole;
+import store.seub2hu2.user.vo.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -38,8 +35,6 @@ public interface UserMapper {
     // 사용자 닉네임으로 사용자 조회
     User getUserByNickname(@Param("nickname") String nickname);
 
-    // 이메일로 아이디 찾기 (아이디 찾기용)
-    String findIdByEmail(@Param("email") String email);
 
     // 사용자 번호로 역할 정보 조회
     List<Role> getRolesByUserNo(@Param("userNo") int userNo);
@@ -65,5 +60,9 @@ public interface UserMapper {
     List<User> findUsersByPassword(@Param("password") String password);
 
     User findByUserNo(@Param("userNo") int userNo);
+
+    void insertUserImage(@Param("user")UserImage userImage);
+
+    void updatePrimaryToN(@Param("userNo") int userNo);
 
 }

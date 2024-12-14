@@ -18,4 +18,5 @@ public class OrderItem {
     private int prodNo; // 상품 번호
     private int sizeNo; // 사이즈 번호(이게 필요할듯)
     private int orderNo; // 주문 번호
+    private int cartNo; // 장바구니 번호
 }

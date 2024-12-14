@@ -64,9 +64,7 @@
     </div>
     
     <div class="content mt-3" style="text-align: start">
-      <textarea id="content" class="form-control bg-white border-0" readonly="readonly"
-                style="resize: none; overflow: hidden; user-select: none;">${notice.content}
-      </textarea>
+      <p>${notice.content}</p>
     </div>
     
     <div class="actions d-flex justify-content-between mb-4">

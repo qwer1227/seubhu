@@ -32,6 +32,7 @@ import store.seub2hu2.mypage.service.QnaService;
 import store.seub2hu2.mypage.service.WorkoutService;
 import store.seub2hu2.mypage.vo.Post;
 import store.seub2hu2.order.service.OrderService;
+import store.seub2hu2.order.vo.Order;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.service.UserService;
 import store.seub2hu2.user.vo.User;
@@ -183,16 +184,11 @@ public class MyPageController {
             condition.put("keyword", keyword);
         }
 
-        ListDto<Board> dto = boardService.getBoards(condition);
+        ListDto<Board> dto = boardService.getHistoryBoards(condition);
 
         model.addAttribute("boards", dto.getData());
         model.addAttribute("paging", dto.getPaging());
         return "mypage/history";
-    }
-
-    @GetMapping("write")
-    public String write(){
-        return "community/write";
     }
 
     @GetMapping("/detail")
@@ -250,8 +246,9 @@ public class MyPageController {
     }
 
     @PostMapping("/modify")
-    public String update(BoardForm form) {
-        boardService.updateBoard(form);
+    public String update(BoardForm form
+            , @AuthenticationPrincipal LoginUser loginUser) {
+        boardService.updateBoard(form, loginUser);
         return "redirect:detail?no=" + form.getNo();
     }
 
@@ -475,7 +472,7 @@ public class MyPageController {
 
         cartService.addCart(cartRegisterForms);
 
-        return "mypage/cart";
+        return "redirect:cart";
     }
 
     // 위시리스트 화면으로 간다.
@@ -509,6 +506,12 @@ public class MyPageController {
     @GetMapping("/orderhistorydetail/{orderNo}")
     public String orderHistoryDetail(@PathVariable("orderNo") int orderNo, Model model, @AuthenticationPrincipal LoginUser loginUser) {
 
+        ResponseDTO order = orderService.getOrderDetails(orderNo);
+
+        double totalPrice = order.getOrders().getOrderPrice()-order.getOrders().getDisPrice();
+
+        model.addAttribute("order", order);
+        model.addAttribute("totalPrice", totalPrice);
 
         return "mypage/orderhistorydetail";
     }
@@ -524,10 +527,12 @@ public class MyPageController {
     @PostMapping("/order")
     public String addOrder(@RequestParam("sizeNo") List<Integer> sizeNoList
             ,@RequestParam("stock") List<Integer> stock
+            , @AuthenticationPrincipal LoginUser loginUser
             ,Model model) {
 
 
-        List<CartItemDto> orderItems = orderService.getOrderItemBySizeNo(sizeNoList, stock);
+
+        List<CartItemDto> orderItems = orderService.getOrderItemBySizeNo(sizeNoList, stock, loginUser.getNo());
         model.addAttribute("orderItems", orderItems);
 
         return "mypage/order";

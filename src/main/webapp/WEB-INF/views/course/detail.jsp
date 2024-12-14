@@ -48,16 +48,18 @@
                         <a href="controlLikeCount?courseNo=${course.no}" class="btn btn-outline-primary ${isSuccess ? "" : "disabled"}" style="width: 100px;">
                             <i class="bi bi-hand-thumbs-up">좋아요!</i>
                         </a>
+                        <span>( 코스 완주자만 좋아요!를 클릭할 수 있습니다. )</span>
                     </c:if>
                 </sec:authorize>
                 <span>좋아요 수 : ${course.likeCnt}개</span>
-                <span>( 코스 완주자만 좋아요!를 클릭할 수 있습니다! )</span>
             </div>
 
             <%-- 성공 표시 --%>
             <div class="row mt-3 mb-3 justify-content-center">
                 <c:if test="${isSuccess == true}">
-                    <span class="badge text-bg-primary" style="width: 100px; font-size: 20px;">완주 성공!</span>
+                    <span class="badge text-bg-primary" style="width: 100px; font-size: 20px; justify-content: center; align-items: center; display: flex;">
+                        완주 성공!
+                    </span>
                 </c:if>
             </div>
 
@@ -222,10 +224,17 @@
         let reviews = result.data.data;
         let paging = result.data.paging;
 
-        for (let review of reviews) {
-            appendReview(review);
+        // 4. 리뷰가 있는 경우와 없는 경우를 구분해서 처리한다.
+        if (reviews.length > 0) {
+            for (let review of reviews) {
+                appendReview(review);
+            }
+            pagingReviews(paging);
+        } else {
+            let box = document.querySelector("#box-reviews");
+            box.innerHTML = "리뷰가 없습니다.";
         }
-        pagingReviews(paging);
+
     }
 
     getReviews(1);
@@ -276,18 +285,16 @@
         let content = `
 	        <div class="card mb-3" id="review-\${review.no}">
 	            <div class="card-header">
-	                <span>\${review.title}</span>
-	                <span class="float-end">
+	                <span style="float: left;">\${review.title}</span>
+	                <span style="float: right;">
 	                    <small><strong style="color: blue;">\${review.user.nickname}</strong></small>
 	                    <small>\${review.createdDate}</small>
+                        <button class="btn btn-danger btn-sm" onclick="removeReview(\${review.no})">삭제</button>
 	                </span>
 	            </div>
-	            <div class="card-body">
+	            <div class="card-body" style="display: flex; flex-direction: column; align-items: flex-start;">
 	                <div>\${review.content}</div>
 	                <div id="box-images-\${review.no}"></div>
-	            </div>
-	            <div class="card-footer text-end">
-	                <button class="btn btn-danger btn-sm" onclick="removeReview(\${review.no})">삭제</button>
 	            </div>
 	        </div>
 	    `;

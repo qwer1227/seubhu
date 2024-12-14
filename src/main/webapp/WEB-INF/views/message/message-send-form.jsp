@@ -27,7 +27,7 @@
                     <th>
                         <label class="form-label" for="sender">보낸사람</label>
                     </th>
-                    <td colspan="3">
+                    <td colspan="3" class="text-start">
                         <div class="text" id="sender">
                             <input type="hidden" name="sender" value="${sender}">
                             ${sender}

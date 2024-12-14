@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="/WEB-INF/views/common/tags.jsp" %>
-<script type="text/javascript" src="../resources/static/smartEditor/js/HuskyEZCreator.js" charset="utf-8"></script>
+<script type="text/javascript" src="/resources/se2/js/service/HuskyEZCreator.js" charset="utf-8"></script>
 <!doctype html>
 <html lang="ko">
 <head>
@@ -49,10 +49,9 @@
         <tr>
           <th>글내용</th>
           <td colspan="3">
-          <textarea style="width: 100%" class="form-control" rows="10" id="content" name="content"
-                    placeholder="내용을 입력해주세요.">${notice.content}</textarea>
-            <!--%@include file="../write.jsp"%-->
-          </td>
+            <form method="get" action="modify">
+              <textarea name="ir1" id="ir1" style="display:none;">${notice.content}</textarea>
+            </form>
         </tr>
         <c:if test="${not empty notice.uploadFile}">
           <c:if test="${notice.uploadFile.deleted eq 'N'}">
@@ -78,36 +77,78 @@
         </tr>
         </tbody>
       </table>
+    </form>
   </div>
-  
   <div class="row p-3">
     <div class="col d-flex justify-content-between">
       <div class="col d-flex" style="text-align: start">
-        <button type="button" class="btn btn-secondary m-1" onclick="abort()">취소</button>
+        <button type="button" class="btn btn-secondary m-1" onclick="abort(${notice.no})">취소</button>
       </div>
       <div class="col d-flex justify-content-end">
         <button type="button" class="btn btn-outline-primary m-1">보관</button>
-        <button type="submit" class="btn btn-primary m-1">등록</button>
+        <button type="button" id="submit" class="btn btn-primary m-1">등록</button>
       </div>
     </div>
   </div>
-  </form>
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
 <script type="text/javascript">
+    var oEditors = [];
+    nhn.husky.EZCreator.createInIFrame({
+        oAppRef: oEditors,
+        elPlaceHolder: "ir1",
+        sSkinURI: "/resources/se2/SmartEditor2Skin_ko_KR.html",
+        fCreator: "createSEditor2"
+    });
+
+    let formData = new FormData();
+
+    // 등록 버튼 클릭 시, 폼에 있는 값을 전달(이미지는 슬라이싱할 때 전달했기 때문에 따로 추가 설정 안해도 됨)
+    document.querySelector("#submit").addEventListener("click", function () {
+
+        oEditors.getById["ir1"].exec("UPDATE_CONTENTS_FIELD", []);
+
+        let no = document.querySelector("input[name=no]").value;
+        let first = document.querySelector("input[name=first]").value;
+        let title = document.querySelector("input[name=title]").value;
+        let content = document.querySelector("textarea[name=ir1]").value;
+        let upfile = document.querySelector("input[name=upfile]")
+
+        formData.append("no", no);
+        formData.append("first", first);
+        formData.append("title", title);
+        formData.append("content", content);
+        if (upfile.files.length > 0) {
+            formData.append("upfile", upfile.files[0]);
+        }
+
+        $.ajax({
+            method: "post",
+            url: "/community/notice/modify",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (board) {
+                window.location.href = "detail?no=" + board.no;
+            }
+        })
+    });
+
     function changeFirst() {
         let checked = document.querySelector("#first");
 
         checked.value = document.querySelector("#first-check").checked ? "true" : "false";
     }
-    function abort(){
+
+    function abort(noticeNo) {
         let result = confirm("수정 중이던 글을 취소하시겠습니까?");
-        if (result){
-            window.location.href = "detail?no=${notice.no}";
+        if (result) {
+            window.location.href = "detail?no=" + noticeNo;
         }
     }
-    function deleteUploadFile(noticeNo, fileNo){
+
+    function deleteUploadFile(noticeNo, fileNo) {
         let result = confirm("기존에 등록된 첨부파일을 삭제하시겠습니까?");
         if (result) {
             window.location.href = `delete-file?no=\${noticeNo}&fileNo=\${fileNo}`;

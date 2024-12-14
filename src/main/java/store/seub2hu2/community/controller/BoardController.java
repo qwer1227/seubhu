@@ -56,11 +56,6 @@ public class BoardController {
     @Autowired
     private MarathonService marathonService;
 
-    @GetMapping("/write")
-    public String write(){
-        return "community/board/write";
-    }
-
     @GetMapping("/main")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page
             , @RequestParam(name = "rows", required = false, defaultValue = "10") int rows
@@ -165,10 +160,12 @@ public class BoardController {
     }
 
     @PostMapping("/modify")
-    public String update(BoardForm form) {
+    @ResponseBody
+    public Board update(BoardForm form
+            , @AuthenticationPrincipal LoginUser loginUser) {
 
-        boardService.updateBoard(form);
-        return "redirect:detail?no=" + form.getNo();
+        Board board = boardService.updateBoard(form, loginUser);
+        return board;
     }
 
     @GetMapping("/delete")

@@ -4,10 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import store.seub2hu2.community.dto.MarathonForm;
 import store.seub2hu2.community.service.MarathonService;
 import store.seub2hu2.community.vo.Crew;
@@ -98,9 +95,10 @@ public class MarathonController {
     }
 
     @PostMapping("/register")
-    public String register(MarathonForm form) {
-        marathonService.addNewMarathon(form);
-        return "redirect:detail?no=" + form.getNo();
+    @ResponseBody
+    public Marathon register(MarathonForm form) {
+        Marathon marathon = marathonService.addNewMarathon(form);
+        return marathon;
     }
 
     @GetMapping("/modify")
@@ -125,9 +123,10 @@ public class MarathonController {
     }
 
     @PostMapping("/modify")
-    public String update(MarathonForm form) {
-        marathonService.updateMarathon(form);
-        return "redirect:detail?no=" + form.getNo();
+    @ResponseBody
+    public Marathon update(MarathonForm form) {
+        Marathon marathon = marathonService.updateMarathon(form);
+        return marathon;
     }
 
     @GetMapping("/delete")

@@ -63,7 +63,7 @@ public class BoardService {
         MultipartFile multipartFile = form.getUpfile();
 
         // 첨부파일이 있으면 실행
-        if (!multipartFile.isEmpty()) {
+        if (multipartFile != null && !multipartFile.isEmpty()) {
             String originalFilename = multipartFile.getOriginalFilename();
             String filename = System.currentTimeMillis() + originalFilename;
             FileUtils.saveMultipartFile(multipartFile, saveDirectory, filename);
@@ -80,7 +80,7 @@ public class BoardService {
 
         // 첨부파일이 있으면 실행
         // boardMapper.insertBoard()를 통해 board_no를 얻은 후에 실행해야 함
-        if (board.getUploadFile() != null) {
+        if (multipartFile != null && !multipartFile.isEmpty()) {
             UploadFile uploadFile = board.getUploadFile();
             uploadFile.setNo(board.getNo());
             uploadFile.setSaveName(board.getUploadFile().getSaveName());
@@ -93,6 +93,26 @@ public class BoardService {
     }
 
     public ListDto<Board> getBoards(Map<String, Object> condition) {
+        // 검색 조건에 맞는 데이터 전체 갯수 조회
+        int totalRows = boardMapper.getTotalRowsForBoard(condition);
+
+        // pagination 객체 생성
+        int page = (Integer) condition.get("page");
+        int rows = (Integer) condition.get("rows");
+        Pagination pagination = new Pagination(page, totalRows, rows);
+
+        //데이터 검색범위를 조회해서 Map에 저장
+        condition.put("begin", pagination.getBegin());
+        condition.put("end", pagination.getEnd());
+
+        // 조회범위에 맞는 데이터 조회하기
+        List<Board> boards = boardMapper.getBoards(condition);
+        ListDto<Board> dto = new ListDto<>(boards, pagination);
+
+        return dto;
+    }
+
+    public ListDto<Board> getHistoryBoards(Map<String, Object> condition) {
         // 검색 조건에 맞는 데이터 전체 갯수 조회
         int totalRows = boardMapper.getTotalRowsForHistory(condition);
 
@@ -152,16 +172,21 @@ public class BoardService {
         boardMapper.updateBoardCnt(board);
     }
 
-    public void updateBoard(BoardForm form) {
+    public Board updateBoard(BoardForm form
+            , @AuthenticationPrincipal LoginUser loginUser) {
         Board savedBoard = boardMapper.getBoardDetailByNo(form.getNo());
         savedBoard.setTitle(form.getTitle());
         savedBoard.setContent(form.getContent());
         savedBoard.setCatName(form.getCatName());
 
+        User user = new User();
+        user.setNo(loginUser.getNo());
+        savedBoard.setUser(user);
+
         MultipartFile multipartFile = form.getUpfile();
 
         // 수정할 첨부파일이 있으면,
-        if (!multipartFile.isEmpty()) {
+        if (multipartFile != null && !multipartFile.isEmpty()) {
             // 기존 파일 정보를 조회
             UploadFile prevFile = uploadMapper.getFileByBoardNo(savedBoard.getNo());
             // 기존 파일 정보가 존재하면 기존 파일 삭제
@@ -186,6 +211,8 @@ public class BoardService {
 
         // 수정한 게시글 내용을 BOARDS 테이블에 저장
         boardMapper.updateBoard(savedBoard);
+
+        return savedBoard;
     }
 
     public void deleteBoard(int boardNo) {
