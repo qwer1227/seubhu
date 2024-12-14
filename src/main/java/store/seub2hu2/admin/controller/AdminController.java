@@ -16,7 +16,7 @@ import store.seub2hu2.course.service.CourseService;
 import store.seub2hu2.course.service.UserCourseService;
 import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.lesson.dto.LessonRegisterForm;
-import store.seub2hu2.lesson.dto.LessonUpdateDto;
+import store.seub2hu2.lesson.dto.LessonUpdateForm;
 import store.seub2hu2.lesson.service.LessonFileService;
 import store.seub2hu2.lesson.service.LessonService;
 import store.seub2hu2.lesson.vo.Lesson;
@@ -92,7 +92,7 @@ public class AdminController {
     }
 
     @PostMapping("/lesson-edit-form")
-    public String lessonEditForm(@ModelAttribute("dto") LessonUpdateDto dto) {
+    public String lessonEditForm(@ModelAttribute("dto") LessonUpdateForm dto) {
 
         log.info("레슨 수정 정보 {} ", dto);
         lessonService.updateLesson(dto);
