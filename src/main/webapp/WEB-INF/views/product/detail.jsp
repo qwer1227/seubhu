@@ -222,48 +222,50 @@
     -->
     <div class="row comments rounded py-3" style="background-color: #f2f2f2">
         <div class="comment">
-            <div class="row align-items-center">
-                <!-- 프로필 이미지, 닉네임, 날짜, 별점 -->
-                <div class="col-3" style="text-align: start;">
-                    <!-- 프로필 이미지 -->
-                    <img src="https://github.com/mdo.png" alt="프로필 이미지" style="width: 50px; height: 50px;" class="rounded-circle mb-2">
+            <c:forEach var="review" items="${prodReviewDto}">
+                <div class="row align-items-center">
+                    <!-- 프로필 이미지, 닉네임, 날짜, 별점 -->
+                    <div class="col-3" style="text-align: start;">
+                        <!-- 프로필 이미지 -->
+                        <img src="https://github.com/mdo.png" alt="프로필 이미지" style="width: 50px; height: 50px;" class="rounded-circle mb-2">
 
-                    <!-- 닉네임 -->
-                    <strong>닉네임변경테스트12</strong><br/>
+                        <!-- 닉네임 -->
+                        <strong>${review.userNickname}</strong><br/>
 
-                    <!-- 날짜 -->
-                    <span style="font-size: 0.9rem; color: #555;">2024.12.15 09:09:19</span><br/>
+                        <!-- 날짜 -->
+                        <span style="font-size: 0.9rem; color: #555;">${review.reviewDate}</span><br/>
 
-                    <!--상품 정보 -->
-                    <span style="font-size: 0.9rem; color: #555;">나이키 페가수스41[블랙/260]</span>
+                        <!--상품 정보 -->
+                        <span style="font-size: 0.9rem; color: #555;">${review.prodName} [${review.colorName}]</span>
 
-                    <!-- 별점 표시 -->
-                    <div class="star-rating" style="font-size: 1.2rem; color: gold;">
-                        &#9733;&#9733;&#9733;&#9733;&#9734; <!-- 별점 4점 예시 -->
+                        <!-- 별점 표시 -->
+                        <div class="star-rating" style="font-size: 1.2rem; color: gold;">
+                            &#9733;&#9733;&#9733;&#9733;&#9734; <!-- 별점 4점 예시 -->
+                        </div>
+                        <div class="mt-1">
+                            <button class="btn btn-outline-secondary">답글</button>
+                        </div>
                     </div>
-                    <div class="mt-1">
-                        <button class="btn btn-outline-secondary">답글</button>
+
+                    <!-- 댓글 내용 -->
+                    <div class="col">
+                        <!-- 이미지가 있을 경우 이미지 표시 -->
+                        <div class="mt-2">
+                            <img src="https://image.xportsnews.com/contents/images/upload/article/2024/1214/1734185915629638.jpg" alt="리뷰 이미지" class="img-fluid" style="max-height: 100px; object-fit: cover;">
+                            <img src="https://image.xportsnews.com/contents/images/upload/article/2024/1214/1734185915629638.jpg" alt="리뷰 이미지" class="img-fluid" style="max-height: 100px; object-fit: cover;">
+                            <img src="https://image.xportsnews.com/contents/images/upload/article/2024/1214/1734185915629638.jpg" alt="리뷰 이미지" class="img-fluid" style="max-height: 100px; object-fit: cover;">
+                            <img src="https://image.xportsnews.com/contents/images/upload/article/2024/1214/1734185915629638.jpg" alt="리뷰 이미지" class="img-fluid" style="max-height: 100px; object-fit: cover;">
+                        </div>
+                        <p style="margin: 3px;">나쁘지 않았어요</p>
+                    </div>
+
+                    <!-- 수정 및 삭제 버튼 -->
+                    <div class="col-2 text-end">
+                        <button type="button" class="btn btn-warning btn-sm">수정</button>
+                        <button type="button" class="btn btn-danger btn-sm">삭제</button>
                     </div>
                 </div>
-
-                <!-- 댓글 내용 -->
-                <div class="col">
-                    <!-- 이미지가 있을 경우 이미지 표시 -->
-                    <div class="mt-2">
-                        <img src="https://image.xportsnews.com/contents/images/upload/article/2024/1214/1734185915629638.jpg" alt="리뷰 이미지" class="img-fluid" style="max-height: 100px; object-fit: cover;">
-                        <img src="https://image.xportsnews.com/contents/images/upload/article/2024/1214/1734185915629638.jpg" alt="리뷰 이미지" class="img-fluid" style="max-height: 100px; object-fit: cover;">
-                        <img src="https://image.xportsnews.com/contents/images/upload/article/2024/1214/1734185915629638.jpg" alt="리뷰 이미지" class="img-fluid" style="max-height: 100px; object-fit: cover;">
-                        <img src="https://image.xportsnews.com/contents/images/upload/article/2024/1214/1734185915629638.jpg" alt="리뷰 이미지" class="img-fluid" style="max-height: 100px; object-fit: cover;">
-                    </div>
-                    <p style="margin: 3px;">나쁘지 않았어요</p>
-                </div>
-
-                <!-- 수정 및 삭제 버튼 -->
-                <div class="col-2 text-end">
-                    <button type="button" class="btn btn-warning btn-sm">수정</button>
-                    <button type="button" class="btn btn-danger btn-sm">삭제</button>
-                </div>
-            </div>
+            </c:forEach>
         </div>
     </div>
 </div>

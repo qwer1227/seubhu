@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import store.seub2hu2.product.dto.*;
+import store.seub2hu2.product.mapper.ProdReviewMapper;
 import store.seub2hu2.product.service.ProductService;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.service.UserService;
@@ -32,11 +33,8 @@ public class ProductController {
     @Autowired
     private UserService userService;
 
-    // 임시 홈 페이지 이동
-    @GetMapping("/")
-    public String home() {
-        return "main";
-    }
+    @Autowired
+    private ProdReviewMapper prodReviewMapper;
 
 
     //  상품 전체 페이지 이동
@@ -70,7 +68,6 @@ public class ProductController {
         model.addAttribute("products", dto.getData());
         model.addAttribute("paging", dto.getPaging());
 
-        System.out.println("--------------------------------------------products:" + dto.getData());
         return "product/list";
     }
 
@@ -82,6 +79,8 @@ public class ProductController {
                          Model model) {
 
         model.addAttribute("loginUser", loginUser);
+
+
 
         User user = userService.findbyUserId(loginUser.getId());
         model.addAttribute("user", user);
@@ -98,6 +97,10 @@ public class ProductController {
         ProdImagesDto prodImagesDto = productService.getProdImagesByColorNo(colorNo);
         model.addAttribute("prodImagesDto", prodImagesDto);
 
+
+        List<ProdReviewDto> prodReviewDto = prodReviewMapper.prodReviewDto(loginUser.getNo());
+        model.addAttribute("prodReviewDto", prodReviewDto);
+
         return "product/detail";
     }
 
@@ -106,4 +109,6 @@ public class ProductController {
         productService.updateProdDetailViewCnt(prodNo, colorNo);
         return "redirect:detail?no=" + prodNo +"&colorNo="+colorNo;
     }
+
+
 }

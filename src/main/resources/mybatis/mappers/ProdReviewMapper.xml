@@ -2,4 +2,57 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="store.seub2hu2.product.mapper.ProdReviewMapper">
 
+    <resultMap id="ProdReviewDtoResultMap" type="store.seub2hu2.product.dto.ProdReviewDto">
+
+        <!-- 리뷰 정보 -->
+        <id property="reviewNo" column="REVIEW_NO"/>
+        <result property="reviewTitle" column="REVIEW_TITLE"/>
+        <result property="reviewContent" column="REVIEW_CONTENT"/>
+        <result property="rating" column="REVIEW_RATING"/>
+        <result property="reviewDate" column="REVIEW_DATE"/>
+
+        <!-- 리뷰 이미지 -->
+        <result property="reviewImgNo" column="REVIEW_PROD_IMG_NO"/>
+        <result property="reviewImg" column="REVIEW_PROD_IMG_NAME"/>
+
+        <!-- 상품 정보 -->
+        <result property="prodNo" column="PROD_NO"/>
+        <result property="prodName" column="PROD_NAME"/>
+
+        <!-- 색상 정보 -->
+        <result property="colorNo" column="COLOR_NO"/>
+        <result property="colorName" column="COLOR_NAME"/>
+
+        <result property="userNo" column="USER_NO"/>
+        <result property="userName" column="USER_NAME"/>
+        <result property="userNickname" column="USER_NICKNAME"/>
+    </resultMap>
+    <select id="prodReviewDto" resultMap="ProdReviewDtoResultMap">
+        SELECT PR.REVIEW_NO
+             ,PR.REVIEW_TITLE
+             ,PR.REVIEW_DATE
+             ,PR.REVIEW_UPDATED_DATE
+             ,PR.REVIEW_RATING
+             ,PR.ISDELETED
+             ,PRI.REVIEW_PROD_IMG_NO
+             ,PRI.REVIEW_PROD_IMG_NAME
+             ,P.PROD_NO
+             ,P.PROD_NAME
+             ,P.PROD_RATING
+             ,PC.COLOR_NO
+             ,PC.COLOR_NAME
+             ,U.USER_NO
+             ,U.USER_NAME
+             ,U.USER_NICKNAME
+        FROM PROD_REVIEWS PR
+                 JOIN USERS U
+                      ON PR.USER_NO = U.USER_NO
+                 JOIN REVIEW_PROD_IMGS PRI
+                      ON PR.REVIEW_NO = PRI.REVIEW_NO
+                 JOIN PRODUCTS P
+                      ON PR.PROD_NO = P.PROD_NO
+                 JOIN PROD_COLORS PC
+                      ON P.PROD_NO = PC.PROD_NO
+        WHERE U.USER_NO = #{userNo}
+    </select>
 </mapper>
