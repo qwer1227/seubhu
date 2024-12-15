@@ -4,7 +4,7 @@
 <html lang="ko">
 <script type="text/javascript" src="/resources/se2/js/service/HuskyEZCreator.js" charset="utf-8"></script>
 <head>
-  <%@include file="/WEB-INF/views/common/common.jsp" %>
+	<%@include file="/WEB-INF/views/common/common.jsp" %>
 </head>
 <style>
     #community-table th {
@@ -18,93 +18,93 @@
 <body>
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
 <div class="container-xxl text-center" id="wrap">
-  
-  <h2> 커뮤니티 글 수정 </h2>
-  
-  <div class="row p-3 m-3">
-    <form id="form-register" action="modify" method="post" enctype="multipart/form-data">
-      <input type="hidden" name="no" value="${board.no}">
-      <input type="hidden" name="fileNo" id="fileNo" value="${board.uploadFile.no}">
-      <table id="community-table" style="width: 98%">
-        <colgroup>
-          <col width="10%">
-          <col width="40%">
-          <col width="15%">
-          <col width="35%">
-        </colgroup>
-        <tbody>
-        <tr class="form-group">
-          <th>
-            <label class="form-label" for="category">카테고리</label>
-          </th>
-          <td style="text-align: start">
-            <select id="category" name="catName" class="form-control">
-              <option hidden="hidden">게시판을 선택해주세요.</option>
-              <option value="일반게시판" ${board.catName eq '일반게시판' ? 'selected' : ''}>일반</option>
-              <option value="자랑게시판" ${board.catName eq '자랑게시판' ? 'selected' : ''}>자랑</option>
-              <option value="질문게시판" ${board.catName eq '훈련게시판' ? 'selected' : ''}>질문</option>
-              <option value="훈련일지" ${board.catName eq '훈련일지' ? 'selected' : ''}>훈련일지</option>
-            </select>
-          </td>
-        </tr>
-        <tr class="form-group">
-          <th>
-            <label class="form-label" for="title">글제목</label>
-          </th>
-          <td colspan="3">
-            <input type="text" class="form-control" style="width: 100%" id="title" name="title"
-                   placeholder="제목을 입력해주세요." value="${board.title}">
-          
-          </td>
-        </tr>
-        <tr class="form-group">
-          <th>
-            <label class="form-label" id="ir">글내용</label>
-          </th>
-          <td colspan="3">
-            <form method="get" action="modify">
-              <textarea name="ir1" id="ir1" style="display:none;">${board.content}</textarea>
-            </form>
-          </td>
-        </tr>
-        <c:if test="${not empty board.uploadFile}">
-          <c:if test="${board.uploadFile.deleted eq 'N'}">
-            <tr class="form-group">
-              <th>
-                <label class="form-label">기존파일명</label>
-              </th>
-              <td colspan="3" style="text-align: start">
-                  ${board.uploadFile.originalName}
-                <button type="button" class="btn btn-outline-dark"
-                        onclick="deleteUploadFile(${board.no}, ${board.uploadFile.no})">
-                  삭제
-                </button>
-              </td>
-            </tr>
-          </c:if>
-        </c:if>
-        <tr class="form-group">
-          <th>
-            <label class="form-label">첨부파일</label>
-          </th>
-          <td colspan="3">
-            <input type="file" class="form-control" name="upfile"/>
-          </td>
-        </tr>
-        </tbody>
-      </table>
-      <div class="row">
-        <div class="col d-flex justify-content-between">
-          <div class="col d-flex" style="text-align: start">
-            <button type="button" class="btn btn-secondary m-1" onclick="abort()">취소</button>
-          </div>
-          <div class="col d-flex justify-content-end">
-            <button type="button" id="submit" class="btn btn-primary m-1">수정</button>
-          </div>
-        </div>
-      </div>
-    </form>
-  </div>
+	
+	<h2> 커뮤니티 글 수정 </h2>
+	
+	<div class="row p-3 m-3">
+		<form id="form-register" action="modify" method="post" enctype="multipart/form-data">
+			<input type="hidden" name="no" value="${board.no}">
+			<input type="hidden" name="fileNo" id="fileNo" value="${board.uploadFile.no}">
+			<table id="community-table" style="width: 98%">
+				<colgroup>
+					<col width="10%">
+					<col width="40%">
+					<col width="15%">
+					<col width="35%">
+				</colgroup>
+				<tbody>
+				<tr class="form-group">
+					<th>
+						<label class="form-label" for="category">카테고리</label>
+					</th>
+					<td style="text-align: start">
+						<select id="category" name="catName" class="form-control">
+							<option hidden="hidden">게시판을 선택해주세요.</option>
+							<option value="일반게시판" ${board.catName eq '일반게시판' ? 'selected' : ''}>일반</option>
+							<option value="자랑게시판" ${board.catName eq '자랑게시판' ? 'selected' : ''}>자랑</option>
+							<option value="질문게시판" ${board.catName eq '훈련게시판' ? 'selected' : ''}>질문</option>
+							<option value="훈련일지" ${board.catName eq '훈련일지' ? 'selected' : ''}>훈련일지</option>
+						</select>
+					</td>
+				</tr>
+				<tr class="form-group">
+					<th>
+						<label class="form-label" for="title">글제목</label>
+					</th>
+					<td colspan="3">
+						<input type="text" class="form-control" style="width: 100%" id="title" name="title"
+									 placeholder="제목을 입력해주세요." value="${board.title}">
+					
+					</td>
+				</tr>
+				<tr class="form-group">
+					<th>
+						<label class="form-label" id="ir">글내용</label>
+					</th>
+					<td colspan="3">
+						<form method="get" action="modify">
+							<textarea name="ir1" id="ir1" style="display:none;">${board.content}</textarea>
+						</form>
+					</td>
+				</tr>
+				<c:if test="${not empty board.uploadFile}">
+					<c:if test="${board.uploadFile.deleted eq 'N'}">
+						<tr class="form-group">
+							<th>
+								<label class="form-label">기존파일명</label>
+							</th>
+							<td colspan="3" style="text-align: start">
+									${board.uploadFile.originalName}
+								<button type="button" class="btn btn-outline-dark"
+												onclick="deleteUploadFile(${board.no}, ${board.uploadFile.no})">
+									삭제
+								</button>
+							</td>
+						</tr>
+					</c:if>
+				</c:if>
+				<tr class="form-group">
+					<th>
+						<label class="form-label">첨부파일</label>
+					</th>
+					<td colspan="3">
+						<input type="file" class="form-control" name="upfile"/>
+					</td>
+				</tr>
+				</tbody>
+			</table>
+			<div class="row">
+				<div class="col d-flex justify-content-between">
+					<div class="col d-flex" style="text-align: start">
+						<button type="button" class="btn btn-secondary m-1" onclick="abort()">취소</button>
+					</div>
+					<div class="col d-flex justify-content-end">
+						<button type="button" id="submit" class="btn btn-primary m-1">수정</button>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script type="text/javascript">
@@ -125,9 +125,25 @@
 
         let no = document.querySelector("input[name=no]").value;
         let catName = document.querySelector("select[name=catName]").value;
-        let title = document.querySelector("input[name=title]").value;
-        let content = document.querySelector("#ir1").value;
+        let title = document.querySelector("input[name=title]").value.trim();
+        let content = document.querySelector("#ir1").value.trim();
         let upfile = document.querySelector("input[name=upfile]")
+
+        let cleanedContent = content.replace(/<p><br><\/p>/g, "").trim();
+
+        // 입력값 검증
+        if (!catName || catName === "게시판을 선택해주세요.") {
+            alert("카테고리를 선택해주세요.");
+            return;
+        }
+        if (!title) {
+            alert("제목을 입력해주세요.");
+            return;
+        }
+        if (!cleanedContent) {
+            alert("내용을 입력해주세요.");
+            return;
+        }
 
         formData.append("no", no);
         formData.append("catName", catName);
@@ -145,8 +161,11 @@
             contentType: false,
             success: function (board) {
                 window.location.href = "detail?no=" + board.no;
+            },
+            error: function () {
+                alert("글 등록 중 오류가 발생했습니다. 다시 시도해주세요.");
             }
-        })
+        });
     });
 
     function abort() {

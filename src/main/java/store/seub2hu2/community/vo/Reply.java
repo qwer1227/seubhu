@@ -16,14 +16,15 @@ import java.util.Date;
 public class Reply {
     private int no;
     private int prevNo;
-    private int boardNo;
-    private int crewNo;
+    private String type; // board, crew, course
+    private int typeNo;  // board의 게시글 번호, crew의 게시글 번호, course의 게시글 번호
     private String content;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date createdDate;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date updatedDate;
     private User user;
+    private User prevUser; // 대댓글의 상위 답글을 쓴 유저
     private String report;
     private int replyLike;
     private String deleted;

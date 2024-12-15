@@ -32,7 +32,6 @@ import store.seub2hu2.mypage.service.QnaService;
 import store.seub2hu2.mypage.service.WorkoutService;
 import store.seub2hu2.mypage.vo.Post;
 import store.seub2hu2.order.service.OrderService;
-import store.seub2hu2.order.vo.Order;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.service.UserService;
 import store.seub2hu2.user.vo.User;
@@ -74,7 +73,7 @@ public class MyPageController {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private BoardReplyService replyService;
+    private ReplyService replyService;
 
     @Autowired
     private ScrapService scrapService;
@@ -312,7 +311,7 @@ public class MyPageController {
 
         replyService.addNewReply(form, loginUser);
 
-        return "redirect:detail?no=" + form.getBoardNo();
+        return "redirect:detail?no=" + form.getTypeNo();
     }
 
     @PostMapping("/add-comment")
@@ -321,7 +320,7 @@ public class MyPageController {
             , @AuthenticationPrincipal LoginUser loginUser){
         replyService.addNewComment(form, loginUser);
 
-        return "redirect:detail?no=" + form.getBoardNo();
+        return "redirect:detail?no=" + form.getTypeNo();
     }
 
     @PostMapping("/modify-reply")
@@ -331,26 +330,27 @@ public class MyPageController {
             , @RequestParam("content") String replyContent
             , @AuthenticationPrincipal LoginUser loginUser){
         ReplyForm form = new ReplyForm();
-        form.setId(replyNo);
-        form.setBoardNo(boardNo);
+        form.setNo(replyNo);
+        form.setTypeNo(boardNo);
         form.setContent(replyContent);
         form.setUserNo(loginUser.getNo());
 
-        replyService.updateReply(form);
+        replyService.updateReply(form, loginUser);
 
-        return "redirect:detail?no=" + form.getBoardNo();
+        return "redirect:detail?no=" + form.getTypeNo();
     }
 
     @GetMapping("/delete-reply")
     @PreAuthorize("isAuthenticated()")
     public String deleteReply(@RequestParam("rno") int replyNo,
-                              @RequestParam("bno") int boardNo){
+                              @RequestParam("bno") int boardNo
+            , @AuthenticationPrincipal LoginUser loginUser){
         ReplyForm form = new ReplyForm();
-        form.setId(replyNo);
-        form.setBoardNo(boardNo);
-        replyService.deleteReply(replyNo);
+        form.setNo(replyNo);
+        form.setTypeNo(boardNo);
+        replyService.deleteReply(replyNo,loginUser);
 
-        return "redirect:detail?no=" + form.getBoardNo();
+        return "redirect:detail?no=" + form.getTypeNo();
     }
 
     @GetMapping("/update-board-like")

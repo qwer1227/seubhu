@@ -1,5 +1,9 @@
 package store.seub2hu2.community.mapper;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import store.seub2hu2.community.vo.Reply;
@@ -7,16 +11,15 @@ import store.seub2hu2.community.vo.Reply;
 import java.util.List;
 
 @Mapper
-public interface BoardReplyMapper {
+public interface ReplyMapper {
 
-    void updateReply(@Param("reply") Reply reply);
     void insertReply(@Param("reply") Reply reply);
-    List<Reply> getRepliesByBoardNo(@Param("no") int boardNo);
+    List<Reply> getRepliesByTypeNo(@Param("no") int typeNo);
     Reply getReplyByReplyNo(@Param("no") int replyNo);
-    int getReplyCntByBoardNo(@Param("no") int boardNo);
-    void deleteReplyByNo(@Param("no") int replyNo);
+    int getReplyCntByTypeNo(@Param("no") int typeNo);
+    void updateReply(@Param("reply") Reply reply);
 
     int hasUserLikedReply(@Param("rno") int replyNo, @Param("userNo") int userNo);
-    void insertReplyLike(@Param("rno") int replyNo, @Param("userNo") int userNo);
+    void insertReplyLike(@Param("reply") Reply reply, @Param("userNo") int userNo);
     void deleteReplyLike(@Param("rno") int replyNo, @Param("userNo") int userNo);
 }
