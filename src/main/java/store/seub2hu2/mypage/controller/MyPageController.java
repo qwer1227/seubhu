@@ -512,6 +512,8 @@ public class MyPageController {
 
         cartService.addToCart(cart);
 
+        wishListService.deleteWishListItemByNo(wishNo);
+
         return "redirect:/cart";
     }
 

@@ -65,6 +65,12 @@ public class CartService {
      * @param cart
      */
     public void addToCart(Cart cart) {
+        // Null 체크
+        if (cart == null) {
+            throw new IllegalArgumentException("Cart 객체가 null입니다.");
+        }
+
+
         cartMapper.addToCart(cart);
     }
 }

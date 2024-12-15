@@ -33,16 +33,16 @@
         SIZE_NO
         , PROD_NO
         , USER_NO
-        , CART_AMOUNT
         , COLOR_NO
+        , CART_AMOUNT
         )
         values
             (
-            #{cart.sizeNo}
-            , #{cart.prodNo}
-            , #{cart.userNo}
-            , #{cart.stock}
-            , #{cart.colorNo}
+            #{cart.size.no}
+            , #{cart.product.no}
+            , #{cart.user.no}
+            , #{cart.color.no}
+            , 1
             )
     </insert>
 

@@ -16,10 +16,9 @@
     <form id="addToCart" action="/add-to-cart" method="post">
         <div class="row row-cols-1 row-cols-md-3 g-4 mt-5 mb-5">
             <c:forEach var="item" items="${wishItemDtoList}">
-                <input type="hidden" name="prodNo" data-prodNo="${item.product.no}" value="${item.product.no}"/>
-                <input type="hidden" name="sizeNo" data-sizeNo="${item.size.no}" value="${item.size.no}"/>
-                <input type="hidden" name="colorNo" data-colorNo="${item.color.no}" value="${item.color.no}"/>
-                <input type="hidden" name="wishNo" data-wishNo="${item.no}">
+                <input type="hidden" name="prodNo"  value="${item.product.no}"/>
+                <input type="hidden" name="sizeNo" value="${item.size.no}"/>
+                <input type="hidden" name="colorNo"  value="${item.color.no}"/>
                 <div class="col">
                     <div class="card h-100">
                         <a class="text-decoration-none" href="/product/detail?no=${item.product.no}&colorNo=${item.color.no}">
@@ -35,7 +34,11 @@
                                 <p><strong><fmt:formatNumber value="${item.product.price}"/> 원</strong></p>
                             </div>
                             <hr class="bg-primary border border-1">
-                            <button type="button" class="btn btn-outline-secondary" id="addToCartBtn">
+                            <button type="button" class="btn btn-outline-secondary" id="addToCartBtn"
+                                    data-wishno="${item.no}"
+                                    data-prodno="${item.product.no}"
+                                    data-colorno="${item.color.no}"
+                                    data-sizeno="${item.size.no}">
                                 <i class="bi bi-basket-fill"></i>
                             </button>
                             <button type="button" class="btn btn-outline-secondary" id="deleteBtn" data-wishNo="${item.no}">
@@ -58,6 +61,11 @@
             const prodNo = $(this).data('prodno');
             const colorNo = $(this).data('colorno');
             const sizeNo = $(this).data('sizeno');
+
+            if (!wishNo || !prodNo || !colorNo || !sizeNo) {
+                alert('데이터가 부족합니다. 확인해주세요.');
+                return;
+            }
 
             // 장바구니에 추가할 데이터를 서버로 전달하는 AJAX 요청
             $.ajax({
