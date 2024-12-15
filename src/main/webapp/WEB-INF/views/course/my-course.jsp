@@ -107,7 +107,8 @@
                                         <td><span>${courseToChallenge.level}단계</span></td>
                                         <td>
                                             <span>
-                                                <button class="btn btn-success" onclick="openAddRecordFormModal()">완주 기록 등록</button>
+                                                <button class="btn btn-success"
+                                                        onclick="openAddRecordFormModal('${courseToChallenge.name}')">완주 기록 등록</button>
                                             </span>
                                         </td>
                                         <td>
@@ -229,28 +230,44 @@
             </div>
             <%-- 완주 날짜와 완주 시간을 입력하고 등록한다. --%>
             <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">1. 코스 이름</label>
+                    <input id="name" class="form-control" type="text" aria-label="Disabled input example" disabled readonly>
+                </div>
                 <form method="post" action="/" enctype="multipart/form-data">
                     <div class="form-group">
-                        <label class="form-label">코스 이름</label>
+                        <label class="form-label">2. 완주 날짜(년, 월, 일, 시, 분, 초)</label>
+                        <div><input type="datetime-local" name="finishedDate" id="today"></div>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">코스 거리</label>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">코스 난이도</label>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">완주 날짜(년, 월, 일, 시, 분)</label>
-                        <input type="datetime-local">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">완주 시간(시간, 분, 초)</label>
+                        <label class="form-label">3. 완주 시간</label>
+                        <div class="row">
+                            <div class="col">
+                                <input type="number" name="hour" min="0" placeholder="시간">
+                            </div>
+                            <div class="col">
+                                <select class="form-select" name="minute">
+                                    <option value="">분</option>
+                                    <c:forEach var="num" begin="0" end="59">
+                                        <option>${num}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div class="col">
+                                <select class="form-select" name="second">
+                                    <option value="">초</option>
+                                    <c:forEach var="num" begin="0" end="59">
+                                        <option>${num}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                <button type="submit" class="btn btn-primary" onclick="submitReview()">등록</button>
+                <button type="submit" class="btn btn-primary" onclick="submitRecord()">등록</button>
             </div>
         </div>
     </div>
@@ -273,8 +290,15 @@
     let registerModal = new bootstrap.Modal('#modal-add-record-form');
 
     // 완주 기록 등록 버튼을 클릭하면, 완주 기록 등록 창이 열린다.
-    function openAddRecordFormModal() {
+    function openAddRecordFormModal(name) {
+        document.querySelector("#name").value = name;
+
         registerModal.show();
+    }
+
+    // 입력한 완주 기록(완주 날짜, 완주 시간)를 컨트롤러에 제출한다.
+    async function submitRecord() {
+
     }
 
     // 삭제 버튼을 클릭하면, 확인창이 표시된다.
