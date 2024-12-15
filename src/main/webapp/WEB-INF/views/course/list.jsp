@@ -63,8 +63,17 @@
                             </c:forEach>
                         </select>
                     </div>
-                    <div class="col-3">
-                        지역(구) 검색<input type="text" class="form-control" name="keyword" value="${param.keyword }">
+                    <div class="col-1">
+                        지역
+                        <select class="form-control" name="region" style="appearance: auto;">
+                            <option value="si" ${param.region eq 'si' ? 'selected' : ''}>시</option>
+                            <option value="gu" ${param.region eq 'gu' ? 'selected' : ''}>구</option>
+                            <option value="dong" ${param.region eq 'dong' ? 'selected' : ''}>동</option>
+                        </select>
+                    </div>
+                    <div class="col-2">
+                        지역 검색
+                        <input type="text" class="form-control" name="keyword" value="${param.keyword}">
                     </div>
                     <div class="col-1 pt-4">
                         <button type="button" class="btn btn-outline-primary" onclick="searchKeyword()">검색 버튼</button>
