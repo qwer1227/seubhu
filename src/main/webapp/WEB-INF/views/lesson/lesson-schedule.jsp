@@ -41,6 +41,14 @@
             text-align: left;
             white-space: nowrap;
         }
+
+        .fc-time-grid .fc-slats td {
+            display: none;
+        }
+
+        .fc-time-grid .fc-slats .fc-event {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -92,6 +100,7 @@
             eventLimit: true,
             slotEventOverlap: false,
             slotDuration: '00:10:00',
+            slotMinTime: '09:00:00',
             headerToolbar: {
                 left: 'prev,next,today',
                 center: 'title',
@@ -130,6 +139,7 @@
             droppable: true,
             windowResize: true, // 창 크기 변경 시 자동 조정
             contentHeight: 'auto', // 높이를 자동으로 설정
+            slotEventOverlap: false,
 
             // Load events dynamically from the database
             events: function (info, successCallback, failureCallback) {
@@ -147,7 +157,7 @@
                 var eventStatus;
 
                 if (eventStatusText === '마감') {
-                    eventStatus = $('<span class="badge bg-danger" style="display: block; margin-bottom: 5px;">' + eventStatusText + '</span>');
+                    eventStatus = $('<span class="badge bg-secondary" style="display: block; margin-bottom: 5px;">' + eventStatusText + '</span>');
                 } else if (eventStatusText === '모집중') {
                     eventStatus = $('<span class="badge bg-success " style="display: block; margin-bottom: 5px;">' + eventStatusText + '</span>');
                 } else if (eventStatusText === '취소') {
