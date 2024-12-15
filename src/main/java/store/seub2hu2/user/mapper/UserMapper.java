@@ -2,7 +2,9 @@ package store.seub2hu2.user.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.security.core.parameters.P;
 import store.seub2hu2.course.vo.UserLevel;
+import store.seub2hu2.mypage.dto.UserInfoReq;
 import store.seub2hu2.user.vo.*;
 
 import java.util.List;
@@ -66,5 +68,9 @@ public interface UserMapper {
     void insertUserImage(@Param("user")UserImage userImage);
 
     void updatePrimaryToN(@Param("userNo") int userNo);
+
+    void updateAddr(UserInfoReq userInfoReq);
+
+    List<Addr> findAddrByUserNo(@Param("userNo") int userNo);
 
 }

@@ -1,5 +1,6 @@
 package store.seub2hu2.mypage.controller;
 
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.web.mappings.MappingsEndpoint;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import retrofit2.http.Path;
 import store.seub2hu2.community.service.BoardService;
+import store.seub2hu2.community.service.CrewService;
+import store.seub2hu2.community.vo.CrewMember;
 import store.seub2hu2.mypage.dto.CommentRequest;
 import store.seub2hu2.mypage.dto.ImageDeleteRequest;
 import store.seub2hu2.mypage.dto.WorkoutDTO;
@@ -19,6 +22,8 @@ import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.service.UserService;
 import store.seub2hu2.user.vo.UserImage;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +42,9 @@ public class MyPageRestController {
 
     @Autowired
     private FileUploadService fileUploadService;
+
+    @Autowired
+    private CrewService crewService;
 
 
     @Autowired
@@ -74,8 +82,34 @@ public class MyPageRestController {
     }
 
     @GetMapping("/detail/{no}")
-    public Post getPostdetail(@PathVariable("no") int no) {
-        return postService.getPostDetail(no);
+    public ResponseEntity<Map<String, Object>> getPostdetail(@PathVariable("no") int no) {
+
+        Map<String ,Object> response = new HashMap<>();
+
+        try{
+            // 게시글 상세 정보를 가져옵니다.
+            Post post = postService.getPostDetail(no);
+
+            // 게시글 생성 날짜를 가져옵니다. (Date 타입)
+            Date postCreatedDate = post.getPostCreatedDate();  // 이미 Date 타입이라고 가정
+
+            // SimpleDateFormat을 사용하여 날짜 형식을 지정합니다.
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+            // Date를 원하는 형식의 문자열로 변환
+            String formattedDate = sdf.format(postCreatedDate);
+
+            // 변환된 날짜 문자열을 Post 객체에 설정
+            post.setPostCreatedDateString(formattedDate);  // setter 메소드에 문자열 형태로 설정
+
+            // response에 포스트 추가
+            response.put("post", post);
+            return ResponseEntity.ok(response);
+        } catch (Exception e){
+            e.printStackTrace();
+            response.put("message", "서버 오류");
+            return ResponseEntity.status(500).body(response);
+        }
     }
 
     @PutMapping("/detail/delete/{no}")
@@ -154,25 +188,28 @@ public class MyPageRestController {
 
 
     @PostMapping("/detail/comment")
-    public ResponseEntity<Map<String, Object>> addComment(@RequestBody CommentRequest request) {
+    public ResponseEntity<Map<String, Object>> addComment(@RequestBody CommentRequest request, @AuthenticationPrincipal LoginUser loginUser) {
 
         Map<String, Object> response = new HashMap<>();
 
         try {
             int postId = request.getPostId();
             String commentText = request.getPostComment();
-            int userNo = request.getUserNo();
+            int userNo = loginUser.getNo();
 
-            String userName = postService.getUserNameByUserNo(userNo); //22
+            String userNickName = postService.getUserNameByUserNo(userNo); //22
 
-            postService.commentInsert(request, userName);
+            postService.commentInsert(request, userNickName);
 
             // todo 리스폰스DTO를 활용해서 수정/입력/삭제 될때 새로고침해서 클라이언트에게 보내주는 작업이 필요함
             response.put("message", "댓글성공");
             response.put("postId", postId);
             response.put("userNo", userNo);
-            response.put("userName", userName);
+            response.put("userNickName", userNickName);
             response.put("commentText", commentText);
+            response.put("replyToUserNo", request.getReplyToUserNo());
+            response.put("replyToCommentNo", request.getReplyToCommentNo());
+
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -321,4 +358,54 @@ public class MyPageRestController {
         }
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/getCrewMembers/{crewNo}")
+    public List<CrewMember> getCrewMembers(@PathVariable("crewNo") int crewNo) {
+        // CrewService를 통해 크루 멤버 리스트 가져오기
+        List<CrewMember> availableMembers = crewService.getCrewMembersByCrewId(crewNo);
+
+        return availableMembers;
+    }
+
+    @PutMapping("/transferLeader")
+    public ResponseEntity<Map<String, Object>> updateReader(@RequestBody Map<String, Integer> request, @AuthenticationPrincipal LoginUser loginUser){
+
+        Map<String, Object> response = new HashMap<>();
+
+        try{
+            int userNo = request.get("userNo");
+            int crewNo = request.get("crewNo");
+
+            crewService.updateReader(userNo,crewNo, loginUser.getNo());
+
+            response.put("success", true);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e){
+            e.printStackTrace();
+            response.put("message", "서버 오류");
+            return ResponseEntity.status(500).body(response);
+        }
+
+    }
+
+    @PutMapping("/leaveCrew")
+    public ResponseEntity<Map<String, Object>> leaveCrew(@RequestBody Map<String, Integer> request, @AuthenticationPrincipal LoginUser loginUser){
+
+        Map<String , Object> response = new HashMap<>();
+
+        try{
+            int crewNo = request.get("crewNo");
+            crewService.leaveCrew(crewNo,loginUser);
+
+            response.put("success", true);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e){
+            e.printStackTrace();
+            response.put("message", "서버 오류");
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+
 }

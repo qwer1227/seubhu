@@ -22,5 +22,8 @@ public class Post {
     private User user;
     private List<PostComment> postComment;
     private List<PostImage> images;
+    private String postCreatedDateString;  // 형식화된 날짜를 저장할 String 타입 필드
+
+
 
 }

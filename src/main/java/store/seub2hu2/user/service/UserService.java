@@ -151,6 +151,10 @@ public class UserService {
         user.setTel(userInfoReq.getPhone());
         user.setEmail(userInfoReq.getEmail());
 
+        if(userInfoReq.getAddrNo() != 0){
+            userMapper.updateAddr(userInfoReq);
+        }
+
         // 이전비밀번호 중복입력검증
         if (userInfoReq.getPassword().equals(user.getPassword())) {
             return 1;
@@ -224,5 +228,11 @@ public class UserService {
         } else {
             return false;
         }
+    }
+
+    public List<Addr> findAddrByUserNo(int userNo){
+
+        return userMapper.findAddrByUserNo(userNo);
+
     }
 }

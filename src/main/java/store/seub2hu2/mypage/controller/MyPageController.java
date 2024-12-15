@@ -35,6 +35,7 @@ import store.seub2hu2.order.service.OrderService;
 import store.seub2hu2.order.vo.Order;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.service.UserService;
+import store.seub2hu2.user.vo.Addr;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.ListDto;
 
@@ -135,7 +136,11 @@ public class MyPageController {
 
     // 내 정보 수정 폼
     @GetMapping("/edit")
-    public String userEdit(){
+    public String userEdit(Model model, @AuthenticationPrincipal LoginUser loginUser){
+
+        List<Addr> addr = userService.findAddrByUserNo(loginUser.getNo());
+
+        model.addAttribute("addr", addr);
 
         return "mypage/edit";
     }
@@ -647,6 +652,8 @@ public class MyPageController {
 
         List<Crew> crews = crewService.getCrewByUserNo(loginUser.getNo());
         model.addAttribute("crews", crews);
+
+
 
         return "mypage/participatingcrew";
     }

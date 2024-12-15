@@ -144,24 +144,32 @@
   </div>
 
   <!-- 주문 상품 -->
-  <div class="product-list">
+<div class="product-list">
     <div class="info-title">주문 상품</div>
     <c:forEach var="item" items="${order.products}">
-      <div class="product-item">
-        <img src="${item.prodImgUrl}" alt="상품 이미지">
-        <div class="product-details">
-          <p><span>상품명:</span> ${item.prodName}</p>
-          <p><span>옵션:</span> ${item.sizeName} / ${item.colorName}</p>
-          <p><span>수량:</span> ${item.orderQty}개</p>
-          <p><span>가격:</span> ${item.prodPrice}원</p>
-          <div class="btn-group">
-            <a href="/mypage/reviews/${item.prodNo}" class="btn btn-reviews">후기 작성</a>
-            <a href="/mypage/tracking/${item.prodNo}" class="btn btn-tracking">배송 조회</a>
-          </div>
+        <div class="product-item">
+            <img src="${item.prodImgUrl}" alt="상품 이미지">
+            <div class="product-details d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="d-flex justify-content-between align-items-center">
+                        <span>상품명:</span>
+                        <span>${item.prodName}</span>
+                        <!-- 배송 상태 -->
+                        <span class="delivery-status text-muted ms-auto" style="padding: 10px">${item.orderStatus}</span>
+                    </p>
+                    <p><span>옵션:</span> ${item.sizeName} / ${item.colorName}</p>
+                    <p><span>수량:</span> ${item.orderQty}개</p>
+                    <p><span>가격:</span> ${item.prodPrice}원</p>
+                </div>
+                <div class="btn-group">
+                    <a href="/mypage/reviews/${item.prodNo}" class="btn btn-reviews">후기 작성</a>
+                    <a href="/mypage/tracking/${item.prodNo}" class="btn btn-tracking">배송 조회</a>
+                </div>
+            </div>
         </div>
-      </div>
     </c:forEach>
-  </div>
+</div>
+
 
   <!-- 결제 정보 -->
   <div class="payment-info">
