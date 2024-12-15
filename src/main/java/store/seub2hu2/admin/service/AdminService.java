@@ -555,4 +555,51 @@ public class AdminService {
 
 
     }
+
+    public ListDto<ReportDto> getReport(Map<String, Object> condition) {
+
+        int totalRows = adminMapper.getReportTotalRows(condition);
+
+        int page = (Integer) condition.get("page");
+        int rows = (Integer) condition.get("rows");
+
+        Pagination pagination = new Pagination(page, totalRows, rows);
+
+        int begin = pagination.getBegin();
+        int end = pagination.getEnd();
+
+        condition.put("begin", begin);
+        condition.put("end", end);
+
+        List<ReportDto> dto = adminMapper.getReports(condition);
+
+        ListDto<ReportDto> dtos = new ListDto<>(dto, pagination);
+
+         return dtos;
+    }
+
+    public void UpdateReport(Map<String, Object> condition) {
+
+        if (condition.get("reportType").equals("board")){
+
+            adminMapper.updateBoardStatus(condition);
+
+            adminMapper.updateReportStatus(condition);
+        } else if (condition.get("reportType").equals("boardReply")){
+
+            adminMapper.updateBoardReplyStatus(condition);
+
+            adminMapper.updateReportStatus(condition);
+        } else if (condition.get("reportType").equals("crew")) {
+
+            adminMapper.updateCrewStatus(condition);
+
+            adminMapper.updateReportStatus(condition);
+        } else if (condition.get("reportType").equals("crewReply")) {
+
+            adminMapper.updateCrewReplyStatus(condition);
+
+            adminMapper.updateReportStatus(condition);
+        }
+    }
 }

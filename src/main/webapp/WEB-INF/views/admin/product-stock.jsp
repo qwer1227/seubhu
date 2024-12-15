@@ -247,6 +247,8 @@
     const form =document.querySelector("#form-search");
     const pageInput = document.querySelector("input[name=page]");
 
+    let currentForm;
+
     function changeSort() {
         pageInput.value = 1;
         form.submit();
@@ -271,42 +273,41 @@
 
         form.submit();
     }
+
+    // 삭제 버튼 클릭 시 삭제 확인과 알림 메시지
     function confirmDelete(button) {
         // 삭제 확인창 띄우기
         const confirmResult = confirm("정말 삭제하시겠습니까?");
-
-        // 사용자가 '확인'을 클릭하면
         if (confirmResult) {
-            // 부모 폼을 찾아서 submit을 실행
-            button.closest('form').submit();
+            button.closest('form').submit(); // 폼 제출
+            alert("삭제가 완료되었습니다."); // 삭제 완료 메시지
         }
-        // 취소를 클릭하면 아무 작업도 하지 않음
     }
-
-    let currentForm;
 
     // 노출 설정 모달 열기
     function openShowModal(button) {
-        currentForm = button.closest('form');
-        $('#showModal').modal('show');
+        currentForm = button.closest('form'); // 클릭된 버튼의 부모 폼 찾기
+        $('#showModal').modal('show'); // 노출 설정 모달 열기
     }
 
     // 노출 설정 (Y)
     document.getElementById('setShowY').addEventListener('click', function() {
         if (currentForm) {
-            currentForm.querySelector('input[name="show"]').value = "Y";
-            currentForm.submit();
+            currentForm.querySelector('input[name="show"]').value = "Y"; // 노출 상태를 'Y'로 변경
+            currentForm.submit(); // 폼 제출
+            alert("노출 상태가 변경되었습니다."); // 노출 상태 변경 메시지
         }
-        $('#showModal').modal('hide');
+        $('#showModal').modal('hide'); // 모달 닫기
     });
 
     // 숨기기 설정 (N)
     document.getElementById('setShowN').addEventListener('click', function() {
         if (currentForm) {
-            currentForm.querySelector('input[name="show"]').value = "N";
-            currentForm.submit();
+            currentForm.querySelector('input[name="show"]').value = "N"; // 노출 상태를 'N'으로 변경
+            currentForm.submit(); // 폼 제출
+            alert("노출 상태가 변경되었습니다."); // 노출 상태 변경 메시지
         }
-        $('#showModal').modal('hide');
+        $('#showModal').modal('hide'); // 모달 닫기
     });
 </script>
 

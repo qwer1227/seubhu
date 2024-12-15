@@ -987,6 +987,50 @@ public class AdminController {
         return "redirect:/admin/qna";
     }
 
+    @PostMapping("/updateReport")
+    public String updateReport(@RequestParam("reportNo") int reportNo,
+                               @RequestParam("reportType") String reportType,
+                               Model model) {
+
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("reportNo", reportNo);
+        condition.put("reportType", reportType);
+
+        adminService.UpdateReport(condition);
+
+
+
+        return "redirect:/admin/report";
+    }
+
+    @GetMapping("/report")
+    public String report(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                         @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
+                         @RequestParam(name = "sort", required = false, defaultValue = "latest") String sort,
+                         @RequestParam(name = "opt", required = false) String opt,
+                         @RequestParam(name = "value", required = false) String value,
+                         @RequestParam(name = "keyword", required = false) String keyword,
+                         Model model) {
+
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("page", page);
+        condition.put("rows", rows);
+        condition.put("sort", sort);
+
+        if (StringUtils.hasText(value)) {
+            condition.put("opt", opt);
+            condition.put("keyword", keyword);
+            condition.put("value", value);
+
+        }
+
+        ListDto<ReportDto> dto = adminService.getReport(condition);
+
+        model.addAttribute("dto", dto.getData());
+        model.addAttribute("paging", dto.getPaging());
+
+        return "admin/reportlist";
+    }
 
     @GetMapping("/community")
     public String community() {
