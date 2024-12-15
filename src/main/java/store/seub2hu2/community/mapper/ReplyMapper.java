@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import store.seub2hu2.community.vo.Board;
 import store.seub2hu2.community.vo.Reply;
 
 import java.util.List;
@@ -19,7 +20,9 @@ public interface ReplyMapper {
     int getReplyCntByTypeNo(@Param("no") int typeNo);
     void updateReply(@Param("reply") Reply reply);
 
-    int hasUserLikedReply(@Param("rno") int replyNo, @Param("userNo") int userNo);
-    void insertReplyLike(@Param("reply") Reply reply, @Param("userNo") int userNo);
-    void deleteReplyLike(@Param("rno") int replyNo, @Param("userNo") int userNo);
+    int hasUserLikedReply(@Param("rno") int replyNo, @Param("type") String type, @Param("userNo") int userNo);
+    void insertReplyLike(@Param("no") int replyNo, @Param("type") String type, @Param("userNo") int userNo);
+    void deleteReplyLike(@Param("rno") int replyNo, @Param("type") String type, @Param("userNo") int userNo);
+
+    void updateCnt(@Param("reply") Reply reply);
 }

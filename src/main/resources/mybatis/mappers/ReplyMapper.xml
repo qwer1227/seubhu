@@ -40,7 +40,7 @@
          , r.reply_created_date as createdDate
          , r.is_report          as report
          , r.is_deleted         as deleted
-         , r.reply_like_cnt     as replyLike
+         , r.reply_like_cnt     as replyLikeCnt
     from REPLIES r
            join USERS u
                 on r.user_no = u.user_no
@@ -62,9 +62,12 @@
         , r.reply_updated_date as upadtedDate
         , r.is_report as report
         , r.is_deleted as deleted
-        , r.reply_like_cnt as replyLike
+        , r.reply_like_cnt as replyLikeCnt
+        , i.user_img_url as image
     from REPLIES r join USERS u
     on r.user_no = u.user_no
+    left join USER_IMGS i
+    on u.user_no = i.user_no
     where r.reply_no = #{no}
   </select>
 
@@ -88,27 +91,36 @@
   <!-- int hasUserLikedReply(@Param("rno") int replyNo, @Param("userNo") int userNo); -->
   <select id="hasUserLikedReply" resultType="int">
     select EXISTS (SELECT 1
-                   FROM REPLY_LIKES
-                   WHERE reply_no = #{rno}
+                   FROM LIKES
+                   WHERE like_type_no = #{rno}
+                     and like_type = #{type}
                      and user_no = #{userNo})
   </select>
 
-  <!-- void insertReplyLike(@Param("reply") Reply reply); -->
+  <!-- void insertReplyLike(@Param("no") int replyNo, @Param("type") String type, @Param("userNo") int userNo); -->
   <insert id="insertReplyLike">
-    insert into REPLY_LIKES
-    ( reply_type
-    , reply_no
+    insert into LIKES
+    ( like_type
+    , like_type_no
     , user_no)
-    values ( #{reply.type}
-           , #{reply.no}
+    values ( #{type}
+           , #{no}
            , #{userNo})
   </insert>
 
-  <!-- void deleteReplyLike(@Param("rno") int replyNo, @Param("userNo") int userNo); -->
+  <!-- void deleteReplyLike(@Param("rno") int replyNo, @Param("type") String type,, @Param("userNo") int userNo); -->
   <delete id="deleteReplyLike">
     delete
-    from REPLY_LIKES
-    where reply_no = #{rno}
+    from LIKES
+    where like_type_no = #{rno}
+      and like_type = #{type}
       and user_no = #{userNo}
   </delete>
+
+  <!-- void updateCnt(@Param("reply") Reply reply); -->
+  <update id="updateCnt">
+    update REPLIES
+    set reply_like_cnt = #{reply.replyLikeCnt}
+    where reply_no = #{reply.no}
+  </update>
 </mapper>

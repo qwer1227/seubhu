@@ -32,7 +32,6 @@ import store.seub2hu2.mypage.service.QnaService;
 import store.seub2hu2.mypage.service.WorkoutService;
 import store.seub2hu2.mypage.vo.Post;
 import store.seub2hu2.order.service.OrderService;
-import store.seub2hu2.order.vo.Order;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.service.UserService;
 import store.seub2hu2.user.vo.User;
@@ -208,7 +207,7 @@ public class MyPageController {
             model.addAttribute("Scrapped", scrapResult);
 
             for (Reply reply : replyList) {
-                int replyResult = replyService.getCheckLike(reply.getNo(), loginUser);
+                int replyResult = replyService.getCheckLike(reply.getNo(), "board", loginUser);
                 model.addAttribute("replyLiked", replyResult);
             }
         }
@@ -344,12 +343,11 @@ public class MyPageController {
     @GetMapping("/delete-reply")
     @PreAuthorize("isAuthenticated()")
     public String deleteReply(@RequestParam("rno") int replyNo,
-                              @RequestParam("bno") int boardNo
-            , @AuthenticationPrincipal LoginUser loginUser){
+                              @RequestParam("bno") int boardNo){
         ReplyForm form = new ReplyForm();
         form.setNo(replyNo);
         form.setTypeNo(boardNo);
-        replyService.deleteReply(replyNo,loginUser);
+        replyService.deleteReply(replyNo);
 
         return "redirect:detail?no=" + form.getTypeNo();
     }
@@ -369,11 +367,11 @@ public class MyPageController {
     }
 
     @GetMapping("/update-reply-like")
-    public String updateReplyLke(@RequestParam("no") int boardNo
+    public String updateReplyLike(@RequestParam("no") int boardNo
             , @RequestParam("rno") int replyNo
             , @AuthenticationPrincipal LoginUser loginUser){
 
-        replyService.updateReplyLike(replyNo, loginUser);
+        replyService.updateReplyLike(replyNo, "boardReply", loginUser);
         return "redirect:detail?no=" + boardNo;
     }
 
@@ -382,7 +380,7 @@ public class MyPageController {
             , @RequestParam("rno") int replyNo
             , @AuthenticationPrincipal LoginUser loginUser){
 
-        replyService.deleteReplyLike(replyNo, loginUser);
+        replyService.deleteReplyLike(replyNo, "boardReply", loginUser);
         return "redirect:detail?no=" + boardNo;
     }
 

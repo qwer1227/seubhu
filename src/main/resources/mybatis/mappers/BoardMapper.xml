@@ -111,6 +111,7 @@
     ) as board
     where rn between #{condition.begin} and #{condition.end}
     order by rn
+
   </select>
 
   <!-- List<Board> getBoardsTopFive(@Param("condition") Map<String, Object> condition); -->
@@ -202,10 +203,14 @@
      , b.is_deleted              as deleted
      , b.is_report               as report
      , b.board_like_cnt          as `like`
-    , (select bp.board_no from BOARDS bp where bp.board_no &lt; #{no} and bp.is_deleted = 'N' order by bp.board_no desc LIMIT 1) as prevNo
-         , (select bp.board_title from BOARDS bp where bp.board_no &lt; #{no} and bp.is_deleted = 'N' order by bp.board_no desc LIMIT 1) as prevTitle
-         , (select bn.board_no from BOARDS bn where bn.board_no > #{no} and bn.is_deleted = 'N' order by bn.board_no asc LIMIT 1) as nextNo
-         , (select bn.board_title from BOARDS bn where bn.board_no > #{no} and bn.is_deleted = 'N' order by bn.board_no asc LIMIT 1) as nextTitle
+     , (select bp.board_no from BOARDS bp
+            where bp.board_no &lt; #{no} and bp.is_deleted = 'N' order by bp.board_no desc LIMIT 1) as prevNo
+     , (select bp.board_title from BOARDS bp
+            where bp.board_no &lt; #{no} and bp.is_deleted = 'N' order by bp.board_no desc LIMIT 1) as prevTitle
+      , (select bn.board_no from BOARDS bn
+            where bn.board_no > #{no} and bn.is_deleted = 'N' order by bn.board_no asc LIMIT 1) as nextNo
+      , (select bn.board_title from BOARDS bn
+            where bn.board_no > #{no} and bn.is_deleted = 'N' order by bn.board_no asc LIMIT 1) as nextTitle
     from
       BOARDS b join USERS u
     on b.user_no = u.user_no
@@ -216,31 +221,34 @@
       and b.board_no = #{no}
   </select>
 
-  <!-- int hasUserLikedBoard(@Param("no") int boardNo, @Param("userNo") int userNo); -->
+  <!-- int hasUserLikedBoard(@Param("no") int boardNo, @Param("type") String type, @Param("userNo") int userNo); -->
   <select id="hasUserLikedBoard" resultType="int">
     select EXISTS (SELECT 1
-                   FROM BOARD_LIKES
-                   WHERE board_no = #{no}
+                   FROM LIKES
+                   WHERE like_type_no = #{no}
+                     and like_type = #{type}
                      and user_no = #{userNo})
   </select>
 
-  <!-- void insertLike(@Param("no") int boardNo, @Param("userNo") int userNo); -->
+  <!-- void insertLike(@Param("no") int boardNo, @Param("type") String type, @Param("userNo") int userNo); -->
   <insert id="insertLike">
-    insert into BOARD_LIKES
-    ( board_no
+    insert into LIKES
+    ( like_type_no
+    , like_type
     , user_no)
     values ( #{no}
+           , #{type}
            , #{userNo})
   </insert>
 
-  <!-- void deleteLike(@Param("no") int boardNo, @Param("userNo") int userNo); -->
+  <!-- void deleteLike(@Param("no") int boardNo, @Param("type") String type, @Param("userNo") int userNo); -->
   <delete id="deleteLike">
     delete
-    from BOARD_LIKES
-    where board_no = #{no}
+    from LIKES
+    where like_type_no = #{no}
+      and like_type = #{type}
       and user_no = #{userNo}
   </delete>
-
 
   <!-- void updateCnt(@Param("board") Board board); -->
   <update id="updateCnt">

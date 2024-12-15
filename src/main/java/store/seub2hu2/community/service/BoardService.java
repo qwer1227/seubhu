@@ -239,7 +239,7 @@ public class BoardService {
             , @AuthenticationPrincipal LoginUser loginUser) {
 
         if (loginUser != null) {
-            return boardMapper.hasUserLikedBoard(boardNo, loginUser.getNo());
+            return boardMapper.hasUserLikedBoard(boardNo, "board", loginUser.getNo());
         } else {
             return 0;
         }
@@ -247,7 +247,7 @@ public class BoardService {
 
     public void updateBoardLike(int boardNo
             , @AuthenticationPrincipal LoginUser loginUser) {
-        boardMapper.insertLike(boardNo, loginUser.getNo());
+        boardMapper.insertLike(boardNo, "board", loginUser.getNo());
 
         Board board = boardMapper.getBoardDetailByNo(boardNo);
         board.setLike((board.getLike() + 1));
@@ -257,7 +257,7 @@ public class BoardService {
 
     public void deleteBoardLike(int boardNo
             , @AuthenticationPrincipal LoginUser loginUser) {
-        boardMapper.deleteLike(boardNo, loginUser.getNo());
+        boardMapper.deleteLike(boardNo, "board", loginUser.getNo());
 
         Board board = boardMapper.getBoardDetailByNo(boardNo);
         board.setLike((board.getLike() - 1));

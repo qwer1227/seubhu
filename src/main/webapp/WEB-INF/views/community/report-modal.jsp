@@ -1,6 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!doctype html>
-<html lang="ko">
 <head>
 </head>
 <body>
@@ -14,6 +13,7 @@
       <div class="modal-body ">
         <form method="post">
           <input type="hidden" name="no" value="">
+          <input type="hidden" name="type" value="">
           <div class="form-check">
             <input class="form-check-input" type="radio" value="스팸홍보/도배글입니다." name="reason" checked>
             <label class="form-check-label">
@@ -60,4 +60,3 @@
   </div>
 </div>
 </body>
-</html>

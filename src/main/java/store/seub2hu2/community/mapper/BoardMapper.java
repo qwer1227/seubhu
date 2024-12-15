@@ -19,9 +19,9 @@ public interface BoardMapper {
     void updateBoard(@Param("board") Board board); // 게시글 수정 및 삭제
     void updateBoardCnt(@Param("board") Board board); // 게시글 조회수 증가
     int getTotalRowsForHistory(@Param("condition") Map<String, Object> condition);
-    int hasUserLikedBoard(@Param("no") int boardNo, @Param("userNo") int userNo);
-    void insertLike(@Param("no") int boardNo, @Param("userNo") int userNo);
-    void deleteLike(@Param("no") int boardNo, @Param("userNo") int userNo);
+    int hasUserLikedBoard(@Param("no") int boardNo, @Param("type") String type, @Param("userNo") int userNo);
+    void insertLike(@Param("no") int boardNo, @Param("type") String type, @Param("userNo") int userNo);
+    void deleteLike(@Param("no") int boardNo, @Param("type") String type, @Param("userNo") int userNo);
 
     void updateCnt(@Param("board") Board board);
 }

@@ -258,13 +258,12 @@ public class CrewController {
     @GetMapping("/delete-reply")
     @PreAuthorize("isAuthenticated()")
     public String deleteReply(@RequestParam("rno") int replyNo,
-                              @RequestParam("cno") int crewNo
-            , @AuthenticationPrincipal LoginUser loginUser){
+                              @RequestParam("cno") int crewNo){
 
         ReplyForm form = new ReplyForm();
         form.setNo(replyNo);
         form.setTypeNo(crewNo);
-        replyService.deleteReply(replyNo, loginUser);
+        replyService.deleteReply(replyNo);
 
         return "redirect:detail?no=" + form.getTypeNo();
     }

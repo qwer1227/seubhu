@@ -9,6 +9,7 @@ import store.seub2hu2.community.dto.ReplyForm;
 import store.seub2hu2.community.mapper.ReplyMapper;
 import store.seub2hu2.community.vo.Reply;
 import store.seub2hu2.security.user.LoginUser;
+import store.seub2hu2.user.service.UserService;
 import store.seub2hu2.user.vo.User;
 
 import java.util.List;
@@ -20,6 +21,9 @@ public class ReplyService {
 
     @Autowired
     private ReplyMapper replyMapper;
+
+    @Autowired
+    private UserService userService;
 
     public Reply addNewReply(ReplyForm form
             , @AuthenticationPrincipal LoginUser loginUser) {
@@ -63,9 +67,17 @@ public class ReplyService {
         replyMapper.insertReply(reply);
     }
 
+    public Reply getReplyDetail(int replyNo){
+        Reply reply = replyMapper.getReplyByReplyNo(replyNo);
+
+        User user = userService.findbyUserId(reply.getUser().getId());
+        reply.setUser(user);
+
+        return reply;
+    }
+
     public List<Reply> getReplies(int typeNo) {
         List<Reply> replyList = replyMapper.getRepliesByTypeNo(typeNo);
-
         return replyList;
     }
 
@@ -93,34 +105,39 @@ public class ReplyService {
         return reply;
     }
 
-    public void deleteReply(int replyNo
-            , @AuthenticationPrincipal LoginUser loginUser) {
+    public void deleteReply(int replyNo) {
         Reply reply = replyMapper.getReplyByReplyNo(replyNo);
         reply.setDeleted("Y");
-        if (loginUser.getNo() == reply.getUser().getNo()) {
-            replyMapper.updateReply(reply);
-        }
+        replyMapper.updateReply(reply);
     }
 
     public int getCheckLike(int replyNo
-            , @AuthenticationPrincipal LoginUser loginUser) {
-
-        return replyMapper.hasUserLikedReply(replyNo, loginUser.getNo());
+                            , String type
+                            , @AuthenticationPrincipal LoginUser loginUser) {
+        if (loginUser != null) {
+            return replyMapper.hasUserLikedReply(replyNo, type, loginUser.getNo());
+        } else {
+            return 0;
+        }
     }
 
     public void updateReplyLike(int replyNo
-            , @AuthenticationPrincipal LoginUser loginUser) {
+                                , String type
+                                , @AuthenticationPrincipal LoginUser loginUser) {
+        replyMapper.insertReplyLike(replyNo, type, loginUser.getNo());
 
         Reply reply = replyMapper.getReplyByReplyNo(replyNo);
-
-        replyMapper.insertReplyLike(reply, loginUser.getNo());
+        reply.setReplyLikeCnt(reply.getReplyLikeCnt() + 1);
+        replyMapper.updateCnt(reply);
     }
 
     public void deleteReplyLike(int replyNo
-            , @AuthenticationPrincipal LoginUser loginUser) {
+                                , String type
+                                , @AuthenticationPrincipal LoginUser loginUser) {
+        replyMapper.deleteReplyLike(replyNo, type, loginUser.getNo());
 
-
-        replyMapper.deleteReplyLike(replyNo, loginUser.getNo());
-
+        Reply reply = replyMapper.getReplyByReplyNo(replyNo);
+        reply.setReplyLikeCnt(reply.getReplyLikeCnt() - 1);
+        replyMapper.updateCnt(reply);
     }
 }

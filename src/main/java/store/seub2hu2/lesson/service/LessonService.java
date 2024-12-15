@@ -3,17 +3,21 @@ package store.seub2hu2.lesson.service;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import store.seub2hu2.lesson.dto.LessonRegisterForm;
-import store.seub2hu2.lesson.dto.LessonUpdateForm;
+import store.seub2hu2.lesson.dto.LessonUpdateDto;
+import store.seub2hu2.lesson.dto.ReservationSearchCondition;
 import store.seub2hu2.lesson.enums.LessonStatus;
 import store.seub2hu2.lesson.mapper.LessonFileMapper;
 import store.seub2hu2.lesson.mapper.LessonMapper;
 import store.seub2hu2.lesson.mapper.LessonReservationMapper;
 import store.seub2hu2.lesson.vo.*;
 import store.seub2hu2.user.mapper.UserMapper;
+import store.seub2hu2.user.service.UserService;
 import store.seub2hu2.user.vo.User;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -67,7 +71,7 @@ public class LessonService {
         return lessonFileMapper.lastInsertedLessonNo();
     }
 
-    public void updateLesson(LessonUpdateForm dto) {
+    public void updateLesson(LessonUpdateDto dto) {
         lessonMapper.updateLesson(dto);
 
         log.info("dto.getThumbnail(): {}" , dto.getThumbnail());
@@ -88,7 +92,7 @@ public class LessonService {
 
     public void updatePastLessons() {
         // 업데이트할 상태를 설정
-        LessonUpdateForm dto = new LessonUpdateForm();
+        LessonUpdateDto dto = new LessonUpdateDto();
         dto.setStatus(LessonStatus.CLOSE.label());
 
         // 매퍼 호출

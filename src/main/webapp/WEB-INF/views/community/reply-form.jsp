@@ -23,7 +23,7 @@
             <textarea name="content" class="form-control" rows="3" placeholder="댓글을 작성하세요."></textarea>
           </div>
           <div class="col" style="text-align: end">
-            <button type="submit" id="add" class="btn btn-success" style="width: 85px" onclick="submitReply()">등록</button>
+            <button type="button" id="add" class="btn btn-success" style="width: 85px" onclick="submitReply()">등록</button>
           </div>
         </c:otherwise>
       </c:choose>
@@ -40,27 +40,41 @@
   }
   
   /* 댓글 제출(/community/add-reply로 데이터 전달) */
-  document.querySelector("#add").addEventListener("click", function () {
-    let type = document.querySelector("input[name=type]").value;
-    let typeNo = document.querySelector("input[name=no]").value;
-    let content = document.querySelector("textarea[name=content]").value;
+  async function submitReply() {
+    let boardNo = document.querySelector("input[name=typeNo]").value;
+    let content = document.querySelector("textarea[name=content]").value.trim();
     let userNo = document.querySelector("input[name=userNo]").value;
     
-    fromData.append(("type"), type);
-    fromData.append(("typeNo"), typeNo);
-    fromData.append(("content"), content);
-    fromData.append(("userNo"), userNo);
+    if (content === "") {
+      alert("댓글 내용을 입력해주세요.");
+      return;
+    }
     
-    $.ajax({
-      method: "post",
-      url: "add-reply",
-      data: formData,
-      processData: false,
-      contentType: false,
-      success: function () {
-        window.location.href = returnUrl; // 성공 시 리다이렉트
-      }
-    })
-  });
+    let data = {
+      boardNo,
+      content,
+      userNo
+    }
+    
+    // 자바스크립트 객체를 json형식의 텍스트로 변환한다.
+    let jsonText = JSON.stringify(data);
+    
+    // POST 방식으로 객체를 JSON 형식의 데이터를 서버로 보내기
+    let response = await fetch("/community/add-reply", {
+      // 요청방식을 지정한다.
+      method: "POST",
+      // 요청메세지의 바디부에 포함된 컨텐츠의 형식을 지정한다.
+      headers: {
+        "Content-Type": "application/json"
+      },
+      // 요청메세지의 바디부에 서버로 전달할 json형식의 텍스트 데이터를 포함시킨다.
+      body: jsonText
+    });
+    // 서버가 보낸 응답데이터를 받는다.
+    if (response.ok) {
+      // 응답으로 새로 추가된 코멘트를 추가한다.
+      let reply = await response.json();
+    }
+  }
 </script>
 </html>

@@ -1,5 +1,7 @@
+<%@ page import="static store.seub2hu2.lesson.enums.LessonCategory.*" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="/WEB-INF/views/common/tags.jsp" %>
+<%@ page import="java.util.Date" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!doctype html>
 <html lang="ko">
@@ -15,47 +17,45 @@
             <h2>레슨 예약 내역</h2>
         </div>
     </div>
-    <form form="condition" method="get" action="/lesson/reservation" id="searchForm">
+    <form form="condition" method="get" action="/lesson/reservation">
+        <input type="hidden" name="userId" value="${loginUser.id}">
         <div class="row mb-3">
             <div class="col-1">
                 <label for="subject">과목</label>
-                <select name="lessonSubject" class="form-select" id="subject" onchange="submitForm()">
-                    <option value="" <c:if test="${empty condition.lessonSubject}">selected</c:if>>모두</option>
-                    <option value="호흡" <c:if test="${condition.lessonSubject == '호흡'}">selected</c:if>>호흡</option>
-                    <option value="자세" <c:if test="${condition.lessonSubject == '자세'}">selected</c:if>>자세</option>
-                    <option value="운동" <c:if test="${condition.lessonSubject == '운동'}">selected</c:if>>운동</option>
+                <select name="lessonSubject" class="form-select" id="subject">
+                    <option>모두</option>
+                    <option>호흡</option>
+                    <option>자세</option>
+                    <option>운동</option>
                 </select>
             </div>
             <div class="col-1">
                 <label for="status">예약상태</label>
-                <select name="lessonStatus" class="form-select" id="status" onchange="submitForm()">
-                    <option value="" <c:if test="${empty condition.lessonStatus}">selected</c:if>>모두</option>
-                    <option value="예약" <c:if test="${condition.lessonStatus == '예약'}">selected</c:if>>예약</option>
-                    <option value="수료" <c:if test="${condition.lessonStatus == '수료'}">selected</c:if>>수료</option>
-                    <option value="취소" <c:if test="${condition.lessonStatus == '취소'}">selected</c:if>>취소</option>
+                <select name="lessonStatus" class="form-select" id="status">
+                    <option>모두</option>
+                    <option>예약</option>
+                    <option>수료</option>
+                    <option>취소</option>
                 </select>
             </div>
             <div class="col-2">
                 <label for="startDate">시작</label>
-                <input type="date" id="startDate" name="start" class="form-select" value="${condition.start}"
-                       onchange="submitForm()">
+                <input type="date" id='startDate' name="start" class="form-select">
             </div>
             <div class="col-2">
                 <label for="endDate">종료</label>
-                <input type="date" id="endDate" name="end" class="form-select" value="${condition.end}"
-                       onchange="submitForm()">
+                <input type="date" id="endDate" name="end" class="form-select">
             </div>
             <div class="col text-end">
                 <label for="searchCondition">검색조건</label>
-                <select name="searchCondition" id="searchCondition" class="form-select" onchange="submitForm()">
-                    <option value="강사명" <c:if test="${condition.searchCondition == '강사명'}">selected</c:if>>강사명</option>
-                    <option value="레슨명" <c:if test="${condition.searchCondition == '레슨명'}">selected</c:if>>레슨명</option>
-                    <option value="과목" <c:if test="${condition.searchCondition == '과목'}">selected</c:if>>과목</option>
+                <select name="searchCondition" id="searchCondition" class="form-select">
+                    <option>강사명</option>
+                    <option>레슨명</option>
+                    <option>과목</option>
                 </select>
             </div>
             <div class="col pt-4">
-                <input type="text" class="form-control border" name="searchKeyword" value="${condition.searchKeyword}"
-                       onchange="submitForm()"/>
+                <input type="text" class="form-control border" name="searchKeyword"/>
             </div>
             <div class="col-1 pt-4">
                 <label for="search"> </label>
@@ -63,7 +63,6 @@
             </div>
         </div>
     </form>
-
     <div class="row">
         <table class="table">
             <colgroup>
@@ -87,7 +86,7 @@
             </tr>
             <c:forEach var="reservation" items="${lessonReservations}" varStatus="loop">
                 <tr>
-                    <td>${loop.index + 1}</td>
+                    <td>${reservation.no}</td>
                     <td><a href="/lesson/reservation/detail?reservationNo=${reservation.no}"
                            style="text-decoration:none">${reservation.lesson.title}</a></td>
                     <td>${reservation.lesson.lecturer.name}</td>
@@ -111,13 +110,12 @@
                         <c:if test="${not empty reservation.status and
                              reservation.status ne '취소' and
                              reservation.status ne '수강종료'}">
-                            <form action="/pay/cancel" name="paymentDto" method="POST" style="display: inline;"
-                                  id="cancel-form">
+
+                            <form action="/pay/cancel" name="paymentDto" method="POST" style="display: inline;" id="cancel-form">
                                 <input type="hidden" name="paymentId" value="${reservation.payment.id}">
                                 <input type="hidden" name="userId" value="${loginUser.id}">
                                 <input type="hidden" name="lessonNo" value="${reservation.lesson.lessonNo}">
                                 <input type="hidden" name="totalAmount" value="${reservation.lesson.price}">
-                                <input type="hidden" name="type" value="레슨">
                                 <button type="button" id="cancel-btn" class="btn btn-sm btn-danger"
                                         onclick="confirmCancel()">취소
                                 </button>
@@ -131,9 +129,12 @@
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script>
-    function submitForm() {
-        document.getElementById('searchForm').submit();
+function confirmCancel() {
+    var confirmResult = confirm("예약을 취소하시겠습니까?");
+    if (confirmResult) {
+        document.getElementById("cancel-form").submit();
     }
+}
 </script>
 </body>
 </html>

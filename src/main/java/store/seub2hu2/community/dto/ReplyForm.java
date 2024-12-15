@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import store.seub2hu2.mypage.vo.PostImage;
 import store.seub2hu2.user.vo.User;
 
 @NoArgsConstructor
