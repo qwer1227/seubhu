@@ -111,7 +111,6 @@
     ) as board
     where rn between #{condition.begin} and #{condition.end}
     order by rn
-
   </select>
 
   <!-- List<Board> getBoardsTopFive(@Param("condition") Map<String, Object> condition); -->

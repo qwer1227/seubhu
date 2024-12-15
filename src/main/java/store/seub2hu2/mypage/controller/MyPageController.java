@@ -32,6 +32,7 @@ import store.seub2hu2.mypage.service.QnaService;
 import store.seub2hu2.mypage.service.WorkoutService;
 import store.seub2hu2.mypage.vo.Post;
 import store.seub2hu2.order.service.OrderService;
+import store.seub2hu2.order.vo.Order;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.service.UserService;
 import store.seub2hu2.user.vo.User;
