@@ -142,6 +142,7 @@
             AND L.LESSON_SUBJECT = #{condition.lessonSubject}
         </if>
         AND R.LESSON_RESERVATION_CREATED_DATE BETWEEN #{condition.start} AND CONCAT(#{condition.end}, ' 23:59:59')
+        ORDER BY R.LESSON_RESERVATION_CREATED_DATE DESC
     </select>
 
     <insert id="insertLessonReservation">
