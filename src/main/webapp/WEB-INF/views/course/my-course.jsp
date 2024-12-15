@@ -30,11 +30,17 @@
         <sec:authentication property="principal" var="loginUser" />
     </sec:authorize>
 
-    <%-- 로그인한 사용자의 배지와 코스 기록 표시 --%>
     <div class="row row-cols-1 row-cols-md-1 g-4 mt-3">
         <div class="col">
             <c:choose>
                 <c:when test="${not empty loginUser}">
+                    <%-- 안내 문구 --%>
+                    <div class="card g-4 mb-3" align="left" style="padding: 10px 10px 10px 10px;">
+                        <h5>* <strong style="background-color: green; color: white;">완주 기록 등록</strong>을 클릭하여 완주 기록 목록에 추가하면,
+                            <strong style="background-color: blue; color: white;">완주 기록 보기</strong>를 클릭하여 등록한 완주 기록을 확인하실 수 있습니다.</h5>
+                    </div>
+
+                    <%-- 로그인한 사용자의 배지와 코스 기록 --%>
                     <table class="table table-bordered">
                         <div class="card">
                             <div class="card-header">나의 배지와 코스 기록</div>
@@ -73,19 +79,21 @@
                         </tbody>
                     </table>
 
+                    <%-- 로그인한 사용자가 지정한 도전할 코스 목록 --%>
                     <div class="card">
                         <div class="card-header">도전할 코스 목록</div>
                     </div>
                     <table class="table">
                         <thead>
-                        <tr class="table-info">
-                            <th scope="col">번호</th>
-                            <th scope="col">이름</th>
-                            <th scope="col">지역</th>
-                            <th scope="col">거리</th>
-                            <th scope="col">난이도</th>
-                            <th scope="col"></th>
-                        </tr>
+                            <tr class="table-info">
+                                <th scope="col">번호</th>
+                                <th scope="col">이름</th>
+                                <th scope="col">지역</th>
+                                <th scope="col">거리</th>
+                                <th scope="col">난이도</th>
+                                <th scope="col">완주 기록 등록</th>
+                                <th scope="col"></th>
+                            </tr>
                         </thead>
                         <tbody>
                         <c:choose>
@@ -97,6 +105,11 @@
                                         <td><span>${courseToChallenge.region.si} ${courseToChallenge.region.gu} ${courseToChallenge.region.dong}</span></td>
                                         <td><span>${courseToChallenge.distance}KM</span></td>
                                         <td><span>${courseToChallenge.level}단계</span></td>
+                                        <td>
+                                            <span>
+                                                <button class="btn btn-success" onclick="openAddRecordFormModal()">완주 기록 등록</button>
+                                            </span>
+                                        </td>
                                         <td>
                                             <span>
                                                 <a href="cancelChallenge?courseNo=${courseToChallenge.no}&page=${pagination.page}"
@@ -206,6 +219,43 @@
     </div>
 </div>
 
+<%-- 코스 완주 기록 등록 Modal창 --%>
+<div class="modal fade" id="modal-add-record-form" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">코스 완주 기록 등록하기</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <%-- 완주 날짜와 완주 시간을 입력하고 등록한다. --%>
+            <div class="modal-body">
+                <form method="post" action="/" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label class="form-label">코스 이름</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">코스 거리</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">코스 난이도</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">완주 날짜(년, 월, 일, 시, 분)</label>
+                        <input type="datetime-local">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">완주 시간(시간, 분, 초)</label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                <button type="submit" class="btn btn-primary" onclick="submitReview()">등록</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script type="text/javascript">
     // 도전할 코스 목록 페이지 번호를 클릭했을 때, 요청 파라미터 정보를 제출한다.
@@ -219,7 +269,15 @@
         form.submit();
     }
 
-    // 등록 취소 버튼을 클릭하면, 확인창이 표시된다.
+    // 완주 기록 등록 Modal창을 가져온다.
+    let registerModal = new bootstrap.Modal('#modal-add-record-form');
+
+    // 완주 기록 등록 버튼을 클릭하면, 완주 기록 등록 창이 열린다.
+    function openAddRecordFormModal() {
+        registerModal.show();
+    }
+
+    // 삭제 버튼을 클릭하면, 확인창이 표시된다.
     function cancelChallenge(event) {
         if (confirm("도전할 코스 목록에서 제외하시겠습니까?")) {
             alert("도전할 코스 목록에서 제외되었습니다.");
@@ -264,13 +322,33 @@
                         <td><span>\${record.course.distance}KM</span></td>
                         <td><span>\${record.course.level}단계</span></td>
                         <td><span>\${record.finishedDate}</span></td>
-                        <td><span>\${record.finishedTime}분</span></td>
+                        <td id="time"></td>
                     </tr>
                 `;
                 num++;
             }
 
             document.querySelector("#finish-records tbody").innerHTML = rows;
+
+            // 완주 기록 - 시, 분, 초 표시
+            let time = document.querySelectorAll("#time");
+            let timeContent = "";
+
+            for (let r = 0; r < records.length; r++) {
+                let record = records[r];
+
+                if (record.hour !== 0) {
+                    timeContent = `
+                        <span>\${record.hour}시간 \${record.minute}분 \${record.second}초</span>
+                    `;
+                } else {
+                    timeContent = `
+                        <span>\${record.minute}분 \${record.second}초</span>
+                    `;
+                }
+
+                time[r].innerHTML = timeContent;
+            }
 
             // 페이징 처리 기능 구현
             let pages = "";

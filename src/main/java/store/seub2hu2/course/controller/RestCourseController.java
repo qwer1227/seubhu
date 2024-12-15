@@ -19,7 +19,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/ajax")
-public class ReviewController {
+public class RestCourseController {
     @Autowired
     private ReviewService reviewService;
 

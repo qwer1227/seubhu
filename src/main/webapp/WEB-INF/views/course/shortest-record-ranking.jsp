@@ -78,15 +78,15 @@
                                 <tr>
                                     <th scope="row">${record.no}</th>
                                     <td>${record.user.nickname}</td>
-                                    <td><fmt:formatDate value="${record.finishedDate}" pattern="yyyy년 M월 d일" /> </td>
-                                    <td>${record.finishedTime}분</td>
+                                    <td><fmt:formatDate value="${record.finishedDate}" pattern="yyyy년 MM월 dd일 HH시 mm분 ss초" /> </td>
+                                    <td><c:if test="${record.hour != 0}">${record.hour}시간</c:if> ${record.minute}분 ${record.second}초</td>
                                 </tr>
                             </c:forEach>
                         </c:when>
                         <%-- 나의 코스 완주 기록이 존재하지 않다면, 문구를 표시한다. --%>
                         <c:otherwise>
                             <tr>
-                                <th colspan="4">해당 코스를 완주한 적이 없어서 기록이 존재하지 않습니다.</th>
+                                <th colspan="4">기록이 존재하지 않습니다.</th>
                             </tr>
                         </c:otherwise>
                     </c:choose>
@@ -149,8 +149,8 @@
                         <tr>
                             <th scope="row">${record.no}</th>
                             <td>${record.user.nickname}</td>
-                            <td><fmt:formatDate value="${record.finishedDate}" pattern="yyyy년 M월 d일" /> </td>
-                            <td>${record.finishedTime}분</td>
+                            <td><fmt:formatDate value="${record.finishedDate}" pattern="yyyy년 MM월 dd일 HH시 mm분 ss초" /> </td>
+                            <td><c:if test="${record.hour != 0}">${record.hour}시간</c:if> ${record.minute}분 ${record.second}초</td>
                         </tr>
                     </c:forEach>
                 </c:when>

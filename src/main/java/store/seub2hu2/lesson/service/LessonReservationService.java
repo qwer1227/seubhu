@@ -2,12 +2,10 @@ package store.seub2hu2.lesson.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.annotations.Param;
-import org.apache.xmlbeans.impl.xb.xsdschema.Attribute;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import store.seub2hu2.lesson.dto.LessonUpdateDto;
+import store.seub2hu2.lesson.dto.LessonUpdateForm;
 import store.seub2hu2.lesson.dto.ReservationSearchCondition;
 import store.seub2hu2.lesson.enums.LessonStatus;
 import store.seub2hu2.lesson.enums.ReservationStatus;
@@ -23,7 +21,6 @@ import store.seub2hu2.user.vo.User;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
 import java.util.List;
 
 @Service
@@ -41,9 +38,9 @@ public class LessonReservationService {
         try {
             // 1. 레슨 정보 조회
             Lesson lesson = lessonMapper.getLessonByNo(paymentDto.getLessonNo());
-            LessonUpdateDto lessonUpdateDto = new LessonUpdateDto();
-            lessonUpdateDto.setLessonNo(paymentDto.getLessonNo());
-            lessonUpdateDto.setParticipant(lesson.getParticipant());
+            LessonUpdateForm lessonUpdateForm = new LessonUpdateForm();
+            lessonUpdateForm.setLessonNo(paymentDto.getLessonNo());
+            lessonUpdateForm.setParticipant(lesson.getParticipant());
 
             if (lesson == null) {
                 throw new RuntimeException("존재하지 않는 레슨입니다. LessonNo: " + paymentDto.getLessonNo());
@@ -85,13 +82,13 @@ public class LessonReservationService {
             lessonReservationMapper.insertLessonReservation(lessonReservation);
 
             // 5. 참가자 수 업데이트
-            lessonUpdateDto.setParticipant(lesson.getParticipant() + 1);
-            if (lessonUpdateDto.getParticipant() == 5) {
-                lessonUpdateDto.setStatus("마감");
-                lessonMapper.updateLessonStatus(lessonUpdateDto);
+            lessonUpdateForm.setParticipant(lesson.getParticipant() + 1);
+            if (lessonUpdateForm.getParticipant() == 5) {
+                lessonUpdateForm.setStatus("마감");
+                lessonMapper.updateLessonStatus(lessonUpdateForm);
             }
             log.info("참가자 수 업데이트 할 lesson = {}", lesson);
-            lessonMapper.updateLessonParticipant(lessonUpdateDto); // 업데이트 후 커밋
+            lessonMapper.updateLessonParticipant(lessonUpdateForm); // 업데이트 후 커밋
 
             log.info("레슨 예약 저장 완료: {}", paymentDto);
         } catch (Exception e) {
@@ -129,6 +126,38 @@ public class LessonReservationService {
         return lessonReservationMapper.getReservationByCondition(condition, userId);
     }
 
+    /**
+     * 기본 날짜를 설정하고 예약 목록을 반환하는 메소드
+     *
+     * @param condition 검색 조건
+     * @param userId    사용자 ID
+     * @return 예약 목록
+     */
+    public List<LessonReservation> getLessonReservationsWithDefaults(ReservationSearchCondition condition, String userId) {
+        LocalDate now = LocalDate.now();
+
+        // 기본 날짜 설정
+        if (condition.getStart() == null && condition.getEnd() == null) {
+            condition.setEnd(now); // 기본 종료 날짜: 오늘
+            condition.setStart(now.minusMonths(1)); // 기본 시작 날짜: 한 달 전
+        } else {
+            if (condition.getEnd() == null) {
+                condition.setEnd(now); // 종료 날짜 기본값
+            }
+            if (condition.getStart() == null) {
+                condition.setStart(now.minusMonths(1)); // 시작 날짜 기본값
+            }
+        }
+
+        // 유효성 검사: 시작 날짜가 종료 날짜보다 이후인 경우 예외 발생
+        if (condition.getStart().isAfter(condition.getEnd())) {
+            throw new IllegalArgumentException("시작 날짜는 종료 날짜보다 이후일 수 없습니다.");
+        }
+
+        // 조건에 맞는 예약 목록 조회
+        return lessonReservationMapper.getReservationByCondition(condition, userId);
+    }
+
     // 예약 상태 변경
     public void cancelReservation(String paymentId, ReservationStatus status, int lessonNo) {
 
@@ -137,16 +166,16 @@ public class LessonReservationService {
 
         // 레슨 예약 인원 감소
         Lesson lesson = lessonService.getLessonByNo(lessonNo);
-        LessonUpdateDto lessonUpdateDto = new LessonUpdateDto();
-        lessonUpdateDto.setLessonNo(lessonNo);
+        LessonUpdateForm lessonUpdateForm = new LessonUpdateForm();
+        lessonUpdateForm.setLessonNo(lessonNo);
         int participant = lesson.getParticipant();
-        lessonUpdateDto.setParticipant(lesson.getParticipant() - 1);
+        lessonUpdateForm.setParticipant(lesson.getParticipant() - 1);
         if (participant == 5) {
-            lessonUpdateDto.setStatus(LessonStatus.RECRUITMENT.label());
-            lessonMapper.updateLessonStatus(lessonUpdateDto);
+            lessonUpdateForm.setStatus(LessonStatus.RECRUITMENT.label());
+            lessonMapper.updateLessonStatus(lessonUpdateForm);
         }
 
-        lessonMapper.updateLessonParticipant(lessonUpdateDto);
+        lessonMapper.updateLessonParticipant(lessonUpdateForm);
 
         log.info("status.label() = {}", status.label());
     }

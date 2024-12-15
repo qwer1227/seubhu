@@ -76,6 +76,7 @@ public class CourseController {
                        @RequestParam(name = "sort", required = false) String sort,
                        @RequestParam(name = "distance", required = false, defaultValue = "10") Double distance,
                        @RequestParam(name = "level", required = false) Integer level,
+                       @RequestParam(name = "region", required = false) String region,
                        @RequestParam(name = "keyword", required = false) String keyword,
                        @AuthenticationPrincipal LoginUser loginUser,
                        Model model){
@@ -91,7 +92,8 @@ public class CourseController {
         if (level != null) {
             condition.put("level", level);
         }
-        if (StringUtils.hasText(keyword)) {
+        if (StringUtils.hasText(region)) {
+            condition.put("region", region);
             condition.put("keyword", keyword);
         }
         if (loginUser != null) {
