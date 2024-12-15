@@ -44,6 +44,12 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         // OAuth2UserInfo객체를 반환한다. OAuth2UserInfo객체는 provider에 따라서 GoogleOAuth2UserInfo, KakaoOAuth2UserInfo 객체 중에서 하나를 반환한다.
         OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(provider, oAuth2User.getAttributes());
 
+        // getName() 값 확인
+        String name = userInfo.getName();
+        if (name == null || name.isEmpty()) {
+            throw new IllegalStateException("OAuth2UserInfo.getName() returned null or empty.");
+        }
+
         // 조회된 아이디로 사용자 정보를 조회한다.
         User savedUser = userMapper.getUserById(userInfo.getId());
 
@@ -56,7 +62,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         if (savedUser == null) {
             savedUser = createUser(userInfo, role, provider);
         }
-
+        // 사용자 정보를 저장한 후, 제공자 정보 전달을 위해 속성 추가
+        savedUser.setProvider(provider); // 로그인 제공자 정보 추가
         return new CustomOAuth2User(savedUser, role, userInfo.getAttributes());
     }
 

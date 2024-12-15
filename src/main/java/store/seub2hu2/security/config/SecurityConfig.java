@@ -76,7 +76,6 @@ public class SecurityConfig {
                         .anyRequest().permitAll()) // 모든 API 요청은 인증 필요
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)); // 세션 사용 안 함
- //               .addFilter(new JwtAuthenticationFilter()) // JWT 인증 필터 추가
 
         return http.build();
     }
@@ -118,7 +117,7 @@ public class SecurityConfig {
                         .invalidateHttpSession(true))
                 .oauth2Login(oauth2Configurer -> oauth2Configurer
                         .loginPage("/login")
-                        .defaultSuccessUrl("/home")
+                        .defaultSuccessUrl("/socialJoin", true) // 소셜 로그인 성공 후 /user/social-join-form 페이지로 리다이렉트
                         .failureUrl("/login?error=fail")
                         .userInfoEndpoint(userEndpoint -> userEndpoint.userService(customOAuth2UserService)))
                 .exceptionHandling(exceptionHandling -> exceptionHandling

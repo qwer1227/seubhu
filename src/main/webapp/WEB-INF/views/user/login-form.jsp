@@ -80,7 +80,7 @@
             <img src="/resources/img/login_naver_wide.png" alt="네이버 로그인 아이콘">
         </a>
         <a href="/oauth2/authorization/google" class="btn btn-social btn-apple">
-            <img src="/resources/img/login_apple_wide.jpg" alt="구글 로그인 아이콘">
+            <img src="/resources/img/login_google_wide.png" alt="구글 로그인 아이콘">
         </a>
 
         <!-- 회원가입 -->
@@ -97,12 +97,13 @@
 
 <!-- 유효성 검사 스크립트 추가 -->
 <script>
+
     // errorMessage가 존재하면 alert로 출력
     <c:if test="${not empty errorMessage}">
-    // ${errorMessage}의 값이 있을 경우 자바스크립트에서 출력
     alert('<c:out value="${errorMessage}" />');
     </c:if>
 
+    // 로그인 폼 검증
     function validateForm() {
         var id = document.forms["loginForm"]["id"].value;
         var password = document.forms["loginForm"]["password"].value;
@@ -122,6 +123,7 @@
         return true;  // 모든 검사를 통과하면 폼 제출
     }
 </script>
+
 
 </body>
 </html>

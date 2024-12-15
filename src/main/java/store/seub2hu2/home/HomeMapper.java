@@ -3,6 +3,7 @@ package store.seub2hu2.home;
 import org.apache.ibatis.annotations.Mapper;
 import store.seub2hu2.community.vo.Board;
 import store.seub2hu2.community.vo.Marathon;
+import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.lesson.vo.Lesson;
 import store.seub2hu2.product.dto.ProdListDto;
 
@@ -23,4 +24,6 @@ public interface HomeMapper {
     List<Marathon> getLatestMarathons();
 
     List<Lesson> getOngoingLessons();
+
+    List<Course> getTopLikedCourses();
 }

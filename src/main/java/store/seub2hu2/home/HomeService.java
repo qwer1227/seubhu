@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import store.seub2hu2.community.vo.Board;
 import store.seub2hu2.community.vo.Marathon;
+import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.lesson.vo.Lesson;
 import store.seub2hu2.product.dto.ProdListDto;
 
@@ -40,5 +41,10 @@ public class HomeService {
     public List<ProdListDto> getWeeklyBestProductsByViewCount() {
         return homeMapper.getWeeklyBestProductsByViewCount();
     }
+
+    public List<Course> getTopLikedCourses() {
+        return homeMapper.getTopLikedCourses();
+    }
+
 }
 
