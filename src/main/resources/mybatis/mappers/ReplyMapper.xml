@@ -54,6 +54,8 @@
         , r.reply_type as type
         , r.reply_type_no as typeNo
         , r.reply_content as content
+        , u.user_no as "user.no"
+        , u.user_id as "user.id"
         , u.user_nickname as "user.nickname"
         , (select uu.user_nickname
             from REPLIES rr join USERS uu on rr.user_no = uu.user_no

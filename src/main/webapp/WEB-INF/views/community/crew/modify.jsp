@@ -1,12 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="/WEB-INF/views/common/tags.jsp" %>
 <script type="text/javascript"
-        src="//dapi.kakao.com/v2/maps/sdk.js?appkey=3af1f449b9175825b32af2e204b65779&libraries=services,clusterer,drawing"></script>
+				src="//dapi.kakao.com/v2/maps/sdk.js?appkey=3af1f449b9175825b32af2e204b65779&libraries=services,clusterer,drawing"></script>
 <script type="text/javascript" src="/resources/se2/js/service/HuskyEZCreator.js" charset="utf-8"></script>
 <!doctype html>
 <html lang="ko">
 <head>
-  <%@include file="/WEB-INF/views/common/common.jsp" %>
+	<%@include file="/WEB-INF/views/common/common.jsp" %>
 </head>
 <style>
     #inviting-table th {
@@ -34,123 +34,123 @@
 <body>
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
 <div class="container-xxl text-center" id="wrap">
-  
-  <h2>크루 모집글 수정</h2>
-  
-  <div class="row p-3">
-    <form method="post" action="modify" enctype="multipart/form-data" onkeydown="return event.key !== 'Enter';">
-      <input type="hidden" value="${crew.no}" name="no">
-      <table id="inviting-table" style="width: 98%">
-        <colgroup>
-          <col width="10%">
-          <col width="40%">
-          <col width="5%">
-          <col width="*">
-        </colgroup>
-        <tbody>
-        <tr>
-          <th>모집글 제목</th>
-          <td><input class="rounded" type="text" name="title" value="${crew.title}" style="width: 448px"></td>
-          <th>장소</th>
-          <td>
-            <input class="rounded" type="text" id="location" value="${crew.location}" name="location"
-                   style="width: 399px">
-            <button type="button" class="btn btn-outline-dark btn-sm" onclick="searchPlaces(event)">검색</button>
-          </td>
-        </tr>
-        <tr>
-          <th>크루 이름</th>
-          <td><input class="rounded" type="text" name="name" value="${crew.name}" style="width: 448px"></td>
-          <th></th>
-          <c:if test="${not empty crew.thumbnail.saveName}">
-          <td rowspan="4">
-            </c:if>
-            <c:if test="${empty crew.thumbnail.saveName}">
-          <td rowspan="3">
-            </c:if>
-            <div id="map" style="width: 90%; height: 200px;" class="mb-2"></div>
-          </td>
-        </tr>
-        <tr>
-          <th>일시</th>
-          <td>
-            <select class="rounded" id="schedule-type" name="type">
-              <option value="매월" ${crew.type eq '매월' ? 'selected' : ''}>매월</option>
-              <option value="매주" ${crew.type eq '매주' ? 'selected' : ''}>매주</option>
-              <option value="매일" ${crew.type eq '매일' ? 'selected' : ''}>매일</option>
-              <option value="입력" ${crew.type eq '입력' ? 'selected' : ''}>입력</option>
-            </select>
-            <input type="text" class="rounded" id="schedule-detail" name="detail" value="${crew.detail}"
-                   style="width: 390px"
-                   placeholder="상세 모임 일시를 작성해주세요.">
-          </td>
-        </tr>
-        <c:if test="${not empty crew.thumbnail.saveName}">
-          <tr>
-            <th>기존 대표 이미지</th>
-            <td>
-              <div class="img-thumbnail">
-                <img src="/resources/images/community/${crew.thumbnail.saveName}" alt="크루 대표 이미지"
-                     class="img" style="width: 50px">
-              </div>
-              <button type="button" class="btn btn-outline-dark"
-                      onclick="deleteThumbnail(${crew.no}, ${crew.thumbnail.fileNo})">
-                삭제
-              </button>
-            </td>
-          </tr>
-        </c:if>
-        <tr>
-          <th>대표 이미지</th>
-          <td>
-            <button type="button" class="btn btn-dark" onclick="thumbnail()">등록</button>
-            <input type="hidden" name="image" value="">
-          </td>
-        </tr>
-        <tr>
-          <th>게시글</th>
-          <td colspan="3">
-            <form method="get" action="modify">
-              <textarea name="ir1" id="ir1" style="display:none;">${crew.description}</textarea>
-            </form>
-          </td>
-        </tr>
-        <c:if test="${not empty crew.uploadFile}">
-          <c:if test="${crew.uploadFile.deleted eq 'N'}">
-            <tr>
-              <th>기존 첨부파일</th>
-              <td colspan="3">
-                  ${crew.uploadFile.originalName}
-                <button type="button" class="btn btn-outline-dark"
-                        onclick="deleteUploadFile(${crew.no}, ${crew.uploadFile.fileNo})">
-                  삭제
-                </button>
-            </tr>
-          </c:if>
-        </c:if>
-        <tr>
-          <th>첨부파일</th>
-          <td colspan="3">
-            <input type="file" class="form-control" name="upfile"/>
-        </tr>
-        </tbody>
-      </table>
-      
-      <div class="row p-3">
-        <div class="col d-flex justify-content-between">
-          <div class="col d-flex" style="text-align: start">
-            <button type="button" class="btn btn-secondary m-1" onclick="abort(${crew.no})">취소</button>
-          </div>
-          <div class="col d-flex justify-content-end">
-            <button type="button" id="submit" class="btn btn-primary m-1">수정</button>
-          </div>
-        </div>
-      </div>
-    </form>
-  </div>
-  
-  <!-- 썸네일 이미지 편집 모달창 -->
-  <%@include file="image-crop.jsp" %>
+	
+	<h2>크루 모집글 수정</h2>
+	
+	<div class="row p-3">
+		<form method="post" action="modify" enctype="multipart/form-data" onkeydown="return event.key !== 'Enter';">
+			<input type="hidden" value="${crew.no}" name="no">
+			<table id="inviting-table" style="width: 98%">
+				<colgroup>
+					<col width="10%">
+					<col width="40%">
+					<col width="5%">
+					<col width="*">
+				</colgroup>
+				<tbody>
+				<tr>
+					<th>모집글 제목</th>
+					<td><input class="rounded" type="text" name="title" value="${crew.title}" style="width: 448px"></td>
+					<th>장소</th>
+					<td>
+						<input class="rounded" type="text" id="location" value="${crew.location}" name="location"
+									 style="width: 399px">
+						<button type="button" class="btn btn-outline-dark btn-sm" onclick="searchPlaces(event)">검색</button>
+					</td>
+				</tr>
+				<tr>
+					<th>크루 이름</th>
+					<td><input class="rounded" type="text" name="name" value="${crew.name}" style="width: 448px"></td>
+					<th></th>
+					<c:if test="${not empty crew.thumbnail.saveName}">
+					<td rowspan="4">
+						</c:if>
+						<c:if test="${empty crew.thumbnail.saveName}">
+					<td rowspan="3">
+						</c:if>
+						<div id="map" style="width: 90%; height: 200px;" class="mb-2"></div>
+					</td>
+				</tr>
+				<tr>
+					<th>일시</th>
+					<td>
+						<select class="rounded" id="schedule-type" name="type">
+							<option value="매월" ${crew.type eq '매월' ? 'selected' : ''}>매월</option>
+							<option value="매주" ${crew.type eq '매주' ? 'selected' : ''}>매주</option>
+							<option value="매일" ${crew.type eq '매일' ? 'selected' : ''}>매일</option>
+							<option value="입력" ${crew.type eq '입력' ? 'selected' : ''}>입력</option>
+						</select>
+						<input type="text" class="rounded" id="schedule-detail" name="detail" value="${crew.detail}"
+									 style="width: 390px"
+									 placeholder="상세 모임 일시를 작성해주세요.">
+					</td>
+				</tr>
+				<c:if test="${not empty crew.thumbnail.saveName}">
+					<tr>
+						<th>기존 대표 이미지</th>
+						<td>
+							<div class="img-thumbnail">
+								<img src="/resources/images/community/${crew.thumbnail.saveName}" alt="크루 대표 이미지"
+										 class="img" style="width: 50px">
+							</div>
+							<button type="button" class="btn btn-outline-dark"
+											onclick="deleteThumbnail(${crew.no}, ${crew.thumbnail.fileNo})">
+								삭제
+							</button>
+						</td>
+					</tr>
+				</c:if>
+				<tr>
+					<th>대표 이미지</th>
+					<td>
+						<button type="button" class="btn btn-dark" onclick="thumbnail()">등록</button>
+						<input type="hidden" name="image" value="">
+					</td>
+				</tr>
+				<tr>
+					<th>게시글</th>
+					<td colspan="3">
+						<form method="get" action="modify">
+							<textarea name="ir1" id="ir1" style="display:none;">${crew.description}</textarea>
+						</form>
+					</td>
+				</tr>
+				<c:if test="${not empty crew.uploadFile}">
+					<c:if test="${crew.uploadFile.deleted eq 'N'}">
+						<tr>
+							<th>기존 첨부파일</th>
+							<td colspan="3">
+									${crew.uploadFile.originalName}
+								<button type="button" class="btn btn-outline-dark"
+												onclick="deleteUploadFile(${crew.no}, ${crew.uploadFile.fileNo})">
+									삭제
+								</button>
+						</tr>
+					</c:if>
+				</c:if>
+				<tr>
+					<th>첨부파일</th>
+					<td colspan="3">
+						<input type="file" class="form-control" name="upfile"/>
+				</tr>
+				</tbody>
+			</table>
+			
+			<div class="row p-3">
+				<div class="col d-flex justify-content-between">
+					<div class="col d-flex" style="text-align: start">
+						<button type="button" class="btn btn-secondary m-1" onclick="abort(${crew.no})">취소</button>
+					</div>
+					<div class="col d-flex justify-content-end">
+						<button type="button" id="submit" class="btn btn-primary m-1">수정</button>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+	
+	<!-- 썸네일 이미지 편집 모달창 -->
+	<%@include file="image-crop.jsp" %>
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script type="text/javascript">
@@ -161,20 +161,44 @@
         sSkinURI: "/resources/se2/SmartEditor2Skin_ko_KR.html",
         fCreator: "createSEditor2"
     });
-    
+
     // 등록 버튼 클릭 시, 폼에 있는 값을 전달(이미지는 슬라이싱할 때 전달했기 때문에 따로 추가 설정 안해도 됨)
     document.querySelector("#submit").addEventListener("click", function () {
 
         oEditors.getById["ir1"].exec("UPDATE_CONTENTS_FIELD", []);
-        
+
         let no = document.querySelector("input[name=no]").value;
-        let title = document.querySelector("input[name=title]").value;
-        let description = document.querySelector("textarea[name=ir1]").value;
-        let name = document.querySelector("input[name=name]").value;
+        let title = document.querySelector("input[name=title]").value.trim();
+        let description = document.querySelector("textarea[name=ir1]").value.trim();
+        let name = document.querySelector("input[name=name]").value.trim();
         let type = document.querySelector("select[name=type]").value;
-        let detail = document.querySelector("input[name=detail]").value;
+        let detail = document.querySelector("input[name=detail]").value.trim();
         let location = document.querySelector("input[name=location]").value;
         let upfile = document.querySelector("input[name=upfile]")
+
+        let cleanedContent = description.replace(/<p><br><\/p>/g, "").trim();
+
+        // 입력값 검증
+        if (!title) {
+            alert("크루 모집글 제목을 입력해주세요.");
+            return;
+        }
+        if (!cleanedContent) {
+            alert("내용을 입력해주세요.");
+            return;
+        }
+        if (!name) {
+            alert("크루명을 입력해주세요.");
+            return;
+        }
+        if (!detail) {
+            alert("상세 일시를 입력해주세요.");
+            return;
+        }
+        if (!location) {
+            alert("모임 장소를 입력해주세요.");
+            return;
+        }
 
         formData.append(("no"), no);
         formData.append("title", title);

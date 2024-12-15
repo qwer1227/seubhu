@@ -23,6 +23,7 @@
 <html lang="ko">
 
 <div class="comment pt-3 ">
+	<c:forEach var="reply" items="${replies}">
 	<c:choose>
 	<c:when test="${reply.deleted eq 'Y'}">
 		<!-- 삭제된 댓글인 경우 -->
@@ -51,17 +52,20 @@
 				<c:if test="${reply.no ne reply.prevNo}">
 					<i class="bi bi-arrow-return-right"></i>
 				</c:if>
-				<c:if test="${image}">
-					<img src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/images/userImage/${image}"
-							 style="width: 40px" class="rounded-circle">
+				<c:if test="${not empty user.imgName}">
+					<img
+						src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/images/userImage/${user.imgName}"
+						style="width: 40px" class="rounded-circle">
 				</c:if>
-				<c:if test="${empty image}">
+				<c:if test="${empty user.imgName}">
 					<img
 						src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/images/userImage/primaryImage.jpg"
 						style="width: 40px" class="rounded-circle">
 				</c:if>
+			
 			</div>
 			<div class="col" style="text-align: start">
+				<p>!!!!!!!!!!!!!!!!! ${user.imgName}</p>
 				<strong>${reply.user.nickname}</strong><br/>
 				<span><fmt:formatDate value="${reply.createdDate}" pattern="yyyy.MM.dd hh:mm:ss"/></span>
 				<c:if test="${loginUser.no ne reply.user.no and not empty loginUser}">
@@ -165,7 +169,7 @@
 				<div class="col">
 					<button type="button" id="submit" class="btn btn-success d-flex align-items-center justify-content-center"
 									style="font-size: 15px; width: 70px;" onclick="submitComment()">
-						답글 <span>${reply.no}</span> / <span>${reply.typeNo}</span>
+						답글
 					</button>
 				</div>
 			</div>
@@ -174,6 +178,7 @@
 </div>
 </c:otherwise>
 </c:choose>
+</c:forEach>
 </html>
 <script>
     // 댓글 등록

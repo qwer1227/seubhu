@@ -70,8 +70,12 @@ public class ReplyService {
     public Reply getReplyDetail(int replyNo){
         Reply reply = replyMapper.getReplyByReplyNo(replyNo);
 
+        System.out.println("@@@@@@@@@@@@@@@@@@@" + reply.getUser().getId());
+
         User user = userService.findbyUserId(reply.getUser().getId());
         reply.setUser(user);
+
+        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~" + user);
 
         return reply;
     }

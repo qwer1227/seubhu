@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="/WEB-INF/views/common/tags.jsp" %>
 <script type="text/javascript"
-        src="//dapi.kakao.com/v2/maps/sdk.js?appkey=3af1f449b9175825b32af2e204b65779&libraries=services,clusterer,drawing"></script>
+				src="//dapi.kakao.com/v2/maps/sdk.js?appkey=3af1f449b9175825b32af2e204b65779&libraries=services,clusterer,drawing"></script>
 
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,7 +14,7 @@
 <!doctype html>
 <html lang="ko">
 <head>
-  <%@include file="/WEB-INF/views/common/common.jsp" %>
+	<%@include file="/WEB-INF/views/common/common.jsp" %>
 </head>
 <style>
     #inviting-table th {
@@ -28,100 +28,126 @@
 <body>
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
 <div class="container-xxl text-center" id="wrap">
-  
-  <h2>크루 모집글 작성</h2>
-  
-  <div class="row p-3">
-    <form method="post" action="register" enctype="multipart/form-data" onkeydown="return event.key !== 'Enter';">
-      <table id="inviting-table" style="width: 98%">
-        <colgroup>
-          <col width="10%">
-          <col width="40%">
-          <col width="5%">
-          <col width="*">
-        </colgroup>
-        <tbody>
-        <tr>
-          <th>모집글 제목</th>
-          <td><input class="rounded" type="text" name="title" value="" style="width: 83%"></td>
-          <th>장소</th>
-          <td>
-            <input class="rounded" type="text" id="location" value="" name="location" style="width: 90%; vertical-align: middle;">
-            <a type="button" class="btn btn-outline-dark btn-sm"
-               onclick="searchPlaces(event)" style="vertical-align: middle; width: 50px">검색</a>
-          </td>
-        </tr>
-        <tr>
-          <th>크루 이름</th>
-          <td><input class="rounded" type="text" name="name" value="" style="width: 83%"></td>
-          <th></th>
-          <td rowspan="3">
-            <div id="map" style="width: 100%; height: 200px" class="mb-2"></div>
-          </td>
-        </tr>
-        <tr>
-          <th>일시</th>
-          <td>
-            <select class="rounded" id="schedule-type" name="type">
-              <option value="매월">매월</option>
-              <option value="매주">매주</option>
-              <option value="매일">매일</option>
-              <option value="번개">입력</option>
-            </select>
-            <input type="text" class="rounded" id="schedule-detail" name="detail" value="" style="width: 70%"
-                   placeholder="상세 모임 일시를 작성해주세요.">
-          </td>
-        </tr>
-        <tr>
-          <th>대표 이미지</th>
-          <td>
-            <button type="button" class="btn btn-dark" onclick="thumbnail()">등록</button>
-            <input type="hidden" name="image" value="">
-          </td>
-        </tr>
-        <tr>
-          <th>게시글</th>
-          <td colspan="3">
-            <%@include file="../write.jsp" %>
-          </td>
-        </tr>
-        <tr>
-          <th>첨부파일</th>
-          <td colspan="3">
-            <input type="file" class="form-control" name="upfile"/>
-        </tr>
-        </tbody>
-      </table>
-      
-      <div class="row p-3">
-        <div class="col d-flex justify-content-between">
-          <div class="col d-flex" style="text-align: start">
-            <button type="button" class="btn btn-secondary m-1" onclick="abort()">취소</button>
-          </div>
-          <div class="col d-flex justify-content-end">
-            <button type="button" id="submit" class="btn btn-primary m-1">등록</button>
-          </div>
-        </div>
-      </div>
-    </form>
-  </div>
-  
-  <!-- 썸네일 이미지 편집 모달창 -->
-  <%@include file="image-crop.jsp" %>
+	
+	<h2>크루 모집글 작성</h2>
+	
+	<div class="row p-3">
+		<form method="post" action="register" enctype="multipart/form-data" onkeydown="return event.key !== 'Enter';">
+			<table id="inviting-table" style="width: 98%">
+				<colgroup>
+					<col width="10%">
+					<col width="40%">
+					<col width="5%">
+					<col width="*">
+				</colgroup>
+				<tbody>
+				<tr>
+					<th>모집글 제목</th>
+					<td><input class="rounded" type="text" name="title" value="" style="width: 83%"></td>
+					<th>장소</th>
+					<td>
+						<input class="rounded" type="text" id="location" value="" name="location"
+									 style="width: 90%; vertical-align: middle;">
+						<a type="button" class="btn btn-outline-dark btn-sm"
+							 onclick="searchPlaces(event)" style="vertical-align: middle; width: 50px">검색</a>
+					</td>
+				</tr>
+				<tr>
+					<th>크루 이름</th>
+					<td><input class="rounded" type="text" name="name" value="" style="width: 83%"></td>
+					<th></th>
+					<td rowspan="3">
+						<div id="map" style="width: 100%; height: 200px" class="mb-2"></div>
+					</td>
+				</tr>
+				<tr>
+					<th>일시</th>
+					<td>
+						<select class="rounded" id="schedule-type" name="type">
+							<option value="매월">매월</option>
+							<option value="매주">매주</option>
+							<option value="매일">매일</option>
+							<option value="번개">입력</option>
+						</select>
+						<input type="text" class="rounded" id="schedule-detail" name="detail" value="" style="width: 70%"
+									 placeholder="상세 모임 일시를 작성해주세요.">
+					</td>
+				</tr>
+				<tr>
+					<th>대표 이미지</th>
+					<td>
+						<button type="button" class="btn btn-dark" onclick="thumbnail()">등록</button>
+						<input type="hidden" name="image" value="">
+					</td>
+				</tr>
+				<tr>
+					<th>게시글</th>
+					<td colspan="3">
+						<%@include file="../write.jsp" %>
+					</td>
+				</tr>
+				<tr>
+					<th>첨부파일</th>
+					<td colspan="3">
+						<input type="file" class="form-control" name="upfile"/>
+				</tr>
+				</tbody>
+			</table>
+			
+			<div class="row p-3">
+				<div class="col d-flex justify-content-between">
+					<div class="col d-flex" style="text-align: start">
+						<button type="button" class="btn btn-secondary m-1" onclick="abort()">취소</button>
+					</div>
+					<div class="col d-flex justify-content-end">
+						<button type="button" id="submit" class="btn btn-primary m-1">등록</button>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+	
+	<!-- 썸네일 이미지 편집 모달창 -->
+	<%@include file="image-crop.jsp" %>
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script type="text/javascript">
     // 등록 버튼 클릭 시, 폼에 있는 값을 전달(이미지는 슬라이싱할 때 전달했기 때문에 따로 추가 설정 안해도 됨)
     document.querySelector("#submit").addEventListener("click", function () {
         oEditors.getById["ir1"].exec("UPDATE_CONTENTS_FIELD", []);
-        
-        let title = document.querySelector("input[name=title]").value;
-        let description = document.querySelector("textarea[name=ir1]").value;
-        let name = document.querySelector("input[name=name]").value;
+
+        let title = document.querySelector("input[name=title]").value.trim();
+        let description = document.querySelector("textarea[name=ir1]").value.trim();
+        let name = document.querySelector("input[name=name]").value.trim();
         let type = document.querySelector("select[name=type]").value;
-        let detail = document.querySelector("input[name=detail]").value;
+        let detail = document.querySelector("input[name=detail]").value.trim();
         let location = document.querySelector("input[name=location]").value;
         let upfile = document.querySelector("input[name=upfile]")
+
+        let cleanedContent = description.replace(/<p><br><\/p>/g, "").trim();
+
+        // 입력값 검증
+        if (!title) {
+            alert("크루 모집글 제목을 입력해주세요.");
+            return;
+        }
+        if (!cleanedContent) {
+            alert("내용을 입력해주세요.");
+            return;
+        }
+        if (!name) {
+            alert("크루명을 입력해주세요.");
+            return;
+        }
+        if (!detail) {
+            alert("상세 일시를 입력해주세요.");
+            return;
+        }
+        if (!location) {
+            alert("모임 장소를 입력해주세요.");
+            return;
+        }
+
 
         formData.append("title", title);
         formData.append("description", description);

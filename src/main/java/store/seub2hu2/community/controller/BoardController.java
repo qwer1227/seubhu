@@ -128,10 +128,12 @@ public class BoardController {
                 String image = r.getImage();
                 model.addAttribute("image", image);
 
+                reply.setImage(image);
+                System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^" + r.getUser());
+
                 int replyResult = replyService.getCheckLike(reply.getNo(), "boardReply", loginUser);
                 model.addAttribute("replyLiked", replyResult);
             }
-
 
         model.addAttribute("board", board);
         model.addAttribute("replies", replyList);
