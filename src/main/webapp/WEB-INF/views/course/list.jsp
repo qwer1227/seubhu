@@ -37,7 +37,7 @@
                         <input type="checkbox"  class="form-check" name="sort" value="like" ${param.sort eq 'like' ? 'checked' : ''}>
                     </div>
                     <div class="col-4">
-                        <label id="slider" for="customRange2" class="form-label">거리</label>
+                        <label id="slider" for="customRange2" class="form-label">거리(KM)</label>
                         <input type="range" class="form-range" min="0" max="10" id="customRange2" name="distance"
                                value="${empty param.distance ? '10' : param.distance}">
                         <div class="row">
@@ -63,8 +63,17 @@
                             </c:forEach>
                         </select>
                     </div>
-                    <div class="col-3">
-                        지역(구) 검색<input type="text" class="form-control" name="keyword" value="${param.keyword }">
+                    <div class="col-1">
+                        지역
+                        <select class="form-control" name="region" style="appearance: auto;">
+                            <option value="si" ${param.region eq 'si' ? 'selected' : ''}>시</option>
+                            <option value="gu" ${param.region eq 'gu' ? 'selected' : ''}>구</option>
+                            <option value="dong" ${param.region eq 'dong' ? 'selected' : ''}>동</option>
+                        </select>
+                    </div>
+                    <div class="col-2">
+                        지역 검색
+                        <input type="text" class="form-control" name="keyword" value="${param.keyword}">
                     </div>
                     <div class="col-1 pt-4">
                         <button type="button" class="btn btn-outline-primary" onclick="searchKeyword()">검색 버튼</button>
@@ -77,8 +86,8 @@
     <%-- 안내 문구 --%>
     <div class="card row row-cols-1 row-cols-md-1 g-4 mt-3 mb-3" align="left">
         <h5>* <strong style="background-color: orange">등록하기</strong>를 클릭하여 도전할 코스 목록에 추가하면,
-            나의 코스 기록에서 코스를 확인하실 수 있습니다!</h5>
-        <h5>* 이전 난이도 코스 3개를 완주해야 다음 난이도의 코스에 도전하실 수 있습니다! (ex 1단계 3개 클리어 시, 2단계 도전 가능)</h5>
+            나의 코스 기록에서 코스를 확인하실 수 있습니다.</h5>
+        <h5>* 이전 난이도 코스 3개를 완주해야 다음 난이도의 코스에 도전하실 수 있습니다. (ex 1단계 3개 클리어 시, 2단계 도전 가능)</h5>
     </div>
 
     <%-- 코스 목록 --%>
@@ -109,7 +118,7 @@
                                 <c:choose>
                                     <%-- 현재 도전 가능한 단계(난이도)가 코스 난이도보다 적으면, 도전 불가능 문구를 표시한다. --%>
                                     <c:when test="${currentUserLevel < course.level}">
-                                        <button class="btn btn-danger disabled">아직 도전할 수 없습니다!</button>
+                                        <button class="btn btn-danger disabled">아직 도전할 수 없습니다</button>
                                     </c:when>
                                     <c:otherwise>
                                         <c:choose>
@@ -192,7 +201,7 @@
     // 등록하기 버튼을 클릭하면, 확인창을 표시한다.
     function registerChallenge(event) {
         if (confirm("도전할 코스 목록에 추가하시겠습니까?")) {
-            alert("도전할 코스 목록에 추가되었습니다!");
+            alert("도전할 코스 목록에 추가되었습니다.");
         } else {
             event.preventDefault();
         }
@@ -201,7 +210,7 @@
     // 등록 취소 버튼을 클릭하면, 확인창을 표시한다.
     function cancelChallenge(event) {
         if (confirm("도전할 코스 목록에서 제외하시겠습니까?")) {
-            alert("도전할 코스 목록에서 제외되었습니다!");
+            alert("도전할 코스 목록에서 제외되었습니다.");
         } else {
             event.preventDefault();
         }
