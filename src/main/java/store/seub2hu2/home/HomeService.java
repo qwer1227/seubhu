@@ -4,10 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import store.seub2hu2.community.vo.Board;
 import store.seub2hu2.community.vo.Marathon;
+import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.lesson.vo.Lesson;
 import store.seub2hu2.product.dto.ProdListDto;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class HomeService {
@@ -20,6 +22,11 @@ public class HomeService {
     public List<Board> getTopViewedBoards() {
         return homeMapper.getTopViewedBoards(); // 최신 글 5개 반환
     }
+
+    public List<Board> getUserRankingByBoards() {
+        return homeMapper.getUserRankingByBoards();
+    }
+
 
     // 접수 마감일순 마라톤 정보 5개 조회
     public List<Marathon> getLatestMarathons() {
@@ -40,5 +47,10 @@ public class HomeService {
     public List<ProdListDto> getWeeklyBestProductsByViewCount() {
         return homeMapper.getWeeklyBestProductsByViewCount();
     }
+
+    public List<Course> getTopLikedCourses() {
+        return homeMapper.getTopLikedCourses();
+    }
+
 }
 

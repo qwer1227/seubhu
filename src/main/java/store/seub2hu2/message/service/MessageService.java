@@ -85,8 +85,6 @@ public class MessageService {
             if (user != null) {
                 // MESSAGE_RECEIVERS 테이블에 수신자 정보 저장
                 messageMapper.insertMessageReceiver(message.getMessageNo(), user.getNo());
-            } else {
-                throw new IllegalArgumentException("수신자 '" + nickname.trim() + "'은(는) 존재하지 않습니다.");
             }
         }
     }

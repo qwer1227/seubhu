@@ -3,10 +3,12 @@ package store.seub2hu2.home;
 import org.apache.ibatis.annotations.Mapper;
 import store.seub2hu2.community.vo.Board;
 import store.seub2hu2.community.vo.Marathon;
+import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.lesson.vo.Lesson;
 import store.seub2hu2.product.dto.ProdListDto;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface HomeMapper {
@@ -20,7 +22,11 @@ public interface HomeMapper {
     // 최신 글 5개 조회
     List<Board> getTopViewedBoards();
 
+    List<Board> getUserRankingByBoards();
+
     List<Marathon> getLatestMarathons();
 
     List<Lesson> getOngoingLessons();
+
+    List<Course> getTopLikedCourses();
 }

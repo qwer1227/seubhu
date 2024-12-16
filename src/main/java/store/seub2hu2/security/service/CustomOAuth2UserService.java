@@ -38,11 +38,18 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         // OAuth2의 registration id를 조회한다.(registtration id는 google, kakao 등이다.)
         String provider = userRequest.getClientRegistration().getRegistrationId();
+        System.out.println("provider ----" +  provider);
 
         // OAuth2UserInfo객체에는 id, name, email이 포함되어 있다.(id값은 실제 아이디는 아니고, 임의의 문자열이다.)
         // OAuth2UserInfoFactory객체는 provider(google 혹은 kakao)와 oAuth2User.getAttributes()는 소셜에서 제공하는 사용자가 정보가 들어 있는 객체를 전달받아서
         // OAuth2UserInfo객체를 반환한다. OAuth2UserInfo객체는 provider에 따라서 GoogleOAuth2UserInfo, KakaoOAuth2UserInfo 객체 중에서 하나를 반환한다.
         OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(provider, oAuth2User.getAttributes());
+
+        // getName() 값 확인
+        String name = userInfo.getName();
+        if (name == null || name.isEmpty()) {
+            throw new IllegalStateException("OAuth2UserInfo.getName() returned null or empty.");
+        }
 
         // 조회된 아이디로 사용자 정보를 조회한다.
         User savedUser = userMapper.getUserById(userInfo.getId());
@@ -56,7 +63,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         if (savedUser == null) {
             savedUser = createUser(userInfo, role, provider);
         }
-
+        // 사용자 정보를 저장한 후, 제공자 정보 전달을 위해 속성 추가
+        savedUser.setProvider(provider); // 로그인 제공자 정보 추가
         return new CustomOAuth2User(savedUser, role, userInfo.getAttributes());
     }
 

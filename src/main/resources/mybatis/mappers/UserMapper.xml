@@ -31,6 +31,18 @@
             SELECT LAST_INSERT_ID() <!-- 마지막으로 삽입된 USER_NO 값을 가져옴 -->
         </selectKey>
     </insert>
+    <!-- 신규 사용자 정보 추가: 사용자를 USERS 테이블에 삽입 -->
+    <insert id="insertSocialUser">
+        insert into USERS
+        (USER_ID, ADDR_NO, USER_NAME, USER_NICKNAME, USER_TEL, USER_EMAIL, USER_TYPE, PROVIDER, USER_TERMS, USER_PRIVACY)
+        values
+        (#{user.id}, #{user.addr.no}, #{user.name}, #{user.nickname}, #{user.tel}, #{user.email}, #{user.type}, #{user.provider}, #{user.terms}, #{user.privacy})
+
+        <!-- 삽입 후 자동 생성된 USER_NO 값을 반환하여 user 객체에 매핑 -->
+        <selectKey resultType="int" keyProperty="user.no" keyColumn="USER_NO" order="AFTER">
+            SELECT LAST_INSERT_ID() <!-- 마지막으로 삽입된 USER_NO 값을 가져옴 -->
+        </selectKey>
+    </insert>
 
     <insert id="insertAddr">
         INSERT INTO ADDRESSES

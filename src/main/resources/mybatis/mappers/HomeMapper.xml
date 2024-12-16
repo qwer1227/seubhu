@@ -5,29 +5,34 @@
 
     <!-- 주간 베스트 상품 - 별점 순으로 조회 -->
     <select id="getWeeklyBestProductsByRating" resultType="store.seub2hu2.product.dto.ProdListDto">
-        SELECT PROD_NO,
-               PROD_NAME,
-               PROD_PRICE,
-               PROD_RATING,
-               PROD_IMG_THUM,
-               PROD_CNT
-        FROM PRODUCTS
-        WHERE PROD_STATUS = '판매중'
-          AND PROD_CREATED_AT BETWEEN CURDATE() - INTERVAL 7 DAY
-          AND CURDATE()
-        ORDER BY
-            PROD_CNT DESC
-            LIMIT 3
+        SELECT
+        P.PROD_NO AS no,
+        P.PROD_NAME AS name,
+        P.PROD_PRICE AS price,
+        P.PROD_IMG_THUM AS imgThum,
+        P.PROD_COLOR_NUM AS colorNum,
+        P.PROD_STATUS AS status,
+        B.BRAND_NAME AS name  <!-- 브랜드명 추가 -->
+        FROM PRODUCTS P
+        JOIN PROD_BRANDS B ON P.BRAND_NO = B.BRAND_NO  <!-- BRAND_NO로 조인 -->
+        WHERE P.PROD_STATUS = '판매중'
+        AND P.PROD_CREATED_AT BETWEEN CURDATE() - INTERVAL 7 DAY AND CURDATE()
+        ORDER BY P.PROD_CNT DESC
+        LIMIT 4
     </select>
+
 
     <!-- 주간 베스트 상품 - 조회수 순으로 조회 (러닝화 기준) -->
     <select id="getWeeklyBestProductsByViewCount" resultType="store.seub2hu2.product.dto.ProdListDto">
-        SELECT PROD_NO, PROD_NAME, PROD_PRICE, PROD_RATING, PROD_IMG_THUM, PROD_CNT
+        SELECT PROD_NO        AS no,
+        PROD_NAME        AS name,
+        PROD_PRICE        AS price,
+        PROD_IMG_THUM        AS imgThum,
+        PROD_COLOR_NUM        AS colorNum
         FROM PRODUCTS
         WHERE PROD_STATUS = '판매중'
         AND CAT_NO = 11  <!-- 러닝화 카테고리 -->
-        ORDER BY
-        PROD_CNT DESC
+        ORDER BY PROD_CNT DESC
         LIMIT 5
     </select>
 
@@ -42,8 +47,22 @@
             LEFT JOIN USERS U ON B.USER_NO = U.USER_NO
         WHERE B.IS_DELETED = 'N'
         ORDER BY B.BOARD_VIEW_CNT DESC
-            LIMIT 3
+            LIMIT 6
     </select>
+
+    <select id="getUserRankingByBoards" resultType="store.seub2hu2.community.vo.Board">
+        SELECT u.USER_NO AS "user.no",
+               u.USER_NICKNAME AS "user.nickname",
+               COUNT(b.BOARD_NO) AS boardCnt
+        FROM BOARDS b
+                 JOIN USERS u ON b.USER_NO = u.USER_NO
+        WHERE b.IS_DELETED = 'N'
+        GROUP BY u.USER_NO
+        ORDER BY boardCnt DESC
+            LIMIT 5
+
+    </select>
+
 
     <select id="getLatestMarathons" resultType="store.seub2hu2.community.vo.Marathon">
         SELECT
@@ -73,6 +92,23 @@
             LIMIT 3
     </select>
 
-
+    <select id="getTopLikedCourses" resultType="store.seub2hu2.course.vo.Course">
+        SELECT C.COURSE_NO        AS no
+             , C.COURSE_NAME        AS name
+             , C.COURSE_TIME        AS time
+             , C.COURSE_DISTANCE        AS distance
+             , C.COURSE_LEVEL        AS level
+             , C.COURSE_LIKE_CNT        AS likeCnt
+             , C.COURSE_FILENAME        AS filename
+             , R.REGION_NO        AS no
+             , R.REGION_SI        AS si
+             , R.REGION_GU        AS gu
+             , R.REGION_DONG        AS dong
+        FROM COURSES C
+                 INNER JOIN COURSE_REGION R
+                            ON C.REGION_NO = R.REGION_NO
+        ORDER BY COURSE_LIKE_CNT DESC
+        LIMIT 3;
+    </select>
 
 </mapper>

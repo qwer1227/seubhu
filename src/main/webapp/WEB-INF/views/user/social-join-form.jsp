@@ -20,7 +20,7 @@
         }
     </style>
     <%@ include file="/WEB-INF/views/common/common.jsp" %>
-    <title>회원가입 폼</title>
+    <title>소셜가입 폼</title>
 </head>
 <body>
 <!-- 헤더부 -->
@@ -35,26 +35,38 @@
 <main class="container">
     <div class="login-form text-center mt-5 mb-3">
         <!-- 회원가입 제목 -->
-        <div class="border p-2 bg-dark text-white fw-bold mb-3">회원가입</div>
+        <div class="border p-2 bg-dark text-white fw-bold mb-3">추가 정보 입력</div>
 
         <!-- 회원가입 폼 -->
-        <form:form id="joinForm" method="POST" action="/join" modelAttribute="joinForm"
-                   novalidate="novalidate">
-            <!-- 아이디 -->
+        <form:form action="/socialJoin/submit" method="post" modelAttribute="joinForm">
+            <!-- provider 값 전달 (hidden input) -->
+            <input type="hidden" name="provider" value="${provider}" />
+
+            <!-- 아이디 (수정 불가) -->
+            <div class="form-group mb-3">
+                <form:input type="text" class="form-control" placeholder="아이디*" path="id" required="true" readonly="true"/>
+            </div>
+
+            <!-- 이름 (수정 불가) -->
+            <div class="form-group mb-3">
+                <form:input class="form-control" placeholder="이름" path="name" required="true" readonly="true"/>
+            </div>
+
+            <!-- 이메일(구글/네이버 로그인 시 이미 입력됨) -->
             <div class="form-group mb-3">
                 <div class="has-validation">
-                    <form:input type="text" class="form-control" placeholder="아이디*" path="id" required="required"
-                                id="user-id" onblur="checkId()"/>
-                    <div class="invalid-feedback">아이디는 영소문자와 숫자만 포함하고 4~16자 사이여야 합니다.</div>
-                    <div class="valid-feedback">사용 가능한 아이디입니다.</div>
+                    <form:input type="text" class="form-control" placeholder="이메일(example@domain.com)*" path="email" id="email" onblur="checkEmail()" required="true" readonly="${joinForm.email != null ? 'readonly' : ''}" />
+                    <div class="invalid-feedback">이메일 형식이 올바르지 않습니다.</div>
+                    <div class="valid-feedback">사용 가능한 이메일입니다!</div>
                 </div>
-                <form:errors path="id" cssClass="text-danger fst-italic"/>
+                <form:errors path="email" cssClass="text-danger fst-italic"/>
             </div>
+
 
             <!-- 비밀번호 -->
             <div class="form-group mb-3">
                 <div class="input-group">
-                    <form:password class="form-control" placeholder="비밀번호*" path="password" required="required"
+                    <form:password class="form-control" placeholder="비밀번호*" path="password" required="true"
                                    id="user-password" onblur="checkPassword()"/>
                     <button type="button" class="btn btn-outline-dark" id="togglePassword">
                         <i class="bi bi-eye"></i>
@@ -67,7 +79,7 @@
 
             <!-- 비밀번호 확인 -->
             <div class="form-group mb-3">
-                <form:password class="form-control" placeholder="비밀번호 확인*" path="passwordConfirm" required="required"
+                <form:password class="form-control" placeholder="비밀번호 확인*" path="passwordConfirm" required="true"
                                id="password-confirm" onblur="checkPasswordConfirm()"/>
                 <div class="invalid-feedback">비밀번호가 일치하지 않습니다.</div>
                 <div class="valid-feedback">비밀번호가 일치합니다!</div>
@@ -85,16 +97,11 @@
                 <form:errors path="nickname" id="nickname-error" cssClass="text-danger fst-italic"/>
             </div>
 
-            <!-- 이름 -->
-            <div class="form-group mb-3">
-                <form:input class="form-control" placeholder="이름" path="name"/>
-            </div>
 
-
-        <!-- 휴대전화 -->
-        <div class="form-group d-flex align-items-center mb-3">
-            <!-- 전화번호 입력 필드 -->
-            <input type="text" class="form-control me-2" id="tel" name="tel" maxlength="13" placeholder="전화번호" required="required" onblur="formatPhoneNumber(event)" />
+            <!-- 휴대전화 -->
+            <div class="form-group d-flex align-items-center mb-3">
+                <!-- 전화번호 입력 필드 -->
+                <input type="text" class="form-control me-2" id="tel" name="tel" maxlength="13" placeholder="전화번호" required="required" onblur="formatPhoneNumber(event)" />
                 <!-- 본인인증 버튼 -->
                 <input type="button" onclick="smsCheck()" class="btn btn-outline-dark" value="본인인증">
             </div>
@@ -113,18 +120,6 @@
                    placeholder="나머지 주소(선택입력 가능)" value=""/>
             <input type="text" name="address-extra" id="address-extra" class="form-control mb-3"
                    placeholder="참고항목"/>
-
-            <!-- 이메일 -->
-            <div class="form-group mb-3">
-                <div class="has-validation">
-                    <form:input type="text" class="form-control" id="user-email" placeholder="이메일(example@domain.com)*"
-                                path="email" onblur="checkEmail()"
-                                required="required"/>
-                    <div class="invalid-feedback">이메일 형식이 올바르지 않습니다.</div>
-                    <div class="valid-feedback">사용 가능한 이메일입니다!</div>
-                </div>
-                <form:errors path="email" cssClass="text-danger fst-italic"/>
-            </div>
 
             <!-- 이용약관 동의 -->
             <div class="form-group text-start mb-3">
@@ -289,7 +284,7 @@
         }
     }
 
-        document.getElementById("togglePassword").addEventListener("click", function () {
+    document.getElementById("togglePassword").addEventListener("click", function () {
         const passwordField = document.getElementById("user-password");
         const type = passwordField.getAttribute("type") === "password" ? "text" : "password";
         passwordField.setAttribute("type", type);
