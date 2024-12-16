@@ -5,10 +5,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import store.seub2hu2.course.dto.ReviewForm;
+import store.seub2hu2.course.dto.AddRecordForm;
+import store.seub2hu2.course.dto.AddReviewForm;
 import store.seub2hu2.course.exception.CourseReviewException;
 import store.seub2hu2.course.service.ReviewService;
 import store.seub2hu2.course.service.UserCourseService;
+import store.seub2hu2.course.vo.Records;
 import store.seub2hu2.course.vo.Review;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.security.dto.RestResponseDto;
@@ -25,6 +27,14 @@ public class RestCourseController {
 
     @Autowired
     private UserCourseService userCourseService;
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/addRecord")
+    @ResponseBody
+    public void addRecord(AddRecordForm form, @AuthenticationPrincipal LoginUser loginUser) {
+        // 1. 코스 완주 기록을 저장한다.
+        userCourseService.addNewRecord(form, loginUser.getNo());
+    }
 
     @GetMapping("/reviews/{no}/{page}")
     public ResponseEntity<RestResponseDto<ListDto<Review>>> reviews(@PathVariable("no") int courseNo,
@@ -44,7 +54,7 @@ public class RestCourseController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/addReview")
     @ResponseBody
-    public Review addReview(ReviewForm form, @AuthenticationPrincipal LoginUser loginUser) {
+    public Review addReview(AddReviewForm form, @AuthenticationPrincipal LoginUser loginUser) {
         // 1. 등록할 리뷰 정보를 테이블에 저장한다.
         Review review = reviewService.addNewReview(form, loginUser.getNo());
 

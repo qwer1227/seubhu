@@ -5,6 +5,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import store.seub2hu2.course.dto.AddRecordForm;
 import store.seub2hu2.course.dto.SuccessCountRankForm;
 import store.seub2hu2.course.dto.SuccessCoursesForm;
 import store.seub2hu2.course.mapper.CourseMapper;
@@ -25,6 +26,28 @@ public class UserCourseService {
 
     @Autowired
     private CourseMapper courseMapper;
+
+    public void addNewRecord(AddRecordForm form, int userNo) {
+        // 1. 코스 완주 기록과 코스 성공 여부를 저장한다.
+//        userCourseMapper.insertRecord(form, userNo);
+
+        // 2. 로그인한 사용자의 현재 도전 가능한 단계를 가져온다.
+        UserLevel userLevel = userCourseMapper.getUserLevel(userNo);
+        int level = userLevel.getLevel();
+
+        // 3. 로그인한 사용자의 현재 배지 상태를 가져온다.
+        List<UserBadge> badges = userCourseMapper.getUserBadge(userNo);
+
+        // 4. 로그인한 사용자가 현재 도전 가능한 단계에서 달성한 완주 기록의 갯수를 가져온다.
+        int eachLevelRecordRows = userCourseMapper.getEachLevelRecordRows(userNo, level);
+
+        // 이전 난이도 코스 3개 달성 시, 현재 도전 가능 레벨과 사용자 배지를 증가시킨다.
+//        if (badges != null && eachLevelRecordRows == 3) {
+//            userCourseMapper.insertUserBadge(userNo);
+//        } else if (eachLevelRecordRows == 3) {
+//
+//        }
+    }
 
     /**
      * 로그인한 사용자의 현재 배지 정보를 가져온다.

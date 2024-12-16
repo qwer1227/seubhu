@@ -78,7 +78,7 @@
                                 <tr>
                                     <th scope="row">${record.no}</th>
                                     <td>${record.user.nickname}</td>
-                                    <td><fmt:formatDate value="${record.finishedDate}" pattern="yyyy년 MM월 dd일 HH시 mm분 ss초" /> </td>
+                                    <td><fmt:formatDate value="${record.finishedDate}" pattern="yyyy년 MM월 dd일 HH시 mm분" /> </td>
                                     <td><c:if test="${record.hour != 0}">${record.hour}시간</c:if> ${record.minute}분 ${record.second}초</td>
                                 </tr>
                             </c:forEach>
@@ -149,7 +149,7 @@
                         <tr>
                             <th scope="row">${record.no}</th>
                             <td>${record.user.nickname}</td>
-                            <td><fmt:formatDate value="${record.finishedDate}" pattern="yyyy년 MM월 dd일 HH시 mm분 ss초" /> </td>
+                            <td><fmt:formatDate value="${record.finishedDate}" pattern="yyyy년 MM월 dd일 HH시 mm분" /> </td>
                             <td><c:if test="${record.hour != 0}">${record.hour}시간</c:if> ${record.minute}분 ${record.second}초</td>
                         </tr>
                     </c:forEach>
