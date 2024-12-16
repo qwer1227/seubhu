@@ -90,7 +90,7 @@
 						<th>기존 대표 이미지</th>
 						<td>
 							<div class="img-thumbnail">
-								<img src="/resources/images/community/${crew.thumbnail.saveName}" alt="크루 대표 이미지"
+								<img src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/crew/images/${crew.thumbnail.saveName}" alt="크루 대표 이미지"
 										 class="img" style="width: 50px">
 							</div>
 							<button type="button" class="btn btn-outline-dark"
