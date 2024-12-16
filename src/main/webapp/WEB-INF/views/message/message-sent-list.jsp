@@ -184,7 +184,7 @@
         </div>
     </form>
 </div>
-
+<%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script>
         function deleteMessage() {
         let form = document.querySelector("#form-search");
