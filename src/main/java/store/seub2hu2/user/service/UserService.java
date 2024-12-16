@@ -292,6 +292,6 @@ public class UserService {
 
     public User findByNickname(String userName){
 
-        return userMapper.findByNickname(userName);
+        return userMapper.getUserByNickname(userName);
     }
 }

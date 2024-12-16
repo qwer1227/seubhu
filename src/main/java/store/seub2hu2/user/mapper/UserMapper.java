@@ -76,6 +76,6 @@ public interface UserMapper {
 
     UserImage findImageByUserNo(@Param("userNo") int userNo);
 
-    User findByNickname(@Param("userName") String userName);
+    /*User findByNickname(@Param("userName") String userName);*/
 
 }

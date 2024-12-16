@@ -117,6 +117,8 @@ public class MyPageController {
                 posts = postService.getPostsByNo(loginUser.getNo());
                 user = userService.findbyUserId(loginUser.getId());
                 userImage = userService.findImageByUserNo(loginUser.getNo());
+
+                System.out.println(posts);
             }
         } catch (Exception e){
             e.printStackTrace();

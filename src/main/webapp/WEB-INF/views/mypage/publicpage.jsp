@@ -167,7 +167,7 @@
                         <!-- 게시글 내용 (content) -->
                         <p class="card-text">${post.postContent}</p>
                         <!-- 게시글 작성자 -->
-                        <p class="text-muted">작성자: ${post.user.name}</p>
+                        <p class="text-muted">작성자: ${post.user.nickname}</p>
                         <!-- 게시글 작성일 -->
                         <p class="text-muted"><fmt:formatDate value="${post.postCreatedDate}"/></p>
                     </div>
@@ -307,7 +307,7 @@
                 }
 
                 // 댓글 로드
-                loadComments(postId);
+                loadComments(postId, loginUserNo);
 
                 // 이미지 슬라이드 구성
                 var carouselContainer = $('#feedModal .carousel-inner');
@@ -345,7 +345,7 @@
 
 
     // 댓글 데이터를 가져와 화면에 표시하는 함수
-    function loadComments(postId) {
+    function loadComments(postId, loginUserNo) {
         $.ajax({
             url: "/mypage/detail/" + postId,  // 서버로 AJAX 요청
             method: "GET",
@@ -482,7 +482,7 @@
     $(document).on('click', '#postCommentInsert', function () {
         let postComment = $('#postComment').val(); // 입력된 댓글의 값
         let postId = $(this).data('post-id'); // 클릭된 버튼의 data-post-id값
-        let userNo = 23;
+        const userNo = $('#loginUserNo').val();
 
         // 대댓글 관련 값들 가져오기
         let replyToCommentNo = $('#replyToCommentId').val(); // 대댓글이 달릴 댓글 번호
