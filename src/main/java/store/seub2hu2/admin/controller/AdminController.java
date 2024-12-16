@@ -7,6 +7,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -16,7 +18,7 @@ import store.seub2hu2.course.service.CourseService;
 import store.seub2hu2.course.service.UserCourseService;
 import store.seub2hu2.course.vo.Course;
 import store.seub2hu2.lesson.dto.LessonRegisterForm;
-import store.seub2hu2.lesson.dto.LessonUpdateDto;
+import store.seub2hu2.lesson.dto.LessonUpdateForm;
 import store.seub2hu2.lesson.service.LessonFileService;
 import store.seub2hu2.lesson.service.LessonService;
 import store.seub2hu2.lesson.vo.Lesson;
@@ -64,12 +66,10 @@ public class AdminController {
     }
 
     @GetMapping("/lesson-edit-form")
-    public String lessonEditForm(@RequestParam("lessonNo")Integer lessonNo, Model model) {
-
+    public String lessonEditForm(@RequestParam("lessonNo") Integer lessonNo, Model model) {
         try {
-
             // 강사 정보 가져오기
-            List<User> lecturers =  userService.findUsersByUserRoleNo(3);
+            List<User> lecturers = userService.findUsersByUserRoleNo(3);
 
             // Lesson 정보 가져오기
             Lesson lesson = lessonService.getLessonByNo(lessonNo);
@@ -92,34 +92,75 @@ public class AdminController {
     }
 
     @PostMapping("/lesson-edit-form")
-    public String lessonEditForm(@ModelAttribute("dto") LessonUpdateDto dto) {
+    public String lessonEditForm(@Validated @ModelAttribute("dto") LessonUpdateForm form, BindingResult result, Model model) {
+        if (!StringUtils.hasText(form.getPlan()) && form.getMainImage().isEmpty()) {
+            result.rejectValue("plan", null, "계획을 작성하거나 메인 이미지를 첨부 해주세요.");
+            result.rejectValue("mainImage", null, "계획을 작성하거나 메인 이미지를 첨부 해주세요.");
+        }
 
-        log.info("레슨 수정 정보 {} ", dto);
-        lessonService.updateLesson(dto);
+        if (result.hasErrors()) {
+            // 강사 정보 가져오기
+            List<User> lecturers = userService.findUsersByUserRoleNo(3);
+
+            // Lesson 정보 가져오기
+            int lessonNo = form.getLessonNo();
+            Lesson lesson = lessonService.getLessonByNo(lessonNo);
+
+            // 이미지 파일 정보 가져오기
+            Map<String, String> images = lessonFileService.getImagesByLessonNo(lessonNo);
+
+            // 모델에 레슨, 이미지, 강사 정보 추가
+            model.addAttribute("lecturers", lecturers);
+            model.addAttribute("lesson", lesson);
+            model.addAttribute("lessonNo", lessonNo);
+            model.addAttribute("images", images);
+
+            log.info("lesson start = {}", lesson);
+
+            return "admin/lesson-edit-form";
+        }
+
+        log.info("레슨 수정 정보 {} ", form);
+        lessonService.updateLesson(form);
 
         return "redirect:/admin/lesson";
     }
+
+    //@ModelAttribute
+    //public List<User> lectures() {
+    //    return userService.findUsersByUserRoleNo(3);
+    //}
 
     @GetMapping("/lesson-register-form")
     public String lessonRegisterForm(Model model) {
 
         // 사용자 권한이 강사인 사용자 목록을 조회한다.
-        List<User> lecturers =  userService.findUsersByUserRoleNo(3);
+        List<User> lecturers = userService.findUsersByUserRoleNo(3);
         model.addAttribute("lecturers", lecturers);
+        model.addAttribute("form", new LessonRegisterForm());
 
         return "admin/lesson-register-form";
     }
 
     @PostMapping("/lesson-register-form")
-    public String form(@ModelAttribute("form") LessonRegisterForm form, Model model) throws IOException {
+    public String form(@Validated @ModelAttribute("form") LessonRegisterForm form, BindingResult result, Model model) throws IOException {
 
+        if (!StringUtils.hasText(form.getPlan()) && form.getMainImage().isEmpty()) {
+            result.rejectValue("plan", null, "계획을 작성하거나 메인 이미지를 첨부 해주세요.");
+            result.rejectValue("mainImage", null, "계획을 작성하거나 메인 이미지를 첨부 해주세요.");
+        }
 
+        if (result.hasErrors()) {
+            // 강사 목록 전달
+            List<User> lecturers = userService.findUsersByUserRoleNo(3);
+            model.addAttribute("lecturers", lecturers);
+
+            return "admin/lesson-register-form"; // 오류가 있는 경우 다시 폼 페이지로 리턴
+        }
 
         lessonService.registerLesson(form);
 
-        // Redirect after successful form submission
         return "redirect:/admin/lesson";
-
     }
 
     @GetMapping("/lesson/preview")
@@ -239,7 +280,7 @@ public class AdminController {
                          @RequestParam(name = "distance", required = false, defaultValue = "10") Double distance,
                          @RequestParam(name = "level", required = false) Integer level,
                          @RequestParam(name = "keyword", required = false) String keyword,
-                         Model model){
+                         Model model) {
         // 1. 요청 파라미터 정보를 Map 객체에 담는다.
         Map<String, Object> condition = new HashMap<>();
         condition.put("page", page);
@@ -283,7 +324,7 @@ public class AdminController {
             @RequestParam(name = "page", required = false, defaultValue = "1") int page,
             @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
             @RequestParam(name = "opt", required = false) String opt,
-            @RequestParam(name= "value", required = false) String value,
+            @RequestParam(name = "value", required = false) String value,
             Model model) {
 
         Map<String, Object> condition = new HashMap<>();
@@ -388,6 +429,7 @@ public class AdminController {
 
         return "admin/product-size-register-form";
     }
+
     @PostMapping("/register-size")
     public String registerSize(@RequestParam("no") int no,
                                @RequestParam("colorNo") Integer colorNo,
@@ -405,7 +447,6 @@ public class AdminController {
 
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
-
 
 
         return "redirect:/admin/register-size?no=" + no + "&colorNo=" + colorNo;
@@ -588,7 +629,7 @@ public class AdminController {
 
         Category category = adminService.getCategory(form.getCategoryNo());
 
-        return "redirect:/admin/product?topNo="+ category.getTopNo();
+        return "redirect:/admin/product?topNo=" + category.getTopNo();
     }
 
     @GetMapping("/product-stock-detail")
@@ -626,6 +667,7 @@ public class AdminController {
 
         return "admin/product-stock-detail";
     }
+
     @PostMapping("/product-stock-detail")
     public String productStockDetail(@RequestParam("no") int no,
                                      @RequestParam(name = "colorNo") Integer colorNo,
@@ -638,13 +680,12 @@ public class AdminController {
         condition.put("no", no);
         condition.put("colorName", colorName);
 
-        for (int i =0; i< size.size(); i++) {
+        for (int i = 0; i < size.size(); i++) {
             String currentSize = size.get(i);
             Integer currentAmount = amount.get(i);
 
             condition.put("size", currentSize);
             condition.put("amount", currentAmount);
-
 
 
             adminService.getInsertStock(condition);
@@ -654,11 +695,11 @@ public class AdminController {
     }
 
     @GetMapping("/product-stock")
-    public String getProductStock(@RequestParam(name= "topNo") int topNo,
+    public String getProductStock(@RequestParam(name = "topNo") int topNo,
                                   @RequestParam(name = "catNo", required = false, defaultValue = "0") int catNo,
                                   @RequestParam(name = "page", required = false, defaultValue = "1") int page,
                                   @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
-                                  @RequestParam(name = "sort" , required = false, defaultValue = "date") String sort,
+                                  @RequestParam(name = "sort", required = false, defaultValue = "date") String sort,
                                   @RequestParam(name = "opt", required = false) String opt,
                                   @RequestParam(name = "value", required = false) String value,
 
@@ -666,7 +707,7 @@ public class AdminController {
 
         Map<String, Object> condition = new HashMap<>();
         condition.put("topNo", topNo);
-        if(catNo != 0) {
+        if (catNo != 0) {
             condition.put("catNo", catNo);
         }
 
@@ -829,7 +870,7 @@ public class AdminController {
     @GetMapping("/p-settlement/preview")
     @ResponseBody
     public List<prevOrderProdDto> prodPreview(@RequestParam("orderNo") int orderNo
-    ){
+    ) {
 
         List<prevOrderProdDto> dtos = adminService.getOrderProdPrev(orderNo);
 

@@ -129,8 +129,18 @@
         <if test="condition.level != null">
             and c.course_level = #{condition.level}
         </if>
-        <if test="condition.keyword != null">
-            and r.region_gu like concat('%', #{condition.keyword}, '%')
+        <if test="condition.region != null">
+            <choose>
+                <when test="condition.region == 'si'">
+                    and r.region_si like concat('%', #{condition.keyword}, '%')
+                </when>
+                <when test="condition.region == 'gu'">
+                    and r.region_gu like concat('%', #{condition.keyword}, '%')
+                </when>
+                <when test="condition.region == 'dong'">
+                    and r.region_dong like concat('%', #{condition.keyword}, '%')
+                </when>
+            </choose>
         </if>
     </sql>
 </mapper>
