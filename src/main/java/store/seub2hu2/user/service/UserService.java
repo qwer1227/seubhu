@@ -6,7 +6,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -80,63 +79,6 @@ public class UserService {
         userLevel.setUserNo(user.getNo());  // 등록된 사용자 번호
         userLevel.setLevel(1);             // 기본 레벨 설정 (예: 1)
         userMapper.insertUserLevel(userLevel);  // 사용자 레벨 등록
-    }
-
-    public boolean insertSocialUser(UserJoinForm form, String provider) {
-        // 소셜 로그인 사용자의 ID가 이미 존재하는지 체크
-        if (userMapper.getUserById(form.getId()) != null) {
-            throw new AlreadyUsedIdException(form.getId());
-        }
-
-        // 사용자 객체 생성 및 설정
-        User user = new User();
-        user.setId(form.getId());
-        user.setNickname(form.getNickname());
-        user.setEmail(form.getEmail());
-        user.setProvider(provider);  // 소셜 로그인 제공자 정보 설정
-
-        // 일반 로그인 시 비밀번호 암호화 처리 (소셜 로그인 시에는 비밀번호는 필요 없음)
-        if (form.getPassword() != null && !form.getPassword().isEmpty()) {
-            user.setPassword(passwordEncoder.encode(form.getPassword()));
-        }
-
-        // DB에 사용자 정보 삽입
-        int result = userMapper.insertSocialUser(user);
-        if (result <= 0) {
-            return false;  // 삽입 실패 시 false 반환
-        }
-
-        // 기본 사용자 역할 부여 (ROLE_USER)
-        Role role = new Role();
-        role.setNo(2);  // ROLE_USER로 설정
-        role.setName("ROLE_USER");
-
-        // 사용자 역할 추가
-        UserRole userRole = new UserRole();
-        userRole.setUserNo(user.getNo());
-        userRole.setRole(role);
-        userMapper.insertUserRole(userRole);
-
-        // 사용자 레벨 설정
-        UserLevel userLevel = new UserLevel();
-        userLevel.setUserNo(user.getNo());
-        userLevel.setLevel(1);  // 기본 레벨 1로 설정
-        userMapper.insertUserLevel(userLevel);
-
-        // 기본 주소 설정 (기본 주소는 회원가입 시 설정)
-        Addr addr = new Addr();
-        addr.setPostcode(form.getPostcode());
-        addr.setAddress(form.getAddress());
-        addr.setAddressDetail(form.getAddressDetail() != null ? form.getAddressDetail() : "");
-        addr.setIsAddrHome("Y");  // 기본 주소로 설정
-        addr.setName(form.getName());  // 이름 설정
-        addr.setUserNo(user.getNo());
-        userMapper.insertAddr(addr);
-
-        // 사용자 주소번호 업데이트
-        userMapper.updateAddrUserNo(addr.getNo(), user.getNo());
-
-        return true;  // 가입 성공 시 true 반환
     }
 
     /**

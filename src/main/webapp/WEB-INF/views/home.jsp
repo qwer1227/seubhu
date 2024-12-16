@@ -146,12 +146,11 @@
                         <c:forEach var="product" items="${bestByRating}" varStatus="status">
                             <div class="col-md-3">
                                 <div class="card position-relative border-0">
-
                                     <a href="/product/hit?no=${product.no}&colorNo=${product.colorNum}">
                                         <img src="${product.imgThum}" class="card-img-top" alt="상품 1">
                                     </a>
 
-                                    <form class="form-cart" method="post">
+                                    <form id="addWish" action="/wish" method="post">
                                         <input type="hidden" name="productId" value="${product.no}"/>
                                         <div class="icon-overlay d-flex justify-content-center">
                                             <button class="icon-button btn-sm wish-add" type="button">
@@ -161,14 +160,22 @@
                                     </form>
 
                                     <div class="card-body">
-                                        <h5 class="card-title mb-0">${product.name}</h5>
+                                        <!-- 상품명과 순위 한 줄로 배치 -->
                                         <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <span>#${status.index + 1}</span> <!-- 좌측: 순위 -->
-                                            <span class="text-danger">${product.status}</span> <!-- 우측: 판매중 -->
+                                            <h5 class="card-title mb-0 fw-bold">${product.name}</h5>
+                                            <span class="fw-bold">#${status.index + 1}</span> <!-- 순위 -->
                                         </div>
+
+                                        <!-- 브랜드명과 상태 한 줄로 배치 -->
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span>${product.brand.name}</span> <!-- 브랜드명 -->
+                                            <span class="text-danger">${product.status}</span> <!-- 판매 상태 -->
+                                        </div>
+
+                                        <!-- 가격과 평점 한 줄로 배치 -->
                                         <div class="d-flex justify-content-between">
-                                            <p class="card-text fw-bold mb-0">${product.price}</p> <!-- 가격 -->
-                                            <p class="mb-0">${product.brand.name}</p> <!-- 브랜드명 -->
+                                            <p class="card-text fw-bold mb-0">￦${product.price}</p> <!-- 가격 -->
+                                            <p class="mb-0">${product.brand.name}</p> <!-- 평점 -->
                                         </div>
                                     </div>
                                 </div>
@@ -176,6 +183,7 @@
                         </c:forEach>
                     </div>
                 </div>
+
 
                 <!-- 두 번째 페이지 -->
                 <div class="carousel-item">
@@ -195,14 +203,22 @@
                                         </div>
                                     </form>
                                     <div class="card-body">
-                                        <h5 class="card-title mb-0">${product.name}</h5>
+                                        <!-- 상품명과 순위 한 줄로 배치 -->
                                         <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <span>#${status.index + 1}</span> <!-- 좌측: 순위 -->
-                                            <span class="text-danger">${product.status}</span> <!-- 우측: 판매중 -->
+                                            <h5 class="card-title mb-0 fw-bold">${product.name}</h5>
+                                            <span class="fw-bold">#${status.index + 1}</span> <!-- 순위 -->
                                         </div>
+
+                                        <!-- 브랜드명과 상태 한 줄로 배치 -->
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span>${product.brand.name}</span> <!-- 브랜드명 -->
+                                            <span class="text-danger">${product.status}</span> <!-- 판매 상태 -->
+                                        </div>
+
+                                        <!-- 가격과 평점 한 줄로 배치 -->
                                         <div class="d-flex justify-content-between">
-                                            <p class="card-text fw-bold mb-0">${product.price}</p> <!-- 가격 -->
-                                            <p class="mb-0">${product.brand.name}</p> <!-- 브랜드명 -->
+                                            <p class="card-text fw-bold mb-0">￦${product.price}</p> <!-- 가격 -->
+                                            <p class="mb-0">${product.brand.name}</p> <!-- 평점 -->
                                         </div>
                                     </div>
                                 </div>
@@ -217,29 +233,43 @@
     <section class="container">
         <div class="row">
             <!-- 러닝화 주간 랭킹 -->
-            <div class="col-md-6 mb-4">
-                <h3>러닝화 주간 랭킹</h3>
-                <div class="border-bottom my-3"></div>
-                <ul class="list-group border-0">
-                    <c:forEach var="product" items="${bestByViewCount}" varStatus="status">
-                        <li class="list-group-item d-flex align-items-center border-0">
-                            <!-- 자동 순위 표시 -->
-                            <span class="fw-bold me-3">#${status.index + 1}</span>
-                            <a href="/product/hit?no=${product.no}&colorNo=${product.colorNum}"
-                               class="text-decoration-none">
-                                <img src="${product.imgThum}" alt="러닝화 ${status.index + 1}" width="50" class="me-3">
-                                <span class="text-muted">${product.name}</span>
-                            </a>
-                        </li>
-                    </c:forEach>
-                </ul>
-            </div>
+<div class="col-md-6 mb-4">
+    <h3>러닝화 주간 랭킹</h3>
+    <div class="border-bottom my-3"></div>
+    <ul class="list-group border-0">
+        <c:forEach var="product" items="${bestByViewCount}" varStatus="status">
+            <li class="list-group-item d-flex align-items-center border-0">
+                <!-- 자동 순위 표시 -->
+                <span class="fw-bold me-3">#${status.index + 1}</span>
+                <a href="/product/hit?no=${product.no}&colorNo=${product.colorNum}"
+                   class="text-decoration-none">
+                    <img src="${product.imgThum}" alt="러닝화 ${status.index + 1}" width="50" class="me-3">
+                    <span class="text-muted">${product.name}</span>
+                </a>
+
+                <!-- 순위 변동 아이콘 -->
+                <span class="ms-auto">
+                    <c:choose>
+                        <c:when test="${product.rankChange > 0}">
+                            <i class="bi bi-arrow-up text-success"></i> <!-- 상승 -->
+                        </c:when>
+                        <c:when test="${product.rankChange < 0}">
+                            <i class="bi bi-arrow-down text-danger"></i> <!-- 하강 -->
+                        </c:when>
+                        <c:otherwise>
+                            <i class="bi bi-dash text-muted"></i> <!-- 변동 없음 -->
+                        </c:otherwise>
+                    </c:choose>
+                </span>
+            </li>
+        </c:forEach>
+    </ul>
+</div>
+
 
             <!-- 마라톤 정보 -->
             <div class="col-md-6 mb-4">
-                <h3 class="d-flex align-items-center">
-                    <span class="ms-3">마라톤 정보</span>
-                </h3>
+                <h3>최신 마라톤 정보</h3>
                 <!-- 제목에 구분선 없이 내용에만 구분선 추가 -->
                 <table class="table" style="table-layout: fixed;">
                     <tbody>
@@ -272,7 +302,7 @@
         <div class="row">
             <!-- 커뮤니티 게시판 -->
             <div class="col-md-9 mb-4">
-                <h3>커뮤니티</h3>
+                <h3>실시간 인기 게시글</h3>
                 <table class="table">
                     <tbody>
                     <c:forEach var="board" items="${topViewedBoards}" varStatus="status">
@@ -306,28 +336,27 @@
 
 
             <!-- 사용자 랭킹 -->
-<div class="col-md-3 mb-4">
-    <h3>사용자 랭킹</h3>
-    <table class="table table-borderless user-ranking-table">
-        <thead class="table-dark">
-            <tr>
-                <th>#</th>
-                <th>닉네임</th>
-                <th>작성글수</th>
-            </tr>
-        </thead>
-        <tbody>
-            <c:forEach var="board" items="${userRankingByBoards}" varStatus="status">
-                <tr>
-                    <td>${status.index + 1}</td>
-                    <td>${board.user.nickname}</td>
-                    <td>${board.boardCnt}</td>
-                </tr>
-            </c:forEach>
-        </tbody>
-    </table>
-</div>
-
+            <div class="col-md-3 mb-4">
+                <h3>최다 작성자 랭킹</h3>
+                <table class="table table-borderless user-ranking-table">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>닉네임</th>
+                        <th>작성글수</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <c:forEach var="board" items="${userRankingByBoards}" varStatus="status">
+                        <tr>
+                            <td>${status.index + 1}</td>
+                            <td>${board.user.nickname}</td>
+                            <td>${board.boardCnt}</td>
+                        </tr>
+                    </c:forEach>
+                    </tbody>
+                </table>
+            </div>
 
 
         </div>
@@ -335,7 +364,7 @@
 
     <!-- 코스 목록 -->
     <section class="container">
-        <h3 class="text-muted">코스 목록</h3>
+        <h3>추천 코스 목록</h3>
         <div class="border-bottom my-3"></div>
         <div class="row">
             <c:forEach var="course" items="${topLikedCourses}">
@@ -346,20 +375,28 @@
                                 <!-- 이미지와 이름 사이 여백 추가 -->
                                 <img src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/images/course/${course.filename}"
                                      class="d-block w-100 mb-3" alt="SEUB2HU2 ls">
-                                <h5 class="card-title text-muted fw-bold">${course.name}</h5> <!-- 볼드체 처리 -->
                             </a>
-                            <!-- 지역과 좋아요 개수를 한 줄로, 좋아요 개수 빨간색으로 표시 -->
-                            <p class="card-text text-muted d-flex justify-content-between">
-                                <span>${course.region.si} ${course.region.gu} ${course.region.dong}</span>
-                                <span class="text-danger">${course.likeCnt}개</span>
-                            </p>
-                            <!-- 거리, 레벨, 시간 한 줄로 배치 -->
-                            <p class="card-text text-muted d-flex justify-content-between">
-                                <span>${course.distance}KM</span>
-                                <span>${course.level}단계</span>
-                                <span>${course.time}분</span>
-                            </p>
-                            <a href="/course/detail?no=${course.no}" class="btn btn-dark text-white">바로가기</a>
+
+                            <!-- 코스 이름과 레벨을 한 줄로 배치 -->
+                            <div class="d-flex justify-content-between">
+                                <h5 class="card-title text-muted fw-bold mb-0">${course.name}</h5>
+                                <span class="text-muted fw-bold">${course.level}단계</span>
+                            </div>
+
+                            <!-- 지역과 거리 정보를 한 줄로 배치 -->
+                            <div class="d-flex justify-content-between">
+                                <span class="text-muted">${course.region.si} ${course.region.gu} ${course.region.dong}</span>
+                                <span class="text-muted">${course.distance}KM</span>
+                            </div>
+
+                            <!-- 시간과 좋아요 개수를 한 줄로 배치 -->
+                            <div class="d-flex justify-content-between">
+                                <span class="text-muted fw-bold">#평균_완주_기록_${course.time}분</span>
+                                <span class="text-danger fw-bold">♥ ${course.likeCnt}</span>
+                            </div>
+
+                            <!-- 바로가기 버튼 -->
+                            <a href="/course/detail?no=${course.no}" class="btn btn-dark text-white mt-3 w-100">바로가기</a>
                         </div>
                     </div>
                 </div>
@@ -437,7 +474,7 @@
             const button = event.target.closest(".wish-add"); // 클릭된 요소가 wish-add 클래스인지 확인
             if (button) {
                 const form = button.closest(".form-cart"); // 버튼과 연결된 폼 가져오기
-                form.setAttribute("action", "/mypage/wish"); // 폼 액션 설정
+                form.setAttribute("action", "/wish"); // 폼 액션 설정
                 form.submit(); // 폼 제출
             }
         });
