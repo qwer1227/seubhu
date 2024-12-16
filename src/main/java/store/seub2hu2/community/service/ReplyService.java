@@ -22,16 +22,12 @@ public class ReplyService {
     @Autowired
     private ReplyMapper replyMapper;
 
-    @Autowired
-    private UserService userService;
-
     public Reply addNewReply(ReplyForm form
             , @AuthenticationPrincipal LoginUser loginUser) {
         Reply reply = new Reply();
         reply.setType(form.getType());
         reply.setTypeNo(form.getTypeNo());
         reply.setContent(form.getContent());
-        reply.setDeleted("N");
 
         User user = new User();
         user.setNo(loginUser.getNo());
@@ -41,8 +37,8 @@ public class ReplyService {
         replyMapper.insertReply(reply);
 
         reply.setPrevNo(reply.getNo());
-        reply.setDeleted(reply.getDeleted());
         reply.setContent(reply.getContent());
+        reply.setDeleted("N");
         reply.setUpdatedDate(null);
 
         replyMapper.updateReply(reply);
@@ -57,14 +53,13 @@ public class ReplyService {
         reply.setType(form.getType());
         reply.setTypeNo(form.getTypeNo());
         reply.setContent(form.getContent());
-        reply.setDeleted("N");
 
         User user = new User();
         user.setNo(loginUser.getNo());
         user.setNickname(loginUser.getNickname());
         reply.setUser(user);
 
-        replyMapper.insertReply(reply);
+        replyMapper.insertComment(reply);
     }
 
     public Reply getReplyDetail(int replyNo){

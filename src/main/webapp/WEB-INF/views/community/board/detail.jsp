@@ -205,7 +205,7 @@
 </div>
 
 <!-- 신고 모달 창 -->
-<%@include file="/WEB-INF/views/community/report-modal.jsp" %>
+<%@include file="../report-modal.jsp" %>
 
 <script type="text/javascript">
     let formData = new FormData();

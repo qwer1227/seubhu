@@ -109,10 +109,8 @@ public class BoardController {
             , Model model) {
         Board board = boardService.getBoardDetail(boardNo);
         List<Reply> replyList = replyService.getReplies(boardNo);
-
         board.setReply(replyList);
         int replyCnt = replyService.getReplyCnt(boardNo);
-
 
         Map<String, Object> condition = new HashMap<>();
         ListDto<Board> dto = boardService.getBoardsTop(condition);
@@ -128,6 +126,9 @@ public class BoardController {
             for (Reply reply : replyList) {
                 int replyResult = replyService.getCheckLike(reply.getNo(), "boardReply", loginUser);
                 reply.setReplyLiked(replyResult);
+
+                Reply prev = replyService.getReplyDetail(reply.getNo());
+                reply.setPrevUser(prev.getPrevUser());
             }
         }
 
@@ -229,7 +230,6 @@ public class BoardController {
         }
     }
 
-
     @GetMapping("/login")
     public String login() {
 
@@ -240,6 +240,7 @@ public class BoardController {
     @PreAuthorize("isAuthenticated()")
     public String addReply(ReplyForm form
             , @AuthenticationPrincipal LoginUser loginUser) {
+
         replyService.addNewReply(form, loginUser);
         return "redirect:detail?no=" + form.getTypeNo();
     }

@@ -28,12 +28,12 @@
 		<!-- 삭제된 댓글인 경우 -->
 		<div class="${reply.no ne reply.prevNo ? 'ps-5' : ''}">
 			<div class="row" style="text-align: start">
-				<div class="col mb-3 d-flex justify-content-between" style="text-align: start">
+				<div class="col mb-3 d-flex justify-content-between" style="text-align: start; margin-left: 15px">
 					<!-- 대댓글인 경우, 화살표 아이콘 추가 -->
 					<c:if test="${reply.no ne reply.prevNo}">
-						<i class="bi bi-arrow-return-right"></i>
+						<i class="bi bi-arrow-return-right d-flex align-items-center"></i>
 					</c:if>
-					<i class="bi bi-emoji-dizzy" style="font-size: 38px"></i>
+					<i class="bi bi-emoji-dizzy" style="font-size: 38px; margin-left: 5px"></i>
 					<div class="col d-flex align-items-center" style="margin-left: 30px">
 						<strong>삭제된 댓글입니다.</strong>
 					</div>
@@ -78,7 +78,7 @@
 						<button class="btn btn-outline-primary btn-sm" id="replyLikeCnt"
 										onclick="replyLikeButton('${reply.typeNo}', ${reply.no})">
 							<i id="icon-thumbs-${reply.no}"
-								 class="bi ${reply.replyLiked == '1' ? 'bi-hand-thumbs-up-fill' : 'bi-hand-thumbs-up'}"></i>${reply.replyLikeCnt}
+								 class="bi ${reply.replyLiked == '1' ? 'bi-hand-thumbs-up-fill' : 'bi-hand-thumbs-up'}"></i>
 						</button>
 					</c:if>
 					<c:if test="${loginUser.no eq reply.user.no}">

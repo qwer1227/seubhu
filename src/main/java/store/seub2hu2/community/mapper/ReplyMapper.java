@@ -15,6 +15,7 @@ import java.util.List;
 public interface ReplyMapper {
 
     void insertReply(@Param("reply") Reply reply);
+    void insertComment(@Param("reply") Reply reply);
     List<Reply> getRepliesByTypeNo(@Param("no") int typeNo);
     Reply getReplyByReplyNo(@Param("no") int replyNo);
     int getReplyCntByTypeNo(@Param("no") int typeNo);

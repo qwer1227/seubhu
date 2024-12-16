@@ -18,4 +18,5 @@ public class ReplyForm {
     private int typeNo;     // 게시글 번호
     private String content;
     private int userNo;
+    private int crewNo;
 }

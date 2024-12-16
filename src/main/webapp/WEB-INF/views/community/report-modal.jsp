@@ -13,6 +13,7 @@
       <div class="modal-body ">
         <form method="post">
           <input type="hidden" name="no" value="">
+          <input type="hidden" name="cno" value="">
           <input type="hidden" name="type" value="">
           <div class="form-check">
             <input class="form-check-input" type="radio" value="스팸홍보/도배글입니다." name="reason" checked>

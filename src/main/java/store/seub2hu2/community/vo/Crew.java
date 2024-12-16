@@ -34,6 +34,7 @@ public class Crew {
     private int viewCnt;
     private List<Reply> reply;
     private int replyCnt;
+    private String reported;
 
     public String getType(){
         return schedule.substring(0,2);

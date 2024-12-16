@@ -18,6 +18,7 @@ public class Reply {
     private int prevNo;
     private String type; // board, crew, course
     private int typeNo;  // board의 게시글 번호, crew의 게시글 번호, course의 게시글 번호
+    private int crewNo;
     private String content;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date createdDate;
@@ -30,5 +31,4 @@ public class Reply {
     private int replyLiked; // 댓글 좋아요 클릭 여부
     private String deleted;
     private String image;
-    private int crewNo;
 }

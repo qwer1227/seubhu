@@ -4,12 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import store.seub2hu2.community.dto.CrewForm;
 import store.seub2hu2.community.exception.CommunityException;
 import store.seub2hu2.community.mapper.CrewMapper;
 import store.seub2hu2.community.mapper.CrewReplyMapper;
+import store.seub2hu2.community.mapper.ReplyMapper;
 import store.seub2hu2.community.mapper.UploadMapper;
 import store.seub2hu2.community.vo.Crew;
 import store.seub2hu2.community.vo.CrewMember;
@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-@Transactional
 public class CrewService {
 
     @Value("${upload.directory.crew.images}")
@@ -50,7 +49,8 @@ public class CrewService {
     private UploadMapper uploadMapper;
 
     @Autowired
-    private CrewReplyMapper crewReplyMapper;
+    private ReplyMapper replyMapper;
+
 
     public Crew addNewCrew(CrewForm form
             , @AuthenticationPrincipal LoginUser loginUser) {
@@ -159,22 +159,22 @@ public class CrewService {
         Crew crew = crewMapper.getCrewDetailByNo(crewNo);
         UploadFile uploadThumbnail = uploadMapper.getThumbnailByCrewNo(crewNo);
         UploadFile uploadFile = uploadMapper.getFileByCrewNo(crewNo);
-        List<Reply> reply = crewReplyMapper.getRepliesByCrewNo(crewNo);
+        List<Reply> reply = replyMapper.getRepliesByTypeNo(crewNo);
         List<CrewMember> member = crewMapper.getCrewMembers(crewNo);
 
         if (crew == null) {
             throw new CommunityException("존재하지 않는 게시글입니다.");
         }
 
-        crew.setThumbnail(uploadThumbnail);
-        crew.setUploadFile(uploadFile);
-        crew.setReply(reply);
-        crew.setMember(member);
-
         User user = new User();
         user.setNo(crew.getUser().getNo());
         user.setNickname(crew.getUser().getNickname());
         crew.setUser(user);
+
+        crew.setThumbnail(uploadThumbnail);
+        crew.setUploadFile(uploadFile);
+        crew.setReply(reply);
+        crew.setMember(member);
 
         return crew;
     }
@@ -185,7 +185,6 @@ public class CrewService {
         crewMapper.updateCrewCnt(crew);
     }
 
-    @Transactional
     public Crew updateCrew(CrewForm form) {
         Crew savedCrew = crewMapper.getCrewDetailByNo(form.getNo());
         savedCrew.setNo(form.getNo());

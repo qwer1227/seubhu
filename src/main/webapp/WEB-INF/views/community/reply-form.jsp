@@ -19,8 +19,8 @@
           </div>
         </c:when>
         <c:otherwise>
-          <div class="form-group col-11">
-            <textarea name="content" class="form-control" rows="3" placeholder="댓글을 작성하세요."></textarea>
+          <div class="form-group col-11 border rounded">
+            <textarea name="content" class="form-control auto-resize" rows="3" placeholder="댓글을 작성하세요."></textarea>
           </div>
           <div class="col" style="text-align: end">
             <button type="button" id="add" class="btn btn-success" style="width: 85px" onclick="submitReply()">등록</button>
@@ -41,6 +41,7 @@
   
   /* 댓글 제출(/community/add-reply로 데이터 전달) */
   async function submitReply() {
+    let type = document.querySelector("input[name=type]").value;
     let boardNo = document.querySelector("input[name=typeNo]").value;
     let content = document.querySelector("textarea[name=content]").value.trim();
     let userNo = document.querySelector("input[name=userNo]").value;
@@ -51,6 +52,7 @@
     }
     
     let data = {
+      type,
       boardNo,
       content,
       userNo
@@ -60,7 +62,7 @@
     let jsonText = JSON.stringify(data);
     
     // POST 방식으로 객체를 JSON 형식의 데이터를 서버로 보내기
-    let response = await fetch("/community/add-reply", {
+    let response = await fetch("/community/board/add-reply", {
       // 요청방식을 지정한다.
       method: "POST",
       // 요청메세지의 바디부에 포함된 컨텐츠의 형식을 지정한다.

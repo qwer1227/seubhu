@@ -5,6 +5,26 @@
   <!-- void insertReply(@Param("reply") Reply reply); -->
   <insert id="insertReply">
     insert into REPLIES
+    (reply_type
+    , reply_type_no
+    , reply_content
+    , user_no
+    )
+    values
+    (
+    #{reply.type}
+    , #{reply.typeNo}
+    , #{reply.content}
+    , #{reply.user.no}
+    )
+    <selectKey resultType="int" keyProperty="reply.no" keyColumn="reply_no" order="AFTER">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+  </insert>
+
+  <!-- void insertComment(@Param("reply") Reply reply); -->
+  <insert id="insertComment">
+    insert into REPLIES
     (
     prev_reply_no
     , reply_type
@@ -20,9 +40,6 @@
     , #{reply.content}
     , #{reply.user.no}
     )
-    <selectKey resultType="int" keyProperty="reply.no" keyColumn="reply_no" order="AFTER">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
   </insert>
 
   <!-- List<Reply> getRepliesByTypeNo(@Param("no") int typeNo); -->
