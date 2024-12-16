@@ -39,7 +39,7 @@
         <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">코스</h6>
-                <a class="collapse-item" href="course">코스 전체</a>
+                <a class="collapse-item" href="course">코스 전체&상세&수정</a>
                 <a class="collapse-item" href="course-register-form">코스 등록하기</a>
             </div>
         </div>
@@ -56,7 +56,6 @@
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">회원</h6>
                 <a class="collapse-item" href="user">회원 전체</a>
-                <a class="collapse-item" href="blacklist">블랙리스트</a>
             </div>
         </div>
     </li>
@@ -90,7 +89,7 @@
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">커뮤니티</h6>
                 <a class="collapse-item" href="">커뮤니티 바로가기</a>
-                <a class="collapse-item" href="">신고글 보기</a>
+                <a class="collapse-item" href="report">신고글 보기</a>
                 <a class="collapse-item" href="qna">1:1 문의사항</a>
             </div>
         </div>

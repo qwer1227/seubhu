@@ -60,7 +60,7 @@
 
               <div class="row col-3 pt-3 align-items-center">
                 <label for="dateInput" class="col-auto col-form-label">날짜</label>
-                <div class="col">
+                <div class="col-8">
                   <%
                     // 현재 날짜 가져오기
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -76,14 +76,14 @@
                 </div>
               </div>
 
-            <div class="col-2">
+            <div class="col-1">
               <select class="form-control" name="opt">
                 <option value="name">강사명</option>
                 <option value="lessonname">레슨명</option>
                 <option value="course">과목</option>
               </select>
             </div>
-            <div class="col-4">
+            <div class="col-3">
               <!-- Search -->
               <%@include file="/WEB-INF/views/admincommon/searchbar.jsp" %>
 

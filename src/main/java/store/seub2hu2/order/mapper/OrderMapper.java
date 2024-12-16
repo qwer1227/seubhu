@@ -20,7 +20,7 @@ public interface OrderMapper {
 
 
     // 장바구니에서 넘어간 상품들 조회
-    List<CartItemDto> getOrderItemBySizeNo(@Param("sizeNoList") List<Integer> sizeNoList);
+    List<CartItemDto> getOrderItemBySizeNo(@Param("sizeNoList") List<Integer> sizeNoList, @Param("userNo") int userNo);
 
     List<OrderResponse> getOrders(@Param("userNo") int userNo);
 

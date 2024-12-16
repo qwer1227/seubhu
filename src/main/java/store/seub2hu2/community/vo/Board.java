@@ -29,6 +29,7 @@ public class Board {
 //    private Hashtag hashtag;
     private List<Reply> reply;
     private int replyCnt;
+    private int boardCnt;
 
     public String getOriginalFileName() {
         if(uploadFile == null){

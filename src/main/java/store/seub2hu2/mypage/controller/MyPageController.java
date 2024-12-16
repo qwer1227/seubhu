@@ -17,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 import store.seub2hu2.admin.dto.RequestParamsDto;
 import store.seub2hu2.cart.dto.CartItemDto;
 import store.seub2hu2.cart.dto.CartRegisterForm;
+import store.seub2hu2.cart.vo.Cart;
 import store.seub2hu2.community.dto.BoardForm;
 import store.seub2hu2.community.dto.ReplyForm;
 import store.seub2hu2.community.dto.ReportForm;
@@ -26,18 +27,20 @@ import store.seub2hu2.community.vo.Crew;
 import store.seub2hu2.community.vo.Reply;
 import store.seub2hu2.lesson.view.FileDownloadView;
 import store.seub2hu2.mypage.dto.*;
-import store.seub2hu2.mypage.service.CartService;
-import store.seub2hu2.mypage.service.PostService;
-import store.seub2hu2.mypage.service.QnaService;
-import store.seub2hu2.mypage.service.WorkoutService;
+import store.seub2hu2.mypage.service.*;
 import store.seub2hu2.mypage.vo.Post;
 import store.seub2hu2.order.service.OrderService;
 import store.seub2hu2.order.vo.Order;
+import store.seub2hu2.product.vo.Color;
+import store.seub2hu2.product.vo.Product;
+import store.seub2hu2.product.vo.Size;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.service.UserService;
 import store.seub2hu2.user.vo.Addr;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.ListDto;
+import store.seub2hu2.wish.dto.WishItemDto;
+import store.seub2hu2.wish.vo.WishList;
 
 import java.io.File;
 import java.net.URLEncoder;
@@ -88,8 +91,12 @@ public class MyPageController {
 
     @Autowired
     private FileDownloadView fileDownloadView;
+
     @Autowired
     private CrewService crewService;
+
+    @Autowired
+    private WishListService wishListService;
 
     // URL localhost/mypage 입력 시 유저의 No를 활용해 그 유저의 페이지를 보여줌
     @GetMapping("")
@@ -480,17 +487,104 @@ public class MyPageController {
         return "redirect:cart";
     }
 
+    @PostMapping("/add-to-cart")
+    @ResponseBody
+    public String addToCart(@RequestParam("wishNo") int wishNo
+                            ,@RequestParam("prodNo") int prodNo
+                            ,@RequestParam("colorNo") int colorNo
+                            ,@RequestParam("sizeNo") int sizeNo
+                            ,@AuthenticationPrincipal LoginUser loginUser) {
+
+        // 로그인된 사용자의 정보를 가져오기
+        User user = User.builder().no(loginUser.getNo()).build();
+
+        // 위시리스트에서 해당 상품을 찾고, 장바구니에 추가
+        Cart cart = new Cart();
+        cart.setUser(user);
+
+        // Product, Color, Size 세팅
+        Product product = new Product();
+        product.setNo(prodNo);
+        cart.setProduct(product);
+
+        Color color = new Color();
+        color.setNo(colorNo);
+        cart.setColor(color);
+
+        Size size = new Size();
+        size.setNo(sizeNo);
+        cart.setSize(size);
+
+        cartService.addToCart(cart);
+
+        wishListService.deleteWishListItemByNo(wishNo);
+
+        return "redirect:/cart";
+    }
+
     // 위시리스트 화면으로 간다.
     @GetMapping("/wish")
-    public String wish() {
+    public String wish(@AuthenticationPrincipal LoginUser loginUser
+                        , Model model) {
+
+        User user = User.builder().no(loginUser.getNo()).build();
+
+        List<WishItemDto> wishItemDtoList = wishListService.getWishListByUserNo(user.getNo());
+
+        model.addAttribute("wishItemDtoList",wishItemDtoList);
 
         return "mypage/wish";
     }
 
+    @PostMapping("/delete-wish")
+    @ResponseBody
+    public String deleteWish(@RequestParam("wishNo") int wishNo) {
+
+        // 삭제
+        wishListService.deleteWishListItemByNo(wishNo);
+        return "삭제 성공";
+    }
+
     // Post 방식으로
     @PostMapping("/wish")
-    public String addWish() {
-        return "mypage/wish";
+    public String addWish(@RequestParam("sizeNo") List<Integer> sizeNo
+                            ,@RequestParam("prodNo") List<Integer> prodNo
+                            ,@RequestParam("colorNo") List<Integer> colorNo
+                            ,@AuthenticationPrincipal LoginUser loginUser
+                            , Model model){
+
+        List<WishList> wishLists = new ArrayList<>();
+
+        for (int i = 0; i < sizeNo.size(); i++) {
+            WishList wish = new WishList();
+
+            // Product 설정
+            Product product = new Product();
+            product.setNo(prodNo.get(i));
+            wish.setProduct(product);
+
+            // Color 설정
+            Color color = new Color();
+            color.setNo(colorNo.get(i));
+            wish.setColor(color);
+
+            // Size 설정
+            Size size = new Size();
+            size.setNo(sizeNo.get(i));
+            wish.setSize(size);
+
+            // User 설정
+            User user = User.builder().no(loginUser.getNo()).build();
+            wish.setUser(user);
+
+            // WishList에 추가
+            wishLists.add(wish);
+        }
+
+        // Service로 데이터 전달
+        wishListService.insertWishItems(wishLists);
+
+        return "redirect:wish";
     }
 
     // 주문내역 화면으로 간다.
@@ -532,10 +626,10 @@ public class MyPageController {
     @PostMapping("/order")
     public String addOrder(@RequestParam("sizeNo") List<Integer> sizeNoList
             ,@RequestParam("stock") List<Integer> stock
+            , @AuthenticationPrincipal LoginUser loginUser
             ,Model model) {
 
-
-        List<CartItemDto> orderItems = orderService.getOrderItemBySizeNo(sizeNoList, stock);
+        List<CartItemDto> orderItems = orderService.getOrderItemBySizeNo(sizeNoList, stock, loginUser.getNo());
         model.addAttribute("orderItems", orderItems);
 
         return "mypage/order";

@@ -36,8 +36,7 @@
         <div class="p-1 d-flex justify-content-between align-items-center mb-4">
             <!-- 좌측: 일괄 삭제 및 읽음 처리 버튼 -->
             <div class="d-flex">
-                <button type="button" class="btn btn-dark me-2" onclick="deleteSelectedMessages()">일괄 삭제</button>
-                <button type="button" class="btn btn-dark" onclick="markAllAsRead()">일괄 읽음</button>
+                <button type="button" class="btn btn-dark me-2" onclick="deleteMessage()">선택 삭제</button>
             </div>
 
             <!-- 우측: 정렬 옵션 -->
@@ -76,9 +75,9 @@
                     <col width="5%">
                     <col width="10%">
                     <col width="*%">
+                    <col width="10%">
                     <col width="5%">
-                    <col width="5%">
-                    <col width="5%">
+                    <col width="10%">
                     <col width="5%">
                 </colgroup>
                 <thead class="text-center">
@@ -187,67 +186,43 @@
 </div>
 
 <script>
-    function deleteMultiple() {
-        const selectedMessages = Array.from(document.querySelectorAll('input[name="messageNo"]:checked')).map(checkbox => checkbox.value);
-        if (selectedMessages.length === 0) {
-            alert("삭제할 메시지를 선택해주세요.");
-            return;
-        }
-
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '/message/deleteMultiple';
-
-        selectedMessages.forEach(messageNo => {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'messageNo';
-            input.value = messageNo;
-            form.appendChild(input);
-        });
-
-        document.body.appendChild(form);
-        form.submit();
+        function deleteMessage() {
+        let form = document.querySelector("#form-search");
+        form.setAttribute("action", "delete"); // 액션을 deleteMessage로 변경
+        form.submit(); // 폼 제출
     }
 
-    function markMultipleAsRead() {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '/message/markMultipleAsRead';
-        document.body.appendChild(form);
-        form.submit();
-    }
 
-    function toggleSelectAll(source) {
+        function toggleSelectAll(source) {
         const checkboxes = document.querySelectorAll('input[name="messageNo"]');
         checkboxes.forEach(checkbox => checkbox.checked = source.checked);
     }
 
-    // form 태그를 가져온다.
-    let form = document.querySelector("#form-search");
-    let pageInput = document.querySelector("input[name=page]");
+        // form 태그를 가져온다.
+        let form = document.querySelector("#form-search");
+        let pageInput = document.querySelector("input[name=page]");
 
-    // 검색 버튼을 클릭했을 때, 요청 파라미터 정보를 제출한다.
-    function searchKeyword() {
+        // 검색 버튼을 클릭했을 때, 요청 파라미터 정보를 제출한다.
+        function searchKeyword() {
         pageInput.value = 1;
         form.submit();
     }
 
-    // 페이지 번호 링크를 클릭했을 때 변화
-    function changePage(page, event) {
+        // 페이지 번호 링크를 클릭했을 때 변화
+        function changePage(page, event) {
         event.preventDefault();
         pageInput.value = page;
         form.submit();
     }
 
-    // 정렬 방식 변경 시 호출
-    function changeSort() {
+        // 정렬 방식 변경 시 호출
+        function changeSort() {
         pageInput.value = 1; // 정렬 변경 시 페이지를 1로 초기화
         form.submit(); // 폼 제출
     }
 
-    // 페이지당 행 수 변경 시 호출
-    function changeRows() {
+        // 페이지당 행 수 변경 시 호출
+        function changeRows() {
         pageInput.value = 1; // 행 수 변경 시 페이지를 1로 초기화
         form.submit(); // 폼 제출
     }

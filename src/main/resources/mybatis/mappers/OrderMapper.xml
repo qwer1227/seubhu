@@ -3,7 +3,7 @@
 <mapper namespace="store.seub2hu2.order.mapper.OrderMapper">
 
     <!--
-        List<OrderItem> insertOrderItems(@Param("orderItems") OrderItem orderItem);
+        void insertOrderItems(@Param("orderItems") List<OrderItem> orderItems);
     -->
     <insert id="insertOrderItems">
         INSERT INTO ORDER_PRODUCTS (
@@ -74,28 +74,32 @@
     -->
     <select id="getOrderItemBySizeNo" resultType="store.seub2hu2.cart.dto.CartItemDto">
         SELECT
-            P.PROD_NO AS "product.no"
-            ,P.PROD_NAME AS "product.name"
-             , P.PROD_PRICE AS "product.price"
-             , PC.COLOR_NAME AS "COLOR.NAME"
-             , PS.SIZE_NO  AS "SIZE.NO"
-             , PS.PROD_SIZE "SIZE.SIZE"
-             , PI.IMG_URL AS imgThum
-             , C.CART_NO AS no
+        P.PROD_NO AS "product.no"
+        ,P.PROD_NAME AS "product.name"
+        , P.PROD_PRICE AS "product.price"
+        , PC.COLOR_NAME AS "COLOR.NAME"
+        , PS.SIZE_NO  AS "SIZE.NO"
+        , PS.PROD_SIZE "SIZE.SIZE"
+        , PI.IMG_URL AS imgThum
+        , C.CART_NO AS no
+        , U.USER_NO AS "user.no"
         FROM PRODUCTS P
-                 JOIN PROD_COLORS PC
-                      ON P.PROD_NO = PC.PROD_NO
-                 JOIN PROD_SIZES PS
-                      ON PC.COLOR_NO = PS.COLOR_NO
-                 JOIN PROD_IMGS PI
-                      ON PC.COLOR_NO = PI.COLOR_NO
-                 JOIN CARTS C
-                      ON P.PROD_NO = C.PROD_NO
-        WHERE PI.IMG_THUM = 'Y'
-          AND PS.SIZE_NO IN
-              <foreach collection="sizeNoList" item="sizeNo" open="(" separator="," close=")">
-                #{sizeNo}
-              </foreach>
+        JOIN PROD_COLORS PC
+        ON P.PROD_NO = PC.PROD_NO
+        JOIN PROD_SIZES PS
+        ON PC.COLOR_NO = PS.COLOR_NO
+        JOIN PROD_IMGS PI
+        ON PC.COLOR_NO = PI.COLOR_NO
+        JOIN CARTS C
+        ON P.PROD_NO = C.PROD_NO
+        JOIN USERS U
+        ON C.USER_NO = U.USER_NO
+        WHERE U.USER_NO = #{userNo}
+        AND PI.IMG_THUM = 'Y'
+        AND PS.SIZE_NO IN
+        <foreach collection="sizeNoList" item="sizeNo" open="(" separator="," close=")">
+            #{sizeNo}
+        </foreach>
     </select>
 
     <resultMap id="responseDTOResultMap" type="store.seub2hu2.mypage.dto.ResponseDTO">
