@@ -237,8 +237,8 @@
                 <form method="post" action="/addRecord" enctype="multipart/form-data">
                     <input type="hidden" name="courseNo"/>
                     <div class="form-group">
-                        <label class="form-label">2. 완주 날짜(년, 월, 일, 시, 분)</label>
-                        <div><input type="datetime-local" name="finishedDate"></div>
+                        <label class="form-label">2. 완주 날짜</label>
+                        <div><input type="datetime-local" name="finishedDate" id="dateLocal"></div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">3. 완주 시간</label>
@@ -297,9 +297,17 @@
 
     // 완주 기록 등록 버튼을 클릭하면, 완주 기록 등록 창이 열린다.
     function openAddRecordFormModal(courseNo, name) {
+        // 코스 번호와 코스 이름을 완주 기록 등록 Modal창에 저장한다.
         document.querySelector("input[name=courseNo]").value = courseNo;
         document.querySelector("#name").value = name;
 
+        // 완주 날짜를 오늘 날짜까지 제한한다.
+        let now_utc = Date.now()
+        let timeOff = new Date().getTimezoneOffset()*60000;
+        let today = new Date(now_utc-timeOff).toISOString().substring(0, 16);
+        document.getElementById("dateLocal").setAttribute("max", today);
+
+        // 완주 기록 등록 창이 열린다.
         registerModal.show();
     }
 
@@ -342,9 +350,10 @@
             body: formData
         });
 
-        // 5. 요청 처리 성공 확인 후, 알림창을 표시한다.
+        // 5. 요청 처리 성공 확인 후, 알림창을 표시하고 modal창을 숨긴다.
         if (response.ok) {
             alert("코스 완주 기록 입력이 성공했습니다!");
+            registerModal.hide();
         }
     }
 
