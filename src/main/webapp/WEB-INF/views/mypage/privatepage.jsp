@@ -64,6 +64,9 @@
             <h3><a href="/mypage/cart">장바구니</a></h3>
         </div>
         <div class="item">
+            <h3><a href="/mypage/wish">위시리스트</a></h3>
+        </div>
+        <div class="item">
             <h3><a href="/mypage/orderhistory">주문내역</a></h3>
         </div>
         <div class="item">
