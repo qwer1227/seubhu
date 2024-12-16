@@ -308,25 +308,26 @@
             <!-- 사용자 랭킹 -->
 <div class="col-md-3 mb-4">
     <h3>사용자 랭킹</h3>
-    <table class="table" style="border-collapse: collapse; background-color: #f8f9fa;">
-        <thead>
+    <table class="table table-borderless user-ranking-table">
+        <thead class="table-dark">
             <tr>
-                <th style="background-color: #f2f2f2; border: none;">#</th>
-                <th style="background-color: #f2f2f2; border: none;">닉네임</th>
-                <th style="background-color: #f2f2f2; border: none;">작성글수</th>
+                <th>#</th>
+                <th>닉네임</th>
+                <th>작성글수</th>
             </tr>
         </thead>
         <tbody>
             <c:forEach var="board" items="${userRankingByBoards}" varStatus="status">
-                <tr style="background-color: #f8f9fa; border: none;">
-                    <td style="border: none; background-color: #f8f9fa;">${status.index + 1}</td>
-                    <td style="border: none; background-color: #f8f9fa;">${board.user.nickname}</td>
-                    <td style="border: none; background-color: #f8f9fa;">${board.boardCnt}</td>
+                <tr>
+                    <td>${status.index + 1}</td>
+                    <td>${board.user.nickname}</td>
+                    <td>${board.boardCnt}</td>
                 </tr>
             </c:forEach>
         </tbody>
     </table>
 </div>
+
 
 
         </div>
