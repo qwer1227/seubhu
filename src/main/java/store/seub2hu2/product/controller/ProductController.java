@@ -8,12 +8,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import store.seub2hu2.course.service.ReviewService;
 import store.seub2hu2.product.dto.*;
 import store.seub2hu2.product.mapper.ProdReviewMapper;
+import store.seub2hu2.product.service.ProdReviewService;
 import store.seub2hu2.product.service.ProductService;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.service.UserService;
@@ -36,8 +35,9 @@ public class ProductController {
     @Autowired
     private UserService userService;
 
+
     @Autowired
-    private ProdReviewMapper prodReviewMapper;
+    private ProdReviewService prodReviewService;
 
 
     //  상품 전체 페이지 이동
@@ -98,6 +98,9 @@ public class ProductController {
         ProdImagesDto prodImagesDto = productService.getProdImagesByColorNo(colorNo);
         model.addAttribute("prodImagesDto", prodImagesDto);
 
+        List<ProdReviewDto> prodReviewDto =prodReviewService.getProdReviews(no);
+        model.addAttribute("prodReviewDto", prodReviewDto);
+
 
         return "product/detail";
     }
@@ -110,10 +113,11 @@ public class ProductController {
 
 
     @PostMapping("/addProdReview")
-    public ResponseEntity<?> addReview(ProdReviewForm form) {
-        System.out.println("------------- 리뷰등록");
-        System.out.println(form);
+    public ResponseEntity<?> addReview(@ModelAttribute ProdReviewForm form
+                                       ,@AuthenticationPrincipal LoginUser loginUser
+                                        ,Model model) {
 
-        return ResponseEntity.ok(null);
+        ProdReviewDto dto = prodReviewService.addProdReview(form, loginUser.getNo());
+        return ResponseEntity.ok(dto);
     }
 }

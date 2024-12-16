@@ -457,7 +457,7 @@
             </div>
         </div>
     </div>
-                    </div>
+</div>
                 `;
 
                 // 새 리뷰를 #wrapper-reviews에 추가
@@ -469,7 +469,6 @@
             }
         });
     });
-
 
 </script>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>

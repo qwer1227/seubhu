@@ -43,6 +43,13 @@ public class ProdReviewService {
         ProdReviewImg img = new ProdReviewImg();
         img.setReviewNo(prodReview.getNo());
 
+        dto.setReviewNo(prodReview.getNo());
+        dto.setReviewTitle(prodReview.getTitle());
+        dto.setReviewContent(prodReview.getContent());
+        dto.setRating(prodReview.getRating());
+        dto.setProdNo(prodReview.getProdNo());
+
+
         return dto;
     }
 

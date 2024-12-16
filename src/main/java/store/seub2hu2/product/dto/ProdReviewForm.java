@@ -12,7 +12,6 @@ import java.util.List;
 @Getter
 public class ProdReviewForm {
 
-    private int reviewNo;
     private int prodNo;
     private int colorNo;
     private int rating;
