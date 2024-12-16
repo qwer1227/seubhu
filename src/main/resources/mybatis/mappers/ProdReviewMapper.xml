@@ -9,7 +9,9 @@
         INSERT INTO PROD_REVIEWS
         (PROD_NO, USER_NO, REVIEW_TITLE, REVIEW_CONTENT, REVIEW_RATING)
         VALUES
-        (#{prodNo}, #{userNo}, #{title}, #{content}, #{rating})
+        (#{review.prodNo}, #{review.userNo}, #{review.title}, #{review.content}, #{review.rating})
+
+
         <selectKey resultType="int" keyProperty="review.no" keyColumn="review_no" order="AFTER">
             SELECT LAST_INSERT_ID()
         </selectKey>

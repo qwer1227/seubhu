@@ -1,12 +1,15 @@
 package store.seub2hu2.product.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import store.seub2hu2.product.dto.*;
@@ -78,11 +81,9 @@ public class ProductController {
                          @AuthenticationPrincipal LoginUser loginUser,
                          Model model) {
 
-        model.addAttribute("loginUser", loginUser);
-
-
 
         User user = userService.findbyUserId(loginUser.getId());
+
         model.addAttribute("user", user);
 
         ProdDetailDto prodDetailDto = productService.getProductByNo(no);
@@ -98,9 +99,6 @@ public class ProductController {
         model.addAttribute("prodImagesDto", prodImagesDto);
 
 
-        List<ProdReviewDto> prodReviewDto = prodReviewMapper.prodReviewDto(no);
-        model.addAttribute("prodReviewDto", prodReviewDto);
-
         return "product/detail";
     }
 
@@ -111,4 +109,11 @@ public class ProductController {
     }
 
 
+    @PostMapping("/addProdReview")
+    public ResponseEntity<?> addReview(ProdReviewForm form) {
+        System.out.println("------------- 리뷰등록");
+        System.out.println(form);
+
+        return ResponseEntity.ok(null);
+    }
 }

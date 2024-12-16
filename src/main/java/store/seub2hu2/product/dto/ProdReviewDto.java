@@ -30,9 +30,6 @@ public class ProdReviewDto {
     private int colorNo;
     private String colorName;
 
-    // 사이즈
-    private int sizeNo;
-    private String sizeName;
 
     private int userNo;
     private String userName;

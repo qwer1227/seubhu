@@ -154,9 +154,10 @@
     <hr class="bg-primary border border-1">
     <div class="comment-form mb-4">
         <h5 style="text-align: start; font-weight: bold;">리뷰 작성</h5>
-        <form method="post" action="/reviews/review-write" enctype="multipart/form-data">
+        <form id="form-review"  method="post" action="addProdReview" enctype="multipart/form-data">
             <input type="hidden" name="prodNo" value="${prodDetailDto.no}">
             <input type="hidden" name="userNo" value="${user.no}">
+            <input type="hidden" name="colorNo" value="${prodImagesDto.color.no}">
 
             <!-- 별점과 댓글 입력 -->
             <div class="row mb-3">
@@ -175,104 +176,31 @@
 
                 <!-- 댓글 입력 -->
                 <div class="col-10">
+                    <input type="text" name="title" class="form-control form-control-lg mb-2" placeholder="리뷰 제목을 작성하세요"
+                           style="border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); padding-left: 15px; font-size: 1rem; color: #333;">
                     <textarea name="content" id="commentContent" class="form-control" rows="3" placeholder="댓글을 작성하세요." style="resize: none;"></textarea>
+                </div>
+
+                <!--첨부 파일-->
+                <div class="col-2"></div>
+                <div class="col-10">
+                    <input type="file" name="reviewFiles" id="reviewFile" class="form-control" multiple>
+                    <small class="form-text text-muted">이미지 파일을 선택해주세요 (여러 개 선택 가능).</small>
                 </div>
             </div>
 
             <!-- 버튼 영역 -->
             <div class="row">
                 <div class="col text-end">
-                    <!-- 이미지 업로드 버튼과 등록 버튼을 나란히 정렬 -->
-                    <button type="button" class="btn btn-primary me-2" id="openUploadModalBtn">이미지 업로드</button>
-                    <input type="file" name="files" accept="image/*" multiple>
-                    <button type="submit" class="btn btn-success" onclick="submitReply()">등록</button>
+                    <button type="submit" class="btn btn-success" >등록</button>
                 </div>
             </div>
         </form>
     </div>
-
-    <!-- 이미지 업로드 모달 -->
-    <div class="modal fade" id="uploadImageModal" tabindex="-1" aria-labelledby="uploadImageModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="uploadImageModalLabel">이미지 업로드</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="imageUploadForm">
-                        <div class="mb-3">
-                            <label for="imageFile" class="form-label">이미지 선택</label>
-                            <input class="form-control" type="file" id="imageFile" accept="image/*">
-                        </div>
-                        <div id="imagePreview" class="mb-3">
-                            <!-- 업로드된 이미지 미리보기 -->
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                    <button type="button" class="btn btn-primary" id="addImageToComment">추가</button>
-                </div>
-            </div>
-        </div>
-    </div>
     <hr class="bg-primary border border-1">
 
+    <div id="wrapper-reviews" class="row comments rounded py-3" style="background-color: #f2f2f2">
 
-    <div class="row comments rounded py-3" style="background-color: #f2f2f2">
-        <c:choose>
-            <c:when test="${empty prodReviewDto}">
-                <div class="text-center py-4">
-                    <p style="font-size: 1.2rem; color: #555;">아직 등록된 리뷰가 없습니다. 첫 번째 리뷰를 작성해보세요!</p>
-                </div>
-            </c:when>
-
-            <c:otherwise>
-                <c:forEach var="review" items="${prodReviewDto}">
-                    <div class="comment">
-                            <div class="row align-items-center">
-                                <div class="col-3" style="text-align: start;">
-                                    <img src="https://github.com/mdo.png" alt="프로필 이미지" style="width: 50px; height: 50px;" class="rounded-circle mb-2">
-
-
-                                    <strong>${review.userNickname}</strong><br/>
-
-
-                                    <span style="font-size: 0.9rem; color: #555;">${review.reviewDate}</span><br/>
-
-
-                                    <span style="font-size: 0.9rem; color: #555;">${review.prodName} [${review.colorName}]</span>
-
-
-                                    <div class="star-rating" style="font-size: 1.2rem; color: gold;">
-                                        &#9733;&#9733;&#9733;&#9733;&#9734;
-                                    </div>
-                                    <div class="mt-1">
-                                        <button class="btn btn-outline-secondary">답글</button>
-                                    </div>
-                                </div>
-
-
-                                <div class="col">
-                                    <div class="mt-2">
-                                        <c:forEach var="img" items="${review.prodReviewImgs}">
-                                            <img src="${img.imgName}" alt="리뷰 이미지" class="img-fluid" style="max-height: 100px; object-fit: cover;">
-                                        </c:forEach>
-                                    </div>
-
-                                    <p style="margin: 3px;">${review.reviewContent}</p>
-                                </div>
-
-                                <div class="col-2 text-end">
-                                    <button type="button" class="btn btn-warning btn-sm">수정</button>
-                                    <button type="button" class="btn btn-danger btn-sm">삭제</button>
-                                </div>
-                            </div>
-                    </div>
-                </c:forEach>
-            </c:otherwise>
-        </c:choose>
     </div>
 </div>
 <script type="text/javascript">
@@ -438,51 +366,111 @@
         });
     });
 
-    $(document).ready(function () {
-        // 이미지 업로드 모달 열기
-        $("#openUploadModalBtn").click(function () {
-            $("#uploadImageModal").modal("show");
+
+    // 별점 요소와 hidden input을 가져옵니다.
+    const stars = document.querySelectorAll('.star-rating .star');
+    const ratingInput = document.querySelector('#commentRating');
+
+    // 각 별점을 클릭했을 때 이벤트 처리
+    stars.forEach(star => {
+        star.addEventListener('click', function () {
+            // 클릭한 별점의 값 가져오기
+            const selectedRating = this.getAttribute('data-value');
+
+            // hidden input에 값 설정
+            ratingInput.value = selectedRating;
+
+            // 별점 스타일 업데이트 (선택된 별점까지만 강조)
+            stars.forEach(s => s.style.color = s.getAttribute('data-value') <= selectedRating ? 'gold' : 'gray');
         });
+    });
 
-        // 이미지 파일 선택 시 미리보기
-        $("#imageFile").change(function () {
-            const file = this.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    $("#imagePreview").html(`
-                    <img src="${e.target.result}" alt="업로드 이미지" style="max-width: 100%; height: auto;" class="rounded">
-                `);
-                };
-                reader.readAsDataURL(file);
-            }
-        });
 
-        // 이미지 추가 버튼 클릭 시 댓글 입력창에 삽입
-        $("#addImageToComment").click(function () {
-            const fileInput = $("#imageFile")[0];
-            if (fileInput.files.length > 0) {
-                const file = fileInput.files[0];
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    // 댓글 입력창에 이미지 삽입
-                    const imgTag = `<img src="${e.target.result}" alt="첨부 이미지" style="max-width: 100%; height: auto; margin-top: 10px;">\n`;
-                    const commentContent = $("#commentContent").val();
-                    $("#commentContent").val(commentContent + "\n" + imgTag);
+    // 폼 제출 시 Ajax 요청
+    $("#form-review").submit(function(e) {
+        e.preventDefault(); // 기본 폼 제출을 방지
 
-                    // 모달 닫기
-                    $("#uploadImageModal").modal("hide");
+        let prodNo = $("input[name=prodNo]").val(); // 상품 번호
+        let colorNo = $("input[name=colorNo]").val(); // 색상 번호
+        let userNo = $("input[name=userNo]").val(); // 사용자 번호
+        let title = $("input[name=title]").val(); // 제목
+        let content = $("textarea[name=content]").val(); // 댓글 내용
+        let rating = $("input[name=rating]").val(); // 별점
+        let files = $("#reviewFile")[0].files; // 파일 목록 가져오기
 
-                    // 초기화
-                    $("#imageFile").val("");
-                    $("#imagePreview").empty();
-                };
-                reader.readAsDataURL(file);
-            } else {
-                alert("이미지를 선택해주세요.");
+        let formData = new FormData();
+        formData.append("prodNo", prodNo);
+        formData.append("colorNo", colorNo);
+        formData.append("userNo", userNo);
+        formData.append("title", title);
+        formData.append("content", content);
+        formData.append("rating", rating);
+
+
+        // 여러 파일을 FormData에 추가한다.
+        for(let i = 0; files.length; i++) {
+            formData.append("reviewFiles", files[i]);
+        }
+
+        // Ajax 요청
+        $.ajax({
+            url: "addProdReview",
+            type: 'POST', // HTTP 메서드
+            data: formData, // FormData 객체
+            processData: false,
+            contentType: false,
+            success: function(dto) {
+
+
+                let reviewHtml = `
+
+        <div class="comment">
+            <div class="row align-items-center">
+                <div class="col-3" style="text-align: start;">
+                    <img src="https://github.com/mdo.png" alt="프로필 이미지" style="width: 50px; height: 50px;"
+                         class="rounded-circle mb-2">
+
+                    <strong>\${dto.userNickname}</strong><br/>
+
+                    <span style="font-size: 0.9rem; color: #555;">\${dto.reviewDate}</span><br/>
+                    <span style="font-size: 0.9rem; color: #555;">\${dto.prodName} [\${dto.colorName}]</span>
+
+                    <div class="star-rating" style="font-size: 1.2rem; color: gold;">
+                        &#9733;&#9733;&#9733;&#9733;&#9734;
+                    </div>
+                    <div class="mt-1">
+                        <button class="btn btn-outline-secondary">답글</button>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="mt-2">
+                        <img src="" alt="리뷰 이미지" class="img-fluid" style="max-height: 100px; object-fit: cover;">
+                    </div>
+                    <p style="margin: 3px;">\${dto.reviewTitle} : \${dto.reviewContent}</p>
+                </div>
+
+                <div class="col-2 text-end">
+                    <button type="button" class="btn btn-warning btn-sm">수정</button>
+                    <button type="button" class="btn btn-danger btn-sm">삭제</button>
+                </div>
+            </div>
+        </div>
+    </div>
+                    </div>
+                `;
+
+                // 새 리뷰를 #wrapper-reviews에 추가
+                $("#wrapper-reviews").prepend(reviewHtml);
+                alert("리뷰가 성공적으로 작성되었습니다.");
+            },
+            error: function(xhr, status, error) {
+                alert("오류가 발생했습니다: " + error);
             }
         });
     });
+
+
 </script>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
