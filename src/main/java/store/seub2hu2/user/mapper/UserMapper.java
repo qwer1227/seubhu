@@ -6,16 +6,12 @@ import store.seub2hu2.course.vo.UserLevel;
 import store.seub2hu2.user.vo.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @Mapper
 public interface UserMapper {
 
     // 신규 사용자 추가
     void insertUser(@Param("user") User user);
-
-    // 기존의 insertUser 메소드 대신 소셜 로그인 사용자 추가 메소드 작성
-    int insertSocialUser(@Param("user")User user);
 
     // 신규 주소 데이터 삽입 후 생성된 주소 번호 반환
     void insertAddr(@Param("addr") Addr addr);

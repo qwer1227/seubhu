@@ -106,7 +106,7 @@ public class SecurityConfig {
                         // 로그인 요청을 처리하는 url을 지정한다.
                         .loginProcessingUrl("/login")
                         // 로그인 성공 시 이동할 URL을 지정한다.
-                        .defaultSuccessUrl("/home", true)
+                        .defaultSuccessUrl("/home")
                         // 로그인 실패 시 이동할 URL을 지정한다.
                         .failureUrl("/login?error=fail"))
 // 로그아웃 정책을 설정한다.
