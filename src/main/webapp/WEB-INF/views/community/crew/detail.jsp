@@ -137,9 +137,6 @@
 				</div>
 				<div>
 					<p>${crew.description}</p>
-					<p>로그인 유저: ${loginUser.no}</p>
-					<p>글 작성자 : ${crew.user.no}</p>
-					<p>크루 번호 : ${crew.no}</p>
 				</div>
 			</div>
 		</div>

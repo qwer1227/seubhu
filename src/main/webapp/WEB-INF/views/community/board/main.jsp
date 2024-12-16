@@ -235,7 +235,7 @@
       </div>
       
       <!-- 페이징처리 -->
-      <c:if test="${paging.totalRows > 10}">
+      <c:if test="${paging.totalRows ne 1}">
       <div>
         <ul class="pagination justify-content-center">
           <li class="page-item ${paging.first ? 'disabled' : '' }">
