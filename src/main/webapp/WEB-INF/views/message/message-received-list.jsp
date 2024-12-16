@@ -186,7 +186,7 @@
     </form>
 </div>
 
-
+<%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script>
     function deleteMultiple() {
         let form = document.querySelector("#form-search");

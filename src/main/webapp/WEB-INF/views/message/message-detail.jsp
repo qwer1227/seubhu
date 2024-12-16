@@ -4,7 +4,7 @@
 <html lang="ko">
 <head>
     <%@include file="/WEB-INF/views/common/common.jsp" %>
-</head>
+    <title>쪽지 작성</title></head>
 <body>
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
 <div class="container-xxl text-center" id="wrap">
@@ -62,6 +62,7 @@
         </div>
     </div>
 
-    <%@include file="/WEB-INF/views/common/footer.jsp" %>
+</div>
+<%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
 </html>
