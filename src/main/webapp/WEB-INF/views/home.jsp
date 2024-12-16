@@ -412,13 +412,11 @@
                 <!-- 반복문으로 슬라이드 생성 -->
                 <c:forEach var="lesson" items="${ongoingLessons}" varStatus="status">
                     <div class="carousel-item ${status.first ? 'active' : ''}">
-                        <c:if test="${not empty images['THUMBNAIL']}">
                             <img src="${s3}/resources/images/lesson/${images['THUMBNAIL']}"
-                                 alt="Thumbnail" style="width: 100%; height: 300px;" class="d-block w-100"/>
-                        </c:if>
+                                 id="Thumbnail" alt="Thumbnail" style="width: 100%; height: 300px;" class="d-block w-100"/>
                         <div class="popup-content text-center">
                             <h5>${lesson.title}</h5>
-                            <p>${lesson.subject} - ${lesson.place}</p>
+                            <p>#${lesson.subject} #${lesson.place}</p>
                             <p>${lesson.start} ~ ${lesson.end}</p>
                             <a href="/lesson/detail?lessonNo=${lesson.lessonNo}"
                                class="btn btn-dark text-white">예약하기</a>
