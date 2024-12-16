@@ -98,7 +98,7 @@
 
     <select id="getReservationByCondition" resultType="store.seub2hu2.lesson.vo.LessonReservation">
         select R.LESSON_RESERVATION_NO as 'no'
-        , R.LESSON_RESERVATION_STATUS as reservationStatus
+        , R.LESSON_RESERVATION_STATUS as status
         , R.USER_ID as "user.id"
         , R.LESSON_RESERVATION_CREATED_DATE as reservationCreatedDate
         , R.LESSON_RESERVATION_UPDATED_DATE as reservationUpdatedDate
