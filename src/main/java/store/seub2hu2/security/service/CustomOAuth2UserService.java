@@ -38,6 +38,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         // OAuth2의 registration id를 조회한다.(registtration id는 google, kakao 등이다.)
         String provider = userRequest.getClientRegistration().getRegistrationId();
+        System.out.println("provider ----" +  provider);
 
         // OAuth2UserInfo객체에는 id, name, email이 포함되어 있다.(id값은 실제 아이디는 아니고, 임의의 문자열이다.)
         // OAuth2UserInfoFactory객체는 provider(google 혹은 kakao)와 oAuth2User.getAttributes()는 소셜에서 제공하는 사용자가 정보가 들어 있는 객체를 전달받아서

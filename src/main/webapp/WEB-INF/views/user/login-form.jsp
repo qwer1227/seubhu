@@ -46,6 +46,15 @@
         <!-- 로그인 제목 -->
         <div class="border p-2 bg-dark text-white fw-bold mb-3">로그인</div>
 
+        <c:choose>
+            <c:when test="${param.error eq 'fail'}">
+                <div class="alert alert-danger mb-3">
+                    아이디 혹은 비밀번호가 올바르지 않습니다.
+                </div>
+            </c:when>
+        </c:choose>
+
+
         <!-- 로그인 폼 -->
         <form name="loginForm" method="post" action="login" onsubmit="return validateForm()">
             <div class="mb-3">
@@ -97,11 +106,6 @@
 
 <!-- 유효성 검사 스크립트 추가 -->
 <script>
-
-    // errorMessage가 존재하면 alert로 출력
-    <c:if test="${not empty errorMessage}">
-    alert('<c:out value="${errorMessage}" />');
-    </c:if>
 
     // 로그인 폼 검증
     function validateForm() {

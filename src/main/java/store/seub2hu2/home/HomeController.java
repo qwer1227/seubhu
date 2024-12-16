@@ -31,6 +31,8 @@ public class HomeController {
 
         List<Board> topViewedBoards  = homeService.getTopViewedBoards();
 
+        List<Board> userRankingByBoards  = homeService.getUserRankingByBoards();
+
         List<Marathon> latestMarathons  = homeService.getLatestMarathons();
 
         List<Lesson> ongoingLessons = homeService.getOngoingLessons();
@@ -41,6 +43,7 @@ public class HomeController {
         model.addAttribute("bestByRating", bestByRating);
         model.addAttribute("bestByViewCount", bestByViewCount);
         model.addAttribute("topViewedBoards", topViewedBoards );
+        model.addAttribute("userRankingByBoards", userRankingByBoards );
         model.addAttribute("latestMarathons", latestMarathons );
         model.addAttribute("ongoingLessons", ongoingLessons );
         model.addAttribute("topLikedCourses", topLikedCourses );

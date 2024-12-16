@@ -117,7 +117,7 @@ public class SecurityConfig {
                         .invalidateHttpSession(true))
                 .oauth2Login(oauth2Configurer -> oauth2Configurer
                         .loginPage("/login")
-                        .defaultSuccessUrl("/socialJoin", true) // 소셜 로그인 성공 후 /user/social-join-form 페이지로 리다이렉트
+                        .defaultSuccessUrl("/home") // 소셜 로그인 성공 후 /user/social-join-form 페이지로 리다이렉트
                         .failureUrl("/login?error=fail")
                         .userInfoEndpoint(userEndpoint -> userEndpoint.userService(customOAuth2UserService)))
                 .exceptionHandling(exceptionHandling -> exceptionHandling

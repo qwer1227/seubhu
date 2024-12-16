@@ -65,10 +65,16 @@ public class UserController {
 
     // 회원가입 폼 화면 요청
     @GetMapping("/socialJoin")
-    public String socialJoinForm(@RequestParam String provider, Model model) {
+    public String socialJoinForm(@AuthenticationPrincipal LoginUser loginUser, Model model) {
         // 소셜 로그인 제공자 정보와 사용자 ID를 폼에 설정
-        model.addAttribute("joinForm", new UserJoinForm());
-        model.addAttribute("provider", provider);  // 소셜 로그인 제공자 정보 전달
+        User user = userService.findbyUserId(loginUser.getId());
+        UserJoinForm userJoinForm = new UserJoinForm();
+        userJoinForm.setId(user.getId());
+        userJoinForm.setName(user.getName());
+        userJoinForm.setEmail(user.getEmail());
+
+        model.addAttribute("joinForm", userJoinForm);
+        model.addAttribute("provider", user.getProvider());  // 소셜 로그인 제공자 정보 전달
         return "user/social-join-form";  // social-join-form.jsp
     }
 

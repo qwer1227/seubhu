@@ -8,6 +8,7 @@ import store.seub2hu2.lesson.vo.Lesson;
 import store.seub2hu2.product.dto.ProdListDto;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface HomeMapper {
@@ -20,6 +21,8 @@ public interface HomeMapper {
 
     // 최신 글 5개 조회
     List<Board> getTopViewedBoards();
+
+    List<Board> getUserRankingByBoards();
 
     List<Marathon> getLatestMarathons();
 

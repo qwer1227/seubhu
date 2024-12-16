@@ -63,14 +63,12 @@
         .ad-popup .popup-content p {
             font-size: 0.9rem;
         }
+
         .btn-close {
             position: absolute;
             top: 10px;
             right: 10px;
             cursor: pointer;
-        }
-        .d-none {
-            display: none !important;
         }
 
 
@@ -140,7 +138,7 @@
         <!-- 가로 구분선 추가 -->
         <div class="border-bottom my-3"></div>
 
-    <div id="weeklyRankingCarousel" class="carousel slide mt-3" data-bs-ride="carousel">
+        <div id="weeklyRankingCarousel" class="carousel slide mt-3" data-bs-ride="carousel">
             <div class="carousel-inner">
                 <!-- 첫 번째 페이지 -->
                 <div class="carousel-item active">
@@ -152,11 +150,16 @@
                                     <a href="/product/hit?no=${product.no}&colorNo=${product.colorNum}">
                                         <img src="${product.imgThum}" class="card-img-top" alt="상품 1">
                                     </a>
-                                    <div class="icon-overlay d-flex justify-content-center">
-                                        <button class="icon-button btn-sm">
-                                            <i class="bi bi-heart"></i>
-                                        </button>
-                                    </div>
+
+                                    <form class="form-cart" method="post">
+                                        <input type="hidden" name="productId" value="${product.no}"/>
+                                        <div class="icon-overlay d-flex justify-content-center">
+                                            <button class="icon-button btn-sm wish-add" type="button">
+                                                <i class="bi bi-heart"></i>
+                                            </button>
+                                        </div>
+                                    </form>
+
                                     <div class="card-body">
                                         <h5 class="card-title mb-0">${product.name}</h5>
                                         <div class="d-flex justify-content-between align-items-center mb-2">
@@ -183,18 +186,24 @@
                                     <a href="/product/hit?no=${product.no}&colorNo=${product.colorNum}">
                                         <img src="${product.imgThum}" class="card-img-top" alt="상품 5">
                                     </a>
-                                    <div class="icon-overlay d-flex justify-content-center">
-                                        <button class="icon-button btn-sm">
-                                            <i class="bi bi-heart"></i>
-                                        </button>
-                                    </div>
+                                    <form class="form-cart" method="post">
+                                        <input type="hidden" name="productId" value="${product.no}"/>
+                                        <div class="icon-overlay d-flex justify-content-center">
+                                            <button class="icon-button btn-sm wish-add" type="button">
+                                                <i class="bi bi-heart"></i>
+                                            </button>
+                                        </div>
+                                    </form>
                                     <div class="card-body">
                                         <h5 class="card-title mb-0">${product.name}</h5>
-                                        <div class="d-flex align-items-center">
-                                            <span class="me-3">#${status.index + 1}</span>
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span>#${status.index + 1}</span> <!-- 좌측: 순위 -->
+                                            <span class="text-danger">${product.status}</span> <!-- 우측: 판매중 -->
                                         </div>
-                                        <p class="card-text fw-bold">${product.price}</p>
-                                        <p>${product.brand.name}</p>
+                                        <div class="d-flex justify-content-between">
+                                            <p class="card-text fw-bold mb-0">${product.price}</p> <!-- 가격 -->
+                                            <p class="mb-0">${product.brand.name}</p> <!-- 브랜드명 -->
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -229,67 +238,102 @@
             <!-- 마라톤 정보 -->
             <div class="col-md-6 mb-4">
                 <h3 class="d-flex align-items-center">
-                    <span class="ms-3 text-muted">마라톤 정보</span>
+                    <span class="ms-3">마라톤 정보</span>
                 </h3>
-                <div class="border-bottom my-3"></div>
-                <c:forEach var="marathon" items="${latestMarathons}">
-                    <ul class="list-group border-0">
-                        <li class="list-group-item d-flex justify-content-between align-items-center border-0">
-                            <!-- 작성 날짜 -->
-                            <div class="d-flex flex-column text-start w-25">
-                            <span class="text-muted">
+                <!-- 제목에 구분선 없이 내용에만 구분선 추가 -->
+                <table class="table" style="table-layout: fixed;">
+                    <tbody>
+                    <c:forEach var="marathon" items="${latestMarathons}">
+                        <tr>
+                            <td class="w-25">
                                 <fmt:formatDate value="${marathon.marathonDate}" pattern="yyyy-MM-dd"/>
-                            </span>
-                            </div>
-                            <!-- 제목 -->
-                            <div class="d-flex flex-column text-start w-50">
-                                <span class="text-muted">${marathon.title}</span>
-                            </div>
-                            <!-- 시작/끝 날짜 -->
-                            <div class="d-flex flex-column text-start w-25">
-                            <span class="text-muted">
+                            </td>
+                            <td class="w-50">${marathon.title}</td>
+                            <td class="w-25">
                                 <fmt:formatDate value="${marathon.startDate}" pattern="yyyy-MM-dd"/>
                                 ~
                                 <fmt:formatDate value="${marathon.endDate}" pattern="yyyy-MM-dd"/>
-                            </span>
-                            </div>
-                            <a href="/community/marathon/hit?no=${marathon.no}" class="btn btn-sm btn-dark text-decoration-none">바로가기</a>
-                        </li>
-                    </ul>
-                </c:forEach>
+                            </td>
+                            <td class="w-25">
+                                <!-- 버튼에 w-100 클래스를 사용하여 버튼 너비 확장 및 줄바꿈 방지 -->
+                                <a href="/community/marathon/hit?no=${marathon.no}"
+                                   class="btn btn-sm btn-dark text-decoration-none w-50"
+                                   style="white-space: nowrap;">확인</a>
+                            </td>
+                        </tr>
+                    </c:forEach>
+                    </tbody>
+                </table>
             </div>
         </div>
     </section>
 
+    <section class="container">
+        <div class="row">
+            <!-- 커뮤니티 게시판 -->
+            <div class="col-md-9 mb-4">
+                <h3>커뮤니티</h3>
+                <table class="table">
+                    <tbody>
+                    <c:forEach var="board" items="${topViewedBoards}" varStatus="status">
+                        <tr>
+                            <!-- 제목 -->
+                            <td class="w-50">
+                                <a href="/community/board/hit?no=${board.no}" class="text-decoration-none"
+                                   style="color: black;">
+                                        ${board.title}
+                                </a>
+                            </td>
+                            <!-- 작성자 -->
+                            <td class="w-25 text-right">
+                                <a>${board.user.nickname}</a>
+                            </td>
+                            <!-- 작성 날짜 -->
+                            <td class="w-15 text-right">
+                                <a>
+                                    <fmt:formatDate value="${board.createdDate}" pattern="yyyy-MM-dd"/>
+                                </a>
+                            </td>
+                            <!-- 조회수 -->
+                            <td class="w-10 text-right">
+                                <a>${board.viewCnt}</a>
+                            </td>
+                        </tr>
+                    </c:forEach>
+                    </tbody>
+                </table>
+            </div>
 
-        <!-- 커뮤니티 게시판 -->
-    <section class="container my-5">
-        <h3 class="text-muted">커뮤니티</h3>
-        <div class="border-bottom my-3"></div>
-        <div class="list-group">
-            <c:forEach var="board" items="${topViewedBoards}">
-                <a href="/community/board/hit?no=${board.no}"
-                   class="list-group-item list-group-item-action d-flex border-0 text-decoration-none">
-                    <div class="col-9">
-                        <span class="text-muted">${board.title}</span>
-                    </div>
-                    <div class="col-1 text-right">
-                        <small class="text-muted">${board.user.nickname}</small>
-                    </div>
-                    <div class="col-1 text-right">
-                        <small class="text-muted"><fmt:formatDate value="${board.createdDate}"
-                                                                  pattern="yyyy-MM-dd"/></small>
-                    </div>
-                    <div class="col-1 text-right">
-                        <small class="text-muted">${board.viewCnt}</small>
-                    </div>
-                </a>
+
+            <!-- 사용자 랭킹 -->
+<div class="col-md-3 mb-4">
+    <h3>사용자 랭킹</h3>
+    <table class="table" style="border-collapse: collapse; background-color: #f8f9fa;">
+        <thead>
+            <tr>
+                <th style="background-color: #f2f2f2; border: none;">#</th>
+                <th style="background-color: #f2f2f2; border: none;">닉네임</th>
+                <th style="background-color: #f2f2f2; border: none;">작성글수</th>
+            </tr>
+        </thead>
+        <tbody>
+            <c:forEach var="board" items="${userRankingByBoards}" varStatus="status">
+                <tr style="background-color: #f8f9fa; border: none;">
+                    <td style="border: none; background-color: #f8f9fa;">${status.index + 1}</td>
+                    <td style="border: none; background-color: #f8f9fa;">${board.user.nickname}</td>
+                    <td style="border: none; background-color: #f8f9fa;">${board.boardCnt}</td>
+                </tr>
             </c:forEach>
+        </tbody>
+    </table>
+</div>
+
+
         </div>
     </section>
 
     <!-- 코스 목록 -->
-    <section class="container my-5">
+    <section class="container">
         <h3 class="text-muted">코스 목록</h3>
         <div class="border-bottom my-3"></div>
         <div class="row">
@@ -299,7 +343,8 @@
                         <div class="card-body">
                             <a href="/course/detail?no=${course.no}" class="text-decoration-none">
                                 <!-- 이미지와 이름 사이 여백 추가 -->
-                                <img src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/images/course/${course.filename}" class="d-block w-100 mb-3" alt="SEUB2HU2 ls">
+                                <img src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/images/course/${course.filename}"
+                                     class="d-block w-100 mb-3" alt="SEUB2HU2 ls">
                                 <h5 class="card-title text-muted fw-bold">${course.name}</h5> <!-- 볼드체 처리 -->
                             </a>
                             <!-- 지역과 좋아요 개수를 한 줄로, 좋아요 개수 빨간색으로 표시 -->
@@ -331,13 +376,14 @@
                     <div class="carousel-item ${status.first ? 'active' : ''}">
                         <c:if test="${not empty images['THUMBNAIL']}">
                             <img src="${s3}/resources/images/lesson/${images['THUMBNAIL']}"
-                                 alt="Thumbnail" style="width: 100%; height: 300px;" class="d-block w-100" />
+                                 alt="Thumbnail" style="width: 100%; height: 300px;" class="d-block w-100"/>
                         </c:if>
                         <div class="popup-content text-center">
                             <h5>${lesson.title}</h5>
                             <p>${lesson.subject} - ${lesson.place}</p>
                             <p>${lesson.start} ~ ${lesson.end}</p>
-                            <a href="/lesson/detail?lessonNo=${lesson.lessonNo}" class="btn btn-dark text-white">예약하기</a>
+                            <a href="/lesson/detail?lessonNo=${lesson.lessonNo}"
+                               class="btn btn-dark text-white">예약하기</a>
                         </div>
                     </div>
                 </c:forEach>
@@ -354,7 +400,7 @@
             </button>
         </div>
         <!-- 닫기 버튼 -->
-        <div class="icon-overlay d-flex justify-content-center">
+        <div class="icon-overlay d-flex justify-content-center" style="z-index: 10 !important;">
             <button type="button" class="btn-close" aria-label="Close" id="closeAdPopup"></button>
         </div>
     </div>
@@ -362,27 +408,6 @@
 
     <!-- 우측 하단 세로 배치 버튼 -->
     <div class="position-fixed bottom-0 end-0 p-3">
-        <!-- 챗봇 연결 버튼 -->
-        <button type="button" class="btn btn-light text-dark mb-3 px-3 py-2 rounded-3 d-block" style="width: 45px;"
-                data-bs-toggle="modal" data-bs-target="#chatModal" title="관리자-유저 채팅">
-            <i class="bi bi-chat-dots me-2"></i>
-        </button>
-
-        <!-- 모달 -->
-        <div class="modal fade" id="chatModal" tabindex="-1" aria-labelledby="chatModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="chatModalLabel">관리자-유저 채팅</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <!-- JSP 페이지 로드 -->
-                        <iframe src="/chat/chatSend" style="width: 100%; height: 400px; border: none;"></iframe>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- 탑 버튼 -->
         <a href="#top" class="btn btn-dark text-light px-3 py-2 rounded-3 d-block" style="width: 45px;" title="상단으로 가기">
@@ -395,12 +420,25 @@
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+        // 버튼과 팝업 요소 가져오기
         const closeButton = document.getElementById("closeAdPopup");
         const adPopup = document.querySelector(".ad-popup");
 
         // 닫기 버튼 클릭 시 팝업 숨기기
         closeButton.addEventListener("click", function () {
-            adPopup.classList.add("d-none"); // Bootstrap의 d-none 클래스를 추가
+            adPopup.classList.add("d-none"); // 팝업 숨기기
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        // 위시리스트 버튼 클릭 이벤트 처리
+        document.body.addEventListener("click", function (event) {
+            const button = event.target.closest(".wish-add"); // 클릭된 요소가 wish-add 클래스인지 확인
+            if (button) {
+                const form = button.closest(".form-cart"); // 버튼과 연결된 폼 가져오기
+                form.setAttribute("action", "/mypage/wish"); // 폼 액션 설정
+                form.submit(); // 폼 제출
+            }
         });
     });
 

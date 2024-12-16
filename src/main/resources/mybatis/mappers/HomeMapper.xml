@@ -47,8 +47,22 @@
             LEFT JOIN USERS U ON B.USER_NO = U.USER_NO
         WHERE B.IS_DELETED = 'N'
         ORDER BY B.BOARD_VIEW_CNT DESC
-            LIMIT 3
+            LIMIT 6
     </select>
+
+    <select id="getUserRankingByBoards" resultType="store.seub2hu2.community.vo.Board">
+        SELECT u.USER_NO AS "user.no",
+               u.USER_NICKNAME AS "user.nickname",
+               COUNT(b.BOARD_NO) AS boardCnt
+        FROM BOARDS b
+                 JOIN USERS u ON b.USER_NO = u.USER_NO
+        WHERE b.IS_DELETED = 'N'
+        GROUP BY u.USER_NO
+        ORDER BY boardCnt DESC
+            LIMIT 5
+
+    </select>
+
 
     <select id="getLatestMarathons" resultType="store.seub2hu2.community.vo.Marathon">
         SELECT

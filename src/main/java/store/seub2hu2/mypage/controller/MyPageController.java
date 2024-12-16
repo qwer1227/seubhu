@@ -530,8 +530,6 @@ public class MyPageController {
             , @AuthenticationPrincipal LoginUser loginUser
             ,Model model) {
 
-
-
         List<CartItemDto> orderItems = orderService.getOrderItemBySizeNo(sizeNoList, stock, loginUser.getNo());
         model.addAttribute("orderItems", orderItems);
 
