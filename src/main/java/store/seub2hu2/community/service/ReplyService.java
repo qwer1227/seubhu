@@ -11,6 +11,7 @@ import store.seub2hu2.community.vo.Reply;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.service.UserService;
 import store.seub2hu2.user.vo.User;
+import store.seub2hu2.user.vo.UserRole;
 
 import java.util.List;
 
@@ -70,14 +71,12 @@ public class ReplyService {
     public Reply getReplyDetail(int replyNo){
         Reply reply = replyMapper.getReplyByReplyNo(replyNo);
 
-        User user = userService.findbyUserId(reply.getUser().getId());
-        reply.setUser(user);
-
         return reply;
     }
 
     public List<Reply> getReplies(int typeNo) {
         List<Reply> replyList = replyMapper.getRepliesByTypeNo(typeNo);
+
         return replyList;
     }
 

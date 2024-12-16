@@ -15,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import store.seub2hu2.community.dto.NoticeForm;
 import store.seub2hu2.community.service.NoticeService;
-import store.seub2hu2.community.view.FileDownloadView;
 import store.seub2hu2.community.vo.Board;
 import store.seub2hu2.community.vo.Notice;
 import store.seub2hu2.security.user.LoginUser;
@@ -37,8 +36,6 @@ public class NoticeController {
     @Autowired
     public NoticeService noticeService;
 
-    @Autowired
-    public FileDownloadView fileDownloadView;
 
     @GetMapping("/main")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page
@@ -92,20 +89,20 @@ public class NoticeController {
         return "community/notice/detail";
     }
 
-    @GetMapping("/filedown")
-    public ModelAndView download(@RequestParam("no") int noticeNo) {
-
-        Notice notice = noticeService.getNoticeDetail(noticeNo);
-
-        ModelAndView mav = new ModelAndView();
-
-        mav.setView(fileDownloadView);
-        mav.addObject("directory", saveDirectory);
-        mav.addObject("filename", notice.getUploadFile().getSaveName());
-        mav.addObject("originalFilename", notice.getOriginalFileName());
-
-        return mav;
-    }
+//    @GetMapping("/filedown")
+//    public ModelAndView download(@RequestParam("no") int noticeNo) {
+//
+//        Notice notice = noticeService.getNoticeDetail(noticeNo);
+//
+//        ModelAndView mav = new ModelAndView();
+//
+//        mav.setView(fileDownloadView);
+//        mav.addObject("directory", saveDirectory);
+//        mav.addObject("filename", notice.getUploadFile().getSaveName());
+//        mav.addObject("originalFilename", notice.getOriginalFileName());
+//
+//        return mav;
+//    }
 
     @GetMapping("/download")
     public ResponseEntity<Resource> downloadFile(int noticeNo) throws Exception {

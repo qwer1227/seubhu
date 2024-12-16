@@ -1,10 +1,7 @@
 package store.seub2hu2.community.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import store.seub2hu2.mypage.vo.PostImage;
 import store.seub2hu2.user.vo.User;
 
@@ -15,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
+@ToString
 public class Reply {
     private int no;
     private int prevNo;
@@ -32,4 +30,5 @@ public class Reply {
     private int replyLiked; // 댓글 좋아요 클릭 여부
     private String deleted;
     private String image;
+    private int crewNo;
 }

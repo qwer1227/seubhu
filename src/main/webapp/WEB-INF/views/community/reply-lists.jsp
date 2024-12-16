@@ -35,7 +35,7 @@
 					</c:if>
 					<i class="bi bi-emoji-dizzy" style="font-size: 38px"></i>
 					<div class="col d-flex align-items-center" style="margin-left: 30px">
-						<strong>삭제된 댓글입니다.</strong>
+						<strong>삭제된 댓글입니다.${reply.no}</strong>
 					</div>
 				</div>
 			</div>
@@ -51,15 +51,18 @@
 				<c:if test="${reply.no ne reply.prevNo}">
 					<i class="bi bi-arrow-return-right"></i>
 				</c:if>
-				<c:if test="${image}">
-					<img src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/images/userImage/${image}"
-							 style="width: 40px" class="rounded-circle">
+				
+			  <c:if test="${not empty reply.image}">
+					<img
+						src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/images/userImage/${reply.image}"
+						style="width: 40px" class="rounded-circle">
 				</c:if>
-				<c:if test="${empty image}">
+				<c:if test="${empty reply.image}">
 					<img
 						src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/images/userImage/primaryImage.jpg"
 						style="width: 40px" class="rounded-circle">
 				</c:if>
+			
 			</div>
 			<div class="col" style="text-align: start">
 				<strong>${reply.user.nickname}</strong><br/>
@@ -75,10 +78,8 @@
 					<c:if test="${loginUser.no ne reply.user.no}">
 						<button class="btn btn-outline-primary btn-sm" id="replyLikeCnt"
 										onclick="replyLikeButton('${reply.typeNo}', ${reply.no})">
-								${reply.replyLikeCnt}
-							//${reply.no}
 							<i id="icon-thumbs-${reply.no}"
-								 class="bi ${reply.replyLiked == '1' ? 'bi-hand-thumbs-up-fill' : 'bi-hand-thumbs-up'}"></i>
+								 class="bi ${reply.replyLiked == '1' ? 'bi-hand-thumbs-up-fill' : 'bi-hand-thumbs-up'}"></i>${reply.replyLikeCnt}
 						</button>
 					</c:if>
 					<c:if test="${loginUser.no eq reply.user.no}">
@@ -112,6 +113,35 @@
 			</c:if>
 		</div>
 		
+		
+		<!-- 대댓글 입력 폼 -->
+		<form method="post" action="add-comment" id="box-comments-${reply.no}" class="d-none">
+			<input type="hidden" name="prevNo" value="${reply.prevNo}">
+			<input type="hidden" name="rno" value="${reply.no}">
+			<input type="hidden" name="type" value="${reply.type}">
+			<input type="hidden" name="typeNo" value="${reply.typeNo}">
+			<div class="row">
+				<div class="col-11">
+					<div class="form-control" style="position: relative; padding-top: 1.5em; border: none; box-shadow: none;">
+						<!-- 닉네임 표시 부분 -->
+						<span
+							style="position: absolute; top: 0.5em; left: 0.5em; color: #6c757d;">@ ${reply.prevUser.nickname}</span>
+						<!-- 텍스트 입력 영역 -->
+						<textarea name="content" class="form-control auto-resize" rows="1" placeholder="답글을 작성하세요."
+											style="resize: none; overflow: hidden; border: none; box-shadow: none;"
+											oninput="autoResize(this)"></textarea>
+					</div>
+				</div>
+				<div class="col">
+					<button type="button" id="submit" class="btn btn-success d-flex align-items-center justify-content-center"
+									style="font-size: 15px; width: 70px;" onclick="submitComment()">
+						답글
+					</button>
+				</div>
+			</div>
+		</form>
+		
+		<!-- 댓글 수정 폼 -->
 		<div class="col ${reply.no ne reply.prevNo ? 'ps-5' : ''}">
 			<div class="comment-item m-1 rounded" style="padding-left:30px; text-align:start;">
 				<form method="post" action="modify-reply" id="box-reply-${reply.no}" class="my-3 d-none">
@@ -144,32 +174,6 @@
 				</form>
 			</div>
 		</div>
-		<!-- 대댓글 입력 폼 -->
-		<form method="post" action="add-comment" id="box-comments-${reply.no}" class="d-none">
-			<input type="hidden" name="prevNo" value="${reply.prevNo}">
-			<input type="hidden" name="rno" value="${reply.no}">
-			<input type="hidden" name="type" value="${reply.type}">
-			<input type="hidden" name="typeNo" value="${reply.typeNo}">
-			<div class="row">
-				<div class="col-11">
-					<div class="form-control" style="position: relative; padding-top: 1.5em; border: none; box-shadow: none;">
-						<!-- 닉네임 표시 부분 -->
-						<span
-							style="position: absolute; top: 0.5em; left: 0.5em; color: #6c757d;">@ ${reply.prevUser.nickname}</span>
-						<!-- 텍스트 입력 영역 -->
-						<textarea name="content" class="form-control auto-resize" rows="1" placeholder="답글을 작성하세요."
-											style="resize: none; overflow: hidden; border: none; box-shadow: none;"
-											oninput="autoResize(this)"></textarea>
-					</div>
-				</div>
-				<div class="col">
-					<button type="button" id="submit" class="btn btn-success d-flex align-items-center justify-content-center"
-									style="font-size: 15px; width: 70px;" onclick="submitComment()">
-						답글 <span>${reply.no}</span> / <span>${reply.typeNo}</span>
-					</button>
-				</div>
-			</div>
-		</form>
 	</div>
 </div>
 </c:otherwise>
@@ -194,7 +198,8 @@
             rno,
             type,
             typeNo,
-            userNo
+            userNo,
+            content
         }
 
         // 자바스크립트 객체를 json형식의 텍스트로 변환한다.

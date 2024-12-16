@@ -17,10 +17,10 @@ import store.seub2hu2.community.vo.Reply;
 import store.seub2hu2.community.vo.UploadFile;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.vo.User;
-import store.seub2hu2.util.FileUtils;
 import store.seub2hu2.util.ListDto;
 import store.seub2hu2.util.Pagination;
-import store.seub2hu2.util.WebContentFileUtils;
+import store.seub2hu2.util.S3Service;
+
 
 import java.util.Date;
 import java.util.List;
@@ -30,14 +30,18 @@ import java.util.Map;
 @Transactional
 public class CrewService {
 
-    @Value("${upload.directory.community}")
+    @Value("${upload.directory.crew.images}")
     private String saveImageDirectory;
 
-    @Value("C:/files/crew")
+    @Value("upload.directory.crew.files")
     private String saveFileDirectory;
 
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucketName;
+
     @Autowired
-    private WebContentFileUtils webContentFileUtils;
+    private S3Service s3Service;
+
 
     @Autowired
     private CrewMapper crewMapper;
@@ -67,7 +71,7 @@ public class CrewService {
         } else if (!image.isEmpty()) {
             String originalImageName = "crew" + form.getNo() + "_" + image.getOriginalFilename();
             String imageName = System.currentTimeMillis() + originalImageName;
-            webContentFileUtils.saveWebContentFile(image, saveImageDirectory, imageName);
+            s3Service.uploadFile(image, bucketName, saveImageDirectory, imageName);
 
             UploadFile uploadThumbnail = new UploadFile();
             uploadThumbnail.setOriginalName(originalImageName);
@@ -82,7 +86,9 @@ public class CrewService {
         } else if (!upfile.isEmpty()) {
             String originalFileName = upfile.getOriginalFilename();
             String filename = System.currentTimeMillis() + originalFileName;
-            FileUtils.saveMultipartFile(upfile, saveFileDirectory, filename);
+
+            s3Service.uploadFile(upfile, bucketName, saveFileDirectory, filename);
+            //FileUtils.saveMultipartFile(upfile, saveFileDirectory, filename);
 
             UploadFile uploadFile = new UploadFile();
             uploadFile.setOriginalName(originalFileName);
@@ -211,7 +217,7 @@ public class CrewService {
                 // 신규 썸네일 정보를 조회하여 CREW_FILES 테이블에 저장
                 String originalImageName = "crew" + form.getNo() + "_" + image.getOriginalFilename();
                 String ImageName = System.currentTimeMillis() + originalImageName;
-                webContentFileUtils.saveWebContentFile(image, saveImageDirectory, ImageName);
+                s3Service.uploadFile(image, bucketName, saveImageDirectory, ImageName);
 
                 UploadFile uploadThumbnail = new UploadFile();
                 uploadThumbnail.setNo(savedCrew.getNo());
@@ -234,7 +240,8 @@ public class CrewService {
             // 신규 첨부파일 정보를 조회하여 CREW_FILES 테이블에 저장
             String originalFileName = upfile.getOriginalFilename();
             String filename = System.currentTimeMillis() + originalFileName;
-            FileUtils.saveMultipartFile(upfile, saveFileDirectory, filename);
+
+            s3Service.uploadFile(upfile, bucketName, saveFileDirectory, filename);
 
             UploadFile uploadFile = new UploadFile();
             uploadFile.setNo(savedCrew.getNo());

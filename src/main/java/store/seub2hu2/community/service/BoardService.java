@@ -16,7 +16,6 @@ import store.seub2hu2.community.vo.Reply;
 import store.seub2hu2.community.vo.UploadFile;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.vo.User;
-import store.seub2hu2.util.FileUtils;
 import store.seub2hu2.util.ListDto;
 import store.seub2hu2.util.Pagination;
 import store.seub2hu2.util.S3Service;
@@ -29,7 +28,7 @@ import java.util.Map;
 @Transactional
 public class BoardService {
 
-    @Value("${upload.directory.community}")
+    @Value("${upload.directory.board.files}")
     private String saveDirectory;
 
     @Value("${cloud.aws.s3.bucket}")

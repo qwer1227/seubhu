@@ -4,7 +4,7 @@
 <!doctype html>
 <html lang="ko">
 <head>
-    <%@include file="/WEB-INF/views/common/common.jsp" %>
+	<%@include file="/WEB-INF/views/common/common.jsp" %>
 </head>
 <style>
     /* 툴팁 스타일 (처음에는 숨겨져 있음) */
@@ -45,162 +45,163 @@
 <body>
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
 <div class="container-xxl text-center" id="wrap">
-    <h2> 커뮤니티 글 상세 </h2>
-    <div>
-        <input type="hidden" name="type" value="board">
-        <input type="hidden" name="no" value="${board.no}">
-        <input type="hidden" name="typeNo" value="${board.no}">
-        <div class="col d-flex justify-content-left">
-            <div>
-                <a href="main?category=${board.catName}" style="text-decoration-line: none">${board.catName}</a>
-            </div>
-        </div>
-        <div class="title h4 d-flex justify-content-between align-items-center">
-            <div>
-                ${board.title}
-            </div>
-            <div class="ml-auto">
-                <security:authorize access="isAuthenticated()">
-                    <security:authentication property="principal" var="loginUser"/>
-                    <c:if test="${loginUser.no ne board.user.no}">
-                        <button class="btn btn-outline-success btn-lg" id="scrapButton"
-                                onclick="scrapButton(${board.no})">
-                            <i id="icon-scrap"
-                                class="bi ${Scrapped == '1' ? 'bi-bookmark-fill' : (Scrapped == '0' ? 'bi-bookmark' : 'bi-bookmark')}"></i>
-                        </button>
-                    </c:if>
-                </security:authorize>
-            </div>
-        </div>
-        <div class="meta d-flex justify-content-between mb-3">
+	<h2> 커뮤니티 글 상세 </h2>
+	<div>
+		<input type="hidden" name="type" value="board">
+		<input type="hidden" name="no" value="${board.no}">
+		<input type="hidden" name="typeNo" value="${board.no}">
+		<div class="col d-flex justify-content-left">
+			<div>
+				<a href="main?category=${board.catName}" style="text-decoration-line: none">${board.catName}</a>
+			</div>
+		</div>
+		<div class="title h4 d-flex justify-content-between align-items-center">
+			<div>
+				${board.title}
+			</div>
+			<div class="ml-auto">
+				<security:authorize access="isAuthenticated()">
+					<security:authentication property="principal" var="loginUser"/>
+					<c:if test="${loginUser.no ne board.user.no}">
+						<button class="btn btn-outline-success btn-lg" id="scrapButton"
+										onclick="scrapButton(${board.no})">
+							<i id="icon-scrap"
+								 class="bi ${Scrapped == '1' ? 'bi-bookmark-fill' : (Scrapped == '0' ? 'bi-bookmark' : 'bi-bookmark')}"></i>
+						</button>
+					</c:if>
+				</security:authorize>
+			</div>
+		</div>
+		<div class="meta d-flex justify-content-between mb-3">
             <span>
                 ${board.user.nickname} | <fmt:formatDate value="${board.createdDate}" pattern="yyyy.MM.dd hh:mm:ss"/>
             </span>
-            <span>
+			<span>
                 <i class="bi bi-eye"></i> ${board.viewCnt}
                 <i class="bi bi-bookmark"></i> ${board.scrapCnt}
                 <i class="bi bi-hand-thumbs-up"></i> ${board.like}
                 <i class="bi bi-chat-square-text"></i> ${replyCnt}
             </span>
-        </div>
-        <div style="margin-top: 10px; border-bottom: 1px solid #ccc; margin-bottom: 10px;"></div>
-
-        <c:if test="${not empty board.uploadFile.originalName}">
-            <div class="content mb-4" id="fileDown" style="text-align: end">
-                <a href="filedown?no=${board.no}" class="btn btn-outline-primary btn-sm">첨부파일 다운로드</a>
-                <span id="hover-box">${board.uploadFile.originalName}</span>
-            </div>
-        </c:if>
-
-        <div class="content m-3" style="text-align: start">
-            <p>${board.content}</p>
-        </div>
-
-        <div style="border-bottom: 1px solid #ccc; margin-bottom: 10px;"></div>
-
-        <div class="row mb-4">
-            <div class="col d-flex justify-content-between">
-                <div class="col-6 d-flex justify-content-start">
-                    <!-- 수정, 삭제 버튼은 로그인된 사용자만 -->
-                    <c:if test="${loginUser.no == board.user.no}">
-                        <button class="btn btn-warning mr-3" onclick="updateBoard(${board.no})" style="margin-right: 10px;">수정</button>
-                        <button class="btn btn-danger" onclick="deleteBoard(${board.no})" style="margin-right: 10px;">삭제</button>
-                    </c:if>
-                    <!-- 신고 버튼은 로그인된 사용자만 표시 -->
-                    <c:if test="${loginUser.no != board.user.no and not empty loginUser}">
-                        <button type="button" class="btn btn-danger" onclick="report('board', ${board.no})">신고</button>
-                    </c:if>
-                </div>
-                <div class="col d-flex justify-content-end">
-                    <!-- 좋아요 버튼은 로그인된 사용자만 표시 -->
-                    <c:if test="${not empty loginUser}">
-                        <button class="btn btn-outline-primary" id="likeCnt" style="margin-right: 10px;"
-                                onclick="boardLikeButton(${board.no})">
-                            <i id="icon-heart"
-                               class="bi ${boardLiked == '1' ? 'bi-heart-fill' : (boardLiked == '0' ? 'bi-heart' : 'bi-heart')}"></i>
-                        </button>
-                    </c:if>
-                    <!-- 목록 버튼은 로그인 여부와 관계없이 표시 -->
-                    <a type="button" href="main" class="btn btn-secondary">목록</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- 이전, 다음 게시글 -->
-        <div class="pb-3">
-            <table style="width: 100%">
-                <colgroup>
-                    <col width="10%">
-                    <col width="*">
-                </colgroup>
-                <tbody>
-                <tr>
-                    <td> ▲ 이전글</td>
-                    <td style="text-align: start">
-                        <c:if test="${not empty board.prevNo}">
-                            <a href="hit?no=${board.prevNo}">${board.prevTitle}</a>
-                        </c:if>
-                    </td>
-                </tr>
-                <tr>
-                    <td> ▼ 다음글</td>
-                    <td style="text-align: start">
-                        <c:if test="${not empty board.nextNo}">
-                            <a href="hit?no=${board.nextNo}">${board.nextTitle}</a>
-                        </c:if>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- 댓글 작성 -->
-        <%@include file="../reply-form.jsp" %>
-
-        <!-- 댓글 목록 -->
-        <c:if test="${not empty board.reply}">
-            <div class="row comments rounded mb-4" style="margin-left: 2px; width: 100%; background-color: #f2f2f2">
-                <!--댓글 내용 -->
-                <c:forEach var="reply" items="${replies}">
-                    <%@include file="../reply-lists.jsp" %>
-                </c:forEach>
-            </div>
-        </c:if>
-    </div>
+		</div>
+		<div style="margin-top: 10px; border-bottom: 1px solid #ccc; margin-bottom: 10px;"></div>
+		
+		<c:if test="${not empty board.uploadFile.originalName}">
+			<div class="content mb-4" id="fileDown" style="text-align: end">
+				<a href="filedown?no=${board.no}" class="btn btn-outline-primary btn-sm">첨부파일 다운로드</a>
+				<span id="hover-box">${board.uploadFile.originalName}</span>
+			</div>
+		</c:if>
+		
+		<div class="content m-3" style="text-align: start">
+			<p>${board.content}</p>
+		</div>
+		
+		<div style="border-bottom: 1px solid #ccc; margin-bottom: 10px;"></div>
+		
+		<div class="row mb-4">
+			<div class="col d-flex justify-content-between">
+				<div class="col-6 d-flex justify-content-start">
+					<!-- 수정, 삭제 버튼은 로그인된 사용자만 -->
+					<c:if test="${loginUser.no == board.user.no}">
+						<button class="btn btn-warning mr-3" onclick="updateBoard(${board.no})" style="margin-right: 10px;">수정
+						</button>
+						<button class="btn btn-danger" onclick="deleteBoard(${board.no})" style="margin-right: 10px;">삭제</button>
+					</c:if>
+					<!-- 신고 버튼은 로그인된 사용자만 표시 -->
+					<c:if test="${loginUser.no != board.user.no and not empty loginUser}">
+						<button type="button" class="btn btn-danger" onclick="report('board', ${board.no})">신고</button>
+					</c:if>
+				</div>
+				<div class="col d-flex justify-content-end">
+					<!-- 좋아요 버튼은 로그인된 사용자만 표시 -->
+					<c:if test="${not empty loginUser}">
+						<button class="btn btn-outline-primary" id="likeCnt" style="margin-right: 10px;"
+										onclick="boardLikeButton(${board.no})">
+							<i id="icon-heart"
+								 class="bi ${boardLiked == '1' ? 'bi-heart-fill' : (boardLiked == '0' ? 'bi-heart' : 'bi-heart')}"></i>
+						</button>
+					</c:if>
+					<!-- 목록 버튼은 로그인 여부와 관계없이 표시 -->
+					<a type="button" href="main" class="btn btn-secondary">목록</a>
+				</div>
+			</div>
+		</div>
+		
+		<!-- 이전, 다음 게시글 -->
+		<div class="pb-3">
+			<table style="width: 100%">
+				<colgroup>
+					<col width="10%">
+					<col width="*">
+				</colgroup>
+				<tbody>
+				<tr>
+					<td> ▲ 이전글</td>
+					<td style="text-align: start">
+						<c:if test="${not empty board.prevNo}">
+							<a href="hit?no=${board.prevNo}">${board.prevTitle}</a>
+						</c:if>
+					</td>
+				</tr>
+				<tr>
+					<td> ▼ 다음글</td>
+					<td style="text-align: start">
+						<c:if test="${not empty board.nextNo}">
+							<a href="hit?no=${board.nextNo}">${board.nextTitle}</a>
+						</c:if>
+					</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+		
+		<!-- 댓글 작성 -->
+		<%@include file="../reply-form.jsp" %>
+		
+		<!-- 댓글 목록 -->
+		<c:if test="${not empty board.reply}">
+			<div class="row comments rounded mb-4" style="margin-left: 2px; width: 100%; background-color: #f2f2f2">
+				<!--댓글 내용 -->
+					<c:forEach var="reply" items="${replies}">
+					<%@include file="../reply-lists.jsp" %>
+					</c:forEach>
+			</div>
+		</c:if>
+	</div>
 </div>
 
 <!-- 인기 게시글 -->
 <div class="rounded border" style="padding: 10px; background-color: #f2f2f2">
-    <table style="width: 100%">
-        <colgroup>
-            <col width="15%">
-            <col width="*">
-            <col width="20%">
-            <col width="5%">
-            <col width="5%">
-            <col width="5%">
-        </colgroup>
-        <tbody>
-        <tr>
-            <td colspan="6">
-                <div>
-                    <strong>[ 실시간 인기 커뮤니티 글 ]</strong>
-                </div>
-            </td>
-        </tr>
-        <c:forEach items="${boards}" var="b">
-            <tr>
-                <td>${b.catName}</td>
-                <td style="text-align: start">
-                    <a id="content-title" style="text-decoration: none" href="hit?no=${b.no}">${b.title}</a>
-                </td>
-                <td>${b.user.nickname}</td>
-                <td><i class="bi bi-eye"></i>${b.viewCnt}</td>
-                <td><i class="bi bi-hand-thumbs-up"></i>${b.like}</td>
-            </tr>
-        </c:forEach>
-        </tbody>
-    </table>
+	<table style="width: 100%">
+		<colgroup>
+			<col width="15%">
+			<col width="*">
+			<col width="20%">
+			<col width="5%">
+			<col width="5%">
+			<col width="5%">
+		</colgroup>
+		<tbody>
+		<tr>
+			<td colspan="6">
+				<div>
+					<strong>[ 실시간 인기 커뮤니티 글 ]</strong>
+				</div>
+			</td>
+		</tr>
+		<c:forEach items="${boards}" var="b">
+			<tr>
+				<td>${b.catName}</td>
+				<td style="text-align: start">
+					<a id="content-title" style="text-decoration: none" href="hit?no=${b.no}">${b.title}</a>
+				</td>
+				<td>${b.user.nickname}</td>
+				<td><i class="bi bi-eye"></i>${b.viewCnt}</td>
+				<td><i class="bi bi-hand-thumbs-up"></i>${b.like}</td>
+			</tr>
+		</c:forEach>
+		</tbody>
+	</table>
 </div>
 
 <!-- 신고 모달 창 -->

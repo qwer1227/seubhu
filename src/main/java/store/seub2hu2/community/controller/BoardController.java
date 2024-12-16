@@ -2,10 +2,12 @@ package store.seub2hu2.community.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,11 +20,12 @@ import store.seub2hu2.community.dto.BoardForm;
 import store.seub2hu2.community.dto.ReplyForm;
 import store.seub2hu2.community.dto.ReportForm;
 import store.seub2hu2.community.service.*;
-import store.seub2hu2.community.view.FileDownloadView;
 import store.seub2hu2.community.vo.*;
 import store.seub2hu2.mypage.service.PostService;
 import store.seub2hu2.security.user.LoginUser;
+import store.seub2hu2.user.vo.User;
 import store.seub2hu2.util.ListDto;
+import store.seub2hu2.util.S3Service;
 
 import java.io.File;
 import java.net.URLEncoder;
@@ -34,14 +37,17 @@ import java.util.Map;
 @RequestMapping("/community/board")
 public class BoardController {
 
-    @Value("${upload.directory.community}")
+    @Value("${upload.directory.board.files}")
     private String saveDirectory;
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucketName;
+
+    @Autowired
+    private S3Service s3Service;
 
     @Autowired
     public BoardService boardService;
-
-    @Autowired
-    public FileDownloadView fileDownloadView;
 
     @Autowired
     public ReplyService replyService;
@@ -112,7 +118,7 @@ public class BoardController {
         ListDto<Board> dto = boardService.getBoardsTop(condition);
         model.addAttribute("boards", dto.getData());
 
-
+        if (loginUser != null) {
             int boardResult = boardService.getCheckLike(boardNo, loginUser);
             model.addAttribute("boardLiked", boardResult);
 
@@ -120,18 +126,10 @@ public class BoardController {
             model.addAttribute("Scrapped", scrapResult);
 
             for (Reply reply : replyList) {
-                Reply r = replyService.getReplyDetail(reply.getNo());
-                int replyLikeCnt = r.getReplyLikeCnt();
-                reply.setPrevUser(r.getPrevUser());
-                model.addAttribute("replyLikeCnt", replyLikeCnt);
-
-                String image = r.getImage();
-                model.addAttribute("image", image);
-
                 int replyResult = replyService.getCheckLike(reply.getNo(), "boardReply", loginUser);
-                model.addAttribute("replyLiked", replyResult);
+                reply.setReplyLiked(replyResult);
             }
-
+        }
 
         model.addAttribute("board", board);
         model.addAttribute("replies", replyList);
@@ -184,7 +182,7 @@ public class BoardController {
                 form.setUpfile(null); // Null 처리
             }
             boardService.updateBoard(form, loginUser);
-            return ResponseEntity.ok(form); // 정상적으로 업데이트 후 응답
+            return ResponseEntity.ok().body(form.getNo());
         } catch (Exception e) {
             // 예외 처리 및 로그 남기기
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("글 수정 중 오류 발생: " + e.getMessage());
@@ -212,36 +210,25 @@ public class BoardController {
 
     // 요청 URL : comm/filedown?no=xxx
     @GetMapping("/filedown")
-    public ModelAndView download(@RequestParam("no") int boardNo) {
+    public ResponseEntity<ByteArrayResource> download(@RequestParam("no") int boardNo) {
 
         Board board = boardService.getBoardDetail(boardNo);
+        try {
+            String filename = board.getOriginalFileName();
+            ByteArrayResource byteArrayResource = s3Service.downloadFile(bucketName, saveDirectory, filename);
 
-        ModelAndView mav = new ModelAndView();
+            String encodedFileName = URLEncoder.encode(filename.substring(13), "UTF-8");
 
-        mav.setView(fileDownloadView);
-        mav.addObject("directory", saveDirectory);
-        mav.addObject("filename", board.getUploadFile().getSaveName());
-        mav.addObject("originalFilename", board.getOriginalFileName());
-
-        return mav;
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + encodedFileName + "\"")
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .contentLength(byteArrayResource.contentLength())
+                    .body(byteArrayResource);
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
-    @GetMapping("/download")
-    public ResponseEntity<Resource> downloadFile(int boardNo) throws Exception {
-
-        Board board = boardService.getBoardDetail(boardNo);
-
-        String fileName = board.getUploadFile().getSaveName();
-        String originalFileName = board.getOriginalFileName();
-        originalFileName = URLEncoder.encode(originalFileName, "UTF-8");
-
-        File file = new File(new File(saveDirectory), fileName);
-        FileSystemResource resource = new FileSystemResource(file);
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + originalFileName)
-                .body(resource);
-    }
 
     @GetMapping("/login")
     public String login() {

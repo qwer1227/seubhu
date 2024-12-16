@@ -2,9 +2,11 @@ package store.seub2hu2.community.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,12 +21,12 @@ import store.seub2hu2.community.dto.ReportForm;
 import store.seub2hu2.community.service.CrewService;
 import store.seub2hu2.community.service.ReplyService;
 import store.seub2hu2.community.service.ReportService;
-import store.seub2hu2.community.view.FileDownloadView;
 import store.seub2hu2.community.vo.Crew;
 import store.seub2hu2.community.vo.CrewMember;
 import store.seub2hu2.community.vo.Reply;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.util.ListDto;
+import store.seub2hu2.util.S3Service;
 
 import java.io.File;
 import java.net.URLEncoder;
@@ -36,14 +38,20 @@ import java.util.Map;
 @RequestMapping("/community/crew")
 public class CrewController {
 
-    @Value("C:/files/crew")
-    private String saveFileDirectory;
+    @Value("${upload.directory.crew.images}")
+    private String imageSaveDirectory;
+
+    @Value("${upload.directory.crew.files}")
+    private String fileSaveDirectory;
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucketName;
+
+    @Autowired
+    private S3Service s3Service;
 
     @Autowired
     public CrewService crewService;
-
-    @Autowired
-    public FileDownloadView fileDownloadView;
 
     @Autowired
     private ReplyService replyService;
@@ -193,36 +201,28 @@ public class CrewController {
     }
 
     @GetMapping("/filedown")
-    public ModelAndView download(@RequestParam("no") int crewNo) {
+    public ResponseEntity<ByteArrayResource> download(@RequestParam("no") int crewNo) {
 
         Crew crew = crewService.getCrewDetail(crewNo);
 
-        ModelAndView mav = new ModelAndView();
+        try {
+            String originalFileName = crew.getUploadFile().getOriginalName();
+            String savedFilename = crew.getUploadFile().getSaveName();
 
-        mav.setView(fileDownloadView);
-        mav.addObject("directory", saveFileDirectory);
-        mav.addObject("filename", crew.getUploadFile().getSaveName());
-        mav.addObject("originalFilename", crew.getUploadFile().getOriginalName());
+            ByteArrayResource byteArrayResource = s3Service.downloadFile(bucketName, fileSaveDirectory, savedFilename);
 
-        return mav;
+            String encodedFileName = URLEncoder.encode(originalFileName, "UTF-8");
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + encodedFileName + "\"")
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .contentLength(byteArrayResource.contentLength())
+                    .body(byteArrayResource);
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
-    @GetMapping("/download")
-    public ResponseEntity<Resource> downloadFile(int crewNo) throws Exception{
-
-        Crew crew = crewService.getCrewDetail(crewNo);
-
-        String fileName = crew.getUploadFile().getSaveName();
-        String originalFileName = crew.getUploadFile().getOriginalName();
-        originalFileName = URLEncoder.encode(originalFileName, "UTF-8");
-
-        File file = new File(new File(saveFileDirectory), fileName);
-        FileSystemResource resource = new FileSystemResource(file);
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + originalFileName)
-                .body(resource);
-    }
 
     @GetMapping("/login")
     public String login(){
