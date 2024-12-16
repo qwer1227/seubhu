@@ -1247,20 +1247,20 @@
             SELECT *
             FROM(
             SELECT
-            <if test="condition != null">
-            <choose>
-                <when test="condition.sort == 'date'">
-                    ROW_NUMBER() OVER(ORDER BY P.PROD_CREATED_AT DESC) AS RN
-                </when>
-                <when test="condition.sort == 'name'">
-                    ROW_NUMBER() OVER(ORDER BY P.PROD_NAME ASC) AS RN
-                </when>
-                <when test="condition.sort == 'price'">
-                    ROW_NUMBER() OVER(ORDER BY P.PROD_PRICE ASC) AS RN
-                </when>
-            </choose>
+            <if test="condition.sort != null">
+                <choose>
+                    <when test="condition.sort == 'date'">
+                        ROW_NUMBER() OVER(ORDER BY P.PROD_CREATED_AT DESC) AS RN ,
+                    </when>
+                    <when test="condition.sort == 'name'">
+                        ROW_NUMBER() OVER(ORDER BY P.PROD_NAME ASC) AS RN ,
+                    </when>
+                    <when test="condition.sort == 'price'">
+                        ROW_NUMBER() OVER(ORDER BY P.PROD_PRICE ASC) AS RN ,
+                    </when>
+                </choose>
             </if>
-            , P.PROD_NO AS no,
+            P.PROD_NO AS no,
             P.PROD_NAME AS name,
             P.PROD_PRICE AS price,
             P.PROD_STATUS AS status,

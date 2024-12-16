@@ -763,7 +763,7 @@ public class AdminController {
                        @RequestParam(name = "catNo", required = false, defaultValue = "0") int catNo,
                        @RequestParam(name = "page", required = false, defaultValue = "1") int page,
                        @RequestParam(name = "rows", required = false, defaultValue = "6") int rows,
-                       @RequestParam(name = "sort" , required = false) String sort,
+                       @RequestParam(name = "sort" , required = false, defaultValue = "date") String sort,
                        @RequestParam(name = "opt", required = false) String opt,
                        @RequestParam(name = "value", required = false) String value,
                        Model model) {
