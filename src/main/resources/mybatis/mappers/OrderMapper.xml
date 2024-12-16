@@ -3,7 +3,7 @@
 <mapper namespace="store.seub2hu2.order.mapper.OrderMapper">
 
     <!--
-        List<OrderItem> insertOrderItems(@Param("orderItems") OrderItem orderItem);
+        void insertOrderItems(@Param("orderItems") List<OrderItem> orderItems);
     -->
     <insert id="insertOrderItems">
         INSERT INTO ORDER_PRODUCTS (

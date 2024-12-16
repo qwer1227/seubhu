@@ -59,4 +59,18 @@ public class CartService {
 
         }
     }
+
+    /**
+     * 위시리스트에서 장바구니로 추가
+     * @param cart
+     */
+    public void addToCart(Cart cart) {
+        // Null 체크
+        if (cart == null) {
+            throw new IllegalArgumentException("Cart 객체가 null입니다.");
+        }
+
+
+        cartMapper.addToCart(cart);
+    }
 }
