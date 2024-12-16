@@ -35,7 +35,7 @@
 					</c:if>
 					<i class="bi bi-emoji-dizzy" style="font-size: 38px"></i>
 					<div class="col d-flex align-items-center" style="margin-left: 30px">
-						<strong>삭제된 댓글입니다.${reply.no}</strong>
+						<strong>삭제된 댓글입니다.</strong>
 					</div>
 				</div>
 			</div>
@@ -62,7 +62,6 @@
 						src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/images/userImage/primaryImage.jpg"
 						style="width: 40px" class="rounded-circle">
 				</c:if>
-			
 			</div>
 			<div class="col" style="text-align: start">
 				<strong>${reply.user.nickname}</strong><br/>
@@ -198,7 +197,6 @@
             rno,
             type,
             typeNo,
-            userNo,
             content
         }
 

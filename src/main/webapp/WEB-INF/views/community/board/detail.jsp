@@ -76,7 +76,7 @@
             <span>
                 ${board.user.nickname} | <fmt:formatDate value="${board.createdDate}" pattern="yyyy.MM.dd hh:mm:ss"/>
             </span>
-			<span>
+            <span>
                 <i class="bi bi-eye"></i> ${board.viewCnt}
                 <i class="bi bi-bookmark"></i> ${board.scrapCnt}
                 <i class="bi bi-hand-thumbs-up"></i> ${board.like}

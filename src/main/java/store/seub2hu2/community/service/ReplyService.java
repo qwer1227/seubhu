@@ -11,7 +11,6 @@ import store.seub2hu2.community.vo.Reply;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.service.UserService;
 import store.seub2hu2.user.vo.User;
-import store.seub2hu2.user.vo.UserRole;
 
 import java.util.List;
 
