@@ -82,35 +82,10 @@ public class MyPageRestController {
     }
 
     @GetMapping("/detail/{no}")
-    public ResponseEntity<Map<String, Object>> getPostdetail(@PathVariable("no") int no) {
-
-        Map<String ,Object> response = new HashMap<>();
-
-        try{
-            // 게시글 상세 정보를 가져옵니다.
-            Post post = postService.getPostDetail(no);
-
-            // 게시글 생성 날짜를 가져옵니다. (Date 타입)
-            Date postCreatedDate = post.getPostCreatedDate();  // 이미 Date 타입이라고 가정
-
-            // SimpleDateFormat을 사용하여 날짜 형식을 지정합니다.
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
-            // Date를 원하는 형식의 문자열로 변환
-            String formattedDate = sdf.format(postCreatedDate);
-
-            // 변환된 날짜 문자열을 Post 객체에 설정
-            post.setPostCreatedDateString(formattedDate);  // setter 메소드에 문자열 형태로 설정
-
-            // response에 포스트 추가
-            response.put("post", post);
-            return ResponseEntity.ok(response);
-        } catch (Exception e){
-            e.printStackTrace();
-            response.put("message", "서버 오류");
-            return ResponseEntity.status(500).body(response);
-        }
+    public Post getPostdetail(@PathVariable("no") int no) {
+        return postService.getPostDetail(no);
     }
+
 
     @PutMapping("/detail/delete/{no}")
     public ResponseEntity<Map<String, Object>> deletePost(@PathVariable("no") int no) {
