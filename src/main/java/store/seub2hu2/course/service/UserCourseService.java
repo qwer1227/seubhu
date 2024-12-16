@@ -35,23 +35,19 @@ public class UserCourseService {
     public void addNewRecord(AddRecordForm form, int userNo) {
         // 1. 코스 성공 여부를 확인한다.
         SuccessWhether successWhether = userCourseMapper.checkSuccess(userNo, form.getCourseNo());
-        System.out.println("코스 성공 여부: " + successWhether);
 
         // 2. 코스 완주 기록과 코스 성공 여부를 저장한다. (코스 성공 여부가 존재한다면, 코스 성공 여부를 저장하지 않는다.)
         userCourseMapper.insertRecord(form, userNo);
         if (successWhether == null) {
             userCourseMapper.insertSuccess(form.getCourseNo(), userNo);
         }
-        System.out.println("-----코스 기록 저장 성공!-----");
 
         // 3. 로그인한 사용자의 현재 도전 가능한 단계를 가져온다.
         UserLevel userLevel = userCourseMapper.getUserLevel(userNo);
         int level = userLevel.getLevel();
-        System.out.println("현재 도전 가능한 단계: " + level);
 
         // 4. 로그인한 사용자가 현재 도전 가능한 단계에서 달성한 완주 기록의 갯수를 가져온다.
         int eachLevelRecordRows = userCourseMapper.getLevelRecordRows(userNo, level);
-        System.out.println("현재 도전 가능한 단계에서 달성한 완주 기록 갯수: " + eachLevelRecordRows);
 
         // 5. 이전 난이도 코스 3개 달성 시, 현재 도전 가능한 단계와 사용자 배지를 변경한다.
         if (level == 1 && eachLevelRecordRows == 3) {
@@ -66,11 +62,9 @@ public class UserCourseService {
             // 5단계 코스를 도전할 수 있는 사용자라면, 배지만 새로 부여한다.
             userCourseMapper.insertUserBadge(userNo, 5);
         }
-        System.out.println("-----코스 기록 저장 성공2!-----");
 
         // 6. 도전할 코스 목록에서 입력한 완주 기록에 해당하는 코스를 삭제한다.
         userCourseMapper.deleteChallenger(form.getCourseNo(), userNo);
-        System.out.println("-----도전할 코스 목록 삭제 성공!-----");
     }
 
     /**
