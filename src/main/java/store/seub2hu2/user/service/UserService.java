@@ -3,6 +3,7 @@ package store.seub2hu2.user.service;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -35,22 +36,6 @@ public class UserService {
 
     @Autowired
     private UserMapper userMapper;
-
-    // 아이디 중복 체크
-    public boolean isIdExists(String id) {
-        return userMapper.getUserById(id) != null;
-    }
-
-    // 닉네임 중복 체크
-    public boolean isNicknameExists(String nickname) {
-        return userMapper.getUserByNickname(nickname) != null;
-    }
-
-    // 이메일 중복 체크
-    public boolean isEmailExists(String email) {
-        return userMapper.getUserByEmail(email) != null;
-    }
-
 
     /**
      * 신규 사용자 정보를 전달받아서 회원가입 시키는 서비스
@@ -100,6 +85,62 @@ public class UserService {
         userMapper.insertUserLevel(userLevel);  // 사용자 레벨 등록
     }
 
+    public boolean insertSocialUser(UserJoinForm form, String provider) {
+        // 소셜 로그인 사용자의 ID가 이미 존재하는지 체크
+        if (userMapper.getUserById(form.getId()) != null) {
+            throw new AlreadyUsedIdException(form.getId());
+        }
+
+        // 사용자 객체 생성 및 설정
+        User user = new User();
+        user.setId(form.getId());
+        user.setNickname(form.getNickname());
+        user.setEmail(form.getEmail());
+        user.setProvider(provider);  // 소셜 로그인 제공자 정보 설정
+
+        // 일반 로그인 시 비밀번호 암호화 처리 (소셜 로그인 시에는 비밀번호는 필요 없음)
+        if (form.getPassword() != null && !form.getPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(form.getPassword()));
+        }
+
+        // DB에 사용자 정보 삽입
+        int result = userMapper.insertSocialUser(user);
+        if (result <= 0) {
+            return false;  // 삽입 실패 시 false 반환
+        }
+
+        // 기본 사용자 역할 부여 (ROLE_USER)
+        Role role = new Role();
+        role.setNo(2);  // ROLE_USER로 설정
+        role.setName("ROLE_USER");
+
+        // 사용자 역할 추가
+        UserRole userRole = new UserRole();
+        userRole.setUserNo(user.getNo());
+        userRole.setRole(role);
+        userMapper.insertUserRole(userRole);
+
+        // 사용자 레벨 설정
+        UserLevel userLevel = new UserLevel();
+        userLevel.setUserNo(user.getNo());
+        userLevel.setLevel(1);  // 기본 레벨 1로 설정
+        userMapper.insertUserLevel(userLevel);
+
+        // 기본 주소 설정 (기본 주소는 회원가입 시 설정)
+        Addr addr = new Addr();
+        addr.setPostcode(form.getPostcode());
+        addr.setAddress(form.getAddress());
+        addr.setAddressDetail(form.getAddressDetail() != null ? form.getAddressDetail() : "");
+        addr.setIsAddrHome("Y");  // 기본 주소로 설정
+        addr.setName(form.getName());  // 이름 설정
+        addr.setUserNo(user.getNo());
+        userMapper.insertAddr(addr);
+
+        // 사용자 주소번호 업데이트
+        userMapper.updateAddrUserNo(addr.getNo(), user.getNo());
+
+        return true;  // 가입 성공 시 true 반환
+    }
 
     /**
      * 사용자번호, 권한이름을 전달받아서 권한을 추가하는 서비스
@@ -182,18 +223,29 @@ public class UserService {
         return findUsers;
     }
 
+    public LoginUser authenticateUser(String id, String password) throws BadCredentialsException {
+        // userMapper를 통해 아이디로 사용자 조회
+        User user = userMapper.getUserById(id);
+        if (user == null) {
+            throw new BadCredentialsException("아이디가 존재하지 않습니다.");
+        }
 
-    public LoginUser authenticateUser(String id, String password) throws AuthenticationException {
-        // 인증을 시도하고, 인증에 성공하면 인증된 사용자 정보를 반환
+        // 비밀번호가 일치하지 않으면
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new BadCredentialsException("비밀번호가 맞지 않습니다.");
+        }
+
+        // 인증 처리
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(id, password)
         );
 
-        // 인증 성공 시, 인증 정보를 SecurityContext에 저장
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         return (LoginUser) authentication.getPrincipal();
     }
+
+
 
     public List<User> searchUsersByNickname(String nickname) {
         return userMapper.findUsersByNickname(nickname);

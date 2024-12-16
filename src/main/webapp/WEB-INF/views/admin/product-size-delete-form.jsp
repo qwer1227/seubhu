@@ -93,7 +93,7 @@
                                         <a type="button" class="btn btn-success mr-2" href="/admin/product-detail?no=${param.no}&colorNo=${param.colorNo}">뒤로가기</a>
                                     </div>
                                     <div class="text-end" style="text-align: right">
-                                        <button type="button" id="getSubmitButton" class="btn btn-primary">조회</button>
+                                        <button type="button" id="getSubmitButton" class="btn btn-primary mr-1">조회</button>
                                     </div>
                                 </div>
                             </form>

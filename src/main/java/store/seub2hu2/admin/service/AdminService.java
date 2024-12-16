@@ -348,72 +348,42 @@ public class AdminService {
     }
 
     public void getUpdateCourse(CourseRegisterForm form) {
+        MultipartFile multipartFile = form.getImage();
+
+        if (multipartFile == null || multipartFile.isEmpty()) {
+            throw new IllegalArgumentException("이미지가 업로드되지 않았습니다.");
+        }
+
+        // 기존 코드 유지
         Region region = new Region();
         region.setSi(form.getSi());
         region.setGu(form.getGu());
         region.setDong(form.getDong());
 
         Region savedRegion = adminMapper.checkRegion(region);
-
         Course course = new Course();
 
         if (savedRegion == null) {
-
             adminMapper.insertRegion(region);
-
             course.setRegion(adminMapper.getRegions(region));
-
-            course.setNo(form.getNo());
-            course.setName(form.getName());
-            course.setTime(form.getTime());
-            course.setLevel(form.getLevel());
-            Double distance = form.getDistance();
-
-            if (distance == null) {
-                distance = 0.0; // 기본값 설정 (필요에 따라 변경)
-            }
-            course.setDistance(distance);
-
-            MultipartFile multipartFile = form.getImage();
-            if (multipartFile != null) {
-                String originalFilename = multipartFile.getOriginalFilename();
-                String filename = System.currentTimeMillis() + originalFilename;
-
-                //FileUtils.saveMultipartFile(multipartFile, saveDirectory, filename);
-                s3Service.uploadFile(multipartFile, bucketName, saveDirectory, filename);
-
-                course.setFilename(filename);
-            }
-
-            adminMapper.updateCourse(course);
         } else {
-
             course.setRegion(savedRegion);
-
-            course.setNo(form.getNo());
-            course.setName(form.getName());
-            course.setTime(form.getTime());
-            course.setLevel(form.getLevel());
-            Double distance = form.getDistance();
-
-            if (distance == null) {
-                distance = 0.0; // 기본값 설정 (필요에 따라 변경)
-            }
-            course.setDistance(distance);
-
-            MultipartFile multipartFile = form.getImage();
-            if (multipartFile != null) {
-                String originalFilename = multipartFile.getOriginalFilename();
-                String filename = System.currentTimeMillis() + originalFilename;
-
-                //FileUtils.saveMultipartFile(multipartFile, saveDirectory, filename);
-                s3Service.uploadFile(multipartFile, bucketName, saveDirectory, filename);
-
-                course.setFilename(filename);
-            }
-
-            adminMapper.updateCourse(course);
         }
+
+        course.setNo(form.getNo());
+        course.setName(form.getName());
+        course.setTime(form.getTime());
+        course.setLevel(form.getLevel());
+        Double distance = form.getDistance() != null ? form.getDistance() : 0.0;
+        course.setDistance(distance);
+
+        String originalFilename = multipartFile.getOriginalFilename();
+        String filename = System.currentTimeMillis() + originalFilename;
+
+        s3Service.uploadFile(multipartFile, bucketName, saveDirectory, filename);
+        course.setFilename(filename);
+
+        adminMapper.updateCourse(course);
     }
 
     public Map<String, Object> getTotalSubject(String day) {
@@ -538,10 +508,98 @@ public class AdminService {
 
         Pagination pagination = new Pagination(page, totalRows, rows);
 
+        int begin = pagination.getBegin();
+        int end = pagination.getEnd();
+
+        // 데이터 검색 범위를 조회해서 Map에 저장한다.
+        condition.put("begin", begin);
+        condition.put("end", end);
+
         List<orderDeliveryDto> deliveryDtos = adminMapper.getOrderDeliveries(condition);
+
 
         ListDto<orderDeliveryDto> dtos = new ListDto<>(deliveryDtos, pagination);
 
         return dtos;
+    }
+
+    public void getDeletedProd(Map<String, Object> condition) {
+
+        adminMapper.getDeletedProds(condition);
+    }
+
+    public void updateProductShowStatus(Map<String, Object> condition) {
+
+        adminMapper.getUpdateShows(condition);
+    }
+
+    public void getDeletedCourse(int courseNo) {
+
+        adminMapper.getDeletedCourses(courseNo);
+    }
+
+    public void getUpdateDelivery(Map<String, Object> condition) {
+
+        if(condition.get("deliStatus").equals("배송준비중")) {
+
+            adminMapper.getUpdateDeliverySetReady(condition);
+
+        } else if (condition.get("deliStatus").equals("배송출발")) {
+
+            adminMapper.getUpdateDeliverySetShipped(condition);
+
+        } else if (condition.get("deliStatus").equals("배송완료")) {
+
+            adminMapper.getUpdateDeliverySetDelivered(condition);
+        }
+
+
+    }
+
+    public ListDto<ReportDto> getReport(Map<String, Object> condition) {
+
+        int totalRows = adminMapper.getReportTotalRows(condition);
+
+        int page = (Integer) condition.get("page");
+        int rows = (Integer) condition.get("rows");
+
+        Pagination pagination = new Pagination(page, totalRows, rows);
+
+        int begin = pagination.getBegin();
+        int end = pagination.getEnd();
+
+        condition.put("begin", begin);
+        condition.put("end", end);
+
+        List<ReportDto> dto = adminMapper.getReports(condition);
+
+        ListDto<ReportDto> dtos = new ListDto<>(dto, pagination);
+
+         return dtos;
+    }
+
+    public void UpdateReport(Map<String, Object> condition) {
+
+        if (condition.get("reportType").equals("board")){
+
+            adminMapper.updateBoardStatus(condition);
+
+            adminMapper.updateReportStatus(condition);
+        } else if (condition.get("reportType").equals("boardReply")){
+
+            adminMapper.updateBoardReplyStatus(condition);
+
+            adminMapper.updateReportStatus(condition);
+        } else if (condition.get("reportType").equals("crew")) {
+
+            adminMapper.updateCrewStatus(condition);
+
+            adminMapper.updateReportStatus(condition);
+        } else if (condition.get("reportType").equals("crewReply")) {
+
+            adminMapper.updateCrewReplyStatus(condition);
+
+            adminMapper.updateReportStatus(condition);
+        }
     }
 }

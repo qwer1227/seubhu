@@ -81,7 +81,11 @@
               </div>
               <div class="row justify-content-end">
                 <a type="button" class="btn btn-primary justify-content-end mr-2" href="course">뒤로가기</a>
-                <a type="button" class="btn btn-warning justify-content-end" href="course-edit-form?no=${param.no}">수정</a>
+                <a type="button" class="btn btn-warning justify-content-end mr-2" href="course-edit-form?no=${param.no}">수정</a>
+                <form method="post" action="/admin/course-delete">
+                    <input type="hidden" name="no" value="${param.no}">
+                    <button type="button" class="btn btn-danger" onclick="confirmDelete(this)">삭제</button>
+                </form>
               </div>
           </div>
         <div class="col-6">
@@ -108,6 +112,18 @@
 <%@include file="/WEB-INF/views/admincommon/common.jsp" %>
 
 </body>
+<script>
+    function confirmDelete(button) {
+        // 삭제 확인창 띄우기
+        const confirmResult = confirm("정말 삭제하시겠습니까?");
 
+        // 사용자가 '확인'을 클릭하면
+        if (confirmResult) {
+            // 부모 폼을 찾아서 submit을 실행
+            button.closest('form').submit();
+        }
+        // 취소를 클릭하면 아무 작업도 하지 않음
+    }
+</script>
 </html>
 

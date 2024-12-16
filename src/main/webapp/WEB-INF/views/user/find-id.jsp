@@ -67,6 +67,15 @@
 </footer>
 
 <script>
+    // 아이디 마스킹 함수
+    function maskUserId(userId) {
+        // 아이디의 길이가 4 이상이면 앞 4자리만 남기고 나머지는 *로 마스킹
+        if (userId.length > 4) {
+            return userId.substring(0, 4) + '****';
+        }
+        return userId;  // 아이디가 4자리 이하일 경우 그대로 반환
+    }
+
     // 폼 제출 시 처리
     document.querySelector("form").addEventListener("submit", function (event) {
         event.preventDefault();  // 폼 기본 동작을 막음
@@ -78,9 +87,9 @@
         fetch("/find-id", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/x-www-form-urlencoded",
             },
-            body: JSON.stringify({email: email})
+            body: "email=" + email,
         })
             .then(response => {
                 return response.json();
@@ -89,20 +98,16 @@
                 // 모달 본문에 결과 메시지 추가
                 const modalBody = document.getElementById("modalBody");
                 if (data.success) {
-                    modalBody.innerHTML = `<p>가입하신 아이디는 <b>${data.userId}</b>입니다.</p>`;
+                    // 아이디 마스킹 처리
+                    const maskedUserId = maskUserId(data.userId);
+                    modalBody.innerHTML = `<p>가입하신 아이디는 <b>\${maskedUserId}</b>입니다.</p>`;
                 } else {
-                    modalBody.innerHTML = `<p>${data.error}</p>`;
+                    modalBody.innerHTML = `<p>\${data.error}</p>`;
                 }
                 // 모달 띄우기
                 var myModal = new bootstrap.Modal(document.getElementById('idFindModal'));
                 myModal.show();
             })
-            .catch(error => {
-                const modalBody = document.getElementById("modalBody");
-                modalBody.innerHTML = `<p>서버 오류: ${error.message}</p>`;
-                var myModal = new bootstrap.Modal(document.getElementById('idFindModal'));
-                myModal.show();
-            });
     });
 </script>
 

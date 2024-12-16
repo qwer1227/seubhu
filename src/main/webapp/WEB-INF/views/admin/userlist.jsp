@@ -93,9 +93,8 @@
                                 <col width="10%">
                                 <col width="20%">
                                 <col width="10%">
-                                <col width="10%">
                             </colgroup>
-                            <thead>
+                            <thead class="text-center">
                                 <tr>
                                     <th>회원번호</th>
                                     <th>이름</th>
@@ -103,10 +102,9 @@
                                     <th>닉네임</th>
                                     <th>이메일</th>
                                     <th>보기</th>
-                                    <th>블랙현황</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody class="text-center">
                                 <c:forEach var="u" items="${users }">
                                     <tr>
                                         <td>${u.no}</td>
@@ -117,12 +115,6 @@
                                         <td>
                                             <button class="btn btn-outline btn-success btn-sm"
                                                     onclick="previewUser(${u.no})">미리보기</button>
-                                        </td>
-                                        <td>
-                                            <a href="userblack?user_no=${u.no}">
-                                                <button class="btn btn-outline btn-danger btn-sm "
-                                                        >블랙</button>
-                                            </a>
                                         </td>
                                     </tr>
                                 </c:forEach>
