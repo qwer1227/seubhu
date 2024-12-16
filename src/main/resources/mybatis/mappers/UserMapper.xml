@@ -139,15 +139,9 @@
         u.USER_CREATED_DATE,
         u.USER_UPDATED_DATE,
         u.USER_TERMS,
-        u.USER_PRIVACY,
-        ui.user_img_url as imgName,
-        ui.img_isprimary as isPrimary
+        u.USER_PRIVACY
         from
         USERS u
-        LEFT OUTER JOIN
-        USER_IMGS ui
-        ON
-        u.user_no = ui.user_no
         where
         USER_ID = #{id} <!-- 사용자 ID로 사용자 정보 조회 -->
     </select>
@@ -314,5 +308,27 @@
         where
             user_no = #{userNo}
     </select>
+
+    <!-- UserImage findImageByUserNo(@Param("userNo") int userNo); -->
+    <select id="findImageByUserNo" resultType="store.seub2hu2.user.vo.UserImage">
+        select
+            user_img_no as no
+        ,   user_img_url as imgName
+        ,   img_created_date as createdDate
+        ,   img_isprimary as isPrimary
+        ,   user_no     as userNo
+        from
+            USER_IMGS
+        where
+            user_no = #{userNo}
+        and
+            img_isprimary = 'Y'
+    </select>
+
+    <!-- User findByNickname(@Param("userName") String userName);
+    <select id="findByNickname" resultType="store.seub2hu2.user.vo.User">
+        select
+
+    </select>-->
 
 </mapper>

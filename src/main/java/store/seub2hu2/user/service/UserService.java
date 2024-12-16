@@ -17,10 +17,7 @@ import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.dto.UserJoinForm;
 import store.seub2hu2.user.exception.AlreadyUsedIdException;
 import store.seub2hu2.user.mapper.UserMapper;
-import store.seub2hu2.user.vo.Addr;
-import store.seub2hu2.user.vo.Role;
-import store.seub2hu2.user.vo.User;
-import store.seub2hu2.user.vo.UserRole;
+import store.seub2hu2.user.vo.*;
 
 import java.util.List;
 
@@ -286,5 +283,15 @@ public class UserService {
 
         return userMapper.findAddrByUserNo(userNo);
 
+    }
+
+    public UserImage findImageByUserNo(int userNo){
+
+        return userMapper.findImageByUserNo(userNo);
+    }
+
+    public User findByNickname(String userName){
+
+        return userMapper.findByNickname(userName);
     }
 }

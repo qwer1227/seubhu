@@ -74,4 +74,8 @@ public interface UserMapper {
 
     List<Addr> findAddrByUserNo(@Param("userNo") int userNo);
 
+    UserImage findImageByUserNo(@Param("userNo") int userNo);
+
+    User findByNickname(@Param("userName") String userName);
+
 }

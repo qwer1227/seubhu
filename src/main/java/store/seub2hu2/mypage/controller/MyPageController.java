@@ -38,6 +38,7 @@ import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.service.UserService;
 import store.seub2hu2.user.vo.Addr;
 import store.seub2hu2.user.vo.User;
+import store.seub2hu2.user.vo.UserImage;
 import store.seub2hu2.util.ListDto;
 import store.seub2hu2.wish.dto.WishItemDto;
 import store.seub2hu2.wish.vo.WishList;
@@ -100,12 +101,30 @@ public class MyPageController {
 
     // URL localhost/mypage 입력 시 유저의 No를 활용해 그 유저의 페이지를 보여줌
     @GetMapping("")
-    public String myPageList(Model model, @AuthenticationPrincipal LoginUser loginUser) {
-        List<Post> posts = postService.getPostsByNo(loginUser.getNo());
-        User user = userService.findbyUserId(loginUser.getId());
+    public String myPageList(Model model, @AuthenticationPrincipal LoginUser loginUser, @RequestParam(value = "userName", required = false) String userName) {
+
+        User user = null;
+        UserImage userImage = null;
+        List<Post> posts = null;
+
+        try {
+            if (userName != null && !userName.isEmpty()) {
+                // userName이 파라미터로 제공되면 해당 닉네임으로 사용자 정보를 조회
+                user = userService.findByNickname(userName);
+                userImage = userService.findImageByUserNo(user.getNo());
+                posts = postService.getPostsByNo(user.getNo());
+            } else {
+                posts = postService.getPostsByNo(loginUser.getNo());
+                user = userService.findbyUserId(loginUser.getId());
+                userImage = userService.findImageByUserNo(loginUser.getNo());
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
 
         model.addAttribute("posts",posts);
         model.addAttribute("user",user);
+        model.addAttribute("userimage",userImage);
 
         return "mypage/publicpage";
     }

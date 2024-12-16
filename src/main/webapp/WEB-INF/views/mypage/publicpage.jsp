@@ -115,13 +115,13 @@
 
     <!-- User Profile -->
     <div class="profile-header">
-            <c:if test="${user.imgName != null}">
+            <c:if test="${userimage.imgName != null}">
             <img id="profileImage"
-             src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/images/userImage/${user.imgName}"
+             src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/images/userImage/${userimage.imgName}"
              alt="User Image"
              style="cursor: pointer;">
             </c:if>
-            <c:if test="${user.imgName == null}">
+            <c:if test="${userimage.imgName == null}">
                  <img id="profileImage"
                  src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/images/userImage/primaryImage.jpg"
                  alt="User Image"
@@ -139,6 +139,18 @@
             <button class="btn btn-outline-secondary btn-message"><a href="message/list">메시지</a></button>
             <a href="mypage/private" class="btn btn-outline-dark btn-settings">⚙️</a>
         </div>
+    </div>
+    <security:authorize access="isAuthenticated()">
+    <security:authentication property="principal" var="loginUser" />
+    <input type="hidden" id="loginUserNo" value="${loginUser.no}">
+    </security:authorize>
+
+    <!-- 검색창 -->
+    <div class="search-bar mt-4 mb-4">
+        <form method="get" action="/mypage">
+            <input type="text" id="userName" name="userName"  class="form-control" placeholder="사용자 닉네임을 입력하세요...">
+            <button class="btn btn-primary mt-2" id="searchButton">검색</button>
+        </form>
     </div>
 
 
@@ -281,6 +293,19 @@
             url: "/mypage/detail/" + postId,  // 서버로 AJAX 요청
             method: "GET",
             success: function(response) {
+                const postWriterNo = response.user.no;
+                const loginUserNo = $('#loginUserNo').val();
+
+                if (postWriterNo == loginUserNo) {
+                    // 수정 / 삭제 버튼 표시
+                    $('#postUpdate').show();
+                    $('#postDelete').show();
+                } else {
+                    // 수정 / 삭제 버튼 숨김
+                    $('#postUpdate').hide();
+                    $('#postDelete').hide();
+                }
+
                 // 댓글 로드
                 loadComments(postId);
 
