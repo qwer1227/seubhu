@@ -72,6 +72,15 @@ public class AdminController {
 
             // Lesson 정보 가져오기
             Lesson lesson = lessonService.getLessonByNo(lessonNo);
+            LessonUpdateForm form = new LessonUpdateForm();
+            form.setLessonNo(lessonNo);
+            form.setTitle(lesson.getTitle());
+            form.setPlan(lesson.getPlan());
+            form.setPrice(lesson.getPrice());
+            form.setSubject(lesson.getSubject());
+            form.setStatus(lesson.getStatus());
+            form.setStart(lesson.getStartDate() + " " + lesson.getStartTime());
+            form.setEnd(lesson.getEndDate() + " " + lesson.getEndTime());
 
             // 이미지 파일 정보 가져오기
             Map<String, String> images = lessonFileService.getImagesByLessonNo(lessonNo);
@@ -81,6 +90,7 @@ public class AdminController {
             model.addAttribute("lesson", lesson);
             model.addAttribute("lessonNo", lessonNo);
             model.addAttribute("images", images);
+            model.addAttribute("form", form);
 
             log.info("lesson start = {}", lesson);
 
@@ -91,10 +101,14 @@ public class AdminController {
     }
 
     @PostMapping("/lesson-edit-form")
-    public String lessonEditForm(@Validated @ModelAttribute("dto") LessonUpdateForm form, BindingResult result, Model model) {
+    public String lessonEditForm(@Validated @ModelAttribute("form") LessonUpdateForm form, BindingResult result, Model model) {
         if (!StringUtils.hasText(form.getPlan()) && form.getMainImage().isEmpty()) {
             result.rejectValue("plan", null, "계획을 작성하거나 메인 이미지를 첨부 해주세요.");
             result.rejectValue("mainImage", null, "계획을 작성하거나 메인 이미지를 첨부 해주세요.");
+        }
+
+        if(form.getThumbnail().isEmpty()) {
+            result.rejectValue("thumbnail", null, "썸네일을 첨부 해주세요.");
         }
 
         if (result.hasErrors()) {
@@ -113,6 +127,7 @@ public class AdminController {
             model.addAttribute("lesson", lesson);
             model.addAttribute("lessonNo", lessonNo);
             model.addAttribute("images", images);
+            model.addAttribute("form", form);
 
             log.info("lesson start = {}", lesson);
 
@@ -147,6 +162,10 @@ public class AdminController {
         if (!StringUtils.hasText(form.getPlan()) && form.getMainImage().isEmpty()) {
             result.rejectValue("plan", null, "계획을 작성하거나 메인 이미지를 첨부 해주세요.");
             result.rejectValue("mainImage", null, "계획을 작성하거나 메인 이미지를 첨부 해주세요.");
+        }
+
+        if(form.getThumbnail().isEmpty()) {
+            result.rejectValue("thumbnail", null, "썸네일을 첨부 해주세요.");
         }
 
         if (result.hasErrors()) {
