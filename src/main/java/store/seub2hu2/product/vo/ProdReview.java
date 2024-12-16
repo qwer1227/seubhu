@@ -11,6 +11,8 @@ import java.util.Date;
 @Getter
 public class ProdReview {
     private int no;
+    private int prodNo;
+    private int userNo;
     private String title;
     private String content;
     private Date createdDate;

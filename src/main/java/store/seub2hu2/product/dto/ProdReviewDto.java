@@ -1,6 +1,9 @@
 package store.seub2hu2.product.dto;
 
 import lombok.*;
+import store.seub2hu2.product.vo.ProdReviewImg;
+
+import java.util.List;
 
 @ToString
 @NoArgsConstructor
@@ -17,8 +20,7 @@ public class ProdReviewDto {
     private String reviewDate;
 
     // 리뷰이미지
-    private int reviewImgNo;
-    private String reviewImg;
+    private List<ProdReviewImg> prodReviewImgs;
 
     // 상품
     private int prodNo;

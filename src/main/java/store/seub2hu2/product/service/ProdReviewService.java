@@ -17,10 +17,12 @@ public class ProdReviewService {
     private final ProdReviewMapper prodReviewMapper;
 
 
-    public List<ProdReviewDto> getProdReviews(int userNo) {
+    public List<ProdReviewDto> getProdReviews(int prodNo) {
 
-        List<ProdReviewDto> reviews = prodReviewMapper.prodReviewDto(userNo);
+        List<ProdReviewDto> reviews = prodReviewMapper.prodReviewDto(prodNo);
 
         return reviews;
     }
+
+
 }

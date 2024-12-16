@@ -154,7 +154,7 @@
     <hr class="bg-primary border border-1">
     <div class="comment-form mb-4">
         <h5 style="text-align: start; font-weight: bold;">리뷰 작성</h5>
-        <form method="post" action="">
+        <form method="post" action="/reviews/review-write" enctype="multipart/form-data">
             <input type="hidden" name="prodNo" value="${prodDetailDto.no}">
             <input type="hidden" name="userNo" value="${user.no}">
 
@@ -184,6 +184,7 @@
                 <div class="col text-end">
                     <!-- 이미지 업로드 버튼과 등록 버튼을 나란히 정렬 -->
                     <button type="button" class="btn btn-primary me-2" id="openUploadModalBtn">이미지 업로드</button>
+                    <input type="file" name="files" accept="image/*" multiple>
                     <button type="submit" class="btn btn-success" onclick="submitReply()">등록</button>
                 </div>
             </div>
@@ -217,56 +218,61 @@
         </div>
     </div>
     <hr class="bg-primary border border-1">
-    <!--
-        내용
-    -->
+
+
     <div class="row comments rounded py-3" style="background-color: #f2f2f2">
-        <div class="comment">
-            <c:forEach var="review" items="${prodReviewDto}">
-                <div class="row align-items-center">
-                    <!-- 프로필 이미지, 닉네임, 날짜, 별점 -->
-                    <div class="col-3" style="text-align: start;">
-                        <!-- 프로필 이미지 -->
-                        <img src="https://github.com/mdo.png" alt="프로필 이미지" style="width: 50px; height: 50px;" class="rounded-circle mb-2">
-
-                        <!-- 닉네임 -->
-                        <strong>${review.userNickname}</strong><br/>
-
-                        <!-- 날짜 -->
-                        <span style="font-size: 0.9rem; color: #555;">${review.reviewDate}</span><br/>
-
-                        <!--상품 정보 -->
-                        <span style="font-size: 0.9rem; color: #555;">${review.prodName} [${review.colorName}]</span>
-
-                        <!-- 별점 표시 -->
-                        <div class="star-rating" style="font-size: 1.2rem; color: gold;">
-                            &#9733;&#9733;&#9733;&#9733;&#9734; <!-- 별점 4점 예시 -->
-                        </div>
-                        <div class="mt-1">
-                            <button class="btn btn-outline-secondary">답글</button>
-                        </div>
-                    </div>
-
-                    <!-- 댓글 내용 -->
-                    <div class="col">
-                        <!-- 이미지가 있을 경우 이미지 표시 -->
-                        <div class="mt-2">
-                            <img src="https://image.xportsnews.com/contents/images/upload/article/2024/1214/1734185915629638.jpg" alt="리뷰 이미지" class="img-fluid" style="max-height: 100px; object-fit: cover;">
-                            <img src="https://image.xportsnews.com/contents/images/upload/article/2024/1214/1734185915629638.jpg" alt="리뷰 이미지" class="img-fluid" style="max-height: 100px; object-fit: cover;">
-                            <img src="https://image.xportsnews.com/contents/images/upload/article/2024/1214/1734185915629638.jpg" alt="리뷰 이미지" class="img-fluid" style="max-height: 100px; object-fit: cover;">
-                            <img src="https://image.xportsnews.com/contents/images/upload/article/2024/1214/1734185915629638.jpg" alt="리뷰 이미지" class="img-fluid" style="max-height: 100px; object-fit: cover;">
-                        </div>
-                        <p style="margin: 3px;">나쁘지 않았어요</p>
-                    </div>
-
-                    <!-- 수정 및 삭제 버튼 -->
-                    <div class="col-2 text-end">
-                        <button type="button" class="btn btn-warning btn-sm">수정</button>
-                        <button type="button" class="btn btn-danger btn-sm">삭제</button>
-                    </div>
+        <c:choose>
+            <c:when test="${empty prodReviewDto}">
+                <div class="text-center py-4">
+                    <p style="font-size: 1.2rem; color: #555;">아직 등록된 리뷰가 없습니다. 첫 번째 리뷰를 작성해보세요!</p>
                 </div>
-            </c:forEach>
-        </div>
+            </c:when>
+
+            <c:otherwise>
+                <c:forEach var="review" items="${prodReviewDto}">
+                    <div class="comment">
+                            <div class="row align-items-center">
+                                <div class="col-3" style="text-align: start;">
+                                    <img src="https://github.com/mdo.png" alt="프로필 이미지" style="width: 50px; height: 50px;" class="rounded-circle mb-2">
+
+
+                                    <strong>${review.userNickname}</strong><br/>
+
+
+                                    <span style="font-size: 0.9rem; color: #555;">${review.reviewDate}</span><br/>
+
+
+                                    <span style="font-size: 0.9rem; color: #555;">${review.prodName} [${review.colorName}]</span>
+
+
+                                    <div class="star-rating" style="font-size: 1.2rem; color: gold;">
+                                        &#9733;&#9733;&#9733;&#9733;&#9734;
+                                    </div>
+                                    <div class="mt-1">
+                                        <button class="btn btn-outline-secondary">답글</button>
+                                    </div>
+                                </div>
+
+
+                                <div class="col">
+                                    <div class="mt-2">
+                                        <c:forEach var="img" items="${review.prodReviewImgs}">
+                                            <img src="${img.imgName}" alt="리뷰 이미지" class="img-fluid" style="max-height: 100px; object-fit: cover;">
+                                        </c:forEach>
+                                    </div>
+
+                                    <p style="margin: 3px;">${review.reviewContent}</p>
+                                </div>
+
+                                <div class="col-2 text-end">
+                                    <button type="button" class="btn btn-warning btn-sm">수정</button>
+                                    <button type="button" class="btn btn-danger btn-sm">삭제</button>
+                                </div>
+                            </div>
+                    </div>
+                </c:forEach>
+            </c:otherwise>
+        </c:choose>
     </div>
 </div>
 <script type="text/javascript">

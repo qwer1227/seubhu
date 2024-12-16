@@ -75,7 +75,7 @@ public class ProductController {
     @GetMapping("/detail")
     public String detail(@RequestParam("no") int no,
                          @RequestParam("colorNo") int colorNo,
-             @AuthenticationPrincipal LoginUser loginUser,
+                         @AuthenticationPrincipal LoginUser loginUser,
                          Model model) {
 
         model.addAttribute("loginUser", loginUser);
@@ -98,7 +98,7 @@ public class ProductController {
         model.addAttribute("prodImagesDto", prodImagesDto);
 
 
-        List<ProdReviewDto> prodReviewDto = prodReviewMapper.prodReviewDto(loginUser.getNo());
+        List<ProdReviewDto> prodReviewDto = prodReviewMapper.prodReviewDto(no);
         model.addAttribute("prodReviewDto", prodReviewDto);
 
         return "product/detail";
