@@ -28,7 +28,7 @@ public class ReviewService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucketName;
 
-    @Value("resources/images/courseReviewImages")
+    @Value("${upload.directory.course}")
     private String folder;
 
     @Autowired

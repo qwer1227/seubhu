@@ -98,7 +98,6 @@
 
 </div>
 
-<%@ include file="/WEB-INF/views/common/footer.jsp" %>
 <script>
     const receiversInput = document.getElementById('receivers');
     const suggestionsContainer = document.getElementById('receiver-suggestions');
@@ -119,6 +118,6 @@
         }
     });
 </script>
-
+<%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
 </html>

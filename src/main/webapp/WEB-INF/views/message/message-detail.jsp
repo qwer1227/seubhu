@@ -14,7 +14,7 @@
     <div>
         <div class="col d-flex justify-content-left">
             <div>
-                <a href="" style="text-decoration-line: none">받은 쪽지</a>
+                <a href="" style="text-decoration-line: none">쪽지 상세</a>
             </div>
         </div>
         <div class="title h4 d-flex justify-content-left">
