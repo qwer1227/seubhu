@@ -106,4 +106,22 @@
         WHERE P.PROD_NO= #{prodNo}
           AND PR.ISDELETED = 'N'
     </select>
+
+    <!--
+        ProdReview prodReview(@Param("reviewNo") int reviewNo);
+    -->
+    <select id="getProdReviewByNo" resultType="store.seub2hu2.product.vo.ProdReview">
+        SELECT REVIEW_NO AS no
+              ,PROD_NO as prodNo
+              ,USER_NO as userNo
+             ,REVIEW_TITLE AS title
+             ,REVIEW_CONTENT AS content
+             ,REVIEW_DATE AS createdDate
+             ,REVIEW_UPDATED_DATE AS updatedDate
+             ,REVIEW_RATING AS rating
+             ,ISDELETED AS isDeleted
+        FROM PROD_REVIEWS
+        WHERE REVIEW_NO = #{reviewNo}
+        AND ISDELETED = 'N'
+    </select>
 </mapper>

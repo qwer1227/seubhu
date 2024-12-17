@@ -45,6 +45,9 @@ public class ProdReviewService {
         return reviews;
     }
 
+    public ProdReview getProdReviewByNo(int reviewNo) {
+        return prodReviewMapper.getProdReviewByNo(reviewNo);
+    }
 
     public ProdReviewDto addProdReview(ProdReviewForm form, int userNo) {
 
@@ -98,6 +101,5 @@ public class ProdReviewService {
 
         return dto;
     }
-
 
 }

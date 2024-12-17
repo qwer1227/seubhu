@@ -13,6 +13,8 @@ public interface ProdReviewMapper {
 
     List<ProdReviewDto> prodReviewDto(@Param("prodNo") int prodNo);
 
+    ProdReview getProdReviewByNo(@Param("reviewNo") int reviewNo);
+
     void insertProdReview(@Param("review") ProdReview prodReview);
 
     void insertProdReviewsImg(ProdReviewImg prodReviewImg);

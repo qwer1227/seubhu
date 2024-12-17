@@ -3,6 +3,7 @@ package store.seub2hu2.product.controller;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -14,6 +15,7 @@ import store.seub2hu2.product.dto.*;
 import store.seub2hu2.product.mapper.ProdReviewMapper;
 import store.seub2hu2.product.service.ProdReviewService;
 import store.seub2hu2.product.service.ProductService;
+import store.seub2hu2.product.vo.ProdReview;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.service.UserService;
 import store.seub2hu2.user.vo.User;
@@ -108,6 +110,7 @@ public class ProductController {
     @GetMapping("/hit")
     public String hit(@RequestParam("no") int prodNo, @RequestParam("colorNo") int colorNo){
         productService.updateProdDetailViewCnt(prodNo, colorNo);
+
         return "redirect:detail?no=" + prodNo +"&colorNo="+colorNo;
     }
 
@@ -121,4 +124,13 @@ public class ProductController {
         return ResponseEntity.ok(dto);
     }
 
+    @GetMapping("reviews/{reviewNo}")
+    public ResponseEntity<ProdReview> getReview(@PathVariable("reviewNo") int reviewNo) {
+        ProdReview review = prodReviewService.getProdReviewByNo(reviewNo);
+        if (review != null) {
+            return ResponseEntity.ok(review);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
 }

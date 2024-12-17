@@ -213,7 +213,7 @@
         <c:otherwise>
             <c:forEach var="review" items="${prodReviews}">
                 <div class="mb-3"></div>
-                <div id="wrapper-reviews" class="row comments rounded py-3" style="background-color: #f2f2f2">
+                <div id="wrapper-reviews" class="row comments rounded py-3" style="background-color: #f2f2f2" data-reviewno="${review.reviewNo}">
                     <div class="comment">
                         <div class="row align-items-center">
                             <div class="col-3" style="text-align: start;">
@@ -247,7 +247,7 @@
                             </div>
 
                             <div class="col-2 text-end">
-                                <button type="button" class="btn btn-warning btn-sm" onclick="openEditModal(${review.reviewNo})">수정</button>
+                                <button type="button" class="btn btn-warning btn-sm" id="editReviewBtn" onclick="openEditModal(${review.reviewNo})">수정</button>
                                 <button type="button" class="btn btn-danger btn-sm">삭제</button>
                             </div>
                         </div>
@@ -258,9 +258,9 @@
     </c:choose>
 </div>
 
-<!-- Modal Structure -->
-<div class="modal fade" id="editReviewModal" tabindex="-1" aria-labelledby="editReviewModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+<!-- 수정 모달 창 -->
+<div class="modal fade" id="form-modal" tabindex="-1" aria-labelledby="editReviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="editReviewModalLabel">리뷰 수정</h5>
@@ -284,15 +284,16 @@
                     </div>
 
                     <!-- 별점 -->
-                    <div class="mb-3">
-                        <label for="rating" class="form-label">별점</label>
-                        <select id="rating" name="rating" class="form-select">
-                            <option value="1">1점</option>
-                            <option value="2">2점</option>
-                            <option value="3">3점</option>
-                            <option value="4">4점</option>
-                            <option value="5">5점</option>
-                        </select>
+                    <div class="col-2" style="text-align: left;">
+                        <label class="form-label" style="font-weight: bold;">별점</label>
+                        <div class="star-rating" id="commentStarRating-edit" style="font-size: 1.0rem;">
+                            <span class="star" data-value="1">&#9733;</span>
+                            <span class="star" data-value="2">&#9733;</span>
+                            <span class="star" data-value="3">&#9733;</span>
+                            <span class="star" data-value="4">&#9733;</span>
+                            <span class="star" data-value="5">&#9733;</span>
+                        </div>
+                        <input type="hidden" name="rating" id="commentRating-edit" value="0">
                     </div>
 
                     <!-- 이미지 업로드 -->
@@ -587,34 +588,61 @@
         });
     });
 
+    let editReviewModal = new bootstrap.Modal(document.getElementById('form-modal'));
+
     function openEditModal(reviewNo) {
         // 서버에서 리뷰 데이터를 가져오기
-        fetch(`/reviews/${reviewNo}`, {
+        fetch(`reviews/`+reviewNo, {
             method: 'GET',
         })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('리뷰 데이터를 불러오는 데 실패했습니다.');
+                    throw new Error(reviewNo +'리뷰 데이터를 불러오는 데 실패했습니다.');
                 }
                 return response.json();
             })
             .then(data => {
                 // 가져온 데이터를 모달 폼에 채우기
-                document.getElementById('reviewNo').value = data.reviewNo;
-                document.getElementById('reviewTitle').value = data.reviewTitle;
-                document.getElementById('reviewContent').value = data.reviewContent;
-                document.getElementById('rating').value = data.rating;
+                document.querySelector('#form-modal input[name="reviewNo"]').value = data.no;
+                document.querySelector('#form-modal input[name="reviewTitle"]').value = data.title;
+                document.querySelector('#form-modal textarea[name="reviewContent"]').value = data.content;
+                setRatingStars(data.rating);
 
                 // 모달 열기
-                const editReviewModal = new bootstrap.Modal(document.getElementById('editReviewModal'));
                 editReviewModal.show();
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('리뷰 데이터를 불러오지 못했습니다.');
+                alert(reviewNo+'리뷰 데이터를 불러오지 못했습니다.');
             });
     }
 
+    // 리뷰 데이터에서 가져온 rating 값으로 별을 미리 표시
+    function setRatingStars(rating) {
+        // 모든 별을 초기화
+        $('#commentStarRating-edit .star').each(function() {
+            $(this).removeClass('selected'); // 기존에 선택된 별을 제거
+        });
+
+        // rating 값에 맞는 별을 선택
+        $('#commentStarRating-edit .star').each(function() {
+            var starValue = $(this).data('value');
+            if (starValue <= rating) {
+                $(this).addClass('selected'); // 선택된 별
+            }
+        });
+
+        // hidden input에 rating 값 설정
+        $('#commentRating-edit').val(rating);
+    }
+
+    // 별 클릭 시 별점 변경
+    $('#commentStarRating-edit .star').on('click', function() {
+        var rating = $(this).data('value');
+
+        // 선택된 별을 표시
+        setRatingStars(rating);
+    });
 
 </script>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
