@@ -120,6 +120,7 @@
         nickname: false,
         phone: false,
         email: false,
+        newPassword: false
 
     };
 
@@ -165,6 +166,8 @@
                 return "전화번호는 01012345678 형식이어야 합니다.";
             case "email":
                 return "유효한 이메일 주소를 입력하세요.";
+            case "newPassword":
+                return "이전비밀번호와 같습니다";
             default:
                 return "유효하지 않은 입력입니다.";
         }
@@ -243,13 +246,17 @@
                         // 서버 응답 처리
                         if (response.isSameAsOldPassword) {
                             $('#passwordFeedback').text('이전 비밀번호와 같습니다. 다른 비밀번호를 입력해주세요.').css('color', 'red');
+                            fieldValidResult.newPassword = false;  // 유효하지 않으면 false로 설정
+                            fieldValidResult.password = false;
                         } else {
                             $('#passwordFeedback').text('✔ 유효한 비밀번호입니다.').css('color', 'green');
+                            fieldValidResult.newPassword = true;  // 유효하면 true로 설정
                         }
                     },
                     error: function (xhr, status, error) {
                         console.error('AJAX 요청 실패:', error);
                         $('#passwordFeedback').text('비밀번호 확인 중 오류가 발생했습니다.').css('color', 'red');
+                        fieldValidResult.newPassword = false;  // 오류가 발생하면 false로 설정
                     }
                 });
             }
