@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import store.seub2hu2.address.service.AddressService;
 import store.seub2hu2.admin.dto.RequestParamsDto;
 import store.seub2hu2.cart.dto.CartItemDto;
 import store.seub2hu2.cart.dto.CartRegisterForm;
@@ -56,6 +57,9 @@ public class MyPageController {
 
     @Value("upload.directory.userImage")
     private String saveDirectory;
+
+    @Autowired
+    AddressService addressService;
 
     @Autowired
     PostService postService;
@@ -652,6 +656,9 @@ public class MyPageController {
 
         List<CartItemDto> orderItems = orderService.getOrderItemBySizeNo(sizeNoList, stock, loginUser.getNo());
         model.addAttribute("orderItems", orderItems);
+
+        List<Addr> addresses = addressService.getAddressListByUserNo(loginUser.getNo());
+        model.addAttribute("addresses", addresses);
 
         return "mypage/order";
     }
