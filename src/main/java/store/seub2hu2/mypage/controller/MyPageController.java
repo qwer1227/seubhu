@@ -54,7 +54,7 @@ import java.util.Map;
 @RequestMapping("/mypage")
 public class MyPageController {
 
-    @Value("${upload.directory.community}")
+    @Value("upload.directory.userImage")
     private String saveDirectory;
 
     @Autowired

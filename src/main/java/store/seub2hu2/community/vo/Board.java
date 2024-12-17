@@ -13,9 +13,13 @@ import java.util.List;
 @Setter
 public class Board {
     private int no;
+    private int prevNo;
+    private int nextNo;
     private String catName;
     private User user;
     private String title;
+    private String prevTitle;
+    private String nextTitle;
     private String content;
     private UploadFile uploadFile;
     private Date createdDate;
@@ -26,7 +30,6 @@ public class Board {
     private String deleted;
     private String keep;
     private Report report;
-//    private Hashtag hashtag;
     private List<Reply> reply;
     private int replyCnt;
     private int boardCnt;

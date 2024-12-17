@@ -73,7 +73,7 @@ public class CrewReplyService {
     }
 
     public void updateReply(ReplyForm form) {
-        Reply reply = crewReplyMapper.getReplyByReplyNo(form.getId());
+        Reply reply = crewReplyMapper.getReplyByReplyNo(form.getNo());
         reply.setContent(form.getContent());
 
         crewReplyMapper.updateReply(reply);
