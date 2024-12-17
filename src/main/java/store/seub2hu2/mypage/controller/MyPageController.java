@@ -2,9 +2,12 @@ package store.seub2hu2.mypage.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -40,6 +43,7 @@ import store.seub2hu2.user.vo.Addr;
 import store.seub2hu2.user.vo.User;
 import store.seub2hu2.user.vo.UserImage;
 import store.seub2hu2.util.ListDto;
+import store.seub2hu2.util.S3Service;
 import store.seub2hu2.wish.dto.WishItemDto;
 import store.seub2hu2.wish.vo.WishList;
 
@@ -54,8 +58,11 @@ import java.util.Map;
 @RequestMapping("/mypage")
 public class MyPageController {
 
-    @Value("${upload.directory.community}")
+    @Value("${upload.directory.userImage}")
     private String saveDirectory;
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucketName;
 
     @Autowired
     PostService postService;
@@ -79,7 +86,7 @@ public class MyPageController {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private BoardReplyService replyService;
+    private ReplyService replyService;
 
     @Autowired
     private ScrapService scrapService;
@@ -98,6 +105,8 @@ public class MyPageController {
 
     @Autowired
     private WishListService wishListService;
+    @Autowired
+    private S3Service s3Service;
 
     // URL localhost/mypage 입력 시 유저의 No를 활용해 그 유저의 페이지를 보여줌
     @GetMapping("")
@@ -233,6 +242,10 @@ public class MyPageController {
         board.setReply(replyList);
         int replyCnt = replyService.getReplyCnt(boardNo);
 
+        Map<String, Object> condition = new HashMap<>();
+        ListDto<Board> dto = boardService.getBoardsTop(condition);
+        model.addAttribute("boards", dto.getData());
+
         if (loginUser != null) {
             int boardResult = boardService.getCheckLike(boardNo, loginUser);
             model.addAttribute("boardLiked", boardResult);
@@ -241,8 +254,11 @@ public class MyPageController {
             model.addAttribute("Scrapped", scrapResult);
 
             for (Reply reply : replyList) {
-                int replyResult = replyService.getCheckLike(reply.getNo(), loginUser);
-                model.addAttribute("replyLiked", replyResult);
+                int replyResult = replyService.getCheckLike(reply.getNo(), "boardReply", loginUser);
+                reply.setReplyLiked(replyResult);
+
+                Reply prev = replyService.getReplyDetail(reply.getNo());
+                reply.setPrevUser(prev.getPrevUser());
             }
         }
 
@@ -250,205 +266,241 @@ public class MyPageController {
         model.addAttribute("replies", replyList);
         model.addAttribute("replyCnt", replyCnt);
 
-        return "community/detail";
+        return "community/board/detail";
+    }
+
+    @GetMapping("/hit")
+    public String hit(@RequestParam("no") int boardNo) {
+        boardService.updateBoardViewCnt(boardNo);
+        return "redirect:detail?no=" + boardNo;
     }
 
     @GetMapping("/form")
+    @PreAuthorize("isAuthenticated()")
     public String form() {
-        return "community/form";
+        return "community/board/form";
     }
 
     @PostMapping("/register")
-//    @PreAuthorize("isAuthenticated()")
-    public String register(BoardForm form
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    public Board register(BoardForm form
             , @AuthenticationPrincipal LoginUser loginUser) {
-        Board board = boardService.addNewBoard(form, loginUser);
 
-        return "redirect:detail?no=" + board.getNo();
+        Board board = boardService.addNewBoard(form, loginUser);
+        return board;
     }
 
     @GetMapping("/modify")
-    public String modifyForm(@RequestParam("no") Integer boardNo
-            , @AuthenticationPrincipal LoginUser loginUser
+    @PreAuthorize("isAuthenticated()")
+    public String modifyForm(@RequestParam("no") int boardNo
             , Model model) {
-        Board board = boardService.getBoardDetail(boardNo);
 
+        Board board = boardService.getBoardDetail(boardNo);
         model.addAttribute("board", board);
 
-        return "community/modify";
+        return "community/board/modify";
     }
 
     @PostMapping("/modify")
-    public String update(BoardForm form
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> update(BoardForm form
             , @AuthenticationPrincipal LoginUser loginUser) {
-        boardService.updateBoard(form, loginUser);
-        return "redirect:detail?no=" + form.getNo();
+        try {
+            // 첨부파일이 없는 경우 처리
+            if (form.getUpfile() != null && form.getUpfile().getName() == null) {
+                form.setUpfile(null); // Null 처리
+            }
+            boardService.updateBoard(form, loginUser);
+            return ResponseEntity.ok().body(form.getNo());
+        } catch (Exception e) {
+            // 예외 처리 및 로그 남기기
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("글 수정 중 오류 발생: " + e.getMessage());
+        }
     }
 
     @GetMapping("/delete")
+    @PreAuthorize("isAuthenticated()")
     public String delete(@RequestParam("no") int boardNo) {
+
         BoardForm form = new BoardForm();
         form.setNo(boardNo);
         boardService.deleteBoard(boardNo);
+
         return "redirect:main";
     }
 
     @GetMapping("/delete-file")
     public String deleteUploadFile(@RequestParam("no") int boardNo
             , @RequestParam("fileNo") int fileNo) {
-        boardService.deleteBoardFile(boardNo, fileNo);
 
+        boardService.deleteBoardFile(boardNo, fileNo);
         return "redirect:modify?no=" + boardNo;
     }
 
     // 요청 URL : comm/filedown?no=xxx
     @GetMapping("/filedown")
-    public ModelAndView download(@RequestParam("no") int boardNo
-            , @AuthenticationPrincipal LoginUser loginUser) {
+    public ResponseEntity<ByteArrayResource> download(@RequestParam("no") int boardNo) {
+
         Board board = boardService.getBoardDetail(boardNo);
+        try {
+            String filename = board.getOriginalFileName();
+            ByteArrayResource byteArrayResource = s3Service.downloadFile(bucketName, saveDirectory, filename);
 
-        ModelAndView mav = new ModelAndView();
+            String encodedFileName = URLEncoder.encode(filename.substring(13), "UTF-8");
 
-        mav.setView(fileDownloadView);
-        mav.addObject("directory", saveDirectory);
-        mav.addObject("filename", board.getUploadFile().getSaveName());
-        mav.addObject("originalFilename", board.getOriginalFileName());
-
-        return mav;
-    }
-
-    @GetMapping("/download")
-    public ResponseEntity<Resource> downloadFile(int boardNo
-            , @AuthenticationPrincipal LoginUser loginUser) throws Exception{
-        Board board = boardService.getBoardDetail(boardNo);
-
-        String fileName = board.getUploadFile().getSaveName();
-        String originalFileName = board.getOriginalFileName();
-        originalFileName = URLEncoder.encode(originalFileName, "UTF-8");
-
-        File file = new File(new File(saveDirectory), fileName);
-        FileSystemResource resource = new FileSystemResource(file);
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + originalFileName)
-                .body(resource);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + encodedFileName + "\"")
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .contentLength(byteArrayResource.contentLength())
+                    .body(byteArrayResource);
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     @GetMapping("/login")
-    public String login(){
+    public String login() {
+
         return "redirect:/user/login";
     }
-    @GetMapping("/add-reply")
+
+    @PostMapping("/add-reply")
     @PreAuthorize("isAuthenticated()")
-    public String addReply(ReplyForm form
+    @ResponseBody
+    public Reply addReply(ReplyForm form
             , @AuthenticationPrincipal LoginUser loginUser) {
 
-        replyService.addNewReply(form, loginUser);
-
-        return "redirect:detail?no=" + form.getBoardNo();
+        Reply reply = replyService.addNewReply(form, loginUser);
+        return reply;
     }
 
     @PostMapping("/add-comment")
     @PreAuthorize("isAuthenticated()")
-    public String addComment(ReplyForm form
-            , @AuthenticationPrincipal LoginUser loginUser){
-        replyService.addNewComment(form, loginUser);
+    public Reply addComment(ReplyForm form
+            , @AuthenticationPrincipal LoginUser loginUser) {
 
-        return "redirect:detail?no=" + form.getBoardNo();
+        Reply reply = replyService.addNewComment(form, loginUser);
+        return reply;
     }
 
     @PostMapping("/modify-reply")
     @PreAuthorize("isAuthenticated()")
-    public String modifyReply(@RequestParam("replyNo") int replyNo
-            , @RequestParam("boardNo") int boardNo
-            , @RequestParam("content") String replyContent
-            , @AuthenticationPrincipal LoginUser loginUser){
-        ReplyForm form = new ReplyForm();
-        form.setId(replyNo);
-        form.setBoardNo(boardNo);
-        form.setContent(replyContent);
-        form.setUserNo(loginUser.getNo());
+    public String modifyReply(ReplyForm form
+            , @AuthenticationPrincipal LoginUser loginUser) {
 
-        replyService.updateReply(form);
-
-        return "redirect:detail?no=" + form.getBoardNo();
+        replyService.updateReply(form, loginUser);
+        return "redirect:detail?no=" + form.getTypeNo();
     }
 
     @GetMapping("/delete-reply")
     @PreAuthorize("isAuthenticated()")
     public String deleteReply(@RequestParam("rno") int replyNo,
-                              @RequestParam("bno") int boardNo){
+                              @RequestParam("no") int boardNo) {
+
         ReplyForm form = new ReplyForm();
-        form.setId(replyNo);
-        form.setBoardNo(boardNo);
+        form.setNo(replyNo);
+        form.setTypeNo(boardNo);
         replyService.deleteReply(replyNo);
 
-        return "redirect:detail?no=" + form.getBoardNo();
+        return "redirect:detail?no=" + form.getTypeNo();
     }
 
     @GetMapping("/update-board-like")
+    @PreAuthorize("isAuthenticated()")
     public String updateBoardLike(@RequestParam("no") int boardNo
-            , @AuthenticationPrincipal LoginUser loginUser){
+            , @AuthenticationPrincipal LoginUser loginUser) {
+
         boardService.updateBoardLike(boardNo, loginUser);
         return "redirect:detail?no=" + boardNo;
     }
 
     @GetMapping("/delete-board-like")
+    @PreAuthorize("isAuthenticated()")
     public String updateBoardUnlike(@RequestParam("no") int boardNo
-            , @AuthenticationPrincipal LoginUser loginUser){
+            , @AuthenticationPrincipal LoginUser loginUser) {
+
         boardService.deleteBoardLike(boardNo, loginUser);
         return "redirect:detail?no=" + boardNo;
     }
 
-    @GetMapping("/update-reply-like")
-    public String updateReplyLke(@RequestParam("no") int boardNo
+    @PostMapping("/update-reply-like")
+    @PreAuthorize("isAuthenticated()")
+    public String updateReplyLike(@RequestParam("no") int boardNo
             , @RequestParam("rno") int replyNo
-            , @AuthenticationPrincipal LoginUser loginUser){
+            , @AuthenticationPrincipal LoginUser loginUser) {
 
-        replyService.updateReplyLike(replyNo, loginUser);
+        replyService.updateReplyLike(replyNo, "boardReply", loginUser);
         return "redirect:detail?no=" + boardNo;
     }
 
-    @GetMapping("/delete-reply-like")
+    @PostMapping("/delete-reply-like")
+    @PreAuthorize("isAuthenticated()")
     public String updateReplyUnlike(@RequestParam("no") int boardNo
             , @RequestParam("rno") int replyNo
-            , @AuthenticationPrincipal LoginUser loginUser){
+            , @AuthenticationPrincipal LoginUser loginUser) {
 
-        replyService.deleteReplyLike(replyNo, loginUser);
+        replyService.deleteReplyLike(replyNo, "boardReply", loginUser);
         return "redirect:detail?no=" + boardNo;
     }
 
     @GetMapping("/update-board-scrap")
+    @PreAuthorize("isAuthenticated()")
     public String updateScrap(@RequestParam("no") int boardNo
-            , @AuthenticationPrincipal LoginUser loginUser){
+            , @AuthenticationPrincipal LoginUser loginUser) {
 
         scrapService.updateBoardScrap(boardNo, loginUser);
         return "redirect:detail?no=" + boardNo;
     }
 
     @GetMapping("/delete-board-scrap")
+    @PreAuthorize("isAuthenticated()")
     public String deleteScrap(@RequestParam("no") int boardNo
-            , @AuthenticationPrincipal LoginUser loginUser){
+            , @AuthenticationPrincipal LoginUser loginUser) {
 
         scrapService.deleteBoardScrap(boardNo, loginUser);
         return "redirect:detail?no=" + boardNo;
     }
 
     @PostMapping("/report-board")
+    @PreAuthorize("isAuthenticated()")
     public String reportBoard(ReportForm form
-            , @AuthenticationPrincipal LoginUser loginUser){
+            , @AuthenticationPrincipal LoginUser loginUser) {
+        boolean isReported = reportService.isReported(form.getType(), form.getNo(), loginUser);
 
-        reportService.registerReport(form, loginUser);
+        if (!isReported) {
+            reportService.registerReport(form, loginUser);
+        }
+
         return "redirect:detail?no=" + form.getNo();
     }
 
-    @PostMapping("report-reply")
+    @PostMapping("/report-reply")
+    @PreAuthorize("isAuthenticated()")
     public String reportReply(ReportForm form
-            , @RequestParam("bno") int boardNo
-            , @AuthenticationPrincipal LoginUser loginUser){
+            , @AuthenticationPrincipal LoginUser loginUser) {
+        boolean isReported = reportService.isReported(form.getType(), form.getNo(), loginUser);
 
-        reportService.registerReport(form, loginUser);
-        return "redirect:detail?no=" + boardNo;
+        if (!isReported) {
+            reportService.registerReport(form, loginUser);
+        }
+
+        Reply reply = replyService.getReplyDetail(form.getNo());
+        return "redirect:detail?no=" + reply.getTypeNo();
+
+    }
+
+    @GetMapping("report-check")
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    public String reportCheck(@RequestParam("type") String type
+            , @RequestParam("no") int no
+            , @AuthenticationPrincipal LoginUser loginUser) {
+
+        boolean isReported = reportService.isReported(type, no, loginUser);
+
+        return isReported ? "yes" : "no";
     }
 
 
