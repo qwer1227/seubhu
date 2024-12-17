@@ -70,14 +70,13 @@
     and f.is_deleted = 'N'), null) as "thumbnail.saveName"
     , c.crew_view_cnt as viewCnt
     , (select count(*) from CREW_REPLIES cr where c.crew_no = cr.crew_no) as replyCnt
-    from
-    CREWS c join CREW_MEMBERS cm
+    from CREWS c join CREW_MEMBERS cm
     on c.crew_no = cm.crew_no
     join USERS u
     on cm.user_no = u.user_no
     <if test="condition.opt == 'reply'">
-      join CREW_REPLIES r
-      on r.crew_no = c.crew_no
+      join REPLIES r
+      on r.reply_type_no = c.crew_no
     </if>
     where c.is_deleted = 'N'
     and cm.is_reader = 'Y'
@@ -103,7 +102,7 @@
           and r.reply_content like concat ('%', #{condition.keyword}, '%')
         </when>
         <when test="condition.opt == 'nickname'">
-          and cm.user_nickname like concat('%', #{condition.keyword}, '%')
+          and u.user_nickname like concat('%', #{condition.keyword}, '%')
         </when>
       </choose>
     </if>
@@ -131,24 +130,45 @@
   </select>
 
   <!-- List<CrewMember> getCrewMembers(@Param("no") int crewNo);); -->
-  <select id="getCrewMembers" resultType="store.seub2hu2.community.vo.CrewMember" parameterType="int">
-    select cm.crew_no        as crewNo
-         , cm.is_reader      as reader
-         , u.user_no         as "user.no"
-         , cm.crew_join_date as joinDate
+  <select id="getCrewMembers" resultType="int" >
+    select cm.user_no
     from CREW_MEMBERS cm
-           join USERS u
-                on cm.user_no = u.user_no
-    where cm.crew_no = #{no}
-      and cm.is_join = 'Y'
+    where cm.is_join = 'Y'
+      and cm.crew_no = #{no}
   </select>
 
   <!-- int getTotalRowsForCrew(@Param("condition") Map<String, Object> condition); -->
   <select id="getTotalRowsForCrew" resultType="int">
     select count(*)
-    from CREWS crew
-    where is_deleted = 'N'
-
+    from CREWS c
+    <if test="condition.opt == 'reply'">
+      join REPLIES r
+      on c.crew_no = r.reply_type_no
+    </if>
+    where c.is_deleted = 'N'
+    <if test="condition.category != null">
+      and c.is_entered = #{condition.category}
+    </if>
+    <if test="condition.opt != null">
+      <choose>
+        <when test="condition.opt == 'all'">
+          and c.crew_title like concat ('%', #{condition.keyword}, '%')
+          || c.crew_description like concat('%', #{condition.keyword}, '%')
+        </when>
+        <when test="condition.opt == 'title'">
+          and c.crew_title like concat ('%', #{condition.keyword}, '%')
+        </when>
+        <when test="condition.opt == 'content'">
+          and c.crew_description like concat('%', #{condition.keyword}, '%')
+        </when>
+        <when test="condition.opt == 'name'">
+          and c.crew_name like concat('%', #{condition.keyword}, '%')
+        </when>
+        <when test="condition.opt == 'reply'">
+          and r.reply_content like concat ('%', #{condition.keyword}, '%')
+        </when>
+      </choose>
+    </if>
   </select>
 
   <!-- Crew getCrewDetailByNo(@Param("no") int crewNo); -->
@@ -181,6 +201,7 @@
     where
       c.crew_no = #{no}
       and cm.is_reader = 'Y'
+      and cm.is_join = 'Y'
   </select>
 
   <!-- void updateCrewCnt(@Param("crew") Crew crew); -->
@@ -253,8 +274,6 @@
           where c.is_deleted = 'N'
             and cm.is_join = 'Y'
             and cm.user_no = #{userNo}) crew
-
   </select>
-
 
 </mapper>

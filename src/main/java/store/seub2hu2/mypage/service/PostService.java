@@ -26,7 +26,7 @@ public class PostService {
 
     public Post getPostDetail(int postNo){
         Post post = postMapper.getPostByNo(postNo);
-
+        
         return post;
     }
 
@@ -38,8 +38,6 @@ public class PostService {
     }
 
     public List<Post> getPostsByNo(int userNo) {
-
-        System.out.println("userno = " + userNo);
 
         List<Post> posts = postMapper.getPostsByNo(userNo);
 

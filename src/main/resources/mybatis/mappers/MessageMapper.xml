@@ -34,16 +34,14 @@
         WHERE MESSAGE_NO = #{messageNo}
     </update>
 
-    <update id="deleteMessages" parameterType="store.seub2hu2.message.vo.Message">
+    <update id="deleteMessageRcv" parameterType="store.seub2hu2.message.vo.Message">
         UPDATE MESSAGE_RECEIVERS
         SET MESSAGE_DELETE = 'Y'
-        WHERE (MESSAGE_NO, USER_NO) IN
-        <foreach item="messageNo" collection="messageNos" open="(" separator="," close=")">
-            #{messageNo}, #{userNo}
-        </foreach>
+        WHERE MESSAGE_NO = #{messageNo}
+          AND USER_NO = #{userNo}
     </update>
 
-    <update id="updateReceiveMessageReadStatus">
+    <update id="updateReadMarkMessageRcv">
         UPDATE MESSAGE_RECEIVERS
         SET MESSAGE_READ      = 'Y',
             MESSAGE_READ_DATE = NOW()
@@ -51,39 +49,56 @@
           AND USER_NO = #{userNo}
     </update>
 
-    <update id="updateMessageReadStatus">
+    <update id="updateReadMarkMessage">
         UPDATE MESSAGES
         SET MESSAGE_READ = 'Y'
         WHERE MESSAGE_NO = #{messageNo}
     </update>
 
 
-    <update id="updateReadStatuses">
-        UPDATE MESSAGE_RECEIVERS
-        SET MESSAGE_READ = 'Y',
-        MESSAGE_READ_DATE = NOW()
-        WHERE (MESSAGE_NO, USER_NO) IN
-        <foreach item="messageNo" collection="messageNos" open="(" separator="," close=")">
-            #{messageNo}, #{userNo}
-        </foreach>
-    </update>
-
     <!-- 조건에 맞는 메시지 수 조회 -->
-    <select id="getTotalRows" resultType="int">
+    <select id="getMessageTotalRows" resultType="int">
         SELECT COUNT(*)
         FROM MESSAGES
-        <where>
-            <if test="condition.title != null">
-                AND MESSAGE_TITLE LIKE CONCAT('%', #{condition.title}, '%')
-            </if>
-            <if test="condition.content != null">
-                AND MESSAGE_CONTENT LIKE CONCAT('%', #{condition.content}, '%')
-            </if>
-            <if test="condition.keyword != null">
-                AND (MESSAGE_TITLE LIKE CONCAT('%', #{condition.keyword}, '%')
-                OR MESSAGE_CONTENT LIKE CONCAT('%', #{condition.keyword}, '%'))
-            </if>
-        </where>
+        where MESSAGE_DELETE = 'N'
+          and USER_NO = #{condition.userNo}
+        <if test="condition.title != null">
+            AND MESSAGE_TITLE LIKE CONCAT('%', #{condition.title}, '%')
+        </if>
+        <if test="condition.content != null">
+            AND MESSAGE_CONTENT LIKE CONCAT('%', #{condition.content}, '%')
+        </if>
+        <if test="condition.keyword != null">
+            AND (MESSAGE_TITLE LIKE CONCAT('%', #{condition.keyword}, '%')
+            OR MESSAGE_CONTENT LIKE CONCAT('%', #{condition.keyword}, '%'))
+        </if>
+
+    </select>
+
+    <select id="getMessageRcvTotalRows" resultType="int">
+        SELECT COUNT(*)
+        FROM
+        MESSAGES m
+        JOIN MESSAGE_RECEIVERS r ON m.MESSAGE_NO = r.MESSAGE_NO
+        JOIN USERS u ON m.USER_NO = u.USER_NO -- 발신자 정보 조회
+        WHERE
+        r.USER_NO = #{condition.userNo}
+        AND r.MESSAGE_DELETE = 'N'
+        <if test="condition.keyword != null and condition.opt != null">
+            AND (
+            <choose>
+                <when test="condition.opt == 'title'">
+                    m.MESSAGE_TITLE LIKE CONCAT('%', #{condition.keyword}, '%')
+                </when>
+                <when test="condition.opt == 'content'">
+                    m.MESSAGE_CONTENT LIKE CONCAT('%', #{condition.keyword}, '%')
+                </when>
+                <when test="condition.opt == 'senderNickname'">
+                    u.USER_NICKNAME LIKE CONCAT('%', #{condition.keyword}, '%')
+                </when>
+            </choose>
+            )
+        </if>
     </select>
 
     <!-- 조건에 맞는 메시지 목록 조회 -->
@@ -145,7 +160,7 @@
         JOIN USERS u ON m.USER_NO = u.USER_NO -- 발신자 정보 조회
         WHERE
         r.USER_NO = #{condition.userNo}
-        AND m.MESSAGE_DELETE = 'N'
+        AND r.MESSAGE_DELETE = 'N'
         <if test="condition.keyword != null and condition.opt != null">
             AND (
             <choose>
@@ -241,14 +256,6 @@
         FROM MESSAGE_FILES
         WHERE MESSAGE_NO = #{messageNo}
           AND FILE_DELETED = 'N'
-    </select>
-
-    <!-- 읽지 않은 메시지 개수 조회 -->
-    <select id="countUnreadMessages" parameterType="int" resultType="int">
-        SELECT COUNT(*)
-        FROM MESSAGE_RECEIVERS
-        WHERE USER_NO = #{userNo}
-          AND MESSAGE_READ = 'N'
     </select>
 
 

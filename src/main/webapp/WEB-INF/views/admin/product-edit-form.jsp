@@ -102,13 +102,18 @@
                                     </div>
                                 <div class="row justify-content-end">
                                     <div class="text-end" style="text-align: right">
-                                        <a type="button" class="btn btn-success mr-2" href="/admin/product-detail?no=${param.no}&colorNo=${param.colorNo}">뒤로가기</a>
+                                        <a type="button" class="btn btn-dark mr-2" href="/admin/register-color?no=${param.no}&colorNo=${param.colorNo}">뒤로가기</a>
                                     </div>
                                     <div class="text-end" style="text-align: right">
-                                        <button type="submit" class="btn btn-primary">수정</button>
+                                        <button type="submit" class="btn btn-primary mr-1">수정</button>
                                     </div>
                                 </div>
                             </form>
+                                    <div class="text-end pt-2" style="text-align: right" >
+                                        <a href="register-size?no=${param.no}&colorNo=${param.colorNo}">
+                                            <button class="btn btn-outline btn-success mr-2">상품 사이즈 추가</button>
+                                        </a>
+                                    </div>
                         </div>
                     </div>
                 </div>

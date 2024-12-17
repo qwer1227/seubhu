@@ -89,6 +89,10 @@
             FROM PRODUCTS P
                 JOIN PROD_CATEGORIES PC ON P.CAT_NO = PC.CAT_NO
                 JOIN PROD_BRANDS PB ON P.BRAND_NO = PB.BRAND_NO
+            WHERE
+                P.PROD_DELETED = 'N'
+            AND
+                P.ISSHOW = 'Y'
             <if test="condition != null">
                 <choose>
                     <when test="condition.opt == 'name'">

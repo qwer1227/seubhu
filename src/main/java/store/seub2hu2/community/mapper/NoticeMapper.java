@@ -18,4 +18,7 @@ public interface NoticeMapper {
     void updateNotice(@Param("notice") Notice notice);  // 공지사항 수정 및 삭제
 
     void updateNoticeCnt(@Param("notice") Notice notice);
+
+    int getTopNoticeCnt();
+    void updateTopNoticeToNotFirst();
 }

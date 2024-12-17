@@ -15,7 +15,7 @@ public class ReportService {
     @Autowired
     private ReportMapper reportMapper;
 
-    public void registerReport(ReportForm form
+    public Report registerReport(ReportForm form
             , @AuthenticationPrincipal LoginUser loginUser) {
 
         Report report = new Report();
@@ -30,11 +30,13 @@ public class ReportService {
         report.setUser(user);
 
         reportMapper.insertReport(report);
+
+        return report;
     }
 
     public boolean isReported(String type
-                              , int no
-                            , @AuthenticationPrincipal LoginUser loginUser) {
+            , int no
+            , @AuthenticationPrincipal LoginUser loginUser) {
         return reportMapper.isAlreadyReported(type, no, loginUser.getNo());
     }
 }

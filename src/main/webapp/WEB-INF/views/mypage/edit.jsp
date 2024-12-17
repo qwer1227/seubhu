@@ -68,6 +68,39 @@
                 <div id="emailFeedback"></div> <!-- 피드백 영역 -->
             </div>
 
+           <!-- 주소 선택 셀렉트 박스 -->
+            <div class="mb-3 d-flex align-items-center">
+                <label for="addressSelect" class="form-label me-2">주소 선택</label>
+                <select id="addressSelect" class="form-select me-2 flex-grow-1" name="addrNo" onchange="populateAddressFields()">
+                    <option value="" disabled selected>주소를 선택하세요</option>
+                    <c:forEach var="addr" items="${addr}">
+                        <option value="${addr.no}">
+                            ${addr.address} (${addr.addressDetail})
+                        </option>
+                    </c:forEach>
+                </select>
+                <button type="button" class="btn btn-secondary me-2" id="editAddressBtn" onclick="showAddressFields()">수정</button>
+                <!-- 기본배송지 설정 체크박스 -->
+                <div class="form-check d-flex align-items-center">
+                    <input class="form-check-input" type="checkbox" id="defaultAddress" name="isAddrHome">
+                    <label class="form-check-label ms-1" for="defaultAddress">기본배송지 설정</label>
+                </div>
+            </div>
+
+
+
+            <!-- 숨겨진 주소 입력 폼 -->
+            <div id="addressFields" style="display: none;">
+                <div class="form-group d-flex align-items-center mb-3">
+                    <input type="text" name="postcode" class="form-control me-2" id="postcode" placeholder="우편번호" required readonly>
+                    <input type="button" onclick="openPostcode()" class="btn btn-dark" value="우편번호 검색">
+                </div>
+                <input type="text" name="address" id="address" class="form-control mb-3" placeholder="기본주소"/>
+                <input type="text" name="addressDetail" id="address-detail" class="form-control mb-3" placeholder="나머지 주소(선택입력 가능)" value=""/>
+                <input type="text" name="address-extra" id="address-extra" class="form-control mb-3" placeholder="참고항목"/>
+            </div>
+
+
             <!-- 수정 버튼 -->
             <button type="submit" class="btn btn-primary">수정하기</button>
         </form>
@@ -77,6 +110,10 @@
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 
 <script>
+    function showAddressFields() {
+        document.getElementById("addressFields").style.display = "block";
+    }
+
     // 유효성 검사 규칙
     const validators = {
         password: (value) => value.length >= 8,  // 비밀번호 길이 8자 이상
@@ -193,6 +230,55 @@
             }
         });
     });
+
+    // 카카오 주소 api
+    function openPostcode() {
+        new daum.Postcode({
+            oncomplete: function (data) {
+                // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+
+                // 각 주소의 노출 규칙에 따라 주소를 조합한다.
+                // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+                var addr = ''; // 주소 변수
+                var extraAddr = ''; // 참고항목 변수
+
+                //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+                if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+                    addr = data.roadAddress;
+                } else { // 사용자가 지번 주소를 선택했을 경우(J)
+                    addr = data.jibunAddress;
+                }
+
+                // 사용자가 선택한 주소가 도로명 타입일때 참고항목을 조합한다.
+                if (data.userSelectedType === 'R') {
+                    // 법정동명이 있을 경우 추가한다. (법정리는 제외)
+                    // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
+                    if (data.bname !== '' && /[동|로|가]$/g.test(data.bname)) {
+                        extraAddr += data.bname;
+                    }
+                    // 건물명이 있고, 공동주택일 경우 추가한다.
+                    if (data.buildingName !== '' && data.apartment === 'Y') {
+                        extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+                    }
+                    // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+                    if (extraAddr !== '') {
+                        extraAddr = ' (' + extraAddr + ')';
+                    }
+                    // 조합된 참고항목을 해당 필드에 넣는다.
+                    document.getElementById("address-extra").value = extraAddr;
+
+                } else {
+                    document.getElementById("address-extra").value = '';
+                }
+
+                // 우편번호와 주소 정보를 해당 필드에 넣는다.
+                document.getElementById('postcode').value = data.zonecode;
+                document.getElementById("address").value = addr;
+                // 커서를 상세주소 필드로 이동한다.
+                document.getElementById("address-detail").focus();
+            }
+        }).open();
+    }
 
 </script>
 </body>

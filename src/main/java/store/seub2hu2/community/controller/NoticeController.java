@@ -15,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import store.seub2hu2.community.dto.NoticeForm;
 import store.seub2hu2.community.service.NoticeService;
-import store.seub2hu2.community.view.FileDownloadView;
 import store.seub2hu2.community.vo.Board;
 import store.seub2hu2.community.vo.Notice;
 import store.seub2hu2.security.user.LoginUser;
@@ -37,12 +36,11 @@ public class NoticeController {
     @Autowired
     public NoticeService noticeService;
 
-    @Autowired
-    public FileDownloadView fileDownloadView;
 
     @GetMapping("/main")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page
             , @RequestParam(name = "rows", required = false, defaultValue = "10") int rows
+            , @RequestParam(name = "sort", required = false, defaultValue = "import") String sort
             , @RequestParam(name = "opt", required = false) String opt
             , @RequestParam(name = "keyword", required = false) String keyword
             , Model model) {
@@ -50,6 +48,7 @@ public class NoticeController {
         Map<String, Object> condition = new HashMap<>();
         condition.put("page", page);
         condition.put("rows", rows);
+        condition.put("sort", sort);
 
         if (StringUtils.hasText(keyword)) {
             condition.put("opt", opt);
@@ -92,20 +91,20 @@ public class NoticeController {
         return "community/notice/detail";
     }
 
-    @GetMapping("/filedown")
-    public ModelAndView download(@RequestParam("no") int noticeNo) {
-
-        Notice notice = noticeService.getNoticeDetail(noticeNo);
-
-        ModelAndView mav = new ModelAndView();
-
-        mav.setView(fileDownloadView);
-        mav.addObject("directory", saveDirectory);
-        mav.addObject("filename", notice.getUploadFile().getSaveName());
-        mav.addObject("originalFilename", notice.getOriginalFileName());
-
-        return mav;
-    }
+//    @GetMapping("/filedown")
+//    public ModelAndView download(@RequestParam("no") int noticeNo) {
+//
+//        Notice notice = noticeService.getNoticeDetail(noticeNo);
+//
+//        ModelAndView mav = new ModelAndView();
+//
+//        mav.setView(fileDownloadView);
+//        mav.addObject("directory", saveDirectory);
+//        mav.addObject("filename", notice.getUploadFile().getSaveName());
+//        mav.addObject("originalFilename", notice.getOriginalFileName());
+//
+//        return mav;
+//    }
 
     @GetMapping("/download")
     public ResponseEntity<Resource> downloadFile(int noticeNo) throws Exception {
@@ -146,7 +145,7 @@ public class NoticeController {
 
     @GetMapping("/delete-file")
     public String deleteUploadFile(@RequestParam("no") int noticeNo
-                            , @RequestParam("fileNo") int fileNo){
+            , @RequestParam("fileNo") int fileNo){
         noticeService.deleteNoticeFile(noticeNo, fileNo);
 
         return "redirect:modify?no=" + noticeNo;

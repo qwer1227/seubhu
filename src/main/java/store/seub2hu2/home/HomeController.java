@@ -6,6 +6,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import lombok.extern.slf4j.Slf4j;
 import store.seub2hu2.community.vo.Board;
+import store.seub2hu2.community.vo.Marathon;
+import store.seub2hu2.course.vo.Course;
+import store.seub2hu2.lesson.vo.Lesson;
 import store.seub2hu2.product.dto.ProdListDto;
 
 import java.util.List;
@@ -28,10 +31,22 @@ public class HomeController {
 
         List<Board> topViewedBoards  = homeService.getTopViewedBoards();
 
+        List<Board> userRankingByBoards  = homeService.getUserRankingByBoards();
+
+        List<Marathon> latestMarathons  = homeService.getLatestMarathons();
+
+        List<Lesson> ongoingLessons = homeService.getOngoingLessons();
+
+        List<Course> topLikedCourses = homeService.getTopLikedCourses();
+
         // 모델에 데이터 추가
         model.addAttribute("bestByRating", bestByRating);
         model.addAttribute("bestByViewCount", bestByViewCount);
         model.addAttribute("topViewedBoards", topViewedBoards );
+        model.addAttribute("userRankingByBoards", userRankingByBoards );
+        model.addAttribute("latestMarathons", latestMarathons );
+        model.addAttribute("ongoingLessons", ongoingLessons );
+        model.addAttribute("topLikedCourses", topLikedCourses );
 
         return "home"; // 해당 JSP 페이지로 전달
     }

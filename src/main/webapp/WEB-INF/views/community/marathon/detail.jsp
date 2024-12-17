@@ -20,6 +20,7 @@
         margin-bottom: 10px;
         padding-left: 50px;
     }
+
     /* 툴팁 스타일 (처음에는 숨겨져 있음) */
     #hover-box {
         display: none; /* 기본적으로 툴팁 숨김 */
@@ -66,7 +67,7 @@
     <div class="title h4 d-flex justify-content-between align-items-center">
       <div>
         ${marathon.title}
-          <c:if test="${marathon.endDate.time < now.time}">
+        <c:if test="${marathon.endDate.time < now.time}">
           <span class="badge text-bg-secondary">마감</span>
         </c:if>
       </div>
@@ -75,6 +76,8 @@
     <div class="meta d-flex justify-content-between">
       <fmt:formatDate value="${marathon.createdDate}" pattern="yyyy.MM.dd hh:mm:ss"/>
     </div>
+    
+    <div style="margin-top: 10px; border-bottom: 1px solid #ccc; margin-bottom: 10px;"></div>
     
     <div class="row mt-1">
       <table id="marathon-table" class="text-start">
@@ -108,7 +111,8 @@
         </tr>
         </tbody>
       </table>
-      <div class="content mt-3">
+      
+      <div class="content m-3">
         <div>
           <img src="${marathon.thumbnail}" style="height: 350px">
         </div>
@@ -121,18 +125,24 @@
       </div>
     </div>
     
-    <div class="actions d-flex justify-content-between mb-4">
-      <!-- 로그인 여부를 체크하기 위해 먼저 선언 -->
-      <security:authorize access="isAuthenticated()">
-        <div>
-          <!-- principal 프로퍼티 안의 loginUser 정보를 가져옴 -->
-          <!-- loginUser.no를 가져와서 조건문 실행 -->
-          <button class="btn btn-warning" onclick="updateMarathon(${marathon.no})">수정</button>
-          <button class="btn btn-danger" onclick="deleteMarathon(${marathon.no})">삭제</button>
+    <div style="border-bottom: 1px solid #ccc; margin-bottom: 10px;"></div>
+    
+    <div class="row">
+      <div class="col d-flex justify-content-between">
+        <!-- 로그인 여부를 체크하기 위해 먼저 선언 -->
+        <security:authorize access="isAuthenticated()">
+          <div class="d-flex justify-content-start">
+            <!-- principal 프로퍼티 안의 loginUser 정보를 가져옴 -->
+            <!-- loginUser.no를 가져와서 조건문 실행 -->
+            <button class="btn btn-warning" onclick="updateMarathon(${marathon.no})" style="margin-right: 10px;">수정
+            </button>
+            <button class="btn btn-danger" onclick="deleteMarathon(${marathon.no})" style="margin-right: 10px;">삭제
+            </button>
+          </div>
+        </security:authorize>
+        <div class="d-flex justify-content-end">
+          <a type="button" href="main" class="btn btn-secondary">목록</a>
         </div>
-      </security:authorize>
-      <div>
-        <a type="button" href="main" class="btn btn-secondary">목록</a>
       </div>
     </div>
   </div>

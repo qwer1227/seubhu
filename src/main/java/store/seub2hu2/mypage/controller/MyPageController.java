@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import store.seub2hu2.address.service.AddressService;
 import store.seub2hu2.admin.dto.RequestParamsDto;
 import store.seub2hu2.cart.dto.CartItemDto;
 import store.seub2hu2.cart.dto.CartRegisterForm;
@@ -36,7 +37,9 @@ import store.seub2hu2.product.vo.Product;
 import store.seub2hu2.product.vo.Size;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.service.UserService;
+import store.seub2hu2.user.vo.Addr;
 import store.seub2hu2.user.vo.User;
+import store.seub2hu2.user.vo.UserImage;
 import store.seub2hu2.util.ListDto;
 import store.seub2hu2.wish.dto.WishItemDto;
 import store.seub2hu2.wish.vo.WishList;
@@ -52,8 +55,11 @@ import java.util.Map;
 @RequestMapping("/mypage")
 public class MyPageController {
 
-    @Value("${upload.directory.community}")
+    @Value("upload.directory.userImage")
     private String saveDirectory;
+
+    @Autowired
+    AddressService addressService;
 
     @Autowired
     PostService postService;
@@ -99,12 +105,32 @@ public class MyPageController {
 
     // URL localhost/mypage 입력 시 유저의 No를 활용해 그 유저의 페이지를 보여줌
     @GetMapping("")
-    public String myPageList(Model model, @AuthenticationPrincipal LoginUser loginUser) {
-        List<Post> posts = postService.getPostsByNo(loginUser.getNo());
-        User user = userService.findbyUserId(loginUser.getId());
+    public String myPageList(Model model, @AuthenticationPrincipal LoginUser loginUser, @RequestParam(value = "userName", required = false) String userName) {
+
+        User user = null;
+        UserImage userImage = null;
+        List<Post> posts = null;
+
+        try {
+            if (userName != null && !userName.isEmpty()) {
+                // userName이 파라미터로 제공되면 해당 닉네임으로 사용자 정보를 조회
+                user = userService.findByNickname(userName);
+                userImage = userService.findImageByUserNo(user.getNo());
+                posts = postService.getPostsByNo(user.getNo());
+            } else {
+                posts = postService.getPostsByNo(loginUser.getNo());
+                user = userService.findbyUserId(loginUser.getId());
+                userImage = userService.findImageByUserNo(loginUser.getNo());
+
+                System.out.println(posts);
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
 
         model.addAttribute("posts",posts);
         model.addAttribute("user",user);
+        model.addAttribute("userimage",userImage);
 
         return "mypage/publicpage";
     }
@@ -142,7 +168,11 @@ public class MyPageController {
 
     // 내 정보 수정 폼
     @GetMapping("/edit")
-    public String userEdit(){
+    public String userEdit(Model model, @AuthenticationPrincipal LoginUser loginUser){
+
+        List<Addr> addr = userService.findAddrByUserNo(loginUser.getNo());
+
+        model.addAttribute("addr", addr);
 
         return "mypage/edit";
     }
@@ -624,10 +654,11 @@ public class MyPageController {
             , @AuthenticationPrincipal LoginUser loginUser
             ,Model model) {
 
-
-
         List<CartItemDto> orderItems = orderService.getOrderItemBySizeNo(sizeNoList, stock, loginUser.getNo());
         model.addAttribute("orderItems", orderItems);
+
+        List<Addr> addresses = addressService.getAddressListByUserNo(loginUser.getNo());
+        model.addAttribute("addresses", addresses);
 
         return "mypage/order";
     }
@@ -644,8 +675,8 @@ public class MyPageController {
 //    }
     
     // 레슨예약내역 화면으로 간다
-    @GetMapping("/reservation/{userId}")
-    public String reservation(@PathVariable("userId") String userId , @AuthenticationPrincipal LoginUser loginUser){
+    @GetMapping("/reservation")
+    public String reservation(){
 
         return "lesson/lesson-reservation";
     }
@@ -654,7 +685,7 @@ public class MyPageController {
     @GetMapping("/qna")
     public String qna(Model model, @AuthenticationPrincipal LoginUser loginUser, RequestParamsDto requestParamsDto){
 
-        ListDto<QnaResponse> qnaDto = qnaService.getQnas2(requestParamsDto);
+        ListDto<QnaResponse> qnaDto = qnaService.getQnas(requestParamsDto, loginUser.getNo());
         
         model.addAttribute("qna", qnaDto.getData());
         model.addAttribute("pagination", qnaDto.getPaging());
@@ -693,11 +724,20 @@ public class MyPageController {
 
     // 문의삭제 기능 POST
     @PostMapping("/qna/delete/{qnaNo}")
-    public String postQnaDelete(@PathVariable("qnaNo") int qnaNo){
+    public String postQnaDelete(@PathVariable("qnaNo") int qnaNo, @AuthenticationPrincipal LoginUser loginUser){
+
+        String userName = loginUser.getNickname();
+
+        boolean isAdmin = "관리자".equals(userName);
 
         qnaService.deleteQna(qnaNo);
 
-        return "redirect:/mypage/qna";
+        // 역할에 따른 리다이렉트 분류
+        if(isAdmin){
+            return "redirect:/admin/qna";
+        } else {
+            return "redirect:/mypage/qna";
+        }
     }
 
     // 문의수정 화면
@@ -734,6 +774,8 @@ public class MyPageController {
 
         List<Crew> crews = crewService.getCrewByUserNo(loginUser.getNo());
         model.addAttribute("crews", crews);
+
+
 
         return "mypage/participatingcrew";
     }

@@ -9,6 +9,7 @@ import store.seub2hu2.community.dto.CrewForm;
 import store.seub2hu2.community.exception.CommunityException;
 import store.seub2hu2.community.mapper.CrewMapper;
 import store.seub2hu2.community.mapper.CrewReplyMapper;
+import store.seub2hu2.community.mapper.ReplyMapper;
 import store.seub2hu2.community.mapper.UploadMapper;
 import store.seub2hu2.community.vo.Crew;
 import store.seub2hu2.community.vo.CrewMember;
@@ -16,11 +17,12 @@ import store.seub2hu2.community.vo.Reply;
 import store.seub2hu2.community.vo.UploadFile;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.vo.User;
-import store.seub2hu2.util.FileUtils;
 import store.seub2hu2.util.ListDto;
 import store.seub2hu2.util.Pagination;
-import store.seub2hu2.util.WebContentFileUtils;
+import store.seub2hu2.util.S3Service;
 
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -28,14 +30,18 @@ import java.util.Map;
 @Service
 public class CrewService {
 
-    @Value("${upload.directory.community}")
+    @Value("${upload.directory.crew.images}")
     private String saveImageDirectory;
 
-    @Value("C:/files/crew")
+    @Value("upload.directory.crew.files")
     private String saveFileDirectory;
 
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucketName;
+
     @Autowired
-    private WebContentFileUtils webContentFileUtils;
+    private S3Service s3Service;
+
 
     @Autowired
     private CrewMapper crewMapper;
@@ -44,7 +50,7 @@ public class CrewService {
     private UploadMapper uploadMapper;
 
     @Autowired
-    private CrewReplyMapper crewReplyMapper;
+    private ReplyMapper replyMapper;
 
 
     public Crew addNewCrew(CrewForm form
@@ -66,7 +72,7 @@ public class CrewService {
         } else if (!image.isEmpty()) {
             String originalImageName = "crew" + form.getNo() + "_" + image.getOriginalFilename();
             String imageName = System.currentTimeMillis() + originalImageName;
-            webContentFileUtils.saveWebContentFile(image, saveImageDirectory, imageName);
+            s3Service.uploadFile(image, bucketName, saveImageDirectory, imageName);
 
             UploadFile uploadThumbnail = new UploadFile();
             uploadThumbnail.setOriginalName(originalImageName);
@@ -81,7 +87,9 @@ public class CrewService {
         } else if (!upfile.isEmpty()) {
             String originalFileName = upfile.getOriginalFilename();
             String filename = System.currentTimeMillis() + originalFileName;
-            FileUtils.saveMultipartFile(upfile, saveFileDirectory, filename);
+
+            s3Service.uploadFile(upfile, bucketName, saveFileDirectory, filename);
+            //FileUtils.saveMultipartFile(upfile, saveFileDirectory, filename);
 
             UploadFile uploadFile = new UploadFile();
             uploadFile.setOriginalName(originalFileName);
@@ -152,17 +160,20 @@ public class CrewService {
         Crew crew = crewMapper.getCrewDetailByNo(crewNo);
         UploadFile uploadThumbnail = uploadMapper.getThumbnailByCrewNo(crewNo);
         UploadFile uploadFile = uploadMapper.getFileByCrewNo(crewNo);
-        List<Reply> reply = crewReplyMapper.getRepliesByCrewNo(crewNo);
-        List<CrewMember> member = crewMapper.getCrewMembers(crewNo);
+        List<Reply> reply = replyMapper.getRepliesByTypeNo(crewNo);
 
         if (crew == null) {
             throw new CommunityException("존재하지 않는 게시글입니다.");
         }
 
+        User user = new User();
+        user.setNo(crew.getUser().getNo());
+        user.setNickname(crew.getUser().getNickname());
+        crew.setUser(user);
+
         crew.setThumbnail(uploadThumbnail);
         crew.setUploadFile(uploadFile);
         crew.setReply(reply);
-        crew.setMember(member);
 
         return crew;
     }
@@ -204,7 +215,7 @@ public class CrewService {
                 // 신규 썸네일 정보를 조회하여 CREW_FILES 테이블에 저장
                 String originalImageName = "crew" + form.getNo() + "_" + image.getOriginalFilename();
                 String ImageName = System.currentTimeMillis() + originalImageName;
-                webContentFileUtils.saveWebContentFile(image, saveImageDirectory, ImageName);
+                s3Service.uploadFile(image, bucketName, saveImageDirectory, ImageName);
 
                 UploadFile uploadThumbnail = new UploadFile();
                 uploadThumbnail.setNo(savedCrew.getNo());
@@ -227,7 +238,8 @@ public class CrewService {
             // 신규 첨부파일 정보를 조회하여 CREW_FILES 테이블에 저장
             String originalFileName = upfile.getOriginalFilename();
             String filename = System.currentTimeMillis() + originalFileName;
-            FileUtils.saveMultipartFile(upfile, saveFileDirectory, filename);
+
+            s3Service.uploadFile(upfile, bucketName, saveFileDirectory, filename);
 
             UploadFile uploadFile = new UploadFile();
             uploadFile.setNo(savedCrew.getNo());
@@ -262,10 +274,19 @@ public class CrewService {
         uploadMapper.updateCrewFile(fileNo);
     }
 
-    public List<CrewMember> getCrewMembers(int crewNo) {
-        List<CrewMember> members = crewMapper.getCrewMembers(crewNo);
+    public boolean isExistCrewMember(int crewNo, @AuthenticationPrincipal LoginUser loginUser) {
+        List<Integer> userNoList = crewMapper.getCrewMembers(crewNo);
 
-        return members;
+        boolean isExists = false;
+
+        for (int userNo: userNoList) {
+            if (userNo == loginUser.getNo()) {
+                isExists = true;
+                break;
+            }
+        }
+
+        return isExists;
     }
 
     public int getEnterMemberCnt(int crewNo) {
@@ -306,5 +327,29 @@ public class CrewService {
 
     public List<Crew> getCrewByUserNo(int userNo) {
         return crewMapper.getCrewByUserNo(userNo);
+    }
+
+    public List<CrewMember> getCrewMembersByCrewId(int crewNo){
+
+        List<CrewMember> members = crewMapper.getByCrewNo(crewNo);
+
+        List<CrewMember> availableMembers = new ArrayList<>();
+
+        for (CrewMember member : members) {
+            // 'Y'가 아닌 reader 값을 가진 멤버만 추가
+            if (!"Y".equals(member.getReader())){
+                availableMembers.add(member);
+            }
+        }
+
+        //필터링된 멤버 목록 반환
+        return availableMembers;
+    }
+
+    public void updateReader(int userNo, int crewNo, int readerNo){
+        // 셀렉트 박스에서 유저의 no를 활용해서 update를 시키기 위한 updateReader 메소드
+        crewMapper.updateReader(userNo, crewNo);
+        // 위임이라는 기능을 사용하기 위해서는 리더의 계정 로그인을 필수로 해야해서 user.getNo를 통해서 리더의 번호를 넘겨줌
+        crewMapper.exitCrew(readerNo, crewNo);
     }
 }

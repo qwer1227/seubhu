@@ -19,6 +19,27 @@
         <result property="privacy" column="USER_PRIVACY"/> <!-- 개인정보 처리방침 동의 여부 -->
     </resultMap>
 
+    <select id="countById" parameterType="string" resultType="int">
+        SELECT COUNT(*)
+        FROM USERS
+        WHERE USER_ID = #{id}
+    </select>
+
+    <select id="countByEmail" parameterType="string" resultType="int">
+        SELECT COUNT(*)
+        FROM USERS
+        WHERE USER_EMAIL = #{email}
+    </select>
+
+    <select id="countByNickname" parameterType="string" resultType="int">
+        SELECT COUNT(*)
+        FROM USERS
+        WHERE USER_NICKNAME = #{nickname}
+    </select>
+
+
+
+
     <!-- 신규 사용자 정보 추가: 사용자를 USERS 테이블에 삽입 -->
     <insert id="insertUser">
         insert into USERS
@@ -39,7 +60,7 @@
             (#{addr.postcode}, #{addr.address}, #{addr.addressDetail}, #{addr.isAddrHome}, #{addr.userNo}, #{addr.name})
 
         <!-- 자동 생성된 ADDR_NO 반환 -->
-        <selectKey resultType="int" keyProperty="no" keyColumn="ADDR_NO" order="AFTER">
+        <selectKey resultType="int" keyProperty="addr.no" keyColumn="ADDR_NO" order="AFTER">
             SELECT LAST_INSERT_ID()
         </selectKey>
     </insert>
@@ -127,15 +148,9 @@
         u.USER_CREATED_DATE,
         u.USER_UPDATED_DATE,
         u.USER_TERMS,
-        u.USER_PRIVACY,
-        ui.user_img_url as imgName,
-        ui.img_isprimary as isPrimary
+        u.USER_PRIVACY
         from
         USERS u
-        LEFT OUTER JOIN
-        USER_IMGS ui
-        ON
-        u.user_no = ui.user_no
         where
         USER_ID = #{id} <!-- 사용자 ID로 사용자 정보 조회 -->
     </select>
@@ -184,14 +199,6 @@
         USER_NICKNAME = #{nickname} <!-- 닉네임으로 사용자 정보 조회 -->
     </select>
 
-    <select id="findUsersByNickname" resultType="store.seub2hu2.user.vo.User">
-        SELECT
-            USER_NO as no
-          , USER_NICKNAME as nickname
-        FROM USERS
-        WHERE USER_NICKNAME LIKE CONCAT('%', #{nickname}, '%')
-    </select>
-
     <!-- 비밀번호 수정: 사용자의 비밀번호를 갱신 -->
     <update id="updatePassword">
         UPDATE USERS
@@ -232,6 +239,34 @@
             USER_EMAIL    = #{user.email}
         WHERE USER_NO = #{user.no}
     </update>
+
+    <!-- void updateAddr(UserInfoReq userInfoReq); -->
+    <update id="updateAddr" parameterType="store.seub2hu2.mypage.dto.UserInfoReq">
+        update
+        ADDRESSES
+        set
+        zip_code = #{postcode},
+        addr_1 = #{address},
+        addr_2 = #{addressDetail},
+        isaddr_home =
+        <if test="isAddrHome != null and isAddrHome == 'on'">
+            'Y'
+        </if>
+        <if test="isAddrHome == null or isAddrHome != 'on'">
+            'N'
+        </if>
+        where
+        addr_no = #{addrNo}
+    </update>
+
+    <!-- 기존 isAddrHome 값을 N으로 업데이트 -->
+    <update id="updateIsAddrHomeToN">
+        UPDATE ADDRESSES
+        SET ISADDR_HOME = 'N'
+        WHERE USER_NO = #{userNo}
+    </update>
+
+
     <!-- 권한번호로 사용자 조회하기 -->
     <select id="getUsersByRoleNo" resultType="store.seub2hu2.user.vo.User">
         SELECT R.USER_NO   as no
@@ -246,8 +281,9 @@
     <!-- User findByUserNo(@Param("userNo") int userNo); -->
     <select id="findByUserNo" parameterType="store.seub2hu2.user.vo.User">
         select
-            user_no as no
-        ,   password as password
+          user_no as no
+        , password as password
+        , user_nickname as nickname
         from
             USERS
         where
@@ -284,5 +320,40 @@
         SET IMG_ISPRIMARY = 'N'
         WHERE USER_NO = #{userNo}
     </update>
+
+    <!-- List<Addr> findAddrByUserNo(@Param("userNo") int userNo); -->
+    <select id="findAddrByUserNo" resultType="store.seub2hu2.user.vo.Addr">
+        select
+            addr_no as no,
+            zip_code as postcode,
+            addr_1 as address,
+            addr_2 as addressDetail
+        from
+            ADDRESSES
+        where
+            user_no = #{userNo}
+    </select>
+
+    <!-- UserImage findImageByUserNo(@Param("userNo") int userNo); -->
+    <select id="findImageByUserNo" resultType="store.seub2hu2.user.vo.UserImage">
+        select
+            user_img_no as no
+        ,   user_img_url as imgName
+        ,   img_created_date as createdDate
+        ,   img_isprimary as isPrimary
+        ,   user_no     as userNo
+        from
+            USER_IMGS
+        where
+            user_no = #{userNo}
+        and
+            img_isprimary = 'Y'
+    </select>
+
+    <!-- User findByNickname(@Param("userName") String userName);
+    <select id="findByNickname" resultType="store.seub2hu2.user.vo.User">
+        select
+
+    </select>-->
 
 </mapper>

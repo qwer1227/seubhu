@@ -51,58 +51,71 @@
         </div>
         <!-- 5-10-20개씩 보기 최신순 이름순 -->
         <c:choose>
-        <c:when test="${topNo == 10}">
-            <div class="row row-cols-2 row-cols-lg-6 g-2 g-lg-3">
-                <div class="col " >
-                    <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="product?topNo=10" >전체보기</a>
+            <c:when test="${topNo == 10}">
+                <div class="row row-cols-2 row-cols-lg-6 g-3">
+                    <div class="col">
+                        <a class="nav-link text-center text-white bg-primary fw-bold py-2 px-3 rounded"
+                           style="background-color: #0064FF; font-size: 0.9rem;" href="product?topNo=10">전체보기</a>
+                    </div>
+                    <div class="col">
+                        <a class="nav-link text-center text-white bg-primary fw-bold py-2 px-3 rounded"
+                           style="background-color: #0064FF; font-size: 0.9rem;" href="product?topNo=10&catNo=11">남성 러닝화</a>
+                    </div>
+                    <div class="col">
+                        <a class="nav-link text-center text-white bg-primary fw-bold py-2 px-3 rounded"
+                           style="background-color: #0064FF; font-size: 0.9rem;" href="product?topNo=10&catNo=12">남성 상의</a>
+                    </div>
+                    <div class="col">
+                        <a class="nav-link text-center text-white bg-primary fw-bold py-2 px-3 rounded"
+                           style="background-color: #0064FF; font-size: 0.9rem;" href="product?topNo=10&catNo=13">남성 하의</a>
+                    </div>
+                    <div class="col">
+                        <a class="nav-link text-center text-white bg-primary fw-bold py-2 px-3 rounded"
+                           style="background-color: #0064FF; font-size: 0.9rem;" href="product?topNo=10&catNo=14">남성 아우터</a>
+                    </div>
                 </div>
-                <div class="col " >
-                    <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="product?topNo=10&catNo=11" >남성 러닝화</a>
+            </c:when>
+            <c:when test="${topNo == 20}">
+                <div class="row row-cols-2 row-cols-lg-6 g-3">
+                    <div class="col">
+                        <a class="nav-link text-center text-white bg-primary fw-bold py-2 px-3 rounded"
+                           style="background-color: #0064FF; font-size: 0.9rem;" href="product?topNo=20">전체보기</a>
+                    </div>
+                    <div class="col">
+                        <a class="nav-link text-center text-white bg-primary fw-bold py-2 px-3 rounded"
+                           style="background-color: #0064FF; font-size: 0.9rem;" href="product?topNo=20&catNo=21">여성 러닝화</a>
+                    </div>
+                    <div class="col">
+                        <a class="nav-link text-center text-white bg-primary fw-bold py-2 px-3 rounded"
+                           style="background-color: #0064FF; font-size: 0.9rem;" href="product?topNo=20&catNo=22">여성 상의</a>
+                    </div>
+                    <div class="col">
+                        <a class="nav-link text-center text-white bg-primary fw-bold py-2 px-3 rounded"
+                           style="background-color: #0064FF; font-size: 0.9rem;" href="product?topNo=20&catNo=23">여성 하의</a>
+                    </div>
+                    <div class="col">
+                        <a class="nav-link text-center text-white bg-primary fw-bold py-2 px-3 rounded"
+                           style="background-color: #0064FF; font-size: 0.9rem;" href="product?topNo=20&catNo=24">여성 아우터</a>
+                    </div>
                 </div>
-                <div class="col " >
-                    <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="product?topNo=10&catNo=12">남성 상의</a>
+            </c:when>
+            <c:when test="${topNo == 30}">
+                <div class="row row-cols-2 row-cols-lg-5 g-3">
+                    <div class="col">
+                        <a class="nav-link text-center text-white bg-primary fw-bold py-2 px-3 rounded"
+                           style="background-color: #0064FF; font-size: 0.9rem;" href="product?topNo=30">전체보기</a>
+                    </div>
+                    <div class="col">
+                        <a class="nav-link text-center text-white bg-primary fw-bold py-2 px-3 rounded"
+                           style="background-color: #0064FF; font-size: 0.9rem;" href="product?topNo=30&catNo=31">양말</a>
+                    </div>
+                    <div class="col">
+                        <a class="nav-link text-center text-white bg-primary fw-bold py-2 px-3 rounded"
+                           style="background-color: #0064FF; font-size: 0.9rem;" href="product?topNo=30&catNo=32">모자</a>
+                    </div>
                 </div>
-                <div class="col " >
-                    <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="product?topNo=10&catNo=13">남성 하의</a>
-                </div>
-                <div class="col " >
-                    <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="product?topNo=10&catNo=14">남성 아우터</a>
-                </div>
-            </div>
-        </c:when>
-        <c:when test="${topNo == 20}">
-            <div class="row row-cols-2 row-cols-lg-6 g-2 g-lg-3">
-                <div class="col " >
-                    <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="product?topNo=20" >전체보기</a>
-                </div>
-                <div class="col " >
-                    <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="productl?topNo=20&catNo=21" >여성 러닝화</a>
-                </div>
-                <div class="col " >
-                    <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="product?topNo=20&catNo=22">여성 상의</a>
-                </div>
-                <div class="col " >
-                    <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="product?topNo=20&catNo=23">여성 하의</a>
-                </div>
-                <div class="col " >
-                    <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="product?topNo=20&catNo=24">여성 아우터</a>
-                </div>
-            </div>
-        </c:when>
-        <c:when test="${topNo == 30}">
-            <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
-                <div class="col " >
-                <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="product?topNo=30">전체보기</a>
-                </div>
-                <div class="col " >
-                    <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="product?topNo=30&catNo=31">양말</a>
-                </div>
-                <div class="col " >
-                    <a class="nav-link p-3 border-start border-primary border-4 bg-light" style="border-color: #0064FF;" href="product?topNo=30&catNo=32">모자</a>
-                </div>
-            </div>
-        </c:when>
-    </c:choose>
+            </c:when>
+        </c:choose>
             <div class="row mt-3">
                 <div class="col-12">
                     <form id="form-search" method="get" action="/admin/product">
@@ -167,10 +180,10 @@
                 <div class="container-xxl text-center" id="wrap">
                     <div class="row row-cols-1 row-cols-md-3 g-4 mt-3 mb-5">
                         <c:forEach var="prod"  items="${products }">
-                            <div class="col">
+                            <div class="col mb-3">
                                 <div class="card h-100">
                                     <a class="text-decoration-none" href="product-detail?no=${prod.no}&colorNo=${prod.colorNum}">
-                                        <img src="${prod.imgThum}" class="card-img-top" alt="...">
+                                        <img src="${prod.imgThum}" class="card-img-top" alt="..." style="object-fit: cover;">
                                     </a>
                                     <div class="card-body">
                                         <h5 class="card-title">${prod.name}</h5>
