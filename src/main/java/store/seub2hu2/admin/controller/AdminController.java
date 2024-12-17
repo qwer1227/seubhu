@@ -314,6 +314,7 @@ public class AdminController {
             condition.put("level", level);
         }
         if (StringUtils.hasText(keyword)) {
+            condition.put("region", region);
             condition.put("keyword", keyword);
         }
         // 2. 검색에 해당하는 코스 목록을 가져온다.
@@ -383,10 +384,13 @@ public class AdminController {
 
     @PostMapping("/register-editform")
     public String registerEditTitle(Product product,
-                                    Model model) {
-
-        adminService.getUpdateProduct(product);
-
+                                    RedirectAttributes redirectAttributes) {
+        try {
+            adminService.getUpdateProduct(product); // 수정 처리
+            redirectAttributes.addFlashAttribute("successMessage", "수정이 완료되었습니다.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "수정 중 오류가 발생했습니다.");
+        }
 
         return "redirect:/admin/register-editform?no=" + product.getNo() + "&colorNo=" + product.getColorNum();
     }
@@ -570,9 +574,14 @@ public class AdminController {
     @PostMapping("/register-image")
     public String registerImage(@ModelAttribute ColorThumbnailForm form,
                                 @RequestParam("image[]") List<String> links,  // 이미지 URL 배열로 받기
-                                Model model) {
+                                RedirectAttributes redirectAttributes) {
 
-        adminService.addThumb(form, links);
+        try {
+            adminService.addThumb(form, links);
+            redirectAttributes.addFlashAttribute("successMessage", "이미지가 등록되었습니다.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "이미지 등록 중 오류가 발생했습니다.");
+        }
 
         return "redirect:/admin/register-image?no=" + form.getProdNo() + "&colorNo=" + form.getColorNo();
     }

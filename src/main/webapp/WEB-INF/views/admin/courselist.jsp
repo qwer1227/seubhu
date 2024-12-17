@@ -151,12 +151,15 @@
     </div>
 
         <div class="container-xxl text-center" id="wrap">
-          <div class="row row-cols-1 row-cols-md-3 g-4 mt-5 mb-5">
+          <div class="row row-cols-1 row-cols-md-4 g-4 mt-5 mb-5">
         <c:forEach var="course" items="${courses }">
-            <div class="col mb-3">
+            <div class="col-3 mb-3">
                 <div class="card h-100">
                     <a class="text-decoration-none" href="course-detail?no=${course.no }">
-                        <img src="${s3}/resources/images/course/${course.filename }" class="card-img-top" alt="...">
+                        <div class="main_image" style="position: relative;">
+                            <img src="${s3}/resources/images/course/${course.filename }" class="card-img-top" alt="..."
+                                 width="200" height="200">
+                        </div>
                     </a>
                     <div class="card-body">
                         <h5 class="card-title">${course.name }</h5>
