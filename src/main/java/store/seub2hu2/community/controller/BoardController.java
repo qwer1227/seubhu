@@ -215,7 +215,7 @@ public class BoardController {
 
         Board board = boardService.getBoardDetail(boardNo);
         try {
-            String filename = board.getOriginalFileName();
+            String filename = board.getUploadFile().getSaveName();
             ByteArrayResource byteArrayResource = s3Service.downloadFile(bucketName, saveDirectory, filename);
 
             String encodedFileName = URLEncoder.encode(filename.substring(13), "UTF-8");

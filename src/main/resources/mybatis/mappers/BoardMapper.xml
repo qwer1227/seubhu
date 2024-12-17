@@ -132,11 +132,14 @@
 
   <!-- int getTotalRowsForBoard(@Param("condition") Map<String, Object> condition); -->
   <select id="getTotalRowsForBoard" resultType="int">
-    select count(*)
-    from BOARDS b join REPLIES r
-    on b.board_no = r.reply_type_no
-    join USERS u
-    on b.user_no = u.user_no
+    select count(distinct b.BOARD_NO)
+    from BOARDS b
+    <if test="condition.opt == 'reply'">
+        join REPLIES r on b.board_no = r.reply_type_no
+    </if>
+    <if test="condition.opt == 'nickname'">
+    join USERS u on b.user_no = u.user_no
+    </if>
     where b.is_deleted = 'N'
     <if test="condition.category != null">
       and b.board_cat_name = #{condition.category}
