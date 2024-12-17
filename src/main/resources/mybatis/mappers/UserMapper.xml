@@ -329,10 +329,14 @@
             img_isprimary = 'Y'
     </select>
 
-    <!-- User findByNickname(@Param("userName") String userName);
-    <select id="findByNickname" resultType="store.seub2hu2.user.vo.User">
+    <!-- List<User> findUsersByNickname(@Param("nickname") String nickname); -->
+    <select id="findUsersByNickname" resultType="store.seub2hu2.user.vo.User">
         select
-
-    </select>-->
+            user_nickname as nickname
+        from
+            USERS
+        where
+            user_nickname = #{nickname}
+    </select>
 
 </mapper>

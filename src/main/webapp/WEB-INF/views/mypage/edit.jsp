@@ -28,7 +28,7 @@
     <h2>내 정보 수정</h2>
 
     <div class="form-container">
-        <form action="/mypage/edit" method="post" class="form-group">
+        <form action="/mypage/edit" method="post" class="form-group" id="form-modify">
             <!-- 비밀번호 -->
             <div class="mb-3">
                 <label for="password" class="form-label">비밀번호</label>
@@ -114,6 +114,15 @@
         document.getElementById("addressFields").style.display = "block";
     }
 
+    let fieldValidResult = {
+        password: false,
+        confirmPassword: false,
+        nickname: false,
+        phone: false,
+        email: false,
+
+    };
+
     // 유효성 검사 규칙
     const validators = {
         password: (value) => value.length >= 8,  // 비밀번호 길이 8자 이상
@@ -127,16 +136,20 @@
     function validateInput(input) {
         const value = input.value.trim();
         const id = input.id;
+
         const isValid = validators[id](value);
         const feedbackElement = document.getElementById(id + "Feedback");
 
         if (isValid) {
+            fieldValidResult[id] = true;
             feedbackElement.textContent = "✔ 유효한 입력입니다.";
             feedbackElement.style.color = "green";
         } else {
+            fieldValidResult[id] = false;
             feedbackElement.textContent = getErrorMessage(id);
             feedbackElement.style.color = "red";
         }
+        console.log(fieldValidResult)
     }
 
     // 오류 메시지 반환 함수
@@ -156,6 +169,18 @@
                 return "유효하지 않은 입력입니다.";
         }
     }
+
+    document.getElementById("form-modify").addEventListener("submit", function (event) {
+        for (const [key, value] of Object.entries(fieldValidResult)) {
+            if (!value) {
+                alert("입력값이 유효하지 않습니다.");
+                event.preventDefault();
+                return;
+            }
+        }
+
+
+    })
 
     // 각 입력 필드에 keyup 이벤트 처리
     document.getElementById("password").addEventListener("keyup", function () {

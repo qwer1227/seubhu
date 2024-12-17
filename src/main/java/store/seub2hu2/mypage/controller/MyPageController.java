@@ -115,6 +115,7 @@ public class MyPageController {
         User user = null;
         UserImage userImage = null;
         List<Post> posts = null;
+        boolean isOwnProfile = false;
 
         try {
             if (userName != null && !userName.isEmpty()) {
@@ -122,10 +123,12 @@ public class MyPageController {
                 user = userService.findByNickname(userName);
                 userImage = userService.findImageByUserNo(user.getNo());
                 posts = postService.getPostsByNo(user.getNo());
+                isOwnProfile = (user.getNo() == loginUser.getNo());
             } else {
                 posts = postService.getPostsByNo(loginUser.getNo());
                 user = userService.findbyUserId(loginUser.getId());
                 userImage = userService.findImageByUserNo(loginUser.getNo());
+                isOwnProfile = true;
 
                 System.out.println(posts);
             }
@@ -136,6 +139,7 @@ public class MyPageController {
         model.addAttribute("posts",posts);
         model.addAttribute("user",user);
         model.addAttribute("userimage",userImage);
+        model.addAttribute("isOwnProfile", isOwnProfile);
 
         return "mypage/publicpage";
     }

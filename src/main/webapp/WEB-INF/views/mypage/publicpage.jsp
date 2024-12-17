@@ -127,17 +127,21 @@
                  alt="User Image"
                  style="cursor: pointer;">
             </c:if>
+            <c:if test="${isOwnProfile}">
         <input id="profileImageInput"
                type="file"
                style="display: none;"
                accept="image/*">
+               </c:if>
         <div class="name">${user.nickname}</div>
         <div>
+        <c:if test="${isOwnProfile}">
             <button type="button" id="insertPost" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newPostModal">
                 새 글 작성
             </button>
             <button class="btn btn-outline-secondary btn-message"><a href="message/list">메시지</a></button>
             <a href="mypage/private" class="btn btn-outline-dark btn-settings">⚙️</a>
+            </c:if>
         </div>
     </div>
     <security:authorize access="isAuthenticated()">
