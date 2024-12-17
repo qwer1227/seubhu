@@ -7,7 +7,7 @@ import org.apache.xmlbeans.impl.xb.xsdschema.Attribute;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import store.seub2hu2.lesson.dto.LessonUpdateDto;
+import store.seub2hu2.lesson.dto.LessonUpdateForm;
 import store.seub2hu2.lesson.dto.ReservationSearchCondition;
 import store.seub2hu2.lesson.enums.LessonStatus;
 import store.seub2hu2.lesson.enums.ReservationStatus;
@@ -41,9 +41,9 @@ public class LessonReservationService {
         try {
             // 1. 레슨 정보 조회
             Lesson lesson = lessonMapper.getLessonByNo(paymentDto.getLessonNo());
-            LessonUpdateDto lessonUpdateDto = new LessonUpdateDto();
-            lessonUpdateDto.setLessonNo(paymentDto.getLessonNo());
-            lessonUpdateDto.setParticipant(lesson.getParticipant());
+            LessonUpdateForm lessonUpdateForm = new LessonUpdateForm();
+            lessonUpdateForm.setLessonNo(paymentDto.getLessonNo());
+            lessonUpdateForm.setParticipant(lesson.getParticipant());
 
             if (lesson == null) {
                 throw new RuntimeException("존재하지 않는 레슨입니다. LessonNo: " + paymentDto.getLessonNo());
@@ -85,13 +85,13 @@ public class LessonReservationService {
             lessonReservationMapper.insertLessonReservation(lessonReservation);
 
             // 5. 참가자 수 업데이트
-            lessonUpdateDto.setParticipant(lesson.getParticipant() + 1);
-            if (lessonUpdateDto.getParticipant() == 5) {
-                lessonUpdateDto.setStatus("마감");
-                lessonMapper.updateLessonStatus(lessonUpdateDto);
+            lessonUpdateForm.setParticipant(lesson.getParticipant() + 1);
+            if (lessonUpdateForm.getParticipant() == 5) {
+                lessonUpdateForm.setStatus("마감");
+                lessonMapper.updateLessonStatus(lessonUpdateForm);
             }
             log.info("참가자 수 업데이트 할 lesson = {}", lesson);
-            lessonMapper.updateLessonParticipant(lessonUpdateDto); // 업데이트 후 커밋
+            lessonMapper.updateLessonParticipant(lessonUpdateForm); // 업데이트 후 커밋
 
             log.info("레슨 예약 저장 완료: {}", paymentDto);
         } catch (Exception e) {
@@ -137,16 +137,16 @@ public class LessonReservationService {
 
         // 레슨 예약 인원 감소
         Lesson lesson = lessonService.getLessonByNo(lessonNo);
-        LessonUpdateDto lessonUpdateDto = new LessonUpdateDto();
-        lessonUpdateDto.setLessonNo(lessonNo);
+        LessonUpdateForm lessonUpdateForm = new LessonUpdateForm();
+        lessonUpdateForm.setLessonNo(lessonNo);
         int participant = lesson.getParticipant();
-        lessonUpdateDto.setParticipant(lesson.getParticipant() - 1);
+        lessonUpdateForm.setParticipant(lesson.getParticipant() - 1);
         if (participant == 5) {
-            lessonUpdateDto.setStatus(LessonStatus.RECRUITMENT.label());
-            lessonMapper.updateLessonStatus(lessonUpdateDto);
+            lessonUpdateForm.setStatus(LessonStatus.RECRUITMENT.label());
+            lessonMapper.updateLessonStatus(lessonUpdateForm);
         }
 
-        lessonMapper.updateLessonParticipant(lessonUpdateDto);
+        lessonMapper.updateLessonParticipant(lessonUpdateForm);
 
         log.info("status.label() = {}", status.label());
     }
