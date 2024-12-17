@@ -17,6 +17,6 @@ public class ProdReviewForm {
     private int rating;
     private String title;
     private String content;
-    List<MultipartFile> upfiles;
+    List<MultipartFile> reviewFiles;
 
 }

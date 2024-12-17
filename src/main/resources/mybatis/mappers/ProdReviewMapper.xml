@@ -27,6 +27,29 @@
         (#{imgName}, #{reviewNo})
     </insert>
 
+    <!--
+        void updateProdReview(@Param("review") ProdReview prodReview);
+    -->
+    <update id="updateProdReview">
+        UPDATE PROD_REVIEWS
+        SET
+            REVIEW_TITLE = #{review.title},
+            REVIEW_CONTENT = #{review.content},
+            REVIEW_RATING = #{review.rating}
+        WHERE REVIEW_NO = #{review.no}
+    </update>
+
+
+    <!--
+        void deleteProdReview(@Param("review") ProdReview prodReview);
+    -->
+    <update id="deleteProdReview">
+        UPDATE PROD_REVIEWS
+        SET
+            ISDELEDED = 'Y'
+        WHERE REVIEW_NO = #{review.no}
+    </update>
+
     <resultMap id="ProdReviewDtoResultMap" type="store.seub2hu2.product.dto.ProdReviewDto">
 
         <!-- 리뷰 정보 -->
@@ -81,5 +104,6 @@
                  JOIN PROD_COLORS PC
                       ON P.PROD_NO = PC.PROD_NO
         WHERE P.PROD_NO= #{prodNo}
+          AND PR.ISDELETED = 'N'
     </select>
 </mapper>

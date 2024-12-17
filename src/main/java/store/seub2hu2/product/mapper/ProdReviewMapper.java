@@ -16,4 +16,8 @@ public interface ProdReviewMapper {
     void insertProdReview(@Param("review") ProdReview prodReview);
 
     void insertProdReviewsImg(ProdReviewImg prodReviewImg);
+
+    void updateProdReview(@Param("review") ProdReview prodReview);
+
+    void deleteProdReview(@Param("review") ProdReview prodReview);
 }

@@ -98,9 +98,9 @@ public class ProductController {
         ProdImagesDto prodImagesDto = productService.getProdImagesByColorNo(colorNo);
         model.addAttribute("prodImagesDto", prodImagesDto);
 
-        List<ProdReviewDto> prodReviewDto =prodReviewService.getProdReviews(no);
-        model.addAttribute("prodReviewDto", prodReviewDto);
 
+        List<ProdReviewDto> prodReviews = prodReviewService.getProdReviews(no);
+        model.addAttribute("prodReviews", prodReviews);
 
         return "product/detail";
     }
@@ -120,4 +120,5 @@ public class ProductController {
         ProdReviewDto dto = prodReviewService.addProdReview(form, loginUser.getNo());
         return ResponseEntity.ok(dto);
     }
+
 }

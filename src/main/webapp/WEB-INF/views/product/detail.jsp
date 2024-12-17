@@ -158,6 +158,9 @@
             <input type="hidden" name="prodNo" value="${prodDetailDto.no}">
             <input type="hidden" name="userNo" value="${user.no}">
             <input type="hidden" name="colorNo" value="${prodImagesDto.color.no}">
+            <input type="hidden" name="prodName" value="${prodDetailDto.name}"/>
+            <input type="hidden" name="colorName" value="${prodImagesDto.color.name}">
+            <input type="hidden" name="userNickname" value="${user.nickname}"/>
 
             <!-- 별점과 댓글 입력 -->
             <div class="row mb-3">
@@ -183,7 +186,7 @@
 
                 <!--첨부 파일-->
                 <div class="col-2"></div>
-                <div class="col-10">
+                <div class="col-10 mt-2">
                     <input type="file" name="reviewFiles" id="reviewFile" class="form-control" multiple>
                     <small class="form-text text-muted">이미지 파일을 선택해주세요 (여러 개 선택 가능).</small>
                 </div>
@@ -199,8 +202,111 @@
     </div>
     <hr class="bg-primary border border-1">
 
-    <div id="wrapper-reviews" class="row comments rounded py-3" style="background-color: #f2f2f2">
+    <c:choose>
+        <c:when test="${empty prodReviews}">
+            <div class="row comments rounded py-3" style="background-color: #f2f2f2">
+                <div class="text-center py-4">
+                    <p style="font-size: 1.2rem; color: #555">아직 등록된 리뷰가 없습니다. 첫 번째 리뷰를 작성해보세요!</p>
+                </div>
+            </div>
+        </c:when>
+        <c:otherwise>
+            <c:forEach var="review" items="${prodReviews}">
+                <div class="mb-3"></div>
+                <div id="wrapper-reviews" class="row comments rounded py-3" style="background-color: #f2f2f2">
+                    <div class="comment">
+                        <div class="row align-items-center">
+                            <div class="col-3" style="text-align: start;">
+                                <img src="https://github.com/mdo.png" alt="프로필 이미지" style="width: 50px; height: 50px;"
+                                     class="rounded-circle mb-2">
 
+                                <strong>${review.userNickname}</strong><br/>
+
+                                <span style="font-size: 0.9rem; color: #555;">
+                                    <fmt:formatDate value="${review.reviewDate}" pattern="yyyy-MM-dd HH:mm" />
+                                </span><br/>
+                                <span style="font-size: 0.9rem; color: #555;">${review.prodName} [${review.colorName}]</span>
+
+                                <div class="star-rating" style="font-size: 1.2rem; color: gold;">
+                                    <c:forEach begin="1" end="${review.rating}" var="star">
+                                        &#9733;
+                                    </c:forEach>
+                                    <c:forEach begin="1" end="${5 - review.rating}" var="emptyStar">
+                                        &#9734;
+                                    </c:forEach>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="mt-2">
+                                    <c:forEach var="img" items="${review.prodReviewImgs}">
+                                        <img src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/images/product-review/${img.imgName}" alt="리뷰 이미지" class="img-fluid" style="max-height: 100px; object-fit: cover;">
+                                    </c:forEach>
+                                </div>
+                                <p style="margin: 3px;">${review.reviewTitle} : ${review.reviewContent}</p>
+                            </div>
+
+                            <div class="col-2 text-end">
+                                <button type="button" class="btn btn-warning btn-sm" onclick="openEditModal(${review.reviewNo})">수정</button>
+                                <button type="button" class="btn btn-danger btn-sm">삭제</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </c:forEach>
+        </c:otherwise>
+    </c:choose>
+</div>
+
+<!-- Modal Structure -->
+<div class="modal fade" id="editReviewModal" tabindex="-1" aria-labelledby="editReviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editReviewModalLabel">리뷰 수정</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- 수정 폼 -->
+                <form id="editReviewForm">
+                    <input type="hidden" id="reviewNo" name="reviewNo">
+
+                    <!-- 리뷰 제목 -->
+                    <div class="mb-3">
+                        <label for="reviewTitle" class="form-label">제목</label>
+                        <input type="text" id="reviewTitle" name="reviewTitle" class="form-control">
+                    </div>
+
+                    <!-- 리뷰 내용 -->
+                    <div class="mb-3">
+                        <label for="reviewContent" class="form-label">내용</label>
+                        <textarea id="reviewContent" name="reviewContent" rows="4" class="form-control"></textarea>
+                    </div>
+
+                    <!-- 별점 -->
+                    <div class="mb-3">
+                        <label for="rating" class="form-label">별점</label>
+                        <select id="rating" name="rating" class="form-select">
+                            <option value="1">1점</option>
+                            <option value="2">2점</option>
+                            <option value="3">3점</option>
+                            <option value="4">4점</option>
+                            <option value="5">5점</option>
+                        </select>
+                    </div>
+
+                    <!-- 이미지 업로드 -->
+                    <div class="mb-3">
+                        <label for="upfiles" class="form-label">이미지 업로드</label>
+                        <input type="file" id="upfiles" name="upfiles" class="form-control" multiple>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                <button type="button" class="btn btn-primary" onclick="submitEditReview()">저장</button>
+            </div>
+        </div>
     </div>
 </div>
 <script type="text/javascript">
@@ -396,6 +502,9 @@
         let title = $("input[name=title]").val(); // 제목
         let content = $("textarea[name=content]").val(); // 댓글 내용
         let rating = $("input[name=rating]").val(); // 별점
+        let prodName = $("input[name=prodName]").val();// 상품 이름
+        let colorName = $("input[name=colorName]").val(); // 색상 이름
+        let userNickname = $("input[name=userNickname]").val();
         let files = $("#reviewFile")[0].files; // 파일 목록 가져오기
 
         let formData = new FormData();
@@ -405,10 +514,13 @@
         formData.append("title", title);
         formData.append("content", content);
         formData.append("rating", rating);
+        formData.append("prodName", prodName);
+        formData.append("colorName", colorName);
+        formData.append("userNickname", userNickname);
 
 
         // 여러 파일을 FormData에 추가한다.
-        for(let i = 0; files.length; i++) {
+        for(let i = 0; i< files.length; i++) {
             formData.append("reviewFiles", files[i]);
         }
 
@@ -423,14 +535,14 @@
 
 
                 let reviewHtml = `
-
+        <div class="mb-3"></div>
         <div class="comment">
             <div class="row align-items-center">
                 <div class="col-3" style="text-align: start;">
                     <img src="https://github.com/mdo.png" alt="프로필 이미지" style="width: 50px; height: 50px;"
                          class="rounded-circle mb-2">
 
-                    <strong>\${dto.userNickname}</strong><br/>
+                    <strong>${user.nickname}</strong><br/>
 
                     <span style="font-size: 0.9rem; color: #555;">\${dto.reviewDate}</span><br/>
                     <span style="font-size: 0.9rem; color: #555;">\${dto.prodName} [\${dto.colorName}]</span>
@@ -445,7 +557,13 @@
 
                 <div class="col">
                     <div class="mt-2">
-                        <img src="" alt="리뷰 이미지" class="img-fluid" style="max-height: 100px; object-fit: cover;">
+                `;
+
+                let images = dto.prodReviewImgs;
+                    for (img of images) {
+                        reviewHtml += `<img src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/images/product-review/\${img.imgName}" alt="리뷰 이미지" class="img-fluid" style="max-height: 100px; object-fit: cover;">`;
+                    }
+                reviewHtml +=  `
                     </div>
                     <p style="margin: 3px;">\${dto.reviewTitle} : \${dto.reviewContent}</p>
                 </div>
@@ -456,19 +574,47 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
                 `;
 
                 // 새 리뷰를 #wrapper-reviews에 추가
                 $("#wrapper-reviews").prepend(reviewHtml);
-                alert("리뷰가 성공적으로 작성되었습니다.");
+
+
             },
             error: function(xhr, status, error) {
                 alert("오류가 발생했습니다: " + error);
             }
         });
     });
+
+    function openEditModal(reviewNo) {
+        // 서버에서 리뷰 데이터를 가져오기
+        fetch(`/reviews/${reviewNo}`, {
+            method: 'GET',
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('리뷰 데이터를 불러오는 데 실패했습니다.');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // 가져온 데이터를 모달 폼에 채우기
+                document.getElementById('reviewNo').value = data.reviewNo;
+                document.getElementById('reviewTitle').value = data.reviewTitle;
+                document.getElementById('reviewContent').value = data.reviewContent;
+                document.getElementById('rating').value = data.rating;
+
+                // 모달 열기
+                const editReviewModal = new bootstrap.Modal(document.getElementById('editReviewModal'));
+                editReviewModal.show();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('리뷰 데이터를 불러오지 못했습니다.');
+            });
+    }
+
 
 </script>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>

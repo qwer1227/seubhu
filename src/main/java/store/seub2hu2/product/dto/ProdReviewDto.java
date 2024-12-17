@@ -3,6 +3,7 @@ package store.seub2hu2.product.dto;
 import lombok.*;
 import store.seub2hu2.product.vo.ProdReviewImg;
 
+import java.util.Date;
 import java.util.List;
 
 @ToString
@@ -17,7 +18,7 @@ public class ProdReviewDto {
     private String reviewTitle;
     private String reviewContent;
     private int rating;
-    private String reviewDate;
+    private Date reviewDate;
 
     // 리뷰이미지
     private List<ProdReviewImg> prodReviewImgs;
