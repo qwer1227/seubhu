@@ -71,7 +71,7 @@
            <!-- 주소 선택 셀렉트 박스 -->
             <div class="mb-3 d-flex align-items-center">
                 <label for="addressSelect" class="form-label me-2">주소 선택</label>
-                <select id="addressSelect" class="form-select me-2" name="addrNo" onchange="populateAddressFields()">
+                <select id="addressSelect" class="form-select me-2 flex-grow-1" name="addrNo" onchange="populateAddressFields()">
                     <option value="" disabled selected>주소를 선택하세요</option>
                     <c:forEach var="addr" items="${addr}">
                         <option value="${addr.no}">
@@ -79,8 +79,14 @@
                         </option>
                     </c:forEach>
                 </select>
-                <button type="button" class="btn btn-secondary" id="editAddressBtn" onclick="showAddressFields()">수정</button>
+                <button type="button" class="btn btn-secondary me-2" id="editAddressBtn" onclick="showAddressFields()">수정</button>
+                <!-- 기본배송지 설정 체크박스 -->
+                <div class="form-check d-flex align-items-center">
+                    <input class="form-check-input" type="checkbox" id="defaultAddress" name="isAddrHome">
+                    <label class="form-check-label ms-1" for="defaultAddress">기본배송지 설정</label>
+                </div>
             </div>
+
 
 
             <!-- 숨겨진 주소 입력 폼 -->

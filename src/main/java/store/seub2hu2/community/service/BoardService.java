@@ -9,19 +9,16 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import store.seub2hu2.community.dto.BoardForm;
 import store.seub2hu2.community.exception.CommunityException;
-import store.seub2hu2.community.mapper.BoardMapper;
-import store.seub2hu2.community.mapper.NoticeMapper;
-import store.seub2hu2.community.mapper.UploadMapper;
-import store.seub2hu2.community.mapper.BoardReplyMapper;
+import store.seub2hu2.community.mapper.*;
 import store.seub2hu2.community.vo.Board;
 import store.seub2hu2.community.vo.Notice;
 import store.seub2hu2.community.vo.Reply;
 import store.seub2hu2.community.vo.UploadFile;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.vo.User;
-import store.seub2hu2.util.FileUtils;
 import store.seub2hu2.util.ListDto;
 import store.seub2hu2.util.Pagination;
+import store.seub2hu2.util.S3Service;
 
 import java.util.List;
 import java.util.Map;
@@ -31,8 +28,15 @@ import java.util.Map;
 @Transactional
 public class BoardService {
 
-    @Value("${upload.directory.community}")
+    @Value("${upload.directory.board.files}")
     private String saveDirectory;
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucketName;
+
+    @Autowired
+    private S3Service s3Service;
+
 
     @Autowired
     private BoardMapper boardMapper;
@@ -41,13 +45,13 @@ public class BoardService {
     private UploadMapper uploadMapper;
 
     @Autowired
-    private BoardReplyMapper replyMapper;
+    private ReplyMapper replyMapper;
 
     @Autowired
     private NoticeMapper noticeMapper;
 
     public Board addNewBoard(BoardForm form
-                , @AuthenticationPrincipal LoginUser loginUser) {
+            , @AuthenticationPrincipal LoginUser loginUser) {
         // Board 객체를 생성하여 사용자가 입력한 제목과 내용을 저장한다.
         Board board = new Board();
         board.setNo(form.getNo());
@@ -66,7 +70,7 @@ public class BoardService {
         if (multipartFile != null && !multipartFile.isEmpty()) {
             String originalFilename = multipartFile.getOriginalFilename();
             String filename = System.currentTimeMillis() + originalFilename;
-            FileUtils.saveMultipartFile(multipartFile, saveDirectory, filename);
+            s3Service.uploadFile(multipartFile, bucketName, saveDirectory, filename);
 
             UploadFile uploadFile = new UploadFile();
             uploadFile.setOriginalName(originalFilename);
@@ -149,7 +153,7 @@ public class BoardService {
     public Board getBoardDetail(int boardNo) {
         Board board = boardMapper.getBoardDetailByNo(boardNo);
         UploadFile uploadFile = uploadMapper.getFileByBoardNo(boardNo);
-        List<Reply> reply = replyMapper.getRepliesByBoardNo(boardNo);
+        List<Reply> reply = replyMapper.getRepliesByTypeNo(boardNo);
 
         if (board == null) {
             throw new CommunityException("존재하지 않는 게시글입니다.");
@@ -198,7 +202,7 @@ public class BoardService {
             // 신규파일 정보를 조회하여 BOARD_UPLOADFILES 테이블에 저장
             String originalFilename = multipartFile.getOriginalFilename();
             String filename = System.currentTimeMillis() + originalFilename;
-            FileUtils.saveMultipartFile(multipartFile, saveDirectory, filename);
+            s3Service.uploadFile(multipartFile, bucketName, saveDirectory, filename);
 
             UploadFile uploadFile = new UploadFile();
             uploadFile.setNo(savedBoard.getNo());
@@ -231,18 +235,18 @@ public class BoardService {
     }
 
     public int getCheckLike(int boardNo
-                            , @AuthenticationPrincipal LoginUser loginUser) {
+            , @AuthenticationPrincipal LoginUser loginUser) {
 
         if (loginUser != null) {
-            return boardMapper.hasUserLikedBoard(boardNo, loginUser.getNo());
+            return boardMapper.hasUserLikedBoard(boardNo, "board", loginUser.getNo());
         } else {
             return 0;
         }
     }
 
     public void updateBoardLike(int boardNo
-                            , @AuthenticationPrincipal LoginUser loginUser) {
-        boardMapper.insertLike(boardNo, loginUser.getNo());
+            , @AuthenticationPrincipal LoginUser loginUser) {
+        boardMapper.insertLike(boardNo, "board", loginUser.getNo());
 
         Board board = boardMapper.getBoardDetailByNo(boardNo);
         board.setLike((board.getLike() + 1));
@@ -251,8 +255,8 @@ public class BoardService {
     }
 
     public void deleteBoardLike(int boardNo
-                            , @AuthenticationPrincipal LoginUser loginUser) {
-        boardMapper.deleteLike(boardNo, loginUser.getNo());
+            , @AuthenticationPrincipal LoginUser loginUser) {
+        boardMapper.deleteLike(boardNo, "board", loginUser.getNo());
 
         Board board = boardMapper.getBoardDetailByNo(boardNo);
         board.setLike((board.getLike() - 1));
