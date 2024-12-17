@@ -13,7 +13,7 @@ import java.util.Map;
 public interface ProductMapper {
 
     // 평점 증가
-    void updateProductAvgRating(@Param("prodNo") int prodNo, @Param("avgRating") double avgRating);
+    void updateProductAvgRating(@Param("prodNo") int prodNo, @Param("avgRating") Double avgRating);
 
     // 수량 증감
     void updateAmount(@Param("size") Size size);

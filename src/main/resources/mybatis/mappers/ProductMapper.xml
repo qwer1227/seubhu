@@ -9,7 +9,7 @@
     </update>
 
     <!--
-        void updateProductAvgRating(@Param("prodNo") int prodNo, @Param("avgRating") double avgRating);
+        void incrementViewCount(@Param("product") Product product);
     -->
     <update id="incrementViewCount">
         UPDATE PRODUCTS
@@ -18,9 +18,9 @@
     </update>
 
     <!--
-        void updateRating(@Param("product") Product product);
+       void updateProductAvgRating(@Param("prodNo") int prodNo, @Param("avgRating") Double avgRating);
     -->
-    <update id="updateProductAvgRating">
+    <update id="updateProductAvgRating" parameterType="map">
         UPDATE PRODUCTS
         SET PROD_RATING = #{avgRating}
         WHERE PROD_NO = #{prodNo};

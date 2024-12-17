@@ -16,9 +16,7 @@ import store.seub2hu2.product.vo.ProdReviewImg;
 import store.seub2hu2.product.vo.Product;
 import store.seub2hu2.util.S3Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
@@ -104,6 +102,10 @@ public class ProdReviewService {
 
             dto.setProdReviewImgs(prodReviewImgs);
         }
+
+        // 5. 리뷰 평점 평균 계산
+        double avgRating = prodReviewMapper.calculateAverageRatingByProdNo(form.getProdNo());
+        productMapper.updateProductAvgRating(form.getProdNo(), avgRating);
 
         dto.setProdName(product.getName());
         dto.setColorName(product.getColor().getName());
