@@ -129,8 +129,16 @@
                         </select>
                     </div>
                     <!-- 지역 검색 -->
+                    <div class="col-1">
+                        지역
+                        <select class="form-control mt-2" name="region" style="appearance: auto;">
+                            <option value="si" ${param.region eq 'si' ? 'selected' : ''}>시</option>
+                            <option value="gu" ${param.region eq 'gu' ? 'selected' : ''}>구</option>
+                            <option value="dong" ${param.region eq 'dong' ? 'selected' : ''}>동</option>
+                        </select>
+                    </div>
                     <div class="col-2">
-                        <label for="keyword">지역(구) 검색</label>
+                        <label for="keyword">지역 검색</label>
                         <input type="text" class="form-control" name="keyword" value="${param.keyword}">
                     </div>
                     <!-- 검색 버튼 -->

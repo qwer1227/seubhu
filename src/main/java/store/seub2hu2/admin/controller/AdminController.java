@@ -298,6 +298,7 @@ public class AdminController {
                          @RequestParam(name = "sort", required = false) String sort,
                          @RequestParam(name = "distance", required = false, defaultValue = "10") Double distance,
                          @RequestParam(name = "level", required = false) Integer level,
+                         @RequestParam(name = "region", required = false) String region,
                          @RequestParam(name = "keyword", required = false) String keyword,
                          Model model) {
         // 1. 요청 파라미터 정보를 Map 객체에 담는다.
