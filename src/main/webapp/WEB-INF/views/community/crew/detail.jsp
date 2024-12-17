@@ -150,7 +150,7 @@
           <!-- loginUser.no를 가져와서 조건문 실행 -->
           <c:if test="${loginUser.no eq crew.user.no}">
             <button class="btn btn-warning" onclick="updateCrew(${crew.no})">수정</button>
-            <button class="btn btn-danger" onclick="deleteCrew(${crew.no})">삭제</button>
+            <button class="btn btn-danger" style="margin-left: 5px" onclick="deleteCrew(${crew.no})">삭제</button>
           </c:if>
           <c:if test="${loginUser.no ne crew.user.no}">
             <button type="button" class="btn btn-danger" onclick="report('crew', ${crew.no})">신고</button>
@@ -166,7 +166,7 @@
     <!-- 댓글 작성 -->
     <div class="comment-form mb-4">
       <h5 style="text-align: start">댓글 작성</h5>
-      <form method="post" action="add-reply" id="box-reply-${reply.no}">
+      <form method="post" action="add-reply" id="box-reply">
         <input type="hidden" name="userNo" value="${loginUser.no}">
         <input type="hidden" name="type" value="crew">
         <input type="hidden" name="typeNo" value="${crew.no}">
@@ -185,7 +185,7 @@
                 <textarea name="content" class="form-control" rows="3" placeholder="댓글을 작성하세요."></textarea>
               </div>
               <div class="col">
-                <button type="button" id="addReply" class="btn btn-success" onclick="submitReply()">등록</button>
+                <button type="button" id="addReply" class="btn btn-success" onclick="submitReply(${reply.no})">등록</button>
               </div>
             </c:otherwise>
           </c:choose>
@@ -325,13 +325,15 @@
 </body>
 <script>
     function submitReply(){
-        let content = document.querySelector(`form#box-reply-\${replyNo} textarea[name=content]`).value.trim();
+        let content = document.querySelector(`form#box-reply textarea[name=content]`).value.trim();
 
         // 입력값 검증
         if (!content) {
             alert("댓글 내용을 입력해주세요.");
             return;
         }
+        document.querySelector("form#box-reply").submit()
+        
     }
 
     const myModalRepoter = new bootstrap.Modal('#modal-reporter')
