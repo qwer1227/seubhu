@@ -69,7 +69,7 @@ public class LessonService {
 
     public void updateLesson(LessonUpdateForm dto) {
         lessonMapper.updateLesson(dto);
-
+        // 1
         log.info("dto.getThumbnail(): {}" , dto.getThumbnail());
 
         lessonFileService.updateLessonImages(getMostLatelyLessonNo(), dto.getThumbnail(), dto.getMainImage());
