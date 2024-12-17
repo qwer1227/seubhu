@@ -68,6 +68,8 @@ public interface UserMapper {
 
     void updateAddr(UserInfoReq userInfoReq);
 
+    void updateIsAddrHomeToN(@Param("userNo") int userNo);
+
     List<Addr> findAddrByUserNo(@Param("userNo") int userNo);
 
     UserImage findImageByUserNo(@Param("userNo") int userNo);
