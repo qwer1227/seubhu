@@ -19,27 +19,6 @@
         <result property="privacy" column="USER_PRIVACY"/> <!-- 개인정보 처리방침 동의 여부 -->
     </resultMap>
 
-    <select id="countById" parameterType="string" resultType="int">
-        SELECT COUNT(*)
-        FROM USERS
-        WHERE USER_ID = #{id}
-    </select>
-
-    <select id="countByEmail" parameterType="string" resultType="int">
-        SELECT COUNT(*)
-        FROM USERS
-        WHERE USER_EMAIL = #{email}
-    </select>
-
-    <select id="countByNickname" parameterType="string" resultType="int">
-        SELECT COUNT(*)
-        FROM USERS
-        WHERE USER_NICKNAME = #{nickname}
-    </select>
-
-
-
-
     <!-- 신규 사용자 정보 추가: 사용자를 USERS 테이블에 삽입 -->
     <insert id="insertUser">
         insert into USERS
@@ -55,9 +34,9 @@
 
     <insert id="insertAddr">
         INSERT INTO ADDRESSES
-            (ZIP_CODE, ADDR_1, ADDR_2, ISADDR_HOME, USER_NO, ADDR_NAME)
+        (ZIP_CODE, ADDR_1, ADDR_2, ISADDR_HOME, USER_NO, ADDR_NAME)
         VALUES
-            (#{addr.postcode}, #{addr.address}, #{addr.addressDetail}, #{addr.isAddrHome}, #{addr.userNo}, #{addr.name})
+        (#{addr.postcode}, #{addr.address}, #{addr.addressDetail}, #{addr.isAddrHome}, #{addr.userNo}, #{addr.name})
 
         <!-- 자동 생성된 ADDR_NO 반환 -->
         <selectKey resultType="int" keyProperty="addr.no" keyColumn="ADDR_NO" order="AFTER">
@@ -84,7 +63,7 @@
     <insert id="insertAddress">
         INSERT INTO ADDRESSES (ZIP_CODE, ADDR_1, ADDR_2, ADDR_NAME, USER_NO)
         VALUES
-            (#{addr.postcode}, #{addr.address}, #{addr.addressDetail}, #{addr.name}, #{addr.userNo})
+        (#{addr.postcode}, #{addr.address}, #{addr.addressDetail}, #{addr.name}, #{addr.userNo})
         <selectKey resultType="int" keyProperty="addr.no" keyColumn="ADDR_NO" order="AFTER">
             SELECT LAST_INSERT_ID()
         </selectKey>
@@ -273,15 +252,15 @@
              , U.USER_NAME as name
              , U.USER_ID   as id
         FROM USER_GRANTED_ROLES R
-                 INNER JOIN USERS U
-                            ON R.USER_NO = U.USER_NO
+            INNER JOIN USERS U
+        ON R.USER_NO = U.USER_NO
         WHERE R.ROLE_NO = #{roleNo}
     </select>
 
     <!-- User findByUserNo(@Param("userNo") int userNo); -->
     <select id="findByUserNo" parameterType="store.seub2hu2.user.vo.User">
         select
-          user_no as no
+            user_no as no
         , password as password
         , user_nickname as nickname
         from
@@ -346,7 +325,7 @@
             USER_IMGS
         where
             user_no = #{userNo}
-        and
+          and
             img_isprimary = 'Y'
     </select>
 

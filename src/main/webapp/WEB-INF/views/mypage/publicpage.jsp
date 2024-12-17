@@ -115,38 +115,38 @@
 
     <!-- User Profile -->
     <div class="profile-header">
-            <c:if test="${userimage.imgName != null}">
+        <c:if test="${userimage.imgName != null}">
             <img id="profileImage"
-             src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/images/userImage/${userimage.imgName}"
-             alt="User Image"
-             style="cursor: pointer;">
-            </c:if>
-            <c:if test="${userimage.imgName == null}">
-                 <img id="profileImage"
+                 src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/images/userImage/${userimage.imgName}"
+                 alt="User Image"
+                 style="cursor: pointer;">
+        </c:if>
+        <c:if test="${userimage.imgName == null}">
+            <img id="profileImage"
                  src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/images/userImage/primaryImage.jpg"
                  alt="User Image"
                  style="cursor: pointer;">
-            </c:if>
-            <c:if test="${isOwnProfile}">
-        <input id="profileImageInput"
-               type="file"
-               style="display: none;"
-               accept="image/*">
-               </c:if>
+        </c:if>
+        <c:if test="${isOwnProfile}">
+            <input id="profileImageInput"
+                   type="file"
+                   style="display: none;"
+                   accept="image/*">
+        </c:if>
         <div class="name">${user.nickname}</div>
         <div>
-        <c:if test="${isOwnProfile}">
-            <button type="button" id="insertPost" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newPostModal">
-                새 글 작성
-            </button>
-            <button class="btn btn-outline-secondary btn-message"><a href="message/list">메시지</a></button>
-            <a href="mypage/private" class="btn btn-outline-dark btn-settings">⚙️</a>
+            <c:if test="${isOwnProfile}">
+                <button type="button" id="insertPost" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newPostModal">
+                    새 글 작성
+                </button>
+                <button class="btn btn-outline-secondary btn-message"><a href="message/list">메시지</a></button>
+                <a href="mypage/private" class="btn btn-outline-dark btn-settings">⚙️</a>
             </c:if>
         </div>
     </div>
     <security:authorize access="isAuthenticated()">
-    <security:authentication property="principal" var="loginUser" />
-    <input type="hidden" id="loginUserNo" value="${loginUser.no}">
+        <security:authentication property="principal" var="loginUser" />
+        <input type="hidden" id="loginUserNo" value="${loginUser.no}">
     </security:authorize>
 
     <!-- 검색창 -->
@@ -159,27 +159,27 @@
 
 
     <!-- Feed -->
-<div class="container mt-4">
-    <div class="row row-cols-1 row-cols-md-3 g-4">
-        <!-- Feed Card (반복문을 사용하여 각 게시글을 표시) -->
-        <c:forEach var="post" items="${posts}">
-            <div class="col">
-                <div class="card feed" data-post-id="${post.no}" data-bs-toggle="modal" data-bs-target="#feedModal">
-                    <!-- 썸네일 이미지 -->
-                    <img src="${post.thumbnail}" class="card-img-top" alt="Feed Image">
-                    <div class="card-body">
-                        <!-- 게시글 내용 (content) -->
-                        <p class="card-text">${post.postContent}</p>
-                        <!-- 게시글 작성자 -->
-                        <p class="text-muted">작성자: ${post.user.nickname}</p>
-                        <!-- 게시글 작성일 -->
-                        <p class="text-muted"><fmt:formatDate value="${post.postCreatedDate}"/></p>
+    <div class="container mt-4">
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            <!-- Feed Card (반복문을 사용하여 각 게시글을 표시) -->
+            <c:forEach var="post" items="${posts}">
+                <div class="col">
+                    <div class="card feed" data-post-id="${post.no}" data-bs-toggle="modal" data-bs-target="#feedModal">
+                        <!-- 썸네일 이미지 -->
+                        <img src="${post.thumbnail}" class="card-img-top" alt="Feed Image">
+                        <div class="card-body">
+                            <!-- 게시글 내용 (content) -->
+                            <p class="card-text">${post.postContent}</p>
+                            <!-- 게시글 작성자 -->
+                            <p class="text-muted">작성자: ${post.user.nickname}</p>
+                            <!-- 게시글 작성일 -->
+                            <p class="text-muted"><fmt:formatDate value="${post.postCreatedDate}"/></p>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </c:forEach>
+            </c:forEach>
+        </div>
     </div>
-</div>
 
 
     <!-- 새 글 작성 모달 -->
@@ -499,11 +499,11 @@
         }
 
         let jsonData = {
-          postComment : postComment,
-          postId : postId,
-          userNo : userNo,
-          replyToUserNo : replyToUserNo, // 대댓글의 대상 사용자 번호
-          replyToCommentNo : replyToCommentNo
+            postComment : postComment,
+            postId : postId,
+            userNo : userNo,
+            replyToUserNo : replyToUserNo, // 대댓글의 대상 사용자 번호
+            replyToCommentNo : replyToCommentNo
         };
 
         $.ajax({

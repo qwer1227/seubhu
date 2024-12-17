@@ -68,14 +68,14 @@
                 <div id="emailFeedback"></div> <!-- 피드백 영역 -->
             </div>
 
-           <!-- 주소 선택 셀렉트 박스 -->
+            <!-- 주소 선택 셀렉트 박스 -->
             <div class="mb-3 d-flex align-items-center">
                 <label for="addressSelect" class="form-label me-2">주소 선택</label>
                 <select id="addressSelect" class="form-select me-2 flex-grow-1" name="addrNo" onchange="populateAddressFields()">
                     <option value="" disabled selected>주소를 선택하세요</option>
                     <c:forEach var="addr" items="${addr}">
                         <option value="${addr.no}">
-                            ${addr.address} (${addr.addressDetail})
+                                ${addr.address} (${addr.addressDetail})
                         </option>
                     </c:forEach>
                 </select>
