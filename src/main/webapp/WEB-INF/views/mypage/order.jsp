@@ -198,209 +198,237 @@
             </tr>
             </tbody>
         </table>
-        <!-- 배송지 목록 모달 -->
+
+        <!-- 배송지 모달 창 -->
         <div class="modal fade" id="addressListModal" tabindex="-1" aria-labelledby="addressListModalLabel"
-             aria-hidden="true">
-            <div class="modal-dialog modal-lg">
+             style="display: none;" role="dialog">
+            <div class="modal-dialog modal-lg" style="max-width: 30%;">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="addressListModalLabel">배송지 목록</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>받으실 분</th>
-                                <th>주소</th>
-                                <th>휴대폰 번호</th>
-                                <th>선택</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <c:forEach var="addr" items="" varStatus="status">
-                                <tr>
-                                    <td>${status.index + 1}</td>
-                                    <td>${addr.name}</td>
-                                    <td>${addr.address}</td>
-                                    <td>${addr.addressDetail}</td>
-                                    <td>
-                                        <button class="btn btn-primary btn-sm" onclick="selectAddress('${addr.no}')">
-                                            선택
-                                        </button>
-                                    </td>
-                                </tr>
-                            </c:forEach>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-        <!--
-            쿠폰 적립금
-        -->
-        <div class="row mb-3">
-            <div class="col">
-                <table class="table align-middle mt-2 md-2">
-                    <colgroup>
-                        <col width="5%"/>
-                        <col width="50%"/>
-                        <col width="45%">
-                    </colgroup>
-                    <thead class="table-secondary">
-                    <tr class="text-start">
-                        <th colspan="3">쿠폰 적립금</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <th><label>쿠폰</label></th>
-                        <td>
-                            <input type="text" class="form-control mb-3" value="신입 러너들 10% 할인" disabled>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th><label>적립금</label></th>
-                        <td>
-                            <div class="d-flex align-items-center mb-3">
-                                <input type="text" class="form-control me-2" disabled/>
-                                <input type="button" class="btn btn-secondary" value="모두 사용" disabled>
+                    <div class="modal-body" style="max-height: 600px; overflow-y: auto;">
+                        <!-- 주소 목록을 동적으로 생성 -->
+                        <c:forEach var="address" items="${addresses}">
+                            <div class="card mb-2">
+                                <div class="card-body text-start" style="line-height: 1.4; padding: 10px;">
+                                    <!-- 라디오 버튼 -->
+                                    <input type="radio" id="address${address.no}" name="selectedAddress"
+                                           value="${address.no}"
+                                           class="form-check-input me-2"
+                                           onclick="fillCartForm('${address.name}', '${address.postcode}', '${address.address}', '${address.addressDetail}', '${address.isAddrHome}')">
+                                    <label class="form-check-label" for="address${address.no}">
+                                        <strong>${address.name}</strong>
+                                    </label>
+                                    <!-- 주소 정보 출력 -->
+                                    <p style="margin: 5px 0;"><strong>받으실 분:</strong> ${address.name}</p>
+                                    <p style="margin: 5px 0;"><strong>(우편번호) 주소:</strong>
+                                        (${address.postcode}) ${address.address}</p>
+                                    <p style="margin: 5px 0;"><strong>상세 주소:</strong> ${address.addressDetail}</p>
+                                </div>
                             </div>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <!--
-        결제 정보
-        -->
-        <div class="row mb-3">
-            <div class="col">
-                <table class="table align-middle mt-2 md-2">
-                    <thead class="table-secondary">
-                    <tr class="text-start">
-                        <th colspan="12">결제 정보</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <th><label>결제 수단</label></th>
-                        <td><input type="radio" name="paymentMethod" value="신용카드"><img
-                                src="https://ecimg.cafe24img.com/pg90b05313110010/brooksrunning/web/upload/icon_202210121023113100.png"/>
-                        </td>
-                        <td><input type="radio" name="paymentMethod" value="카카오페이" checked><img
-                                src="https://ecimg.cafe24img.com/pg90b05313110010/brooksrunning/web/upload/icon_202210121022402200.png"/>
-                        </td>
-                        <td><input type="radio" name="paymentMethod" value="페이코"><img
-                                src="https://img.echosting.cafe24.com/design/skin/admin/ko_KR/ico_payco_disabled.gif"/>
-                        </td>
-                        <td><input type="radio" name="paymentMethod" value="네이버페이"><img
-                                src="https://img.echosting.cafe24.com/skin/admin_ko_KR/order/admin_naverpay_disabled.gif"/>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <hr class="bg-dark border-dark border-4">
-        <div class="row">
-            <div class="col">
-                <table class="table table-borderless">
-                    <colgroup>
-                        <col width="50%">
-                        <col width="50%">
-                    </colgroup>
-                    <thead class="table-secondary">
-                    <tr class="text-start">
-                        <th colspan="2">주문예정 금액</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td class="text-start">상품금액</td>
-                        <td class="text-end" id="total-price"> 0 원</td>
-                    </tr>
-                    <tr>
-                        <td class="text-start">배송비</td>
-                        <td class="text-end" id="delivery-price">0 원</td>
-                    </tr>
-                    <tr>
-                        <td class="text-start">총 할인금액</td>
-                        <td class="text-end" id="discount-price">0 원</td>
-                    </tr>
-                    <tr>
-                        <td class="text-start">
-                            <strong>총결제 금액</strong>
-                        </td>
-                        <td class="text-end">
-                            <strong class="text-danger fs-4" id="final-total-price"> 0 원</strong>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-                <div class="d-grid gap-2">
-                    <button class="col btn btn-dark" type="button" id="cancelOrderBtn">주문취소하기</button>
-                    <button class="col btn btn-dark" id="submit-button" type="button">결제하기 <small
-                            id="total-quantity"></small></button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-        <!--
-            주문 취소 모달
-        -->
-        <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="cancelModalLabel">주문 취소</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        정말 주문을 취소하시겠습니까?
+                        </c:forEach>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                        <button type="button" class="btn btn-primary">확인</button>
+                        <div class="d-flex justify-content-end w-100">
+                            <button type="button" class="btn btn-warning me-2" onclick="editAddress()">수정</button>
+                            <button type="button" class="btn btn-danger me-2" onclick="deleteAddress()">삭제</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
+
+    </div>
     <!--
-        결제
+        쿠폰 적립금
     -->
-    <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="paymentModalLabel">결제 확인</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>총 결제 금액: <span id="totalAmount"></span> 원</p>
-                    <p>결제를 진행하시겠습니까?</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                    <button type="button" class="btn btn-primary" id="payBtn">결제</button>
-                </div>
+    <div class="row mb-3">
+        <div class="col">
+            <table class="table align-middle mt-2 md-2">
+                <colgroup>
+                    <col width="5%"/>
+                    <col width="50%"/>
+                    <col width="45%">
+                </colgroup>
+                <thead class="table-secondary">
+                <tr class="text-start">
+                    <th colspan="3">쿠폰 적립금</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <th><label>쿠폰</label></th>
+                    <td>
+                        <input type="text" class="form-control mb-3" value="신입 러너들 10% 할인" disabled>
+                    </td>
+                </tr>
+                <tr>
+                    <th><label>적립금</label></th>
+                    <td>
+                        <div class="d-flex align-items-center mb-3">
+                            <input type="text" class="form-control me-2" disabled/>
+                            <input type="button" class="btn btn-secondary" value="모두 사용" disabled>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!--
+    결제 정보
+    -->
+    <div class="row mb-3">
+        <div class="col">
+            <table class="table align-middle mt-2 md-2">
+                <thead class="table-secondary">
+                <tr class="text-start">
+                    <th colspan="12">결제 정보</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <th><label>결제 수단</label></th>
+                    <td><input type="radio" name="paymentMethod" value="신용카드"><img
+                            src="https://ecimg.cafe24img.com/pg90b05313110010/brooksrunning/web/upload/icon_202210121023113100.png"/>
+                    </td>
+                    <td><input type="radio" name="paymentMethod" value="카카오페이" checked><img
+                            src="https://ecimg.cafe24img.com/pg90b05313110010/brooksrunning/web/upload/icon_202210121022402200.png"/>
+                    </td>
+                    <td><input type="radio" name="paymentMethod" value="페이코"><img
+                            src="https://img.echosting.cafe24.com/design/skin/admin/ko_KR/ico_payco_disabled.gif"/>
+                    </td>
+                    <td><input type="radio" name="paymentMethod" value="네이버페이"><img
+                            src="https://img.echosting.cafe24.com/skin/admin_ko_KR/order/admin_naverpay_disabled.gif"/>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <hr class="bg-dark border-dark border-4">
+    <div class="row">
+        <div class="col">
+            <table class="table table-borderless">
+                <colgroup>
+                    <col width="50%">
+                    <col width="50%">
+                </colgroup>
+                <thead class="table-secondary">
+                <tr class="text-start">
+                    <th colspan="2">주문예정 금액</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td class="text-start">상품금액</td>
+                    <td class="text-end" id="total-price"> 0 원</td>
+                </tr>
+                <tr>
+                    <td class="text-start">배송비</td>
+                    <td class="text-end" id="delivery-price">0 원</td>
+                </tr>
+                <tr>
+                    <td class="text-start">총 할인금액</td>
+                    <td class="text-end" id="discount-price">0 원</td>
+                </tr>
+                <tr>
+                    <td class="text-start">
+                        <strong>총결제 금액</strong>
+                    </td>
+                    <td class="text-end">
+                        <strong class="text-danger fs-4" id="final-total-price"> 0 원</strong>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="d-grid gap-2">
+                <button class="col btn btn-dark" type="button" id="cancelOrderBtn">주문취소하기</button>
+                <button class="col btn btn-dark" id="submit-button" type="button">결제하기 <small
+                        id="total-quantity"></small></button>
             </div>
         </div>
     </div>
 </div>
+
+<!--
+    주문 취소 모달
+-->
+<div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cancelModalLabel">주문 취소</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                정말 주문을 취소하시겠습니까?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                <button type="button" class="btn btn-primary">확인</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--
+    결제
+-->
+<div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="paymentModalLabel">결제 확인</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>총 결제 금액: <span id="totalAmount"></span> 원</p>
+                <p>결제를 진행하시겠습니까?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                <button type="button" class="btn btn-primary" id="payBtn">결제</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
+    // 라디오 버튼 클릭 시 선택된 주소 정보 입력
+    function fillCartForm(name, postcode, address, addressDetail, isAddrHome) {
+        // 주소 정보가 입력될 폼 필드
+        document.querySelector("[name='name']").value = name;
+        document.querySelector("[name='postcode']").value = postcode;
+        document.querySelector("[name='address']").value = address;
+        document.querySelector("[name='address-detail']").value = addressDetail;
+    }
+
+    // 수정 버튼 클릭 시
+    function editAddress() {
+        if (selectedAddressNo) {
+            // 수정 페이지로 이동하거나, 모달 내에 수정 폼을 띄우는 로직 추가
+            window.location.href = "/address/update?addrNo=" + selectedAddressNo; // 수정 페이지로 리디렉션
+        } else {
+            alert("주소를 선택해주세요.");
+        }
+    }
+
+    // 삭제 버튼 클릭 시
+    function deleteAddress() {
+        if (selectedAddressNo) {
+            if (confirm("정말로 삭제하시겠습니까?")) {
+                // 삭제 요청을 서버로 보내는 로직
+                window.location.href = "/address/delete?addrNo=" + selectedAddressNo; // 삭제 요청
+            }
+        } else {
+            alert("주소를 선택해주세요.");
+        }
+    }
+
 
     // 카카오 주소 api
     function openPostcode() {

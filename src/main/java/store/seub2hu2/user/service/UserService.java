@@ -33,6 +33,31 @@ public class UserService {
     @Autowired
     private UserMapper userMapper;
 
+    public boolean checkDuplicateId(String id) {
+        int count = userMapper.countById(id); // 아이디 존재 여부 확인
+        return count > 0;
+    }
+
+    public boolean checkDuplicateEmail(String email) {
+        int count = userMapper.countByEmail(email); // 이메일 존재 여부 확인
+        return count > 0;
+    }
+
+    public boolean checkDuplicateNickname(String nickname) {
+        System.out.println("checkDuplicateNickname method is called!"); // 메서드 호출 여부 확인
+        if (nickname == null || nickname.trim().isEmpty()) {
+            System.out.println("Received nickname is null or empty!");
+        } else {
+            System.out.println("Received nickname: " + nickname); // 디버깅용 로그 추가
+        }
+        int count = userMapper.countByNickname(nickname);
+        System.out.println("Count of nicknames: " + count); // 결과 출력
+        return count > 0;
+    }
+
+
+
+
     /**
      * 신규 사용자 정보를 전달받아서 회원가입 시키는 서비스
      *
@@ -40,10 +65,6 @@ public class UserService {
      */
     @Transactional // 트랜잭션 적용
     public void insertUser(UserJoinForm form) {
-        // 사용자 중복 체크
-        if (userMapper.getUserById(form.getId()) != null) {
-            throw new AlreadyUsedIdException(form.getId());
-        }
 
         // User 객체 생성 및 설정
         User user = new User();
@@ -79,6 +100,17 @@ public class UserService {
         userLevel.setUserNo(user.getNo());  // 등록된 사용자 번호
         userLevel.setLevel(1);             // 기본 레벨 설정 (예: 1)
         userMapper.insertUserLevel(userLevel);  // 사용자 레벨 등록
+
+        // 기본 사용자 이미지 등록
+        UserImage userImage = new UserImage();
+        userImage.setUserNo(user.getNo()); // 생성된 사용자 번호
+
+        // 기본 이미지 URL 설정
+        userImage.setImgName("primaryImage.jpg"); // 기본 이미지 이름
+        userImage.setIsPrimary('Y'); // 기본 이미지로 설정
+
+        // 사용자 이미지 DB에 등록
+        userMapper.insertUserImage(userImage);
     }
 
     /**

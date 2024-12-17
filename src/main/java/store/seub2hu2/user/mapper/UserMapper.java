@@ -2,6 +2,7 @@ package store.seub2hu2.user.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.security.core.parameters.P;
 import store.seub2hu2.course.vo.UserLevel;
 import store.seub2hu2.mypage.dto.UserInfoReq;
@@ -11,6 +12,15 @@ import java.util.List;
 
 @Mapper
 public interface UserMapper {
+
+    // ID로 사용자 중복 여부 확인
+    int countById(@Param("id") String id);
+
+    // 이메일로 사용자 중복 여부 확인
+    int countByEmail(@Param("email") String email);
+
+    // 닉네임으로 사용자 중복 여부 확인
+    int countByNickname(@Param("nickname") String nickname);
 
     // 신규 사용자 추가
     void insertUser(@Param("user") User user);
@@ -35,7 +45,6 @@ public interface UserMapper {
 
     // 사용자 닉네임으로 사용자 조회
     User getUserByNickname(@Param("nickname") String nickname);
-
 
     // 사용자 번호로 역할 정보 조회
     List<Role> getRolesByUserNo(@Param("userNo") int userNo);

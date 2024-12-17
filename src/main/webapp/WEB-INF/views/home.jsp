@@ -17,25 +17,12 @@
             right: 10px;
         }
 
-        /* 아이콘 버튼 스타일 설정 */
-        .icon-button {
-            background-color: transparent;
-            border: none;
-            color: #ffffff;
-            font-size: 1.5rem;
-        }
-
-        .icon-button:hover {
-            color: #f39c12; /* 호버 시 아이콘 색상 */
-        }
-
         /* 카드 제목과 텍스트를 명확히 구분 */
         .card-body h5, .card-body p {
             margin: 0;
         }
 
         /* 광고 팝업 스타일 */
-
         .ad-popup {
             position: fixed;
             bottom: 100px;
@@ -149,16 +136,6 @@
                                     <a href="/product/hit?no=${product.no}&colorNo=${product.colorNum}">
                                         <img src="${product.imgThum}" class="card-img-top" alt="상품 1">
                                     </a>
-
-                                    <form id="addWish" action="/wish" method="post">
-                                        <input type="hidden" name="productId" value="${product.no}"/>
-                                        <div class="icon-overlay d-flex justify-content-center">
-                                            <button class="icon-button btn-sm wish-add" type="button">
-                                                <i class="bi bi-heart"></i>
-                                            </button>
-                                        </div>
-                                    </form>
-
                                     <div class="card-body">
                                         <!-- 상품명과 순위 한 줄로 배치 -->
                                         <div class="d-flex justify-content-between align-items-center mb-2">
@@ -194,14 +171,6 @@
                                     <a href="/product/hit?no=${product.no}&colorNo=${product.colorNum}">
                                         <img src="${product.imgThum}" class="card-img-top" alt="상품 5">
                                     </a>
-                                    <form class="form-cart" method="post">
-                                        <input type="hidden" name="productId" value="${product.no}"/>
-                                        <div class="icon-overlay d-flex justify-content-center">
-                                            <button class="icon-button btn-sm wish-add" type="button">
-                                                <i class="bi bi-heart"></i>
-                                            </button>
-                                        </div>
-                                    </form>
                                     <div class="card-body">
                                         <!-- 상품명과 순위 한 줄로 배치 -->
                                         <div class="d-flex justify-content-between align-items-center mb-2">
@@ -412,7 +381,7 @@
                 <!-- 반복문으로 슬라이드 생성 -->
                 <c:forEach var="lesson" items="${ongoingLessons}" varStatus="status">
                     <div class="carousel-item ${status.first ? 'active' : ''}">
-                            <img src="${s3}/resources/images/lesson/${images['THUMBNAIL']}"
+                            <img src="${s3}/resources/images/lesson/${lesson.filename}"
                                  id="Thumbnail" alt="Thumbnail" style="width: 100%; height: 300px;" class="d-block w-100"/>
                         <div class="popup-content text-center">
                             <h5>${lesson.title}</h5>
