@@ -27,7 +27,7 @@
     <select id="getLessonReservationByUserId" resultType="store.seub2hu2.lesson.vo.LessonReservation">
         select R.LESSON_RESERVATION_NO           as "no"
              , R.USER_ID                         as "user.id"
-             , R.LESSON_RESERVATION_STATUS       as status
+             , R.LESSON_RESERVATION_STATUS       as reservationStatus
              , R.LESSON_RESERVATION_CREATED_DATE as reservationCreatedDate
              , R.LESSON_RESERVATION_UPDATED_DATE as reservationUpdatedDate
              , L.LESSON_NO                       as "lesson.lessonNo"
@@ -135,8 +135,8 @@
                 AND L.LESSON_SUBJECT LIKE CONCAT('%', #{condition.searchKeyword}, '%')
             </when>
         </choose>
-        <if test="condition.lessonStatus != null and condition.lessonStatus != '' and condition.lessonStatus != '모두'">
-            AND L.LESSON_STATUS = #{condition.lessonStatus}
+        <if test="condition.reservationStatus != null and condition.reservationStatus != '' and condition.reservationStatus != '모두'">
+            AND R.LESSON_RESERVATION_STATUS = #{condition.reservationStatus}
         </if>
         <if test="condition.lessonSubject != null and condition.lessonSubject != '' and condition.lessonSubject != '모두'">
             AND L.LESSON_SUBJECT = #{condition.lessonSubject}
