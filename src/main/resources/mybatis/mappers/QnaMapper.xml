@@ -31,25 +31,6 @@
         <association property="qnaCategory" resultMap="QnaCategoryMap"/>
     </resultMap>
 
-    <!-- List<QnaResponse> getQnasByUserNo(@Param("userNo") int userNo); -->
-
-    <select id="getQnasByUserNo" resultMap="QnaResponseMap">
-        SELECT
-            q.QNA_NO, q.QNA_TITLE, q.QNA_CONTENT, q.QNA_STATUS,
-            q.ANSWER_CONTENT, q.ANSWER_CREATED_DATE, q.QNA_CREATED_DATE,
-            q.QNA_UPDATED_DATE, q.QNA_ANSWERD_DATE, q.QNA_ISDELETED,
-            q.QUESTION_USER_NO, q.ANSWER_USER_NO, q.CATEGORY_NO,
-            c.CATEGORY_NO AS CATEGORY_NO, c.CATEGORY_NAME
-        FROM
-            USER_QNA q
-                INNER JOIN
-            QNA_CATEGORY c ON q.CATEGORY_NO = c.CATEGORY_NO
-        WHERE
-            q.QNA_ISDELETED = 'N'
-        AND
-            q.QUESTION_USER_NO = #{userNo}
-    </select>
-
     <!-- QnaResponse getQnaByQnaNo(@Param("qnaNo") int qnaNo); -->
 
     <select id="getQnaByQnaNo" resultMap="QnaResponseMap">
@@ -99,43 +80,10 @@
         WHERE QNA_NO = #{qnaNo}
     </update>
 
-    <!-- int getTotalRows(@Param("condition")Map<String, Object> condition); -->
+
+    <!-- int getTotalRows(@Param("req")RequestParamsDto requestParamsDto); -->
 
     <select id="getTotalRows" resultType="int">
-        select
-            count(*) as cnt
-        from
-            USER_QNA uq
-        JOIN
-            USERS u
-        ON
-            u.user_no = uq.question_user_no
-        JOIN
-            QNA_CATEGORY qc
-        ON
-            qc.category_no = uq.category_no
-        where uq.QNA_ISDELETED = 'N'
-        <if test="condition.opt != null">
-            <choose>
-                <when test="condition.opt == 'title'">
-                    and uq.qna_title like concat('%', #{condition.keyword}, '%')
-                </when>
-                <when test="condition.opt == 'writer'">
-                    and u.user_nickname like concat('%', #{condition.keyword}, '%')
-                </when>
-                <when test="condition.opt == 'status'">
-                    and uq.qna_status = #{condition.keyword}
-                </when>
-                <when test="condition.opt == 'category'">
-                    and qc.category_name like concat('%', #{condition.keyword}, '%')
-                </when>
-            </choose>
-        </if>
-    </select>
-
-    <!-- int getTotalRows2(@Param("req")RequestParamsDto requestParamsDto); -->
-
-    <select id="getTotalRows2" resultType="int">
         select
             count(*) as cnt
         from
@@ -145,7 +93,14 @@
         ON
             qc.category_no = uq.category_no
         where
-            uq.qna_isdeleted = 'N'
+        <choose>
+            <when test="admin == '관리자'">
+                1 = 1
+            </when>
+            <otherwise>
+                uq.qna_isdeleted = 'N'
+            </otherwise>
+        </choose>
         <if test="req.category != null">
             and qc.category_name = #{req.category}
         </if>
@@ -161,69 +116,10 @@
         </if>
     </select>
 
-    <!-- List<QnaResponse> getQnas(@Param("condition") Map<String, Object> condition); -->
+
+    <!-- List<QnaResponse> getQnas(@Param("req") RequestParamsDto requestParamsDto); -->
 
     <select id="getQnas" resultMap="QnaResponseMap">
-        SELECT *
-        FROM (
-            SELECT
-                <if test="condition.sort != null">
-                    <choose>
-                        <when test="condition.sort == 'date'">
-                            row_number() over (order by  uq.qna_created_date desc ) rn
-                        </when>
-                        <otherwise>
-                            row_number() over (order by uq.qna_no desc) rn
-                        </otherwise>
-                    </choose>
-                </if>
-            , uq.qna_no
-            , uq.qna_title
-            , uq.qna_content
-            , uq.qna_status
-            , uq.answer_content
-            , uq.answer_created_date
-            , uq.qna_created_date
-            , uq.qna_updated_date
-            , uq.qna_answerd_date
-            , uq.qna_isdeleted
-            , uq.question_user_no
-            , uq.category_no
-            , uq.answer_user_no
-            , qc.category_name
-            , u.user_nickname
-        FROM
-        USER_QNA uq
-        JOIN QNA_CATEGORY qc
-        ON qc.category_no = uq.category_no
-        JOIN USERS u
-        ON u.user_no = uq.QUESTION_USER_NO
-        WHERE uq.qna_isdeleted = 'N'
-        <!-- 제목/내용 검색 -->
-        <if test="condition.keyword != null">
-            <choose>
-                <when test="condition.opt == 'title'">
-                    AND uq.qna_title LIKE CONCAT('%', #{condition.keyword}, '%')
-                </when>
-                <when test="condition.opt == 'writer'">
-                    AND u.user_nickname LIKE CONCAT('%', #{condition.keyword}, '%')
-                </when>
-                <when test="condition.opt == 'status'">
-                    and uq.qna_status = #{condition.keyword}
-                </when>
-                <when test="condition.opt == 'category'">
-                    and qc.category_name like concat('%', #{condition.keyword}, '%')
-                </when>
-            </choose>
-        </if>
-        ) AS qna
-        WHERE rn BETWEEN #{condition.begin} AND #{condition.end}
-        ORDER BY rn
-    </select>
-
-    <!-- List<QnaResponse> getQnas2(@Param("req") RequestParamsDto requestParamsDto); -->
-
-    <select id="getQnas2" resultMap="QnaResponseMap">
         select *
         from (
             select
@@ -232,15 +128,29 @@
             , uq.qna_content
             , uq.qna_created_date
             , uq.qna_updated_date
-            ,  ROW_NUMBER() OVER (ORDER BY uq.qna_created_date) AS rn
+            , u.user_nickname
+            , uq.qna_status
+            , qc.category_name
+            ,  ROW_NUMBER() OVER (ORDER BY uq.qna_created_date desc) AS rn
             from
                 USER_QNA uq
             JOIN
                 QNA_CATEGORY qc
             ON
                 qc.category_no = uq.category_no
+            JOIN
+                USERS u
+            ON
+                u.user_no = uq.question_user_no
             where
-                qna_isdeleted = 'N'
+        <choose>
+            <when test="admin == '관리자'">
+                1 = 1
+            </when>
+            <otherwise>
+                uq.qna_isdeleted = 'N'
+            </otherwise>
+        </choose>
         <if test="req.category != null and req.category != ''">
             and qc.category_name = #{req.category}
         </if>

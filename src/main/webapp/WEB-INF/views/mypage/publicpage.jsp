@@ -115,13 +115,13 @@
 
     <!-- User Profile -->
     <div class="profile-header">
-            <c:if test="${user.imgName != null}">
+            <c:if test="${userimage.imgName != null}">
             <img id="profileImage"
-             src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/images/userImage/${user.imgName}"
+             src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/images/userImage/${userimage.imgName}"
              alt="User Image"
              style="cursor: pointer;">
             </c:if>
-            <c:if test="${user.imgName == null}">
+            <c:if test="${userimage.imgName == null}">
                  <img id="profileImage"
                  src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/images/userImage/primaryImage.jpg"
                  alt="User Image"
@@ -131,7 +131,7 @@
                type="file"
                style="display: none;"
                accept="image/*">
-        <div class="name">${user.nickname}<span class="badge">Verified</span></div>
+        <div class="name">${user.nickname}</div>
         <div>
             <button type="button" id="insertPost" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newPostModal">
                 새 글 작성
@@ -140,8 +140,20 @@
             <a href="mypage/private" class="btn btn-outline-dark btn-settings">⚙️</a>
         </div>
     </div>
+    <security:authorize access="isAuthenticated()">
+    <security:authentication property="principal" var="loginUser" />
+    <input type="hidden" id="loginUserNo" value="${loginUser.no}">
+    </security:authorize>
 
-    
+    <!-- 검색창 -->
+    <div class="search-bar mt-4 mb-4">
+        <form method="get" action="/mypage">
+            <input type="text" id="userName" name="userName"  class="form-control" placeholder="사용자 닉네임을 입력하세요...">
+            <button class="btn btn-primary mt-2" id="searchButton">검색</button>
+        </form>
+    </div>
+
+
     <!-- Feed -->
 <div class="container mt-4">
     <div class="row row-cols-1 row-cols-md-3 g-4">
@@ -265,60 +277,42 @@
 
 
 <script>
+
     // 게시글 클릭 시 AJAX로 데이터 가져오기
     $('.feed').on('click', function() {
         var postId = $(this).data('post-id');  // 클릭한 게시글의 ID 가져오기
 
+        // 모달 내 버튼에 postId 설정
         $('#postDelete').data('post-id', postId);
         $('#postUpdate').data('post-id', postId);
         $('#postCommentInsert').data('post-id', postId);
+        $('#postComment').val('');
 
-
+        // AJAX 요청
         $.ajax({
             url: "/mypage/detail/" + postId,  // 서버로 AJAX 요청
             method: "GET",
             success: function(response) {
-                const rawDate = response.postCreatedDate;
-                const date = new Date(rawDate)
-                const formattedDate = new Intl.DateTimeFormat('ko-KR',{
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                }).format(date);
+                const postWriterNo = response.user.no;
+                const loginUserNo = $('#loginUserNo').val();
 
-                // 서버에서 받은 게시글 정보로 모달 내용 채우기
-                $("#detailPostContent").text(response.postContent);
-                $("#detailCreatedDate").text(formattedDate);
-                $("#detailPostWriter").text(response.user.nickname);
+                if (postWriterNo == loginUserNo) {
+                    // 수정 / 삭제 버튼 표시
+                    $('#postUpdate').show();
+                    $('#postDelete').show();
+                } else {
+                    // 수정 / 삭제 버튼 숨김
+                    $('#postUpdate').hide();
+                    $('#postDelete').hide();
+                }
 
-                // 서버에서 받은 댓글 데이터를 반복하면서 화면에 추가
-                const comments = response.postComment; // 서버에서 받은 댓글
-
-
-
-                $('#commentList').empty()
-
-                comments.forEach(function(comment) {
-                    const commentHTML = `
-                        <div class="comment-item">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <p><strong class="user-name">\${comment.userName}:</strong> \${comment.commentRequest.postComment}</p>
-                                <div class="comment-actions">
-                                     <button class="btn-reply"  data-comment-id="${comment.no}">답글 달기</button>
-                                    <button class="btn-report">신고</button>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-
-                    $('#commentList').append(commentHTML);
-                });
+                // 댓글 로드
+                loadComments(postId);
 
                 // 이미지 슬라이드 구성
-
                 var carouselContainer = $('#feedModal .carousel-inner');
                 carouselContainer.empty();  // 기존 이미지를 초기화
-                console.log($(this).data("post-id"));
+                console.log(postId);
 
                 // 이미지를 carousel에 추가
                 if (response.images && response.images.length > 0) {
@@ -333,7 +327,7 @@
                                 alt: 'Post Image ' + (index + 1)
                             })
                         );
-                        console.log(image.imageUrl)
+                        console.log(image.imageUrl);
                         carouselContainer.append(imgElement);  // carousel-inner에 추가
                     });
                 } else {
@@ -346,8 +340,53 @@
             error: function() {
                 alert("게시글 정보를 가져오는데 실패했습니다.");
             }
-        });
+        }); // <-- 여기서 AJAX 요청을 닫아줍니다.
     });
+
+
+    // 댓글 데이터를 가져와 화면에 표시하는 함수
+    function loadComments(postId) {
+        $.ajax({
+            url: "/mypage/detail/" + postId,  // 서버로 AJAX 요청
+            method: "GET",
+            success: function(response) {
+                const rawDate = response.postCreatedDate;
+                const date = new Date(rawDate);
+                const formattedDate = new Intl.DateTimeFormat('ko-KR', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                }).format(date);
+
+                // 서버에서 받은 게시글 정보로 모달 내용 채우기
+                $("#detailPostContent").text(response.postContent);
+                $("#detailCreatedDate").text(formattedDate);
+                $("#detailPostWriter").text(response.user.nickname);
+
+                // 서버에서 받은 댓글 데이터를 반복하며 화면에 추가
+                const comments = response.postComment; // 서버에서 받은 댓글
+                $('#commentList').empty(); // 기존 댓글 초기화
+
+                comments.forEach(function(comment) {
+                    const commentHTML = `
+                    <div class="comment-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <p><strong class="user-name">\${comment.userName}:</strong> \${comment.commentRequest.postComment}</p>
+                            <div class="comment-actions">
+                                <!-- 필요한 동작 버튼 -->
+                            </div>
+                        </div>
+                    </div>
+                `;
+                    $('#commentList').append(commentHTML);
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error("댓글 데이터를 불러오는 중 오류 발생:", error);
+            }
+        });
+    }
+
 
     // 새글 작성 버튼 클릭 시
     $(document).on('click', '#insertPost', function() {
@@ -372,6 +411,7 @@
 
         // 기존에 열려 있는 상세 게시글 모달 닫기
         $('#feedModal').modal('hide');  // 상세 모달 닫기
+
 
         // 서버로 AJAX 요청하여 해당 게시글 데이터를 불러옴
         $.ajax({
@@ -439,7 +479,7 @@
     });
 
     // 댓글 작성 함수
-    $(document).on('click', '#postCommentInsert', function (){
+    $(document).on('click', '#postCommentInsert', function () {
         let postComment = $('#postComment').val(); // 입력된 댓글의 값
         let postId = $(this).data('post-id'); // 클릭된 버튼의 data-post-id값
         let userNo = 23;
@@ -463,41 +503,16 @@
         };
 
         $.ajax({
-            url: 'mypage/detail/comment',
+            url: '/mypage/detail/comment',  // 서버 URL
             type: 'POST',
             data: JSON.stringify(jsonData), // JSON으로 변환하여 전송
             dataType: 'json',
             contentType: 'application/json', // JSON 형식으로 설정
-            success: function (response){
+            success: function (response) {
                 console.log("댓글 작성에 성공하셨습니다");
                 console.log("서버 응답:", response);
 
-                // 서버에서 받은 userName과 commentText
-                const userName = response.username;  // 서버에서 받은 유저 이름
-
-                // 댓글 목록을 동적으로 추가하기
-                $('#commentList').empty();  // 기존 댓글 목록을 지우고 새로 고침
-
-
-                const commentsContainer = $('.')
-                // 댓글 목록을 순회하며 HTML 생성
-                comments.forEach(function(comment) {
-                    const newCommentHtml = `
-                    <div class="comment-item" data-comment-id="${comment.commentNo}">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <p class="text-left"><strong>${comment.authorName}:</strong> ${comment.commentText}</p>
-                            <div class="comment-actions">
-                                <button class="btn-reply" data-comment-id="${comment.commentNo}">답글 달기</button>
-                                <button class="btn-report" data-comment-id="${comment.commentNo}">신고</button>
-                            </div>
-                        </div>
-                        <div class="replies-container"></div> <!-- 대댓글이 들어갈 공간 -->
-                    </div>
-                `;
-
-                    // 생성된 댓글 HTML을 댓글 리스트에 추가
-                    $('#commentList').append(newCommentHtml);
-                });
+                loadComments(postId);
 
                 // 댓글 입력 필드 초기화
                 $('#postComment').val('');
@@ -506,11 +521,13 @@
                 $('#replyToCommentId').val('');
                 $('#replyToUserNo').val('');
             },
-            error: function (xhr, status, error){
+            error: function (xhr, status, error) {
                 console.log("댓글 작성 실패", error);
+                alert("댓글 작성에 실패했습니다.");
             }
-        })
-    })
+        });
+    });
+
 
     // 대댓글 작성
     $(document).on('click', '.btn-reply', function() {
@@ -600,6 +617,7 @@
             reader.readAsDataURL(file);
         });
     });
+
 
     // 썸네일 이미지를 선택하는 함수
     function selectImageAsThumbnail(selectedImage) {
@@ -712,6 +730,17 @@
         let thumbnailImage = $('#thumbnailImage').val();  // 썸네일 이미지
         let formData = new FormData();
 
+        // 유효성 검사
+        if (!postContent) {
+            alert("게시글 내용을 작성해주세요.");
+            return;  // 유효성 검사 실패 시 함수 종료
+        }
+
+        if (!thumbnailImage) {
+            alert("썸네일 이미지를 선택해주세요.");
+            return;  // 유효성 검사 실패 시 함수 종료
+        }
+
         formData.append('content', postContent);
         formData.append('thumbnailImage', thumbnailImage);
 
@@ -721,6 +750,11 @@
             Array.from(files).forEach(file => {
                 formData.append('files', file);
             });
+        }
+
+        if (files.length === 0) {
+            alert("파일을 업로드해주세요.");
+            return;  // 유효성 검사 실패 시 함수 종료
         }
 
         $.ajax({

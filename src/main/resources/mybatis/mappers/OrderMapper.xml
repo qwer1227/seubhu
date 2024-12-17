@@ -121,6 +121,7 @@
             <result property="prodPrice" column="prod_price"/>
             <result property="prodImgUrl" column="prod_img_thum"/>
             <result property="orderQty" column="order_prod_amount"/>
+            <result property="orderStatus" column="deli_status" />
         </collection>
     </resultMap>
 
@@ -162,6 +163,7 @@
         <result property="prodPrice" column="prod_price"/>
         <result property="prodImgUrl" column="prod_img_thum"/>
         <result property="orderQty" column="order_prod_amount"/>
+        <result property="orderStatus" column="deli_status"/>
     </resultMap>
     
     <resultMap id="addrResultMap" type="store.seub2hu2.mypage.dto.AddrDto">

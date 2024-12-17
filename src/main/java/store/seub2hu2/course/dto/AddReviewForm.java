@@ -12,7 +12,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @ToString
-public class ReviewForm {
+public class AddReviewForm {
     // 리뷰 작성할 때 사용되는 정보
     private int courseNo; // 코스 번호
     private String title; // 리뷰 제목

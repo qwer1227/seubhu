@@ -54,6 +54,7 @@ public class CrewController {
     @GetMapping("/main")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page
             , @RequestParam(name = "rows", required = false, defaultValue = "6") int rows
+            , @RequestParam(name = "sort", required = false, defaultValue = "date") String sort
             , @RequestParam(name = "category", required = false) String category
             , @RequestParam(name = "opt", required = false) String opt
             , @RequestParam(name = "keyword", required = false) String keyword
@@ -62,6 +63,7 @@ public class CrewController {
         Map<String, Object> condition = new HashMap<>();
         condition.put("page", page);
         condition.put("rows", rows);
+        condition.put("sort", sort);
 
         // 카테고리 필터링 처리
         if (StringUtils.hasText(category)) {

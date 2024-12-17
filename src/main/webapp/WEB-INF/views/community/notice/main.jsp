@@ -25,14 +25,14 @@
 		<div class="row p-3">
 			<table class="table">
 				<colgroup>
-					<col width="3%">
+					<col width="5%">
 					<col width="*">
 					<col width="10%">
 					<col width="15%">
 				</colgroup>
 				<thead>
 				<tr style="text-align: center">
-					<th></th>
+					<th>순번</th>
 					<th>제목</th>
 					<th>조회</th>
 					<th>날짜</th>

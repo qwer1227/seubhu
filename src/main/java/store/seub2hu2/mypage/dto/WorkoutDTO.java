@@ -15,4 +15,7 @@ public class WorkoutDTO {
     private String description;
     private Date startDate;
     private int userNo;
+    private int categoryNo;
+    private String categoryName;
 }
+

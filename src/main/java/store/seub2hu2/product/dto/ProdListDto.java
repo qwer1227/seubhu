@@ -31,5 +31,7 @@ public class ProdListDto {
     private Color color;
     private String isDeleted;
     private String isShow;
+    private int rankChange; // 순위 변동
+    private int cnt;
 
 }

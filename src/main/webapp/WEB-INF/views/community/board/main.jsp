@@ -214,8 +214,7 @@
             <option value="title" ${param.opt eq 'title' ? 'selected' : ''}> 제목</option>
             <option value="content" ${param.opt eq 'content' ? 'selected' : ''}> 내용</option>
             <option value="reply" ${param.opt eq 'reply' ? 'selected' : ''}> 댓글</option>
-            <option value="nickname" ${param.opt eq 'nickname' ? 'selected' : ''}> 닉네임</option>
-            <%--        <option value="hashtag"> 해시태그</option>--%>
+            <option value="nickname" ${param.opt eq 'nickname' ? 'selected' : ''}> 작성자</option>
           </select>
         </div>
         <div class="col-4">

@@ -1,5 +1,6 @@
 package store.seub2hu2.mypage.controller;
 
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.web.mappings.MappingsEndpoint;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import retrofit2.http.Path;
 import store.seub2hu2.community.service.BoardService;
+import store.seub2hu2.community.service.CrewService;
+import store.seub2hu2.community.vo.CrewMember;
 import store.seub2hu2.mypage.dto.CommentRequest;
 import store.seub2hu2.mypage.dto.ImageDeleteRequest;
 import store.seub2hu2.mypage.dto.WorkoutDTO;
@@ -19,6 +22,8 @@ import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.service.UserService;
 import store.seub2hu2.user.vo.UserImage;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +42,9 @@ public class MyPageRestController {
 
     @Autowired
     private FileUploadService fileUploadService;
+
+    @Autowired
+    private CrewService crewService;
 
 
     @Autowired
@@ -77,6 +85,7 @@ public class MyPageRestController {
     public Post getPostdetail(@PathVariable("no") int no) {
         return postService.getPostDetail(no);
     }
+
 
     @PutMapping("/detail/delete/{no}")
     public ResponseEntity<Map<String, Object>> deletePost(@PathVariable("no") int no) {
@@ -154,25 +163,28 @@ public class MyPageRestController {
 
 
     @PostMapping("/detail/comment")
-    public ResponseEntity<Map<String, Object>> addComment(@RequestBody CommentRequest request) {
+    public ResponseEntity<Map<String, Object>> addComment(@RequestBody CommentRequest request, @AuthenticationPrincipal LoginUser loginUser) {
 
         Map<String, Object> response = new HashMap<>();
 
         try {
             int postId = request.getPostId();
             String commentText = request.getPostComment();
-            int userNo = request.getUserNo();
+            int userNo = loginUser.getNo();
 
-            String userName = postService.getUserNameByUserNo(userNo); //22
+            String userNickName = postService.getUserNameByUserNo(userNo); //22
 
-            postService.commentInsert(request, userName);
+            postService.commentInsert(request, userNickName);
 
             // todo 리스폰스DTO를 활용해서 수정/입력/삭제 될때 새로고침해서 클라이언트에게 보내주는 작업이 필요함
             response.put("message", "댓글성공");
             response.put("postId", postId);
             response.put("userNo", userNo);
-            response.put("userName", userName);
+            response.put("userNickName", userNickName);
             response.put("commentText", commentText);
+            response.put("replyToUserNo", request.getReplyToUserNo());
+            response.put("replyToCommentNo", request.getReplyToCommentNo());
+
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -202,7 +214,7 @@ public class MyPageRestController {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/getworkoutdetail{no}")
+    @GetMapping("/getworkoutdetail/{no}")
     public ResponseEntity<Map<String, Object>> getWorkoutDetail(@PathVariable("no") int workoutNo){
 
         Map<String, Object> response = new HashMap<>();
@@ -321,4 +333,54 @@ public class MyPageRestController {
         }
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/getCrewMembers/{crewNo}")
+    public List<CrewMember> getCrewMembers(@PathVariable("crewNo") int crewNo) {
+        // CrewService를 통해 크루 멤버 리스트 가져오기
+        List<CrewMember> availableMembers = crewService.getCrewMembersByCrewId(crewNo);
+
+        return availableMembers;
+    }
+
+    @PutMapping("/transferLeader")
+    public ResponseEntity<Map<String, Object>> updateReader(@RequestBody Map<String, Integer> request, @AuthenticationPrincipal LoginUser loginUser){
+
+        Map<String, Object> response = new HashMap<>();
+
+        try{
+            int userNo = request.get("userNo");
+            int crewNo = request.get("crewNo");
+
+            crewService.updateReader(userNo,crewNo, loginUser.getNo());
+
+            response.put("success", true);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e){
+            e.printStackTrace();
+            response.put("message", "서버 오류");
+            return ResponseEntity.status(500).body(response);
+        }
+
+    }
+
+    @PutMapping("/leaveCrew")
+    public ResponseEntity<Map<String, Object>> leaveCrew(@RequestBody Map<String, Integer> request, @AuthenticationPrincipal LoginUser loginUser){
+
+        Map<String , Object> response = new HashMap<>();
+
+        try{
+            int crewNo = request.get("crewNo");
+            crewService.leaveCrew(crewNo,loginUser);
+
+            response.put("success", true);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e){
+            e.printStackTrace();
+            response.put("message", "서버 오류");
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+
 }

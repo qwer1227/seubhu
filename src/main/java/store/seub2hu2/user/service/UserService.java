@@ -6,7 +6,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,10 +16,7 @@ import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.dto.UserJoinForm;
 import store.seub2hu2.user.exception.AlreadyUsedIdException;
 import store.seub2hu2.user.mapper.UserMapper;
-import store.seub2hu2.user.vo.Addr;
-import store.seub2hu2.user.vo.Role;
-import store.seub2hu2.user.vo.User;
-import store.seub2hu2.user.vo.UserRole;
+import store.seub2hu2.user.vo.*;
 
 import java.util.List;
 
@@ -85,63 +81,6 @@ public class UserService {
         userMapper.insertUserLevel(userLevel);  // 사용자 레벨 등록
     }
 
-    public boolean insertSocialUser(UserJoinForm form, String provider) {
-        // 소셜 로그인 사용자의 ID가 이미 존재하는지 체크
-        if (userMapper.getUserById(form.getId()) != null) {
-            throw new AlreadyUsedIdException(form.getId());
-        }
-
-        // 사용자 객체 생성 및 설정
-        User user = new User();
-        user.setId(form.getId());
-        user.setNickname(form.getNickname());
-        user.setEmail(form.getEmail());
-        user.setProvider(provider);  // 소셜 로그인 제공자 정보 설정
-
-        // 일반 로그인 시 비밀번호 암호화 처리 (소셜 로그인 시에는 비밀번호는 필요 없음)
-        if (form.getPassword() != null && !form.getPassword().isEmpty()) {
-            user.setPassword(passwordEncoder.encode(form.getPassword()));
-        }
-
-        // DB에 사용자 정보 삽입
-        int result = userMapper.insertSocialUser(user);
-        if (result <= 0) {
-            return false;  // 삽입 실패 시 false 반환
-        }
-
-        // 기본 사용자 역할 부여 (ROLE_USER)
-        Role role = new Role();
-        role.setNo(2);  // ROLE_USER로 설정
-        role.setName("ROLE_USER");
-
-        // 사용자 역할 추가
-        UserRole userRole = new UserRole();
-        userRole.setUserNo(user.getNo());
-        userRole.setRole(role);
-        userMapper.insertUserRole(userRole);
-
-        // 사용자 레벨 설정
-        UserLevel userLevel = new UserLevel();
-        userLevel.setUserNo(user.getNo());
-        userLevel.setLevel(1);  // 기본 레벨 1로 설정
-        userMapper.insertUserLevel(userLevel);
-
-        // 기본 주소 설정 (기본 주소는 회원가입 시 설정)
-        Addr addr = new Addr();
-        addr.setPostcode(form.getPostcode());
-        addr.setAddress(form.getAddress());
-        addr.setAddressDetail(form.getAddressDetail() != null ? form.getAddressDetail() : "");
-        addr.setIsAddrHome("Y");  // 기본 주소로 설정
-        addr.setName(form.getName());  // 이름 설정
-        addr.setUserNo(user.getNo());
-        userMapper.insertAddr(addr);
-
-        // 사용자 주소번호 업데이트
-        userMapper.updateAddrUserNo(addr.getNo(), user.getNo());
-
-        return true;  // 가입 성공 시 true 반환
-    }
-
     /**
      * 사용자번호, 권한이름을 전달받아서 권한을 추가하는 서비스
      *
@@ -191,6 +130,10 @@ public class UserService {
         user.setPassword(EncodedPwd);
         user.setTel(userInfoReq.getPhone());
         user.setEmail(userInfoReq.getEmail());
+
+        if(userInfoReq.getAddrNo() != 0){
+            userMapper.updateAddr(userInfoReq);
+        }
 
         // 이전비밀번호 중복입력검증
         if (userInfoReq.getPassword().equals(user.getPassword())) {
@@ -271,9 +214,26 @@ public class UserService {
 
         User user = findbyUserNo(userNo);
 
-        if(user.getPassword().equals(password)){
+        if(passwordEncoder.matches(password, user.getPassword())){
+            return true;
+        } else {
             return false;
         }
-        return true;
+    }
+
+    public List<Addr> findAddrByUserNo(int userNo){
+
+        return userMapper.findAddrByUserNo(userNo);
+
+    }
+
+    public UserImage findImageByUserNo(int userNo){
+
+        return userMapper.findImageByUserNo(userNo);
+    }
+
+    public User findByNickname(String userName){
+
+        return userMapper.findByNickname(userName);
     }
 }

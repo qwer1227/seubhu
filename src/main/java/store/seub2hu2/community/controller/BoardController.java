@@ -76,7 +76,7 @@ public class BoardController {
             condition.put("category", category);
         }
 
-        if (StringUtils.hasText(keyword)){
+        if (StringUtils.hasText(keyword)) {
             condition.put("opt", opt);
             condition.put("keyword", keyword);
         }
@@ -98,8 +98,8 @@ public class BoardController {
 
     @GetMapping("/detail")
     public String detail(@RequestParam("no") int boardNo
-                         , @AuthenticationPrincipal LoginUser loginUser
-                         , Model model) {
+            , @AuthenticationPrincipal LoginUser loginUser
+            , Model model) {
         Board board = boardService.getBoardDetail(boardNo);
         List<Reply> replyList = replyService.getReplies(boardNo);
         board.setReply(replyList);
@@ -118,7 +118,8 @@ public class BoardController {
 
             for (Reply reply : replyList) {
                 int replyResult = replyService.getCheckLike(reply.getNo(), loginUser);
-                model.addAttribute("replyLiked", replyResult);
+                //model.addAttribute("replyLiked", replyResult);
+                reply.setReplyLike(replyResult);
             }
         }
 
@@ -130,7 +131,7 @@ public class BoardController {
     }
 
     @GetMapping("/hit")
-    public String hit(@RequestParam("no") int boardNo){
+    public String hit(@RequestParam("no") int boardNo) {
         boardService.updateBoardViewCnt(boardNo);
         return "redirect:detail?no=" + boardNo;
     }
@@ -180,7 +181,7 @@ public class BoardController {
 
     @GetMapping("/delete-file")
     public String deleteUploadFile(@RequestParam("no") int boardNo
-                                   , @RequestParam("fileNo") int fileNo) {
+            , @RequestParam("fileNo") int fileNo) {
 
         boardService.deleteBoardFile(boardNo, fileNo);
         return "redirect:modify?no=" + boardNo;
@@ -202,8 +203,9 @@ public class BoardController {
         return mav;
     }
 
+
     @GetMapping("/download")
-    public ResponseEntity<Resource> downloadFile(int boardNo) throws Exception{
+    public ResponseEntity<Resource> downloadFile(int boardNo) throws Exception {
 
         Board board = boardService.getBoardDetail(boardNo);
 
@@ -218,6 +220,9 @@ public class BoardController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + originalFileName)
                 .body(resource);
     }
+
+
+
 
     @GetMapping("/login")
     public String login(){

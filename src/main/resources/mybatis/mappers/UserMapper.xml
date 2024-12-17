@@ -31,18 +31,6 @@
             SELECT LAST_INSERT_ID() <!-- 마지막으로 삽입된 USER_NO 값을 가져옴 -->
         </selectKey>
     </insert>
-    <!-- 신규 사용자 정보 추가: 사용자를 USERS 테이블에 삽입 -->
-    <insert id="insertSocialUser">
-        insert into USERS
-        (USER_ID, ADDR_NO, USER_NAME, USER_NICKNAME, USER_TEL, USER_EMAIL, USER_TYPE, PROVIDER, USER_TERMS, USER_PRIVACY)
-        values
-        (#{user.id}, #{user.addr.no}, #{user.name}, #{user.nickname}, #{user.tel}, #{user.email}, #{user.type}, #{user.provider}, #{user.terms}, #{user.privacy})
-
-        <!-- 삽입 후 자동 생성된 USER_NO 값을 반환하여 user 객체에 매핑 -->
-        <selectKey resultType="int" keyProperty="user.no" keyColumn="USER_NO" order="AFTER">
-            SELECT LAST_INSERT_ID() <!-- 마지막으로 삽입된 USER_NO 값을 가져옴 -->
-        </selectKey>
-    </insert>
 
     <insert id="insertAddr">
         INSERT INTO ADDRESSES
@@ -51,7 +39,7 @@
             (#{addr.postcode}, #{addr.address}, #{addr.addressDetail}, #{addr.isAddrHome}, #{addr.userNo}, #{addr.name})
 
         <!-- 자동 생성된 ADDR_NO 반환 -->
-        <selectKey resultType="int" keyProperty="no" keyColumn="ADDR_NO" order="AFTER">
+        <selectKey resultType="int" keyProperty="addr.no" keyColumn="ADDR_NO" order="AFTER">
             SELECT LAST_INSERT_ID()
         </selectKey>
     </insert>
@@ -139,15 +127,9 @@
         u.USER_CREATED_DATE,
         u.USER_UPDATED_DATE,
         u.USER_TERMS,
-        u.USER_PRIVACY,
-        ui.user_img_url as imgName,
-        ui.img_isprimary as isPrimary
+        u.USER_PRIVACY
         from
         USERS u
-        LEFT OUTER JOIN
-        USER_IMGS ui
-        ON
-        u.user_no = ui.user_no
         where
         USER_ID = #{id} <!-- 사용자 ID로 사용자 정보 조회 -->
     </select>
@@ -236,6 +218,18 @@
             USER_EMAIL    = #{user.email}
         WHERE USER_NO = #{user.no}
     </update>
+
+    <!-- void updateAddr(UserInfoReq userInfoReq); -->
+    <update id="updateAddr" parameterType="store.seub2hu2.mypage.dto.UserInfoReq">
+        update
+            ADDRESSES
+        set
+            zip_code = #{postcode},
+            addr_1 = #{address},
+            addr_2 = #{addressDetail}
+        where
+            addr_no = #{addrNo}
+    </update>
     <!-- 권한번호로 사용자 조회하기 -->
     <select id="getUsersByRoleNo" resultType="store.seub2hu2.user.vo.User">
         SELECT R.USER_NO   as no
@@ -250,8 +244,9 @@
     <!-- User findByUserNo(@Param("userNo") int userNo); -->
     <select id="findByUserNo" parameterType="store.seub2hu2.user.vo.User">
         select
-            user_no as no
-        ,   password as password
+          user_no as no
+        , password as password
+        , user_nickname as nickname
         from
             USERS
         where
@@ -288,5 +283,40 @@
         SET IMG_ISPRIMARY = 'N'
         WHERE USER_NO = #{userNo}
     </update>
+
+    <!-- List<Addr> findAddrByUserNo(@Param("userNo") int userNo); -->
+    <select id="findAddrByUserNo" resultType="store.seub2hu2.user.vo.Addr">
+        select
+            addr_no as no,
+            zip_code as postcode,
+            addr_1 as address,
+            addr_2 as addressDetail
+        from
+            ADDRESSES
+        where
+            user_no = #{userNo}
+    </select>
+
+    <!-- UserImage findImageByUserNo(@Param("userNo") int userNo); -->
+    <select id="findImageByUserNo" resultType="store.seub2hu2.user.vo.UserImage">
+        select
+            user_img_no as no
+        ,   user_img_url as imgName
+        ,   img_created_date as createdDate
+        ,   img_isprimary as isPrimary
+        ,   user_no     as userNo
+        from
+            USER_IMGS
+        where
+            user_no = #{userNo}
+        and
+            img_isprimary = 'Y'
+    </select>
+
+    <!-- User findByNickname(@Param("userName") String userName);
+    <select id="findByNickname" resultType="store.seub2hu2.user.vo.User">
+        select
+
+    </select>-->
 
 </mapper>
