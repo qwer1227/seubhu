@@ -62,12 +62,12 @@ public class MailService {
     /**
      * 아이디 찾기 (이메일로 아이디 찾기)
      */
-    public String findIdByEmail(String email) {
-        String userId = String.valueOf(userMapper.findIdByEmail(email));
-        if (userId == null) {
+    public User findIdByEmail(String email) {
+        User user = userMapper.getUserByEmail(email);
+        if (user == null) {
             throw new NoSuchElementException("등록된 이메일이 없습니다.");
         }
-        return userId;
+        return user;
     }
 
     /**

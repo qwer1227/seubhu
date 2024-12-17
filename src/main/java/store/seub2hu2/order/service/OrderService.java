@@ -44,7 +44,9 @@ public class OrderService {
      * @param stocks 수량들
      * @return
      */
-    public List<CartItemDto> getOrderItemBySizeNo(List<Integer> sizeNoList, List<Integer> stocks) {
+    public List<CartItemDto> getOrderItemBySizeNo(List<Integer> sizeNoList, List<Integer> stocks, int userNo) {
+
+
 
         Map <Integer, Integer> map = new HashMap<>();
         for(int i = 0; i < sizeNoList.size(); i++){
@@ -52,7 +54,8 @@ public class OrderService {
         }
 
 
-        List<CartItemDto> orderDto = orderMapper.getOrderItemBySizeNo(sizeNoList);
+
+        List<CartItemDto> orderDto = orderMapper.getOrderItemBySizeNo(sizeNoList, userNo);
         for(CartItemDto cartItemDto : orderDto){
             cartItemDto.setStock(map.get(cartItemDto.getSize().getNo()));
         }

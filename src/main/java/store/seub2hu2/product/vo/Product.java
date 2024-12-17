@@ -28,4 +28,5 @@ public class Product {
     private Size size;
     private Brand brand;
     private Color color;
+    private String isShow;
 }

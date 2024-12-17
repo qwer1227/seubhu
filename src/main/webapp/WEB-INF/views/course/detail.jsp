@@ -36,36 +36,39 @@
                 </tbody>
             </table>
 
+            <%-- 좋아요! 버튼을 클릭하면, 좋아요 수가 증가하거나 감소한다. --%>
             <div class="row mt-3 mb-3 justify-content-center">
                 <sec:authorize access="isAuthenticated()">
-                    <%-- 좋아요! 버튼을 클릭하면, 좋아요 수가 증가하거나 감소한다. --%>
                     <c:if test="${isLike eq true}">
                         <a href="controlLikeCount?courseNo=${course.no}" class="btn btn-primary ${isSuccess ? "" : "disabled"}" style="width: 100px;">
                             <i class="bi bi-hand-thumbs-up">좋아요!</i>
                         </a>
+                        <span>( 코스 완주자만 좋아요!를 클릭할 수 있습니다. )</span>
                     </c:if>
                     <c:if test="${isLike eq false}">
                         <a href="controlLikeCount?courseNo=${course.no}" class="btn btn-outline-primary ${isSuccess ? "" : "disabled"}" style="width: 100px;">
                             <i class="bi bi-hand-thumbs-up">좋아요!</i>
                         </a>
+                        <span>( 코스 완주자만 좋아요!를 클릭할 수 있습니다. )</span>
                     </c:if>
                 </sec:authorize>
                 <span>좋아요 수 : ${course.likeCnt}개</span>
-                <span>( 코스 완주자만 좋아요!를 클릭할 수 있습니다! )</span>
             </div>
 
-            <%-- 성공 표시 --%>
+            <%-- 코스 완주 시, 완주 성공 표시 --%>
             <div class="row mt-3 mb-3 justify-content-center">
                 <c:if test="${isSuccess == true}">
-                    <span class="badge text-bg-primary" style="width: 100px; font-size: 20px;">완주 성공!</span>
+                    <span class="badge text-bg-primary" style="width: 100px; font-size: 20px; justify-content: center; align-items: center; display: flex;">
+                        완주 성공!
+                    </span>
                 </c:if>
             </div>
 
-            <%-- 도전 가능 여부 표시 --%>
+            <%-- 코스 도전 가능 여부 표시 --%>
             <div class="row justify-content-center">
                 <sec:authorize access="isAuthenticated()">
                     <c:choose>
-                        <%-- 현재 도전 가능한 단계(난이도)가 코스 난이도보다 적으면, 도전 불가능 문구를 표시한다. --%>
+                        <%-- 현재 도전 가능한 단계(난이도)가 코스 난이도보다 적으면, 안내 문구를 표시한다. --%>
                         <c:when test="${currentUserLevel < course.level}">
                             <button class="btn btn-danger disabled" style="width: 200px;">아직 도전할 수 없습니다!</button>
                         </c:when>
@@ -190,17 +193,6 @@
 
     // 코스 리뷰 등록 Modal창을 연다.
     async function openAddReviewFormModal() {
-        // 1. 코스 완주를 성공한 사용자가 아니라면, 경고 메시지를 출력한다.
-        let courseNo = document.querySelector("input[name=courseNo]").value;
-        let response = await fetch("/ajax/check-success/" + courseNo);
-        let result = await response.json();
-
-        if (result.data === "fail") {
-            alert("코스를 성공한 사용자만 리뷰 작성이 가능합니다.");
-            return;
-        }
-
-        // 2. 코스 리뷰 등록 Modal창을 화면에 표시한다.
         addReviewFormModal.show();
     }
 
@@ -222,12 +214,20 @@
         let reviews = result.data.data;
         let paging = result.data.paging;
 
-        for (let review of reviews) {
-            appendReview(review);
+        // 4. 리뷰가 있는 경우와 없는 경우를 구분해서 처리한다.
+        if (reviews.length > 0) {
+            for (let review of reviews) {
+                appendReview(review);
+            }
+            pagingReviews(paging);
+        } else {
+            let box = document.querySelector("#box-reviews");
+            box.innerHTML = "리뷰가 없습니다.";
         }
-        pagingReviews(paging);
+
     }
 
+    // 코스 상세 페이지에 접속할 때마다 리뷰 목록이 1페이지가 나타나게 한다.
     getReviews(1);
 
     // 입력한 코스 리뷰 정보(코스번호, 제목, 내용, 첨부파일)를 컨트롤러에 제출한다.
@@ -274,20 +274,18 @@
     function appendReview(review) {
         // 1. 리뷰를 화면에 표시한다.
         let content = `
-	        <div class="card mb-3" id="review-\${review.no}">
+            <div class="card mb-3" id="review-\${review.no}">
 	            <div class="card-header">
-	                <span>\${review.title}</span>
-	                <span class="float-end">
+	                <span style="float: left;">\${review.title}</span>
+	                <span style="float: right;">
 	                    <small><strong style="color: blue;">\${review.user.nickname}</strong></small>
 	                    <small>\${review.createdDate}</small>
+                        <button class="btn btn-danger btn-sm" onclick="removeReview(\${review.no})">삭제</button>
 	                </span>
 	            </div>
-	            <div class="card-body">
+	            <div class="card-body" style="display: flex; flex-direction: column; align-items: flex-start;">
 	                <div>\${review.content}</div>
 	                <div id="box-images-\${review.no}"></div>
-	            </div>
-	            <div class="card-footer text-end">
-	                <button class="btn btn-danger btn-sm" onclick="removeReview(\${review.no})">삭제</button>
 	            </div>
 	        </div>
 	    `;
@@ -300,7 +298,10 @@
         let imgContent = '';
         if (images != null) {
             for (let image of images) {
-                imgContent += `<img src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/images/courseReviewImages/\${image.name}" class="img-thumbnail" style="width: 100px; height: 100px;"/>`;
+                imgContent += `
+                    <img src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/images/courseReviewImages/\${image.name}"
+                        class="img-thumbnail" style="width: 100px; height: 100px;"/>
+                `;
             }
 
             let imagesbox = document.querySelector(`#box-images-\${review.no}`);
@@ -308,7 +309,7 @@
         }
     }
 
-    // 페이징 처리 기능을 사용한다.
+    // 리뷰 목록의 페이징 처리 기능을 구현한다.
     function pagingReviews(paging) {
         let pages = "";
 

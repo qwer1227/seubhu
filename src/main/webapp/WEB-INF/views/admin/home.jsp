@@ -59,7 +59,7 @@
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                             전일 매출액(레슨)</div>
-                                        <div id="yesterdayRevenue" class="h5 mb-0 font-weight-bold text-gray-800">$0</div>
+                                        <div id="yesterdayRevenue" class="h5 mb-0 font-weight-bold text-gray-800">0원</div>
                                     </div>
                                     <div class="col-auto">
                                         <i class="fas fa-chalkboard-teacher fa-2x text-gray-300"></i>
@@ -77,7 +77,7 @@
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                             전일 매출액(상품)</div>
-                                        <div id="yesterdayProdRevenue" class="h5 mb-0 font-weight-bold text-gray-800">$0</div>
+                                        <div id="yesterdayProdRevenue" class="h5 mb-0 font-weight-bold text-gray-800">0원</div>
                                     </div>
                                     <div class="col-auto">
                                         <i class="fas fa-box fa-2x text-gray-300"></i>
@@ -266,8 +266,8 @@
                 }
 
                 // 전일 매출액 업데이트
-                $('#yesterdayRevenue').text('$' + yesterdayPrice.toLocaleString()); // div에 전일 매출액을 표시
-                $('#yesterdayProdRevenue').text('$' + yesterdayProdPrice.toLocaleString()); // div에 전일 상품 매출액을 표시
+                $('#yesterdayRevenue').text(yesterdayPrice.toLocaleString() + '원'); // div에 전일 매출액을 표시
+                $('#yesterdayProdRevenue').text(yesterdayProdPrice.toLocaleString() + '원'); // div에 전일 상품 매출액을 표시
                 $('#yesterdayProdAmountRevenue').text(yesterdayTotalProdAmount.toLocaleString() + '개') // div에 전일 상품 판매수량을 표시
 
             },

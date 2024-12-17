@@ -26,7 +26,7 @@ public class PostService {
 
     public Post getPostDetail(int postNo){
         Post post = postMapper.getPostByNo(postNo);
-
+        
         return post;
     }
 

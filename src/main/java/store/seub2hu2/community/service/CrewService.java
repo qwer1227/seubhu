@@ -22,6 +22,7 @@ import store.seub2hu2.util.Pagination;
 import store.seub2hu2.util.S3Service;
 
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -328,5 +329,29 @@ public class CrewService {
 
     public List<Crew> getCrewByUserNo(int userNo) {
         return crewMapper.getCrewByUserNo(userNo);
+    }
+
+    public List<CrewMember> getCrewMembersByCrewId(int crewNo){
+
+        List<CrewMember> members = crewMapper.getByCrewNo(crewNo);
+
+        List<CrewMember> availableMembers = new ArrayList<>();
+
+        for (CrewMember member : members) {
+            // 'Y'가 아닌 reader 값을 가진 멤버만 추가
+            if (!"Y".equals(member.getReader())){
+                availableMembers.add(member);
+            }
+        }
+
+        //필터링된 멤버 목록 반환
+        return availableMembers;
+    }
+
+    public void updateReader(int userNo, int crewNo, int readerNo){
+        // 셀렉트 박스에서 유저의 no를 활용해서 update를 시키기 위한 updateReader 메소드
+        crewMapper.updateReader(userNo, crewNo);
+        // 위임이라는 기능을 사용하기 위해서는 리더의 계정 로그인을 필수로 해야해서 user.getNo를 통해서 리더의 번호를 넘겨줌
+        crewMapper.exitCrew(readerNo, crewNo);
     }
 }

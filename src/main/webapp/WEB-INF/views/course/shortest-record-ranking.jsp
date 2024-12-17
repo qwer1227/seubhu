@@ -69,7 +69,7 @@
             </sec:authorize>
 
             <c:choose>
-                <%-- 로그인했다면, 나의 코스 완주 기록을 화면에 표시한다. --%>
+                <%-- 로그인한 경우, 나의 코스 완주 기록 혹은 안내 문구를 화면에 표시한다. --%>
                 <c:when test="${not empty loginUser}">
                     <c:choose>
                         <%-- 나의 코스 완주 기록이 존재하면, 나의 코스 완주 기록을 화면에 표시한다. --%>
@@ -78,23 +78,23 @@
                                 <tr>
                                     <th scope="row">${record.no}</th>
                                     <td>${record.user.nickname}</td>
-                                    <td><fmt:formatDate value="${record.finishedDate}" pattern="yyyy년 M월 d일" /> </td>
-                                    <td>${record.finishedTime}분</td>
+                                    <td><fmt:formatDate value="${record.finishedDate}" pattern="yyyy년 MM월 dd일 HH시 mm분" /> </td>
+                                    <td><c:if test="${record.hour != 0}">${record.hour}시간</c:if> ${record.minute}분 ${record.second}초</td>
                                 </tr>
                             </c:forEach>
                         </c:when>
-                        <%-- 나의 코스 완주 기록이 존재하지 않다면, 문구를 표시한다. --%>
+                        <%-- 나의 코스 완주 기록이 존재하지 않다면, 안내 문구를 표시한다. --%>
                         <c:otherwise>
                             <tr>
-                                <th colspan="4">기록이 존재하지 않습니다!</th>
+                                <th colspan="4">기록이 존재하지 않습니다.</th>
                             </tr>
                         </c:otherwise>
                     </c:choose>
                 </c:when>
-                <%-- 로그인하지 않았다면, 문구를 표시한다. --%>
+                <%-- 로그인하지 않은 경우, 안내 문구를 표시한다. --%>
                 <c:otherwise>
                     <tr>
-                        <th colspan="4">로그인하여 기록을 확인해보아요!</th>
+                        <th colspan="4">로그인하여 기록을 확인할 수 있습니다.</th>
                     </tr>
                 </c:otherwise>
             </c:choose>
@@ -102,33 +102,35 @@
     </table>
 
     <!-- 나의 순위 - 페이징 내비게이션 -->
-    <div class="row mb-3">
-        <div class="col-12">
-            <nav>
-                <ul class="pagination justify-content-center">
-                    <li class="page-item ${myPaging.first ? 'disabled' : '' }">
-                        <a class="page-link"
-                           onclick="changeMyRankPage(${myPaging.prevPage}, 1, event)"
-                           href="list?page=${myPaging.prevPage}">이전</a>
-                    </li>
-
-                    <c:forEach var="num" begin="${myPaging.beginPage }" end="${myPaging.endPage }">
-                        <li class="page-item ${myPaging.page eq num ? 'active' : '' }">
+    <c:if test="${not empty myRecords}">
+        <div class="row mb-3">
+            <div class="col-12">
+                <nav>
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item ${myPaging.first ? 'disabled' : '' }">
                             <a class="page-link"
-                               onclick="changeMyRankPage(${num }, 1, event)"
-                               href="list?page=${num }">${num }</a>
+                               onclick="changeMyRankPage(${myPaging.prevPage}, 1, event)"
+                               href="list?page=${myPaging.prevPage}">이전</a>
                         </li>
-                    </c:forEach>
 
-                    <li class="page-item ${myPaging.last ? 'disabled' : '' }">
-                        <a class="page-link"
-                           onclick="changeMyRankPage(${myPaging.nextPage}, 1, event)"
-                           href="list?page=${myPaging.nextPage}">다음</a>
-                    </li>
-                </ul>
-            </nav>
+                        <c:forEach var="num" begin="${myPaging.beginPage }" end="${myPaging.endPage }">
+                            <li class="page-item ${myPaging.page eq num ? 'active' : '' }">
+                                <a class="page-link"
+                                   onclick="changeMyRankPage(${num }, 1, event)"
+                                   href="list?page=${num }">${num }</a>
+                            </li>
+                        </c:forEach>
+
+                        <li class="page-item ${myPaging.last ? 'disabled' : '' }">
+                            <a class="page-link"
+                               onclick="changeMyRankPage(${myPaging.nextPage}, 1, event)"
+                               href="list?page=${myPaging.nextPage}">다음</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
         </div>
-    </div>
+    </c:if>
 
     <%-- 모든 사용자의 현재 코스 완주 기록 및 순위 --%>
     <table class="table mt-5">
@@ -142,19 +144,21 @@
         </thead>
         <tbody>
             <c:choose>
+                <%-- 코스에 대한 모든 사용자의 코스 완주 기록이 있다면, 코스를 완주한 모든 사용자의 기록 목록을 표시한다. --%>
                 <c:when test="${not empty records}">
                     <c:forEach var="record" items="${records}">
                         <tr>
                             <th scope="row">${record.no}</th>
                             <td>${record.user.nickname}</td>
-                            <td><fmt:formatDate value="${record.finishedDate}" pattern="yyyy년 M월 d일" /> </td>
-                            <td>${record.finishedTime}분</td>
+                            <td><fmt:formatDate value="${record.finishedDate}" pattern="yyyy년 MM월 dd일 HH시 mm분" /> </td>
+                            <td><c:if test="${record.hour != 0}">${record.hour}시간</c:if> ${record.minute}분 ${record.second}초</td>
                         </tr>
                     </c:forEach>
                 </c:when>
+                <%-- 코스에 대한 모든 사용자의 코스 완주 기록이 없다면, 안내 문구를 표시한다. --%>
                 <c:otherwise>
                     <tr>
-                        <th colspan="4">기록이 존재하지 않습니다!</th>
+                        <th colspan="4">기록이 존재하지 않습니다.</th>
                     </tr>
                 </c:otherwise>
             </c:choose>
@@ -162,33 +166,35 @@
     </table>
 
     <!-- 모든 사용자의 순위 - 페이징 내비게이션 -->
-    <div class="row mb-3">
-        <div class="col-12">
-            <nav>
-                <ul class="pagination justify-content-center">
-                    <li class="page-item ${allPaging.first ? 'disabled' : '' }">
-                        <a class="page-link"
-                           onclick="changeAllRankPage(${allPaging.prevPage}, 1, event)"
-                           href="list?page=${allPaging.prevPage}">이전</a>
-                    </li>
-
-                    <c:forEach var="num" begin="${allPaging.beginPage }" end="${allPaging.endPage }">
-                        <li class="page-item ${allPaging.page eq num ? 'active' : '' }">
+    <c:if test="${not empty records}">
+        <div class="row mb-3">
+            <div class="col-12">
+                <nav>
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item ${allPaging.first ? 'disabled' : '' }">
                             <a class="page-link"
-                               onclick="changeAllRankPage(${num }, 1, event)"
-                               href="list?page=${num }">${num }</a>
+                               onclick="changeAllRankPage(${allPaging.prevPage}, 1, event)"
+                               href="list?page=${allPaging.prevPage}">이전</a>
                         </li>
-                    </c:forEach>
 
-                    <li class="page-item ${allPaging.last ? 'disabled' : '' }">
-                        <a class="page-link"
-                           onclick="changeAllRankPage(${allPaging.nextPage}, 1, event)"
-                           href="list?page=${allPaging.nextPage}">다음</a>
-                    </li>
-                </ul>
-            </nav>
+                        <c:forEach var="num" begin="${allPaging.beginPage }" end="${allPaging.endPage }">
+                            <li class="page-item ${allPaging.page eq num ? 'active' : '' }">
+                                <a class="page-link"
+                                   onclick="changeAllRankPage(${num }, 1, event)"
+                                   href="list?page=${num }">${num }</a>
+                            </li>
+                        </c:forEach>
+
+                        <li class="page-item ${allPaging.last ? 'disabled' : '' }">
+                            <a class="page-link"
+                               onclick="changeAllRankPage(${allPaging.nextPage}, 1, event)"
+                               href="list?page=${allPaging.nextPage}">다음</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
         </div>
-    </div>
+    </c:if>
 </div>
 
 <%@include file="/WEB-INF/views/common/footer.jsp" %>

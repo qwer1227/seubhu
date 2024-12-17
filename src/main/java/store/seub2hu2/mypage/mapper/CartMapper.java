@@ -17,6 +17,9 @@ public interface CartMapper {
     // 장바구니 추가 기능
     void addCart(@Param("carts") List<CartRegisterForm> cartRegisterForm);
 
+    // 위시리스트에서 장바구니로 추가 기능
+    void addToCart(@Param("cart") Cart cart);
+
     // 장바구니 삭제
     void deleteCartItems(@Param("cartNoList") List<Integer> cartNoList);
 

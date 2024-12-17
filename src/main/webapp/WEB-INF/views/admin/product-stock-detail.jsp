@@ -80,6 +80,7 @@
                   </div>
                 </div>
                 <div class="text-end" style="text-align: right">
+                  <a type="button" class="btn btn-dark" href="/admin/product-stock?topNo=0">뒤로가기</a>
                   <button type="submit" id="getSubmitButton" class="btn btn-primary">재고 조회</button>
                 </div>
               </form>
@@ -150,6 +151,16 @@
         }
       });
     }
+    // 재고 등록 버튼 클릭 시 알림 표시
+    const postForm = document.getElementById("postForm");
+    if (postForm) {
+      postForm.addEventListener("submit", function (event) {
+        event.preventDefault(); // 기본 폼 제출 방지
+        alert("재고가 등록되었습니다."); // 재고 등록 알림
+        postForm.submit(); // 폼 제출
+      });
+    }
+
   });
 </script>
 </body>

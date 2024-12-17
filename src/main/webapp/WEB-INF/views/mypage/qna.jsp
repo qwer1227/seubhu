@@ -53,7 +53,7 @@
         }
 
         .inquiry-item {
-            padding: 15px 0;
+            padding: 5px ;
             border-bottom: 1px solid #e0e0e0;
         }
 
@@ -208,7 +208,10 @@
         </c:if>
         <c:forEach var="qna" items="${qna}">
             <div class="inquiry-item">
-                <h4>${qna.qnaTitle}</h4>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="qna-title">${qna.qnaTitle}</h4>
+                    <a href="qna/detail/${qna.qnaNo}" class="btn-detail">상세보기</a>
+                </div>
                 <p>${qna.qnaContent}</p>
                 <c:choose>
                     <c:when test="${qna.qnaUpdatedDate != null}">
@@ -221,7 +224,6 @@
                     </c:otherwise>
                 </c:choose>
                 <br>
-                <a href="qna/detail/${qna.qnaNo}" class="btn-detail">상세보기</a>
             </div>
         </c:forEach>
 

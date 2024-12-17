@@ -197,9 +197,10 @@
 
     // 정렬방식이 변경될 때
     function changeSort() {
-
-        sortInput.value = 1;
-        form.submit();
+      let form = document.querySelector("#form-search");
+      let sortInput = document.querySelector("input[name=sort]");
+      sortInput.value = 1;
+      form.submit();
     }
 
     // 한 화면에 표기할 행의 갯수가 변경될 때
