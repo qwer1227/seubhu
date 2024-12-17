@@ -770,7 +770,7 @@
             contentType: false,
             success: function(response) {
                 alert("게시글이 성공적으로 작성되었습니다!");
-
+                location.reload();
             },
             error: function(xhr, status, error) {
                 console.log(xhr.responseText);
