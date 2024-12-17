@@ -67,7 +67,7 @@
                   <div class="card">
                     <c:choose>
                       <c:when test="${empty crew.thumbnail}">
-                        <img src="/resources/images/community/inviting_default_main.jpg" alt="크루 대표 이미지"
+                        <img src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/crew/images/inviting_default_main.jpg" alt="크루 대표 이미지"
                              class="card-img-top"
                              style="height: 230px; filter: ${crew.entered eq 'Y' ? 'grayscale(0%)' : 'grayscale(100%)'}">
                         <c:if test="${crew.entered eq 'N'}">
@@ -75,7 +75,7 @@
                         </c:if>
                       </c:when>
                       <c:otherwise>
-                        <img src="/resources/images/community/${crew.thumbnail.saveName}" alt="크루 대표 이미지"
+                        <img src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/crew/images/${crew.thumbnail.saveName}" alt="크루 대표 이미지"
                              class="card-img-top"
                              style="height: 230px; filter: ${crew.entered eq 'Y' ? 'grayscale(0%)' : 'grayscale(100%)'}">
                         <c:if test="${crew.entered eq 'N'}">

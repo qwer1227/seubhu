@@ -4,12 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import store.seub2hu2.community.dto.CrewForm;
 import store.seub2hu2.community.exception.CommunityException;
 import store.seub2hu2.community.mapper.CrewMapper;
 import store.seub2hu2.community.mapper.CrewReplyMapper;
+import store.seub2hu2.community.mapper.ReplyMapper;
 import store.seub2hu2.community.mapper.UploadMapper;
 import store.seub2hu2.community.vo.Crew;
 import store.seub2hu2.community.vo.CrewMember;
@@ -17,10 +17,10 @@ import store.seub2hu2.community.vo.Reply;
 import store.seub2hu2.community.vo.UploadFile;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.vo.User;
-import store.seub2hu2.util.FileUtils;
 import store.seub2hu2.util.ListDto;
 import store.seub2hu2.util.Pagination;
-import store.seub2hu2.util.WebContentFileUtils;
+import store.seub2hu2.util.S3Service;
+
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,17 +28,20 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-@Transactional
 public class CrewService {
 
-    @Value("${upload.directory.community}")
+    @Value("${upload.directory.crew.images}")
     private String saveImageDirectory;
 
-    @Value("C:/files/crew")
+    @Value("upload.directory.crew.files")
     private String saveFileDirectory;
 
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucketName;
+
     @Autowired
-    private WebContentFileUtils webContentFileUtils;
+    private S3Service s3Service;
+
 
     @Autowired
     private CrewMapper crewMapper;
@@ -47,7 +50,8 @@ public class CrewService {
     private UploadMapper uploadMapper;
 
     @Autowired
-    private CrewReplyMapper crewReplyMapper;
+    private ReplyMapper replyMapper;
+
 
     public Crew addNewCrew(CrewForm form
             , @AuthenticationPrincipal LoginUser loginUser) {
@@ -68,7 +72,7 @@ public class CrewService {
         } else if (!image.isEmpty()) {
             String originalImageName = "crew" + form.getNo() + "_" + image.getOriginalFilename();
             String imageName = System.currentTimeMillis() + originalImageName;
-            webContentFileUtils.saveWebContentFile(image, saveImageDirectory, imageName);
+            s3Service.uploadFile(image, bucketName, saveImageDirectory, imageName);
 
             UploadFile uploadThumbnail = new UploadFile();
             uploadThumbnail.setOriginalName(originalImageName);
@@ -83,7 +87,9 @@ public class CrewService {
         } else if (!upfile.isEmpty()) {
             String originalFileName = upfile.getOriginalFilename();
             String filename = System.currentTimeMillis() + originalFileName;
-            FileUtils.saveMultipartFile(upfile, saveFileDirectory, filename);
+
+            s3Service.uploadFile(upfile, bucketName, saveFileDirectory, filename);
+            //FileUtils.saveMultipartFile(upfile, saveFileDirectory, filename);
 
             UploadFile uploadFile = new UploadFile();
             uploadFile.setOriginalName(originalFileName);
@@ -154,22 +160,20 @@ public class CrewService {
         Crew crew = crewMapper.getCrewDetailByNo(crewNo);
         UploadFile uploadThumbnail = uploadMapper.getThumbnailByCrewNo(crewNo);
         UploadFile uploadFile = uploadMapper.getFileByCrewNo(crewNo);
-        List<Reply> reply = crewReplyMapper.getRepliesByCrewNo(crewNo);
-        List<CrewMember> member = crewMapper.getCrewMembers(crewNo);
+        List<Reply> reply = replyMapper.getRepliesByTypeNo(crewNo);
 
         if (crew == null) {
             throw new CommunityException("존재하지 않는 게시글입니다.");
         }
 
-        crew.setThumbnail(uploadThumbnail);
-        crew.setUploadFile(uploadFile);
-        crew.setReply(reply);
-        crew.setMember(member);
-
         User user = new User();
         user.setNo(crew.getUser().getNo());
         user.setNickname(crew.getUser().getNickname());
         crew.setUser(user);
+
+        crew.setThumbnail(uploadThumbnail);
+        crew.setUploadFile(uploadFile);
+        crew.setReply(reply);
 
         return crew;
     }
@@ -180,7 +184,6 @@ public class CrewService {
         crewMapper.updateCrewCnt(crew);
     }
 
-    @Transactional
     public Crew updateCrew(CrewForm form) {
         Crew savedCrew = crewMapper.getCrewDetailByNo(form.getNo());
         savedCrew.setNo(form.getNo());
@@ -212,7 +215,7 @@ public class CrewService {
                 // 신규 썸네일 정보를 조회하여 CREW_FILES 테이블에 저장
                 String originalImageName = "crew" + form.getNo() + "_" + image.getOriginalFilename();
                 String ImageName = System.currentTimeMillis() + originalImageName;
-                webContentFileUtils.saveWebContentFile(image, saveImageDirectory, ImageName);
+                s3Service.uploadFile(image, bucketName, saveImageDirectory, ImageName);
 
                 UploadFile uploadThumbnail = new UploadFile();
                 uploadThumbnail.setNo(savedCrew.getNo());
@@ -235,7 +238,8 @@ public class CrewService {
             // 신규 첨부파일 정보를 조회하여 CREW_FILES 테이블에 저장
             String originalFileName = upfile.getOriginalFilename();
             String filename = System.currentTimeMillis() + originalFileName;
-            FileUtils.saveMultipartFile(upfile, saveFileDirectory, filename);
+
+            s3Service.uploadFile(upfile, bucketName, saveFileDirectory, filename);
 
             UploadFile uploadFile = new UploadFile();
             uploadFile.setNo(savedCrew.getNo());
@@ -270,10 +274,19 @@ public class CrewService {
         uploadMapper.updateCrewFile(fileNo);
     }
 
-    public List<CrewMember> getCrewMembers(int crewNo) {
-        List<CrewMember> members = crewMapper.getCrewMembers(crewNo);
+    public boolean isExistCrewMember(int crewNo, @AuthenticationPrincipal LoginUser loginUser) {
+        List<Integer> userNoList = crewMapper.getCrewMembers(crewNo);
 
-        return members;
+        boolean isExists = false;
+
+        for (int userNo: userNoList) {
+            if (userNo == loginUser.getNo()) {
+                isExists = true;
+                break;
+            }
+        }
+
+        return isExists;
     }
 
     public int getEnterMemberCnt(int crewNo) {

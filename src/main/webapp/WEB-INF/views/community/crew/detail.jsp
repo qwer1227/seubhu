@@ -60,7 +60,7 @@
   <div>
     <div class="col d-flex d-flex justify-content-between">
       <div>
-        ${crew.entered eq 'Y' ? '모집중' : '모집마감'}
+        <a href="main?category=${crew.entered}">${crew.entered eq 'Y' ? '모집중' : '모집마감'}</a>
       </div>
     </div>
     <div class="title h4 d-flex justify-content-between align-items-center">
@@ -85,10 +85,7 @@
         </c:if>
       </div>
     </div>
-    
-    <div style="margin-top: 10px; border-bottom: 1px solid #ccc; margin-bottom: 10px;"></div>
-    
-    <div class="content m-3" style="text-align: start">
+    <div class="content mb-3" style="text-align: start">
       <div class="row">
         <div class="col-6 mb-2" id="map" style="height: 250px; width: 500px"></div>
         <div class="col-6">
@@ -120,25 +117,18 @@
                 <security:authorize access="isAuthenticated()">
                   <security:authentication property="principal" var="loginUser"/>
                   <c:if test="${loginUser.no ne crew.user.no}">
-                    <c:if test="${memberCnt == 5}">
-                      <button class="btn btn-secondary btn-sm">모임 마감</button>
-                    </c:if>
-                    <c:if test="${memberCnt < 5}">
-                      <c:choose>
-                        <c:when test="${isExists}">
-                          <button id="btn-crew-leave" class="btn btn-danger btn-sm"
-                                  onclick="crewLeaveButton(${crew.no})">
-                            모임 탈퇴
-                          </button>
-                        </c:when>
-                        <c:otherwise>
-                          <button id="btn-crew_join" class="btn btn-primary btn-sm"
-                                  onclick="crewJoinButton(${crew.no})">
-                            모임 가입
-                          </button>
-                        </c:otherwise>
-                      </c:choose>
-                    </c:if>
+                    <c:choose>
+                      <c:when test="${isExists}">
+                        <button id="btn-crew-leave" class="btn btn-danger btn-sm" onclick="crewLeaveButton(${crew.no})">
+                          모임 탈퇴
+                        </button>
+                      </c:when>
+                      <c:otherwise>
+                        <button id="btn-crew_join" class="btn btn-primary btn-sm" onclick="crewJoinButton(${crew.no})">
+                          모임 가입
+                        </button>
+                      </c:otherwise>
+                    </c:choose>
                   </c:if>
                 </security:authorize></td>
             </tr>
@@ -151,34 +141,35 @@
       </div>
     </div>
     
-    <div style="margin-top: 10px; border-bottom: 1px solid #ccc; margin-bottom: 10px;"></div>
-    
-    <div class="row mb-4">
-      <div class="col d-flex justify-content-between">
-        <!-- 로그인 여부를 체크하기 위해 먼저 선언 -->
+    <div class="row actions mb-4">
+      
+      <!-- 로그인 여부를 체크하기 위해 먼저 선언 -->
+      <security:authorize access="isAuthenticated()">
         <div class="col-6 d-flex justify-content-start">
           <!-- principal 프로퍼티 안의 loginUser 정보를 가져옴 -->
           <!-- loginUser.no를 가져와서 조건문 실행 -->
-          <c:if test="${loginUser.no eq crew.user.no and loginUser ne null}">
-            <button class="btn btn-warning" onclick="updateCrew(${crew.no})" style="margin-right: 10px;">수정</button>
-            <button class="btn btn-danger" onclick="deleteCrew(${crew.no})" style="margin-right: 10px;">삭제</button>
+          <c:if test="${loginUser.no eq crew.user.no}">
+            <button class="btn btn-warning" onclick="updateCrew(${crew.no})">수정</button>
+            <button class="btn btn-danger" onclick="deleteCrew(${crew.no})">삭제</button>
           </c:if>
-          <c:if test="${loginUser.no ne crew.user.no and loginUser ne null}">
+          <c:if test="${loginUser.no ne crew.user.no}">
             <button type="button" class="btn btn-danger" onclick="report('crew', ${crew.no})">신고</button>
           </c:if>
         </div>
-        <div class="col d-flex justify-content-end">
-          <a type="button" href="main" class="btn btn-secondary">목록</a>
-        </div>
+      </security:authorize>
+      <div class="col-6 d-flex justify-content-end">
+        <a type="button" href="main" class="btn btn-secondary">목록</a>
       </div>
+    
     </div>
     
     <!-- 댓글 작성 -->
     <div class="comment-form mb-4">
       <h5 style="text-align: start">댓글 작성</h5>
-      <form method="get" action="add-reply">
-        <input type="hidden" name="crewNo" value="${crew.no}">
+      <form method="post" action="add-reply" id="box-reply-${reply.no}">
         <input type="hidden" name="userNo" value="${loginUser.no}">
+        <input type="hidden" name="type" value="crew">
+        <input type="hidden" name="typeNo" value="${crew.no}">
         <div class="row">
           <c:choose>
             <c:when test="${empty loginUser}">
@@ -186,8 +177,7 @@
                 <input class="form-control" disabled placeholder="로그인 후 댓글 작성이 가능합니다."/>
               </div>
               <div class="col">
-                <button type="button" class="btn btn-outline-success" style="width: 85px" onclick="goLogin()">등록
-                </button>
+                <button type="button" class="btn btn-outline-success" onclick="goLogin()">등록</button>
               </div>
             </c:when>
             <c:otherwise>
@@ -195,7 +185,7 @@
                 <textarea name="content" class="form-control" rows="3" placeholder="댓글을 작성하세요."></textarea>
               </div>
               <div class="col">
-                <button type="submit" class="btn btn-success" style="width: 85px" onclick="submitReply()">등록</button>
+                <button type="button" id="addReply" class="btn btn-success" onclick="submitReply()">등록</button>
               </div>
             </c:otherwise>
           </c:choose>
@@ -205,7 +195,7 @@
     
     <!-- 댓글 목록 -->
     <c:if test="${not empty crew.reply}">
-      <div class="row comments rounded mb-4" style="margin-left: 2px; width: 100%; background-color: #f2f2f2">
+      <div class="row comments rounded" style="background-color: #f2f2f2">
         <!--댓글 내용 -->
         <c:forEach var="reply" items="${replies}">
           <c:choose>
@@ -242,7 +232,7 @@
                       <div class="col" style="text-align: start">
                         <strong>${reply.user.nickname}</strong><br/>
                         <span><fmt:formatDate value="${reply.createdDate}" pattern="yyyy.MM.dd hh:mm:ss"/></span>
-                        <c:if test="${loginUser.no ne reply.user.no}">
+                        <c:if test="${loginUser.no ne reply.user.no and not empty loginUser}">
                           <button type="button" class="btn btn-danger"
                                   style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
                                   onclick="report('crewReply', ${reply.no})">
@@ -256,7 +246,7 @@
                             <button class="btn btn-outline-primary btn-sm" id="replyLikeCnt"
                                     onclick="replyLikeButton(${crew.no}, ${reply.no})">
                               <i id="icon-thumbs"
-                                 class="bi ${replyLiked == '1' ? 'bi-hand-thumbs-up-fill' : (replyLiked == '0' ? 'bi-hand-thumbs-up' : 'bi-hand-thumbs-up')}"></i>
+                                 class="bi ${reply.replyLiked == '1' ? 'bi-hand-thumbs-up-fill' : 'bi-hand-thumbs-up'}"></i>${reply.replyLikeCnt}
                             </button>
                           </c:if>
                           <c:if test="${loginUser.no eq reply.user.no}">
@@ -264,7 +254,7 @@
                                     onclick="appendModify(${reply.no})">수정
                             </button>
                             <button type="button" class="btn btn-danger btn-sm"
-                                    onclick="deleteReply(${reply.no}, ${reply.crewNo})">삭제
+                                    onclick="deleteReply(${reply.no}, ${reply.typeNo})">삭제
                             </button>
                           </c:if>
                         </security:authorize>
@@ -278,8 +268,9 @@
                         ${reply.content}
                       <form method="post" action="modify-reply" id="box-reply-${reply.no}" class="my-3 d-none">
                         <div class="row">
-                          <input type="hidden" name="replyNo" value="${reply.no}">
-                          <input type="hidden" name="crewNo" value="${reply.crewNo}">
+                          <input type="hidden" name="no" value="${reply.no}">
+                          <input type="hidden" name="crewNo" value="${crew.no}">
+                          <input type="hidden" name="typeNo" value="${reply.typeNo}">
                           <div class="col-11">
                             <textarea name="content" class="form-control" rows="2">${reply.content}</textarea>
                           </div>
@@ -301,6 +292,8 @@
                         <input type="hidden" name="no" value="${reply.no}">
                         <input type="hidden" name="prevNo" value="${reply.prevNo}">
                         <input type="hidden" name="crewNo" value="${crew.no}">
+                        <input type="hidden" name="type" value="crew">
+                        <input type="hidden" name="typeNo" value="${reply.typeNo}">
                         <div class="row">
                           <div class="col-11">
                             <textarea name="content" class="form-control" rows="2" placeholder="답글을 작성하세요."></textarea>
@@ -331,6 +324,15 @@
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
 <script>
+    function submitReply(){
+        let content = document.querySelector(`form#box-reply-\${replyNo} textarea[name=content]`).value.trim();
+
+        // 입력값 검증
+        if (!content) {
+            alert("댓글 내용을 입력해주세요.");
+            return;
+        }
+    }
 
     const myModalRepoter = new bootstrap.Modal('#modal-reporter')
 
@@ -367,38 +369,6 @@
         }
     });
 
-    /* 댓글 제출(/community/add-reply로 데이터 전달) */
-    async function submitReply() {
-        let boardNo = document.querySelector("input[name=crewNo]").value;
-        let content = document.querySelector("textarea[name=content]").value;
-        let userNo = document.querySelector("input[name=userNo]").value;
-
-        let data = {
-            boardNo,
-            content,
-            userNo
-        }
-
-        // 자바스크립트 객체를 json형식의 텍스트로 변환한다.
-        let jsonText = JSON.stringify(data);
-
-        // POST 방식으로 객체를 JSON 형식의 데이터를 서버로 보내기
-        let response = await fetch("/community/add-reply", {
-            // 요청방식을 지정한다.
-            method: "POST",
-            // 요청메세지의 바디부에 포함된 컨텐츠의 형식을 지정한다.
-            headers: {
-                "Content-Type": "application/json"
-            },
-            // 요청메세지의 바디부에 서버로 전달할 json형식의 텍스트 데이터를 포함시킨다.
-            body: jsonText
-        });
-        // 서버가 보낸 응답데이터를 받는다.
-        if (response.ok) {
-            // 응답으로 새로 추가된 코멘트를 추가한다.
-            let reply = await response.json();
-        }
-    }
 
     /* 댓글&답글 삭제 */
     function deleteReply(replyNo, crewNo) {
@@ -429,12 +399,28 @@
     }
 
     function replyLikeButton(crewNo, replyNo) {
-        let heart = document.querySelector("#icon-thumbs");
-        if (heart.classList.contains("bi-hand-thumbs-up")) {
-            window.location.href = `update-reply-like?no=\${crewNo}&rno=\${replyNo}`;
-        } else {
-            window.location.href = `delete-reply-like?no=\${crewNo}&rno=\${replyNo}`;
-        }
+        let heart = document.querySelector("#icon-thumbs-" + replyNo);
+        let isLiked = heart.classList.contains("bi-hand-thumbs-up");
+
+        // AJAX 요청 준비
+        $.ajax({
+            method: "POST",
+            url: isLiked ? `update-reply-like` : `delete-reply-like`,
+            data: {
+                no: crewNo,
+                rno: replyNo,
+            },
+            success: function (response) {
+                // 서버 응답이 성공적이면 좋아요 상태를 변경
+                if (isLiked) {
+                    heart.classList.remove("bi-hand-thumbs-up");
+                    heart.classList.add("bi-hand-thumbs-up-fill");
+                } else {
+                    heart.classList.remove("bi-hand-thumbs-up-fill");
+                    heart.classList.add("bi-hand-thumbs-up");
+                }
+            }
+        });
     }
 
     /* 버튼 클릭 시 답글 입력 폼 활성화 */
@@ -460,7 +446,7 @@
     async function report(type, no) {
         let response = await fetch("/community/crew/report-check?type=" + type + "&no=" + no, {
             // 요청방식을 지정한다.
-            method: "GET",
+            method: "get",
             // 요청메세지의 바디부에 포함된 컨텐츠의 형식을 지정한다.
             headers: {
                 "Content-Type": "application/json"

@@ -120,7 +120,7 @@
         let url = document.querySelector("input[name=url]").value;
         let place = document.querySelector("input[name=place]").value;
         let thumbnail = document.querySelector("input[name=thumbnail]").value;
-        
+
         formData.append("no", no);
         formData.append("title", title);
         formData.append("content", content);
@@ -132,7 +132,7 @@
         formData.append("url", url);
         formData.append("place", place);
         formData.append("thumbnail", thumbnail);
-        
+
         $.ajax({
             method: "post",
             url: "/community/marathon/modify",
@@ -144,7 +144,7 @@
             }
         })
     });
-    
+
     function abort(marathonNo) {
         let result = confirm("수정 중이던 글을 취소하시겠습니까?");
         if (result) {
