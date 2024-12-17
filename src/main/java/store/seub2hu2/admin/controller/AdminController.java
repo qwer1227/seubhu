@@ -136,7 +136,7 @@ public class AdminController {
         }
 
         log.info("레슨 수정 정보 {} ", form);
-        lessonService.updateLesson(form);
+//        lessonService.updateLesson(form);
 
         return "redirect:/admin/lesson";
     }

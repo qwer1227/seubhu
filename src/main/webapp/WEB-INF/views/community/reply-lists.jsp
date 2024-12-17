@@ -207,8 +207,8 @@
             data: formData,
             processData: false,
             contentType: false,
-            success: function (board) {
-                window.location.href = "detail?no=" + board.typeNo;
+            success: function () {
+                window.location.href = "detail?no=" + ${reply.typeNo};
             }
         })
     }

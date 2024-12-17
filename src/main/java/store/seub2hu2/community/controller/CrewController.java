@@ -260,7 +260,7 @@ public class CrewController {
         form.setCrewNo(crewNo);
         replyService.deleteReply(replyNo);
 
-        return "redirect:detail?no=" + form.getCrewNo();
+        return "redirect:detail?no=" + crewNo;
     }
 
     @PostMapping("/update-reply-like")

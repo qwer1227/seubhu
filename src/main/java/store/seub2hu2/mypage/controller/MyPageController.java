@@ -54,7 +54,7 @@ import java.util.Map;
 @RequestMapping("/mypage")
 public class MyPageController {
 
-    @Value("${upload.directory.community}")
+    @Value("${upload.directory.userImage}")
     private String saveDirectory;
 
     @Autowired
@@ -79,7 +79,7 @@ public class MyPageController {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private BoardReplyService replyService;
+    private ReplyService replyService;
 
     @Autowired
     private ScrapService scrapService;
@@ -241,7 +241,7 @@ public class MyPageController {
             model.addAttribute("Scrapped", scrapResult);
 
             for (Reply reply : replyList) {
-                int replyResult = replyService.getCheckLike(reply.getNo(), loginUser);
+                int replyResult = replyService.getCheckLike(reply.getNo(), "board", loginUser);
                 model.addAttribute("replyLiked", replyResult);
             }
         }
@@ -345,7 +345,7 @@ public class MyPageController {
 
         replyService.addNewReply(form, loginUser);
 
-        return "redirect:detail?no=" + form.getBoardNo();
+        return "redirect:detail?no=" + form.getTypeNo();
     }
 
     @PostMapping("/add-comment")
@@ -354,7 +354,7 @@ public class MyPageController {
             , @AuthenticationPrincipal LoginUser loginUser){
         replyService.addNewComment(form, loginUser);
 
-        return "redirect:detail?no=" + form.getBoardNo();
+        return "redirect:detail?no=" + form.getTypeNo();
     }
 
     @PostMapping("/modify-reply")
@@ -364,14 +364,14 @@ public class MyPageController {
             , @RequestParam("content") String replyContent
             , @AuthenticationPrincipal LoginUser loginUser){
         ReplyForm form = new ReplyForm();
-        form.setId(replyNo);
-        form.setBoardNo(boardNo);
+        form.setNo(replyNo);
+        form.setTypeNo(boardNo);
         form.setContent(replyContent);
         form.setUserNo(loginUser.getNo());
 
-        replyService.updateReply(form);
+        replyService.updateReply(form, loginUser);
 
-        return "redirect:detail?no=" + form.getBoardNo();
+        return "redirect:detail?no=" + form.getTypeNo();
     }
 
     @GetMapping("/delete-reply")
@@ -379,11 +379,11 @@ public class MyPageController {
     public String deleteReply(@RequestParam("rno") int replyNo,
                               @RequestParam("bno") int boardNo){
         ReplyForm form = new ReplyForm();
-        form.setId(replyNo);
-        form.setBoardNo(boardNo);
+        form.setNo(replyNo);
+        form.setTypeNo(boardNo);
         replyService.deleteReply(replyNo);
 
-        return "redirect:detail?no=" + form.getBoardNo();
+        return "redirect:detail?no=" + form.getTypeNo();
     }
 
     @GetMapping("/update-board-like")
@@ -405,7 +405,7 @@ public class MyPageController {
             , @RequestParam("rno") int replyNo
             , @AuthenticationPrincipal LoginUser loginUser){
 
-        replyService.updateReplyLike(replyNo, loginUser);
+        replyService.updateReplyLike(replyNo, "boardReply", loginUser);
         return "redirect:detail?no=" + boardNo;
     }
 
@@ -414,7 +414,7 @@ public class MyPageController {
             , @RequestParam("rno") int replyNo
             , @AuthenticationPrincipal LoginUser loginUser){
 
-        replyService.deleteReplyLike(replyNo, loginUser);
+        replyService.deleteReplyLike(replyNo, "boardReply", loginUser);
         return "redirect:detail?no=" + boardNo;
     }
 
