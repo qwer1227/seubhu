@@ -36,12 +36,14 @@
         <h4>코스 달성 수 순위</h4>
     </div>
 
-    <%-- 나의 코스 달성 수 순위 --%>
+    <%-- 로그인한 사용자의 코스 달성 수 순위 --%>
     <table class="table mt-4">
+        <%-- 로그인한 경우, 나의 코스 달성 수 순위를 표시한다. --%>
         <sec:authorize access="isAuthenticated()">
             <sec:authentication property="principal" var="loginUser"/>
             <c:if test="${!empty loginUser}">
                 <c:choose>
+                    <%-- 로그인한 사용자가 코스를 달성한 기록이 있을 경우, 사용자의 코스 달성 수 순위를 표시한다. --%>
                     <c:when test="${successCountRank != null}">
                         <thead>
                         <tr class="table-warning">
@@ -60,6 +62,7 @@
                         </tr>
                         </tbody>
                     </c:when>
+                    <%-- 로그인한 사용자가 코스를 달성한 기록이 없을 경우, 안내 문구를 표시한다. --%>
                     <c:otherwise>
                         <thead>
                         <tr class="table-warning">
@@ -78,6 +81,7 @@
                 </c:choose>
             </c:if>
         </sec:authorize>
+        <%-- 로그인하지 않은 경우, 안내 문구를 표시한다. --%>
         <c:if test="${empty loginUser}">
             <tr>
                 <td>로그인 후 나의 순위를 확인할 수 있습니다.</td>

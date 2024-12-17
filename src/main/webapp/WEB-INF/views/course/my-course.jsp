@@ -33,6 +33,7 @@
     <div class="row row-cols-1 row-cols-md-1 g-4 mt-3">
         <div class="col">
             <c:choose>
+                <%-- 로그인한 경우 로그인한 사용자의 배지와 코스 완주 기록, 도전할 코스 목록을 표시한다. --%>
                 <c:when test="${not empty loginUser}">
                     <%-- 안내 문구 --%>
                     <div class="card g-4 mb-3" align="left" style="padding: 10px 10px 10px 10px;">
@@ -40,7 +41,7 @@
                             <strong style="background-color: blue; color: white;">완주 기록 보기</strong>를 클릭하여 등록한 완주 기록을 확인하실 수 있습니다.</h5>
                     </div>
 
-                    <%-- 로그인한 사용자의 배지와 코스 기록 --%>
+                    <%-- 로그인한 사용자의 배지와 코스 완주 기록 --%>
                     <table class="table table-bordered">
                         <div class="card">
                             <div class="card-header">나의 배지와 코스 기록</div>
@@ -53,6 +54,7 @@
                         <tr>
                             <th scope="row">현재 배지</th>
                             <td>
+                                <%-- 배지가 있다면 배지 목록을 표시하고, 배지가 없다면 안내 문구를 표시한다. --%>
                                 <c:choose>
                                     <c:when test="${not empty userBadges}">
                                         <c:forEach var="userBadge" items="${userBadges}">
@@ -96,6 +98,7 @@
                             </tr>
                         </thead>
                         <tbody>
+                        <%-- 도전 등록한 코스가 있다면 도전할 코스 목록을 표시하고, 없다면 안내 문구를 표시한다. --%>
                         <c:choose>
                             <c:when test="${not empty coursesToChallenge}">
                                 <c:forEach var="courseToChallenge" items="${coursesToChallenge}" varStatus="loop">
@@ -134,6 +137,7 @@
                         </tbody>
                     </table>
                 </c:when>
+                <%-- 로그인하지 않은 경우 안내 문구를 표시한다. --%>
                 <c:otherwise>
                     <table class="table table-bordered">
                         <th colspan="4">로그인하면 나의 배지와 코스 기록을 확인할 수 있습니다.</th>
@@ -237,8 +241,8 @@
                 <form method="post" action="/addRecord" enctype="multipart/form-data">
                     <input type="hidden" name="courseNo"/>
                     <div class="form-group">
-                        <label class="form-label">2. 완주 날짜(년, 월, 일, 시, 분)</label>
-                        <div><input type="datetime-local" name="finishedDate"></div>
+                        <label class="form-label">2. 완주 날짜</label>
+                        <div><input type="datetime-local" name="finishedDate" id="dateLocal"></div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">3. 완주 시간</label>
@@ -283,11 +287,14 @@
 <script type="text/javascript">
     // 도전할 코스 목록 페이지 번호를 클릭했을 때, 요청 파라미터 정보를 제출한다.
     function changePage(page, event) {
+        // 1. 페이지 클릭 시, 링크 이동을 방지한다.
         event.preventDefault();
 
+        // 2. 도전할 코스 목록 페이징 처리 태그와 페이지 번호를 가져온다.
         let form = document.querySelector("#form-myCoursesToChallenge");
         let pageInput = document.querySelector("input[name=page]");
 
+        // 3. Controller에 요청 파라미터 정보를 제출한다.
         pageInput.value = page;
         form.submit();
     }
@@ -297,9 +304,17 @@
 
     // 완주 기록 등록 버튼을 클릭하면, 완주 기록 등록 창이 열린다.
     function openAddRecordFormModal(courseNo, name) {
+        // 1. 코스 번호와 코스 이름을 완주 기록 등록 Modal창에 저장한다.
         document.querySelector("input[name=courseNo]").value = courseNo;
         document.querySelector("#name").value = name;
 
+        // 2. 완주 날짜를 오늘 날짜까지 제한한다.
+        let now_utc = Date.now()
+        let timeOff = new Date().getTimezoneOffset()*60000;
+        let today = new Date(now_utc-timeOff).toISOString().substring(0, 16);
+        document.getElementById("dateLocal").setAttribute("max", today);
+
+        // 3. 완주 기록 등록 창이 열린다.
         registerModal.show();
     }
 
@@ -342,9 +357,10 @@
             body: formData
         });
 
-        // 5. 요청 처리 성공 확인 후, 알림창을 표시한다.
+        // 5. 요청 처리 성공 확인 후, 알림창을 표시하고 modal창을 숨긴다.
         if (response.ok) {
             alert("코스 완주 기록 입력이 성공했습니다!");
+            registerModal.hide();
         }
     }
 
