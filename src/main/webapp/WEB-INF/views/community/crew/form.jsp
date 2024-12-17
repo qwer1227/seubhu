@@ -46,7 +46,8 @@
           <td><input class="rounded" type="text" name="title" value="" style="width: 83%"></td>
           <th>장소</th>
           <td>
-            <input class="rounded" type="text" id="location" value="" name="location" style="width: 90%; vertical-align: middle;">
+            <input class="rounded" type="text" id="location" value="" name="location"
+                   style="width: 90%; vertical-align: middle;">
             <a type="button" class="btn btn-outline-dark btn-sm"
                onclick="searchPlaces(event)" style="vertical-align: middle; width: 50px">검색</a>
           </td>
@@ -114,14 +115,39 @@
     // 등록 버튼 클릭 시, 폼에 있는 값을 전달(이미지는 슬라이싱할 때 전달했기 때문에 따로 추가 설정 안해도 됨)
     document.querySelector("#submit").addEventListener("click", function () {
         oEditors.getById["ir1"].exec("UPDATE_CONTENTS_FIELD", []);
-        
-        let title = document.querySelector("input[name=title]").value;
-        let description = document.querySelector("textarea[name=ir1]").value;
-        let name = document.querySelector("input[name=name]").value;
+
+        let title = document.querySelector("input[name=title]").value.trim();
+        let description = document.querySelector("textarea[name=ir1]").value.trim();
+        let name = document.querySelector("input[name=name]").value.trim();
         let type = document.querySelector("select[name=type]").value;
-        let detail = document.querySelector("input[name=detail]").value;
+        let detail = document.querySelector("input[name=detail]").value.trim();
         let location = document.querySelector("input[name=location]").value;
         let upfile = document.querySelector("input[name=upfile]")
+
+        let cleanedContent = description.replace(/<p><br><\/p>/g, "").trim();
+
+        // 입력값 검증
+        if (!title) {
+            alert("크루 모집글 제목을 입력해주세요.");
+            return;
+        }
+        if (!cleanedContent) {
+            alert("내용을 입력해주세요.");
+            return;
+        }
+        if (!name) {
+            alert("크루명을 입력해주세요.");
+            return;
+        }
+        if (!detail) {
+            alert("상세 일시를 입력해주세요.");
+            return;
+        }
+        if (!location) {
+            alert("모임 장소를 입력해주세요.");
+            return;
+        }
+
 
         formData.append("title", title);
         formData.append("description", description);

@@ -40,16 +40,25 @@
         <!-- 회원가입 폼 -->
         <form:form id="joinForm" method="POST" action="/join" modelAttribute="joinForm"
                    novalidate="novalidate">
+
             <!-- 아이디 -->
             <div class="form-group mb-3">
                 <div class="has-validation">
+                    <!-- 아이디 입력 필드 -->
                     <form:input type="text" class="form-control" placeholder="아이디*" path="id" required="required"
                                 id="user-id" onblur="checkId()"/>
-                    <div class="invalid-feedback">아이디는 영소문자와 숫자만 포함하고 4~16자 사이여야 합니다.</div>
-                    <div class="valid-feedback">사용 가능한 아이디입니다.</div>
+
+                    <!-- 유효성 검사 피드백 -->
+                        <%-- <div class="invalid-feedback">아이디는 영소문자와 숫자만 포함하고 4~16자 사이여야 합니다.</div>
+                         <div class="valid-feedback">사용 가능한 아이디입니다.</div>
+     --%>
+                    <!-- 중복 검사 결과 메시지 -->
+                    <div id="id-check-result" class="small mt-1"></div>
                 </div>
+                <!-- Spring Form Errors -->
                 <form:errors path="id" cssClass="text-danger fst-italic"/>
             </div>
+
 
             <!-- 비밀번호 -->
             <div class="form-group mb-3">
@@ -74,27 +83,52 @@
                 <form:errors path="passwordConfirm" cssClass="text-danger fst-italic"/>
             </div>
 
-            <!-- 닉네임 -->
+            <!-- 닉네임 입력 필드 -->
             <div class="form-group mb-3">
                 <div class="has-validation">
-                    <form:input class="form-control" placeholder="닉네임" path="nickname" onblur="checkNickname()"
-                                id="user-nickname" required="required"/>
-                    <div class="invalid-feedback">닉네임 형식이 올바르지 않습니다.</div>
-                    <div class="valid-feedback">사용 가능한 닉네임입니다!</div>
+                    <form:input type="text" class="form-control" placeholder="닉네임*"
+                                path="nickname" required="required"
+                                id="user-nickname" onblur="checkNickname()"/>
+
+                    <!-- 유효성 검사 피드백 -->
+                        <%--<div class="invalid-feedback" id="nickname-invalid-feedback">닉네임을 입력해주세요.</div>
+                        <div class="valid-feedback" id="nickname-valid-feedback">사용 가능한 닉네임입니다.</div>
+    --%>
+                    <!-- 중복 검사 결과 메시지 -->
+                    <div id="nickname-check-result" class="small mt-1"></div>
                 </div>
-                <form:errors path="nickname" id="nickname-error" cssClass="text-danger fst-italic"/>
+                <!-- 서버 측 오류 메시지를 제거하거나 조건에 맞게 표시 -->
+                <form:errors path="nickname" cssClass="text-danger fst-italic"/>
             </div>
+
 
             <!-- 이름 -->
             <div class="form-group mb-3">
                 <form:input class="form-control" placeholder="이름" path="name"/>
             </div>
 
+            <!-- 이메일 -->
+            <div class="form-group mb-3">
+                <div class="has-validation">
+                    <form:input type="email" class="form-control" placeholder="이메일*" path="email" required="required"
+                                id="user-email" onblur="checkEmail()"/>
 
-        <!-- 휴대전화 -->
-        <div class="form-group d-flex align-items-center mb-3">
-            <!-- 전화번호 입력 필드 -->
-            <input type="text" class="form-control me-2" id="tel" name="tel" maxlength="13" placeholder="전화번호" required="required" onblur="formatPhoneNumber(event)" />
+                    <!-- 유효성 검사 피드백 -->
+                        <%--<div class="invalid-feedback">올바른 이메일 형식이 아닙니다.</div>
+                        <div class="valid-feedback">사용 가능한 이메일입니다.</div>
+    --%>
+                    <!-- 중복 검사 결과 메시지 -->
+                    <div id="email-check-result" class="small mt-1"></div>
+                </div>
+                <form:errors path="email" cssClass="text-danger fst-italic"/>
+            </div>
+
+
+            <!-- 휴대전화 -->
+            <div class="form-group d-flex align-items-center mb-3">
+                <!-- 전화번호 입력 필드 -->
+                <input type="text" class="form-control me-2" id="tel" name="tel" maxlength="13" placeholder="전화번호"
+                       required="required" onblur="formatPhoneNumber(event)"/>
                 <!-- 본인인증 버튼 -->
                 <input type="button" onclick="smsCheck()" class="btn btn-outline-dark" value="본인인증">
             </div>
@@ -114,17 +148,6 @@
             <input type="text" name="address-extra" id="address-extra" class="form-control mb-3"
                    placeholder="참고항목"/>
 
-            <!-- 이메일 -->
-            <div class="form-group mb-3">
-                <div class="has-validation">
-                    <form:input type="text" class="form-control" id="user-email" placeholder="이메일(example@domain.com)*"
-                                path="email" onblur="checkEmail()"
-                                required="required"/>
-                    <div class="invalid-feedback">이메일 형식이 올바르지 않습니다.</div>
-                    <div class="valid-feedback">사용 가능한 이메일입니다!</div>
-                </div>
-                <form:errors path="email" cssClass="text-danger fst-italic"/>
-            </div>
 
             <!-- 이용약관 동의 -->
             <div class="form-group text-start mb-3">
@@ -222,7 +245,7 @@
     <%@ include file="/WEB-INF/views/common/footer.jsp" %>
 </footer>
 
-<script type="text/javascript">
+<script>
     // 상태 플래그
     let isIdValid = false;
     let isPasswordValid = false;
@@ -235,39 +258,44 @@
 
     // 아이디 유효성 검사 + 중복 검사 함수
     function checkId() {
-        let idInput = document.querySelector("#user-id");
-        let id = idInput.value;
+        const idInput = document.querySelector("#user-id");
+        const idFeedback = document.querySelector("#id-check-result");
+        const id = idInput.value;
 
-        // 아이디 유효성 검사: 공백, 특수문자, 길이 체크
-        if (!/^[a-z0-9]{4,16}$/.test(id)) { // 아이디는 소문자 + 숫자, 4~16자
+        // 초기화
+        idFeedback.textContent = "";
+        idInput.classList.remove("is-valid", "is-invalid");
+        idFeedback.classList.remove("valid-feedback", "invalid-feedback")
+        // 유효성 검사: 영소문자 + 숫자만 허용, 길이는 4~16자
+        if (!/^[a-z0-9]{4,16}$/.test(id)) {
             idInput.classList.add("is-invalid");
-            idInput.classList.remove("is-valid");
-            isIdValid = false;
+            idFeedback.classList.add("invalid-feedback")
+            idFeedback.textContent = "아이디는 영소문자와 숫자만 포함하고 4~16자 사이여야 합니다.";
             return;
-        } else {
-            idInput.classList.add("is-valid");
-            idInput.classList.remove("is-invalid");
-            isIdValid = true;
         }
 
-        // 유효성 검사 통과 후 중복 확인 요청
-        fetch(`/user/join/check-id?id=${id}`)
-            .then(response => response.json())
+        // 중복 확인 요청
+        fetch(`/api/users/check-id?id=\${id}`)
+            .then(response => {
+                if (!response.ok) throw new Error("서버 오류 발생");
+                return response.json(); // 서버가 JSON 형태로 반환한다고 가정
+            })
             .then(data => {
-                if (data.exists) {
-                    // 중복된 아이디인 경우
+                if (data.duplicate) { // 중복된 경우
                     idInput.classList.add("is-invalid");
-                    idInput.classList.remove("is-valid");
-                    isIdValid = false;
-                } else {
-                    // 사용 가능한 아이디인 경우
+                    idFeedback.classList.add("invalid-feedback")
+                    idFeedback.textContent = "이미 사용 중인 아이디입니다.";
+                } else { // 사용 가능한 경우
                     idInput.classList.add("is-valid");
-                    idInput.classList.remove("is-invalid");
-                    isIdValid = true;
+                    idFeedback.classList.add("valid-feedback")
+                    idFeedback.textContent = "사용 가능한 아이디입니다.";
                 }
             })
             .catch(error => {
-                console.error("아이디 중복 확인 실패", error);
+                console.error("Error:", error);
+                idInput.classList.add("is-invalid");
+                idFeedback.classList.add("invalid-feedback")
+                idFeedback.textContent = "서버 오류가 발생했습니다.";
             });
     }
 
@@ -289,7 +317,7 @@
         }
     }
 
-        document.getElementById("togglePassword").addEventListener("click", function () {
+    document.getElementById("togglePassword").addEventListener("click", function () {
         const passwordField = document.getElementById("user-password");
         const type = passwordField.getAttribute("type") === "password" ? "text" : "password";
         passwordField.setAttribute("type", type);
@@ -333,77 +361,97 @@
         event.target.value = phoneNumber;
     }
 
-    // 이메일 유효성 검사
-    function isEmailValidFormat(email) {
-        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        return emailPattern.test(email);
-    }
-
+    // 이메일 유효성 검사 + 중복 검사 함수
     function checkEmail() {
-        let emailInput = document.querySelector("#user-email");
-        let email = emailInput.value;
+        const emailInput = document.querySelector("#user-email");
+        const emailFeedback = document.querySelector("#email-check-result");
+        const email = emailInput.value;
 
-        // 이메일 형식 검사
-        if (!isEmailValidFormat(email)) {
+        // 초기화
+        emailFeedback.textContent = "";
+        emailInput.classList.remove("is-valid", "is-invalid");
+        emailFeedback.classList.remove("valid-feedback", "invalid-feedback")
+
+        // 유효성 검사: 이메일 형식 확인
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailPattern.test(email)) {
             emailInput.classList.add("is-invalid");
-            emailInput.classList.remove("is-valid");
-            isEmailValid = false;
+            emailFeedback.classList.add("invalid-feedback")
+            emailFeedback.textContent = "올바른 이메일 형식이 아닙니다.";
             return;
         }
 
-        // 유효성 검사 통과 후 중복 확인 요청
-        fetch(`/user/join/check-email?email=${email}`)
-            .then(response => response.json())
+        // 중복 확인 요청
+        fetch(`/api/users/check-email?email=\${email}`)
+            .then(response => {
+                if (!response.ok) throw new Error("서버 오류 발생");
+                return response.json(); // JSON 형태로 응답한다고 가정
+            })
             .then(data => {
-                if (data.exists) {
-                    // 중복된 이메일인 경우
+                if (data.duplicate) { // 중복된 경우
                     emailInput.classList.add("is-invalid");
-                    emailInput.classList.remove("is-valid");
-                    isEmailValid = false;
-                } else {
-                    // 사용 가능한 이메일인 경우
+                    emailFeedback.classList.add("invalid-feedback")
+                    emailFeedback.textContent = "이미 사용 중인 이메일입니다.";
+                } else { // 사용 가능한 경우
                     emailInput.classList.add("is-valid");
-                    emailInput.classList.remove("is-invalid");
-                    isEmailValid = true;
+                    emailFeedback.classList.add("valid-feedback")
+                    emailFeedback.textContent = "사용 가능한 이메일입니다.";
                 }
             })
             .catch(error => {
-                console.error("이메일 중복 확인 실패", error);
+                console.error("Error:", error);
+                emailInput.classList.add("is-invalid");
+                emailFeedback.classList.add("invalid-feedback")
+                emailFeedback.textContent = "서버 오류가 발생했습니다.";
             });
+
     }
 
-    // 닉네임 유효성 검사
+    // 닉네임 유효성 검사 + 중복 검사 함수
     function checkNickname() {
-        let nicknameInput = document.querySelector("#user-nickname");
-        let nickname = nicknameInput.value;
+        const nicknameInput = document.querySelector("#user-nickname");
+        const nicknameFeedback = document.querySelector("#nickname-check-result");
+        const nickname = nicknameInput.value;
 
-        if (!nickname) {
+        // 초기화
+        nicknameFeedback.textContent = "";
+        nicknameInput.classList.remove("is-valid", "is-invalid");
+        nicknameFeedback.classList.remove("valid-feedback", "invalid-feedback")
+
+        // 유효성 검사: 닉네임 형식 확인
+        const nicknamePattern = /^[가-힣a-z0-9]{2,}$/;
+        if (!nicknamePattern.test(nickname)) {
             nicknameInput.classList.add("is-invalid");
-            nicknameInput.classList.remove("is-valid");
-            isNicknameValid = false;
-            return;
+            nicknameFeedback.classList.add("invalid-feedback")
+            nicknameInvalidFeedback.textContent = "닉네임은 한글, 영문 소문자, 숫자만 포함하며 2글자 이상이어야 합니다.";
+            return; // 유효성 검사 실패 시 더 이상 진행하지 않음
         }
 
-        // 유효성 검사 통과 후 중복 확인 요청
-        fetch(`/user/join/check-nickname?nickname=${nickname}`)
-            .then(response => response.json())
+        // 중복 확인 요청
+        fetch(`/api/users/check-nickname?nickname=\${nickname}`)
+            .then(response => {
+                if (!response.ok) throw new Error("서버 오류 발생");
+                return response.json(); // JSON 형태로 응답한다고 가정
+            })
             .then(data => {
-                if (data.exists) {
-                    // 중복된 닉네임인 경우
+                if (data.duplicate) { // 중복된 경우
                     nicknameInput.classList.add("is-invalid");
-                    nicknameInput.classList.remove("is-valid");
-                    isNicknameValid = false;
-                } else {
-                    // 사용 가능한 닉네임인 경우
+                    nicknameFeedback.classList.add("invalid-feedback")
+                    nicknameFeedback.textContent = "이미 사용 중인 닉네임입니다.";
+                } else { // 사용 가능한 경우
                     nicknameInput.classList.add("is-valid");
-                    nicknameInput.classList.remove("is-invalid");
-                    isNicknameValid = true;
+                    nicknameFeedback.classList.add("valid-feedback")
+                    nicknameFeedback.textContent = "사용 가능한 닉네임입니다.";
                 }
             })
             .catch(error => {
-                console.error("닉네임 중복 확인 실패", error);
-            });
+                console.error("Error:", error);
+                nicknameInput.classList.add("is-invalid");
+                nicknameFeedback.classList.add("invalid-feedback")
+                nicknameFeedback.textContent = "서버 오류가 발생했습니다.";
+                });
     }
+
 
     // 카카오 주소 api
     function openPostcode() {
@@ -468,49 +516,15 @@
         });
     });
 
-    // 폼 제출 시 유효성 검사
-    async function formSubmit() {
-// 모든 유효성 검사 호출
-        checkId();
-        checkPassword();
-        checkPasswordConfirm();
-        checkEmail();
-        checkNickname();
-
-// 이메일 중복체크 미실행 또는 잘못된 이메일 상태 처리
-        let email = document.querySelector("#user-email").value;
-        if (!isEmailValid(email) || !isEmailChecked) {
-            document.querySelector("#user-email").classList.add("is-invalid");
-            document.querySelector("#user-email").classList.remove("is-valid");
-            return;
+    function validateForm() {
+        if (isIdValid && isPasswordValid && isPasswordConfirmed && isTelVerified && isEmailValid && isEmailChecked && isNicknameValid && isNicknameChecked) {
+            // 모든 조건이 만족하면 폼을 제출
+            document.getElementById("form").submit();
+        } else {
+            alert("모든 필드를 올바르게 입력해주세요.");
         }
-
-// 닉네임 중복체크 미실행 또는 사용 불가 체크
-        let nickname = document.querySelector("#user-nickname").value;
-        if (!isNicknameChecked || !isNicknameValid) {
-            document.querySelector("#user-nickname").classList.add("is-invalid");
-            document.querySelector("#user-nickname").classList.remove("is-valid");
-            return;
-        }
-
-// 비밀번호 확인 검사
-        let password = document.querySelector("#user-password").value;
-        let passwordConfirm = document.querySelector("#password-confirm").value;
-        if (password !== passwordConfirm) {
-            document.querySelector("#user-password").classList.add("is-invalid");
-            document.querySelector("#password-confirm").classList.add("is-invalid");
-            return;
-        }
-
-        // 모든 유효성 검사를 통과한 경우 폼 제출
-        document.querySelector("#joinForm").submit();
     }
 
-
-    // DOMContentLoaded 이벤트 리스너 추가
-    document.addEventListener("DOMContentLoaded", function () {
-        // 초기화나 추가적인 설정이 필요한 경우 여기에 추가
-    });
 
 </script>
 

@@ -87,16 +87,32 @@
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script type="text/javascript">
     let formData = new FormData();
-    
+
     // 등록 버튼 클릭 시, 폼에 있는 값을 전달(이미지는 슬라이싱할 때 전달했기 때문에 따로 추가 설정 안해도 됨)
-    document.querySelector("#submit").addEventListener("click", function (){
+    document.querySelector("#submit").addEventListener("click", function () {
 
         oEditors.getById["ir1"].exec("UPDATE_CONTENTS_FIELD", []);
-        
+
         let catName = document.querySelector("select[name=catName]").value;
-        let title = document.querySelector("input[name=title]").value;
-        let content = document.querySelector("textarea[name=ir1]").value;
+        let title = document.querySelector("input[name=title]").value.trim();
+        let content = document.querySelector("textarea[name=ir1]").value.trim();
         let upfile = document.querySelector("input[name=upfile]")
+
+        let cleanedContent = content.replace(/<p><br><\/p>/g, "").trim();
+
+        // 입력값 검증
+        if (!catName || catName === "게시판을 선택해주세요.") {
+            alert("카테고리를 선택해주세요.");
+            return;
+        }
+        if (!title) {
+            alert("제목을 입력해주세요.");
+            return;
+        }
+        if (!cleanedContent) {
+            alert("내용을 입력해주세요.");
+            return;
+        }
 
         formData.append("catName", catName);
         formData.append("title", title);
@@ -111,12 +127,15 @@
             data: formData,
             processData: false,
             contentType: false,
-            success: function (board){
+            success: function (board) {
                 window.location.href = "detail?no=" + board.no;
+            },
+            error: function () {
+                alert("글 등록 중 오류가 발생했습니다. 다시 시도해주세요.");
             }
-        })
+        });
     });
-    
+
     function abort() {
         alert("글 작성을 취소하시겠습니까? 작성중이던 글은 저장되지 않습니다.");
 

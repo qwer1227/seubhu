@@ -53,6 +53,11 @@ public class NoticeService {
             notice.setUploadFile(uploadFile);
         }
 
+        int topNoticeCount = noticeMapper.getTopNoticeCnt();
+        if (topNoticeCount >= 5) {
+            noticeMapper.updateTopNoticeToNotFirst();
+        }
+
         noticeMapper.insertNotice(notice);
 
         if (notice.getUploadFile() != null) {
@@ -132,6 +137,11 @@ public class NoticeService {
             uploadMapper.insertNoticeFile(uploadFile);
         }
 
+        int topNoticeCount = noticeMapper.getTopNoticeCnt();
+        if (topNoticeCount >= 5) {
+            noticeMapper.updateTopNoticeToNotFirst();
+        }
+
         noticeMapper.updateNotice(savedNotice);
 
         return savedNotice;
@@ -154,5 +164,9 @@ public class NoticeService {
         uploadFile.setDeleted("Y");
 
         uploadMapper.updateNoticeFile(uploadFile);
+    }
+
+    public void updateTopFive(NoticeForm form) {
+
     }
 }

@@ -18,12 +18,12 @@ public class ScrapService {
     private BoardMapper boardMapper;
 
     public int getCheckScrap(int boardNo
-                            , @AuthenticationPrincipal LoginUser loginUser){
+            , @AuthenticationPrincipal LoginUser loginUser){
         return scrapMapper.hasUserScrapedBoard(boardNo, loginUser.getNo());
     }
 
     public void updateBoardScrap(int boardNo
-                                 , @AuthenticationPrincipal LoginUser loginUser){
+            , @AuthenticationPrincipal LoginUser loginUser){
         scrapMapper.insertScrap(boardNo, loginUser.getNo());
 
         Board board = boardMapper.getBoardDetailByNo(boardNo);
@@ -34,7 +34,7 @@ public class ScrapService {
     }
 
     public void deleteBoardScrap(int boardNo
-                                    , @AuthenticationPrincipal LoginUser loginUser){
+            , @AuthenticationPrincipal LoginUser loginUser){
         scrapMapper.deleteScrap(boardNo, loginUser.getNo());
 
         Board board = boardMapper.getBoardDetailByNo(boardNo);

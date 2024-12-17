@@ -14,6 +14,16 @@
     <update id="incrementViewCount">
         UPDATE PRODUCTS
         SET PROD_CNT = #{product.cnt}
+        WHERE PROD_NO = #{product.no}
+    </update>
+
+    <!--
+        void updateRating(@Param("product") Product product);
+    -->
+    <update id="updateRating">
+        UPDATE PRODUCTS
+        SET PROD_RATING = #{product.rating}
+        WHERE PROD_NO = #{product.no};
     </update>
 
     <!--
@@ -271,6 +281,12 @@
                       ON P.PROD_NO = PC.PROD_NO
         WHERE P.PROD_NO = #{prodNo}
           AND PC.COLOR_NO = #{colorNo}
+    </select>
+
+    <select id="calculateAverageRatingByProdNo" resultType="java.lang.Double">
+        SELECT COALESCE(AVG(REVIEW_RATING), 0)
+        FROM PROD_REVIEWS
+        WHERE PROD_NO = #{prodNo};
     </select>
 
 </mapper>

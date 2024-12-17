@@ -46,17 +46,17 @@
         </tr>
         <tr>
           <th>장소</th>
-          <td colspan="3"><input type="text" name="place" value="test" style="width: 100%"></td>
+          <td colspan="3"><input type="text" name="place" value="" style="width: 100%"></td>
         </tr>
         <tr>
           <th>주최기관</th>
-          <td><input type="text" name="host" value="test" style="width: 100%"></td>
+          <td><input type="text" name="host" value="" style="width: 100%"></td>
           <th>주관기관</th>
-          <td><input type="text" name="organizer" value="test" style="width: 100%"></td>
+          <td><input type="text" name="organizer" value="" style="width: 100%"></td>
         </tr>
         <tr>
           <th>홈페이지</th>
-          <td colspan="3"><input type="text" name="url" value="test" style="width: 100%"></td>
+          <td colspan="3"><input type="text" name="url" value="" style="width: 100%"></td>
         </tr>
         <tr>
           <th>게시글</th>
@@ -66,7 +66,7 @@
         </tr>
         <tr>
           <th>썸네일</th>
-          <td colspan="3"><input type="text" name="thumbnail" value="https://pann.nate.com/attach/imageView?source_url=http%3A%2F%2Ffimg5.pann.com%2Fnew%2Fdownload.jsp%3FFileID%3D59236741&cate_cd=20028" style="width: 100%"></td>
+          <td colspan="3"><input type="text" name="thumbnail" value="" style="width: 100%"></td>
         </tr>
         </tbody>
       </table>
