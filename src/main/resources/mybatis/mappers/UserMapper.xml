@@ -222,14 +222,30 @@
     <!-- void updateAddr(UserInfoReq userInfoReq); -->
     <update id="updateAddr" parameterType="store.seub2hu2.mypage.dto.UserInfoReq">
         update
-            ADDRESSES
+        ADDRESSES
         set
-            zip_code = #{postcode},
-            addr_1 = #{address},
-            addr_2 = #{addressDetail}
+        zip_code = #{postcode},
+        addr_1 = #{address},
+        addr_2 = #{addressDetail},
+        isaddr_home =
+        <if test="isAddrHome != null and isAddrHome == 'on'">
+            'Y'
+        </if>
+        <if test="isAddrHome == null or isAddrHome != 'on'">
+            'N'
+        </if>
         where
-            addr_no = #{addrNo}
+        addr_no = #{addrNo}
     </update>
+
+    <!-- 기존 isAddrHome 값을 N으로 업데이트 -->
+    <update id="updateIsAddrHomeToN">
+        UPDATE ADDRESSES
+        SET ISADDR_HOME = 'N'
+        WHERE USER_NO = #{userNo}
+    </update>
+
+
     <!-- 권한번호로 사용자 조회하기 -->
     <select id="getUsersByRoleNo" resultType="store.seub2hu2.user.vo.User">
         SELECT R.USER_NO   as no

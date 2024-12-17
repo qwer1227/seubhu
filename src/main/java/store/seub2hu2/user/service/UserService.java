@@ -132,6 +132,7 @@ public class UserService {
         user.setEmail(userInfoReq.getEmail());
 
         if(userInfoReq.getAddrNo() != 0){
+            userMapper.updateIsAddrHomeToN(user.getNo());
             userMapper.updateAddr(userInfoReq);
         }
 
@@ -234,6 +235,7 @@ public class UserService {
 
     public User findByNickname(String userName){
 
-        return userMapper.findByNickname(userName);
+        return userMapper.getUserByNickname(userName);
     }
+
 }
