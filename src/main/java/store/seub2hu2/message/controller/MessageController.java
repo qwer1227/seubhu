@@ -13,7 +13,6 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-//import store.seub2hu2.community.view.FileDownloadView;
 import store.seub2hu2.community.vo.Board;
 import store.seub2hu2.message.dto.MessageForm;
 import store.seub2hu2.message.dto.MessageReceived;
@@ -49,7 +48,6 @@ public class MessageController {
 
     @Autowired
     private UserService userService;
-
 
     // 받은 메시지 목록 조회
     @GetMapping("/list")

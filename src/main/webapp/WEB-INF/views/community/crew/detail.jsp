@@ -125,7 +125,7 @@
                       </c:when>
                       <c:otherwise>
                         <button id="btn-crew_join" class="btn btn-primary btn-sm" onclick="crewJoinButton(${crew.no})">
-                          모임 가입${isExists}
+                          모임 가입
                         </button>
                       </c:otherwise>
                     </c:choose>
@@ -166,7 +166,7 @@
     <!-- 댓글 작성 -->
     <div class="comment-form mb-4">
       <h5 style="text-align: start">댓글 작성</h5>
-      <form method="post" action="add-reply">
+      <form method="post" action="add-reply" id="box-reply-${reply.no}">
         <input type="hidden" name="userNo" value="${loginUser.no}">
         <input type="hidden" name="type" value="crew">
         <input type="hidden" name="typeNo" value="${crew.no}">
@@ -185,7 +185,7 @@
                 <textarea name="content" class="form-control" rows="3" placeholder="댓글을 작성하세요."></textarea>
               </div>
               <div class="col">
-                <button type="submit" class="btn btn-success" onclick="submitReply()">등록</button>
+                <button type="button" id="addReply" class="btn btn-success" onclick="submitReply()">등록</button>
               </div>
             </c:otherwise>
           </c:choose>
@@ -254,7 +254,7 @@
                                     onclick="appendModify(${reply.no})">수정
                             </button>
                             <button type="button" class="btn btn-danger btn-sm"
-                                    onclick="deleteReply(${reply.no}, ${reply.crewNo})">삭제
+                                    onclick="deleteReply(${reply.no}, ${reply.typeNo})">삭제
                             </button>
                           </c:if>
                         </security:authorize>
@@ -324,6 +324,15 @@
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
 <script>
+    function submitReply(){
+        let content = document.querySelector(`form#box-reply-\${replyNo} textarea[name=content]`).value.trim();
+
+        // 입력값 검증
+        if (!content) {
+            alert("댓글 내용을 입력해주세요.");
+            return;
+        }
+    }
 
     const myModalRepoter = new bootstrap.Modal('#modal-reporter')
 

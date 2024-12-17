@@ -161,7 +161,6 @@ public class CrewService {
         UploadFile uploadThumbnail = uploadMapper.getThumbnailByCrewNo(crewNo);
         UploadFile uploadFile = uploadMapper.getFileByCrewNo(crewNo);
         List<Reply> reply = replyMapper.getRepliesByTypeNo(crewNo);
-        List<CrewMember> member = crewMapper.getCrewMembers(crewNo);
 
         if (crew == null) {
             throw new CommunityException("존재하지 않는 게시글입니다.");
@@ -175,7 +174,6 @@ public class CrewService {
         crew.setThumbnail(uploadThumbnail);
         crew.setUploadFile(uploadFile);
         crew.setReply(reply);
-        crew.setMember(member);
 
         return crew;
     }
@@ -277,12 +275,12 @@ public class CrewService {
     }
 
     public boolean isExistCrewMember(int crewNo, @AuthenticationPrincipal LoginUser loginUser) {
-        List<CrewMember> members = crewMapper.getCrewMembers(crewNo);
+        List<Integer> userNoList = crewMapper.getCrewMembers(crewNo);
 
         boolean isExists = false;
 
-        for (CrewMember member : members) {
-            if (member.getUser().getNo() == loginUser.getNo()) {
+        for (int userNo: userNoList) {
+            if (userNo == loginUser.getNo()) {
                 isExists = true;
                 break;
             }

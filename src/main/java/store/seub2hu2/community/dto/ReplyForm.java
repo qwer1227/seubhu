@@ -19,4 +19,6 @@ public class ReplyForm {
     private String content;
     private int userNo;
     private int crewNo;
+    private int boardNo;
+    private int id;
 }

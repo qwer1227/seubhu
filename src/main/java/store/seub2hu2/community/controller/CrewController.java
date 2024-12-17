@@ -120,9 +120,10 @@ public class CrewController {
                 Reply prev = replyService.getReplyDetail(reply.getNo());
                 model.addAttribute("prev", prev);
 
-                boolean isExists = crewService.isExistCrewMember(crewNo, loginUser);
-                model.addAttribute("isExists", isExists);
+
             }
+            boolean isExists = crewService.isExistCrewMember(crewNo, loginUser);
+            model.addAttribute("isExists", isExists);
         }
 
         if (memberCnt < 5){
@@ -260,7 +261,7 @@ public class CrewController {
         form.setCrewNo(crewNo);
         replyService.deleteReply(replyNo);
 
-        return "redirect:detail?no=" + form.getCrewNo();
+        return "redirect:detail?no=" + crewNo;
     }
 
     @PostMapping("/update-reply-like")

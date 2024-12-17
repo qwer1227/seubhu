@@ -163,7 +163,7 @@
 			<div class="row comments rounded mb-4" style="margin-left: 2px; width: 100%; background-color: #f2f2f2">
 				<!--댓글 내용 -->
 					<c:forEach var="reply" items="${replies}">
-					<%@include file="../reply-lists.jsp" %>
+					<%@include file="../reply-list.jsp" %>
 					</c:forEach>
 			</div>
 		</c:if>

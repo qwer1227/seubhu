@@ -35,8 +35,8 @@ public class ReportService {
     }
 
     public boolean isReported(String type
-                              , int no
-                            , @AuthenticationPrincipal LoginUser loginUser) {
+            , int no
+            , @AuthenticationPrincipal LoginUser loginUser) {
         return reportMapper.isAlreadyReported(type, no, loginUser.getNo());
     }
 }

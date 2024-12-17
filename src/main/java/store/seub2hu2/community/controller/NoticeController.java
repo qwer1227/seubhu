@@ -145,7 +145,7 @@ public class NoticeController {
 
     @GetMapping("/delete-file")
     public String deleteUploadFile(@RequestParam("no") int noticeNo
-                            , @RequestParam("fileNo") int fileNo){
+            , @RequestParam("fileNo") int fileNo){
         noticeService.deleteNoticeFile(noticeNo, fileNo);
 
         return "redirect:modify?no=" + noticeNo;

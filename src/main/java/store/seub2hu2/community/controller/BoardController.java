@@ -66,7 +66,7 @@ public class BoardController {
 
     @GetMapping("/main")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page
-            , @RequestParam(name = "rows", required = false, defaultValue = "10") int rows
+            , @RequestParam(name = "rows", defaultValue = "10") int rows
             , @RequestParam(name = "sort", required = false, defaultValue = "date") String sort
             , @RequestParam(name = "opt", required = false) String opt
             , @RequestParam(name = "keyword", required = false) String keyword
@@ -248,6 +248,7 @@ public class BoardController {
 
     @PostMapping("/add-comment")
     @PreAuthorize("isAuthenticated()")
+    @ResponseBody
     public Reply addComment(ReplyForm form
             , @AuthenticationPrincipal LoginUser loginUser) {
 

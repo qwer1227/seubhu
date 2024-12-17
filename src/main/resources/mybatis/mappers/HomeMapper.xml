@@ -81,16 +81,19 @@
 
     <select id="getOngoingLessons" resultType="store.seub2hu2.lesson.vo.Lesson">
         SELECT
-        LESSON_NO        AS lessonNo,
-        LESSON_TITLE           AS title,
-        LESSON_SUBJECT    AS subject,
-        LESSON_PLACE    AS place,
-        PARTICIPANT as participant,
-        LESSON_START_DATE        AS start,
-        LESSON_END_DATE        AS end
-        FROM LESSONS
-        WHERE LESSON_STATUS = '모집중'
-        ORDER BY LESSON_CREATED_DATE DESC
+        l.LESSON_NO        AS lessonNo,
+        l.LESSON_TITLE           AS title,
+        l.LESSON_SUBJECT    AS subject,
+        l.LESSON_PLACE    AS place,
+        l.PARTICIPANT as participant,
+        l.LESSON_START_DATE        AS start,
+        l.LESSON_END_DATE        AS end,
+        f.FILE_NAME AS filename
+        FROM LESSONS l join  LESSON_FIELS f
+        on l.LESSON_NO = f.LESSON_NO
+        WHERE l.LESSON_STATUS = '모집중'
+        and f.FILE_TYPE = 'THUMBNAIL'
+        ORDER BY l.LESSON_NO DESC
             LIMIT 3
     </select>
 
