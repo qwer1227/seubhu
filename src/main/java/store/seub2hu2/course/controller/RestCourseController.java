@@ -76,15 +76,4 @@ public class RestCourseController {
         // 2. 응답 데이터를 반환한다.
         return ResponseEntity.ok(RestResponseDto.success("review deleted"));
     }
-
-    @GetMapping("/check-success/{courseNo}")
-    public ResponseEntity<RestResponseDto<String>> checkSuccess(@AuthenticationPrincipal LoginUser loginUser
-                                                                , @PathVariable("courseNo") int courseNo) {
-        // 1. 로그인한 사용자가 코스를 성공했는지 확인한다.
-        boolean isSuccess = userCourseService.checkSuccess(loginUser.getNo(), courseNo);
-        String data = isSuccess ? "success" : "fail";
-
-        // 2. 응답 데이터를 반환한다.
-        return ResponseEntity.ok(RestResponseDto.success(data));
-    }
 }

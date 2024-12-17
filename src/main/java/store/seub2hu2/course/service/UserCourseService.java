@@ -27,26 +27,44 @@ public class UserCourseService {
     @Autowired
     private CourseMapper courseMapper;
 
+    /**
+     * 로그인한 사용자의 완주 기록을 저장한다.
+     * @param form 코스 완주 기록 정보
+     * @param userNo 사용자 번호
+     */
     public void addNewRecord(AddRecordForm form, int userNo) {
-        // 1. 코스 완주 기록과 코스 성공 여부를 저장한다.
-//        userCourseMapper.insertRecord(form, userNo);
+        // 1. 코스 성공 여부를 확인한다.
+        SuccessWhether successWhether = userCourseMapper.checkSuccess(userNo, form.getCourseNo());
 
-        // 2. 로그인한 사용자의 현재 도전 가능한 단계를 가져온다.
+        // 2. 코스 완주 기록과 코스 성공 여부를 저장한다. (코스 성공 여부가 존재한다면, 코스 성공 여부를 저장하지 않는다.)
+        userCourseMapper.insertRecord(form, userNo);
+        if (successWhether == null) {
+            userCourseMapper.insertSuccess(form.getCourseNo(), userNo);
+        }
+
+        // 3. 로그인한 사용자의 현재 도전 가능한 단계를 가져온다.
         UserLevel userLevel = userCourseMapper.getUserLevel(userNo);
         int level = userLevel.getLevel();
 
-        // 3. 로그인한 사용자의 현재 배지 상태를 가져온다.
-        List<UserBadge> badges = userCourseMapper.getUserBadge(userNo);
-
         // 4. 로그인한 사용자가 현재 도전 가능한 단계에서 달성한 완주 기록의 갯수를 가져온다.
-        int eachLevelRecordRows = userCourseMapper.getEachLevelRecordRows(userNo, level);
+        int eachLevelRecordRows = userCourseMapper.getLevelRecordRows(userNo, level);
 
-        // 이전 난이도 코스 3개 달성 시, 현재 도전 가능 레벨과 사용자 배지를 증가시킨다.
-//        if (badges != null && eachLevelRecordRows == 3) {
-//            userCourseMapper.insertUserBadge(userNo);
-//        } else if (eachLevelRecordRows == 3) {
-//
-//        }
+        // 5. 이전 난이도 코스 3개 달성 시, 현재 도전 가능한 단계와 사용자 배지를 변경한다.
+        if (level == 1 && eachLevelRecordRows == 3) {
+            // 1단계 코스만 도전할 수 있는 사용자라면, 1단계 배지를 부여하고 현재 도전 가능 단계를 올린다.
+            userCourseMapper.insertUserBadge(userNo, 1);
+            userCourseMapper.updateUserLevel(userNo, 2);
+        } else if ((level == 2 || level == 3 || level == 4) && eachLevelRecordRows == 3) {
+            // 2 ~ 4단계 코스를 도전할 수 있는 사용자라면, 다음 단계 배지를 새로 부여하고 현재 도전 가능 단계를 올린다.
+            userCourseMapper.insertUserBadge(userNo, level);
+            userCourseMapper.updateUserLevel(userNo, level + 1);
+        } else if (level == 5 && eachLevelRecordRows == 3) {
+            // 5단계 코스를 도전할 수 있는 사용자라면, 배지만 새로 부여한다.
+            userCourseMapper.insertUserBadge(userNo, 5);
+        }
+
+        // 6. 도전할 코스 목록에서 입력한 완주 기록에 해당하는 코스를 삭제한다.
+        userCourseMapper.deleteChallenger(form.getCourseNo(), userNo);
     }
 
     /**
