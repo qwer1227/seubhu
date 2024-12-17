@@ -238,20 +238,21 @@ public class BoardController {
 
     @PostMapping("/add-reply")
     @PreAuthorize("isAuthenticated()")
-    public String addReply(ReplyForm form
+    @ResponseBody
+    public Reply addReply(ReplyForm form
             , @AuthenticationPrincipal LoginUser loginUser) {
 
-        replyService.addNewReply(form, loginUser);
-        return "redirect:detail?no=" + form.getTypeNo();
+        Reply reply = replyService.addNewReply(form, loginUser);
+        return reply;
     }
 
     @PostMapping("/add-comment")
     @PreAuthorize("isAuthenticated()")
-    public String addComment(ReplyForm form
+    public Reply addComment(ReplyForm form
             , @AuthenticationPrincipal LoginUser loginUser) {
 
-        replyService.addNewComment(form, loginUser);
-        return "redirect:detail?no=" + form.getTypeNo();
+        Reply reply = replyService.addNewComment(form, loginUser);
+        return reply;
     }
 
     @PostMapping("/modify-reply")

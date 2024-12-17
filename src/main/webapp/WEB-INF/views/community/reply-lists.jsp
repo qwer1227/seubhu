@@ -132,9 +132,9 @@
 					</div>
 				</div>
 				<div class="col">
-					<button type="button" id="submit" class="btn btn-success d-flex align-items-center justify-content-center"
-									style="font-size: 15px; width: 70px;" onclick="submitComment()">
-						답글
+					<button type="button" onclick="addComment(${reply.no})" class="btn btn-success d-flex align-items-center justify-content-center"
+									style="font-size: 15px; width: 70px;">
+						submit
 					</button>
 				</div>
 			</div>
@@ -180,45 +180,37 @@
 </html>
 <script>
     // 댓글 등록
-    async function submitComment() {
-        let prevNo = document.querySelector("input[name=prevNo]").value;
-        let rno = document.querySelector("input[name=rno]").value;
-        let type = document.querySelector("input[name=type]").value;
-        let typeNo = document.querySelector("input[name=typeNo]").value;
-        let content = document.querySelector("textarea[name=content]").value.trim();
+    function addComment(replyNo) {
+        
+        let prevNo = document.querySelector(`form#box-comments-\${replyNo} input[name=prevNo]`).value;
+        let no = document.querySelector(`form#box-comments-\${replyNo} input[name=rno]`).value;
+        let type = document.querySelector(`form#box-comments-\${replyNo} input[name=type]`).value;
+        let typeNo = document.querySelector(`form#box-comments-\${replyNo} input[name=typeNo]`).value;
+        let content = document.querySelector(`form#box-comments-\${replyNo} textarea[name=content]`).value.trim();
 
-        if (content === "") {
+        // 입력값 검증
+        if (!content) {
             alert("댓글 내용을 입력해주세요.");
             return;
         }
 
-        let data = {
-            prevNo,
-            rno,
-            type,
-            typeNo,
-            content
-        }
+        formData.append("prevNo", prevNo);
+        formData.append("no", no);
+        formData.append("type", type);
+        formData.append("typeNo", typeNo);
+        formData.append("content", content);
 
-        // 자바스크립트 객체를 json형식의 텍스트로 변환한다.
-        let jsonText = JSON.stringify(data);
 
-        // POST 방식으로 객체를 JSON 형식의 데이터를 서버로 보내기
-        let response = await fetch("/community/modify-reply", {
-            // 요청방식을 지정한다.
-            method: "POST",
-            // 요청메세지의 바디부에 포함된 컨텐츠의 형식을 지정한다.
-            headers: {
-                "Content-Type": "application/json"
-            },
-            // 요청메세지의 바디부에 서버로 전달할 json형식의 텍스트 데이터를 포함시킨다.
-            body: jsonText
-        });
-        // 서버가 보낸 응답데이터를 받는다.
-        if (response.ok) {
-            // 응답으로 새로 추가된 코멘트를 추가한다.
-            let reply = await response.json();
-        }
+        $.ajax({
+            method: "post",
+            url: "/community/board/add-comment",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (board) {
+                window.location.href = "detail?no=" + board.typeNo;
+            }
+        })
     }
 
 
@@ -227,15 +219,7 @@
         let box = document.querySelector("#box-comments-" + replyNo);
         box.classList.toggle("d-none");
 
-        const replyContainer = document.querySelector(`#reply-${replyNo}`); // 부모 댓글 영역
-        const replyForm = document.querySelector(`#box-comments-${replyNo}`); // 대댓글 입력 폼
-
-        // 대댓글을 부모 댓글 하위에 추가
-        if (!replyContainer.contains(replyForm)) {
-            replyContainer.appendChild(replyForm);
-        }
-
-        document.querySelector("#box-reply-${reply.no}").addEventListener("click", function () {
+        document.querySelector(`#box-reply-\${replyNo}`).addEventListener("click", function () {
             let no = document.querySelector("input[name=no]").value;
             let prevNo = document.querySelector("input[name=prevNo]").value;
             let type = document.querySelector("input[name=type]").value;

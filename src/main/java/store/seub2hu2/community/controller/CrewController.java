@@ -18,7 +18,6 @@ import org.springframework.web.servlet.ModelAndView;
 import store.seub2hu2.community.dto.CrewForm;
 import store.seub2hu2.community.dto.ReplyForm;
 import store.seub2hu2.community.dto.ReportForm;
-import store.seub2hu2.community.service.CrewReplyService;
 import store.seub2hu2.community.service.CrewService;
 import store.seub2hu2.community.service.ReplyService;
 import store.seub2hu2.community.service.ReportService;
@@ -106,14 +105,11 @@ public class CrewController {
         crew.setReply(replyList);
         int replyCnt = replyService.getReplyCnt(crewNo);
 
-        List<CrewMember> members = crewService.getCrewMembers(crewNo);
-//        crew.setMember(members);
         int memberCnt = crewService.getEnterMemberCnt(crewNo);
 
         model.addAttribute("crew", crew);
         model.addAttribute("replies", replyList);
         model.addAttribute("replyCnt", replyCnt);
-//        model.addAttribute("members", members);
         model.addAttribute("memberCnt", memberCnt);
 
         if (loginUser != null) {
@@ -123,16 +119,10 @@ public class CrewController {
 
                 Reply prev = replyService.getReplyDetail(reply.getNo());
                 model.addAttribute("prev", prev);
-            }
 
-            boolean isExists = false;
-            for (CrewMember member : members) {
-                if (member.getUser().getNo()== loginUser.getNo()) {
-                    isExists = true;
-                    break;
-                }
+                boolean isExists = crewService.isExistCrewMember(crewNo, loginUser);
+                model.addAttribute("isExists", isExists);
             }
-            model.addAttribute("isExists", isExists);
         }
 
         if (memberCnt < 5){
@@ -317,7 +307,7 @@ public class CrewController {
         return "redirect:detail?no=" + reply.getTypeNo();
     }
 
-    @PostMapping("/enter-crew")
+    @GetMapping("/enter-crew")
     public String enterCrew(@RequestParam("no") int crewNo
             , @AuthenticationPrincipal LoginUser loginUser){
         crewService.enterCrew(crewNo, loginUser);

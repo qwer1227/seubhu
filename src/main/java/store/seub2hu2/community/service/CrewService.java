@@ -275,10 +275,19 @@ public class CrewService {
         uploadMapper.updateCrewFile(fileNo);
     }
 
-    public List<CrewMember> getCrewMembers(int crewNo) {
+    public boolean isExistCrewMember(int crewNo, @AuthenticationPrincipal LoginUser loginUser) {
         List<CrewMember> members = crewMapper.getCrewMembers(crewNo);
 
-        return members;
+        boolean isExists = false;
+
+        for (CrewMember member : members) {
+            if (member.getUser().getNo() == loginUser.getNo()) {
+                isExists = true;
+                break;
+            }
+        }
+
+        return isExists;
     }
 
     public int getEnterMemberCnt(int crewNo) {

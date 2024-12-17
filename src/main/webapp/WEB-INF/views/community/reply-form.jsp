@@ -1,5 +1,17 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!doctype html>
+<style>
+    .auto-resize {
+        border: none; /* 테두리 제거 */
+        box-shadow: none; /* 그림자 제거 */
+        resize: none; /* 크기 조정 막기 */
+        overflow: hidden; /* 스크롤바 숨기기 */
+    }
+
+    .auto-resize:focus {
+        outline: none; /* 포커스 시 외곽선 제거 */
+    }
+</style>
 <html lang="ko">
 <div class="comment-form mb-4">
   <h5 style="text-align: start">댓글 작성</h5>
@@ -23,7 +35,7 @@
             <textarea name="content" class="form-control auto-resize" rows="3" placeholder="댓글을 작성하세요."></textarea>
           </div>
           <div class="col" style="text-align: end">
-            <button type="button" id="add" class="btn btn-success" style="width: 85px" onclick="submitReply()">등록</button>
+            <button type="button" id="addReply" class="btn btn-success" style="width: 85px">등록</button>
           </div>
         </c:otherwise>
       </c:choose>
@@ -39,44 +51,60 @@
     }
   }
   
-  /* 댓글 제출(/community/add-reply로 데이터 전달) */
-  async function submitReply() {
-    let type = document.querySelector("input[name=type]").value;
-    let boardNo = document.querySelector("input[name=typeNo]").value;
-    let content = document.querySelector("textarea[name=content]").value.trim();
-    let userNo = document.querySelector("input[name=userNo]").value;
-    
-    if (content === "") {
-      alert("댓글 내용을 입력해주세요.");
-      return;
-    }
-    
-    let data = {
-      type,
-      boardNo,
-      content,
-      userNo
-    }
-    
-    // 자바스크립트 객체를 json형식의 텍스트로 변환한다.
-    let jsonText = JSON.stringify(data);
-    
-    // POST 방식으로 객체를 JSON 형식의 데이터를 서버로 보내기
-    let response = await fetch("/community/board/add-reply", {
-      // 요청방식을 지정한다.
-      method: "POST",
-      // 요청메세지의 바디부에 포함된 컨텐츠의 형식을 지정한다.
-      headers: {
-        "Content-Type": "application/json"
-      },
-      // 요청메세지의 바디부에 서버로 전달할 json형식의 텍스트 데이터를 포함시킨다.
-      body: jsonText
-    });
-    // 서버가 보낸 응답데이터를 받는다.
-    if (response.ok) {
-      // 응답으로 새로 추가된 코멘트를 추가한다.
-      let reply = await response.json();
-    }
+  /* 댓글 등록 */
+  document.querySelector("#addReply").addEventListener("click", function () {
+      let no = document.querySelector("input[name=no]").value;
+      let type = document.querySelector("input[name=type]").value;
+      let typeNo = document.querySelector("input[name=typeNo]").value;
+      let content = document.querySelector("textarea[name=content]").value.trim();
+
+      let cleanedContent = content.replace(/<p><br><\/p>/g, "").trim();
+
+      // 입력값 검증
+      if (!cleanedContent) {
+          alert("댓글 내용을 입력해주세요.");
+          return;
+      }
+
+      formData.append("no", no);
+      formData.append("type", type);
+      formData.append("typeNo", typeNo);
+      formData.append("content", content);
+
+
+      $.ajax({
+          method: "post",
+          url: "/community/board/add-reply",
+          data: formData,
+          processData: false,
+          contentType: false,
+          success: function (board) {
+              window.location.href = "detail?no=" + board.typeNo;
+          }
+      })
+  });
+
+  function autoResize(textarea) {
+      // 높이를 초기화하여 스크롤 높이를 정확히 계산
+      textarea.style.height = 'auto';
+      // 입력된 텍스트에 따라 높이를 조정
+      textarea.style.height = textarea.scrollHeight + 'px';
   }
+
+  // DOM이 로드된 후 textarea에 자동 크기 조정 이벤트를 추가
+  document.addEventListener("DOMContentLoaded", function () {
+      const textareas = document.querySelectorAll(".auto-resize");
+      textareas.forEach(textarea => {
+          autoResize(textarea); // 초기 높이 설정
+          textarea.addEventListener("input", function () {
+              autoResize(textarea); // 입력 시 높이 자동 조정
+          });
+      });
+  });
+
+  // 페이지 로드 시 기존 값이 있다면 크기를 조정
+  document.querySelectorAll('.auto-resize').forEach(textarea => {
+      autoResize(textarea);
+  });
 </script>
 </html>
