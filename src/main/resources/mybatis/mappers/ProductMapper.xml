@@ -9,7 +9,7 @@
     </update>
 
     <!--
-
+        void updateProductAvgRating(@Param("prodNo") int prodNo, @Param("avgRating") double avgRating);
     -->
     <update id="incrementViewCount">
         UPDATE PRODUCTS
@@ -20,10 +20,10 @@
     <!--
         void updateRating(@Param("product") Product product);
     -->
-    <update id="updateRating">
+    <update id="updateProductAvgRating">
         UPDATE PRODUCTS
-        SET PROD_RATING = #{product.rating}
-        WHERE PROD_NO = #{product.no};
+        SET PROD_RATING = #{avgRating}
+        WHERE PROD_NO = #{prodNo};
     </update>
 
     <!--
@@ -282,11 +282,4 @@
         WHERE P.PROD_NO = #{prodNo}
           AND PC.COLOR_NO = #{colorNo}
     </select>
-
-    <select id="calculateAverageRatingByProdNo" resultType="java.lang.Double">
-        SELECT COALESCE(AVG(REVIEW_RATING), 0)
-        FROM PROD_REVIEWS
-        WHERE PROD_NO = #{prodNo};
-    </select>
-
 </mapper>

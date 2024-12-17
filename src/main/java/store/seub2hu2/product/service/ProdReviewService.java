@@ -38,6 +38,11 @@ public class ProdReviewService {
     private final ProductMapper productMapper;
 
 
+    /**
+     * 상품 리뷰들 조회한다.
+     * @param prodNo 상품 번호
+     * @return 해당 상품의 리뷰들
+     */
     public List<ProdReviewDto> getProdReviews(int prodNo) {
 
         List<ProdReviewDto> reviews = prodReviewMapper.prodReviewDto(prodNo);
@@ -45,10 +50,21 @@ public class ProdReviewService {
         return reviews;
     }
 
+    /**
+     * 해당 리뷰의 값을 조회한다.
+     * @param reviewNo 리뷰 번호
+     * @return 해당 리뷰의 정보
+     */
     public ProdReview getProdReviewByNo(int reviewNo) {
         return prodReviewMapper.getProdReviewByNo(reviewNo);
     }
 
+    /**
+     * 리뷰를 저장한다.
+     * @param form 리뷰 정보
+     * @param userNo 유저 번호
+     * @return 리뷰 정보
+     */
     public ProdReviewDto addProdReview(ProdReviewForm form, int userNo) {
 
         ProdReviewDto dto = new ProdReviewDto();
@@ -102,4 +118,31 @@ public class ProdReviewService {
         return dto;
     }
 
+    /**
+     * 리뷰 정보 수정
+     * @param prodReview 리뷰 객체
+     */
+    public void updateProdReview(ProdReview prodReview) {
+        if(prodReview.getNo() == 0) {
+            throw new IllegalArgumentException("리뷰 번호가 필요합니다.");
+        }
+
+        prodReview.setUpdatedDate(new Date());
+        prodReviewMapper.updateProdReview(prodReview);
+    }
+
+    /**
+     * 리뷰 삭제
+     * @param reviewNo 리뷰 번호
+     * @return 참이면 삭제
+     */
+    public boolean deleteProdReview(int reviewNo) {
+
+        try {
+            prodReviewMapper.deleteProdReview(reviewNo);
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
+    }
 }
