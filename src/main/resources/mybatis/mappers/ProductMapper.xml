@@ -200,6 +200,7 @@
         JOIN PROD_SIZES PS
         ON PC.COLOR_NO = PS.COLOR_NO
         WHERE PS.COLOR_NO = #{colorNo}
+        AND PS.DELETED_SIZE = 'N'
     </select>
 
     <!--
