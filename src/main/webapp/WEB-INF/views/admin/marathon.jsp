@@ -89,7 +89,7 @@
 		
 		<div class="category-nav d-flex justify-content-center mb-4">
 			<a href="marathon">전체</a>
-			<a href="javascript:void(0)" onclick="changeCategory('진행중')">진행중</a>
+			<a href="javascript:void(0)" onclick="changeCategory('진행중')">접수가능</a>
 			<a href="javascript:void(0)" onclick="changeCategory('종료')">종료</a>
 		</div>
 		
@@ -169,7 +169,7 @@
 				<security:authorize access="isAuthenticated()">
 					<security:authentication property="principal" var="loginUser"/>
 					<c:if test="${loginUser.nickname eq '관리자'}">
-						<a href="form" type="button" class="btn btn-primary">글쓰기</a>
+						<a href="../community/marathon/form" type="button" class="btn btn-primary">글쓰기</a>
 					</c:if>
 				</security:authorize>
 			</div>

@@ -48,7 +48,7 @@
 		
 		<div class="category-nav d-flex justify-content-center mb-4">
 			<a href="main">전체</a>
-			<a href="javascript:void(0)" onclick="changeCategory('진행중')">진행중</a>
+			<a href="javascript:void(0)" onclick="changeCategory('진행중')">접수가능</a>
 			<a href="javascript:void(0)" onclick="changeCategory('종료')">종료</a>
 		</div>
 		

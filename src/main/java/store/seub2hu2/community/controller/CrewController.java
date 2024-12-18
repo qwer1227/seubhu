@@ -261,7 +261,7 @@ public class CrewController {
     @GetMapping("/delete-reply")
     @PreAuthorize("isAuthenticated()")
     public String deleteReply(@RequestParam("rno") int replyNo,
-                              @RequestParam("cno") int crewNo){
+                              @RequestParam("no") int crewNo){
 
         ReplyForm form = new ReplyForm();
         form.setNo(replyNo);
@@ -291,6 +291,7 @@ public class CrewController {
     }
 
     @PostMapping("/report-crew")
+    @PreAuthorize("isAuthenticated()")
     public String reportCrew(ReportForm form
             , @AuthenticationPrincipal LoginUser loginUser){
         boolean isReported = reportService.isReported(form.getType(), form.getNo(), loginUser);
@@ -303,6 +304,7 @@ public class CrewController {
     }
 
     @PostMapping("report-reply")
+    @PreAuthorize("isAuthenticated()")
     public String reportReply(ReportForm form
             , @AuthenticationPrincipal LoginUser loginUser){
         boolean isReported = reportService.isReported(form.getType(), form.getNo(), loginUser);

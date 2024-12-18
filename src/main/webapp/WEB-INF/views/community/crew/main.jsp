@@ -6,35 +6,35 @@
   <%@include file="/WEB-INF/views/common/common.jsp" %>
 </head>
 <style>
-    .category-nav a {
-        font-size: 20px;
-        font-weight: bolder;
-        color: #0064FF;
-        padding: 10px 20px;
-        border: 2px solid #0064FF;
-        border-radius: 5px;
-        text-decoration: none;
-        margin: 0 10px;
-    }
-
-    .category-nav a:hover {
-        background-color: #0064FF;
-        color: white;
-    }
-
-    .overlay-text {
-        position: absolute; /* 부모 기준으로 절대 위치 설정 */
-        top: 40%; /* 컨테이너의 세로 중심 */
-        left: 50%; /* 컨테이너의 가로 중심 */
-        transform: translate(-50%, -50%); /* 정확히 중앙으로 이동 */
-        color: white; /* 텍스트 색상 */
-        font-size: 1.5rem; /* 텍스트 크기 */
-        font-weight: bold; /* 텍스트 굵기 */
-        text-align: center; /* 텍스트 가운데 정렬 */
-        background-color: rgba(0, 0, 0, 0.5); /* 텍스트 배경 반투명 설정 */
-        padding: 10px; /* 텍스트 주변 여백 추가 */
-        border-radius: 5px; /* 배경의 모서리 둥글게 처리 (선택 사항) */
-    }
+  .category-nav a {
+    font-size: 20px;
+    font-weight: bolder;
+    color: #0064FF;
+    padding: 10px 20px;
+    border: 2px solid #0064FF;
+    border-radius: 5px;
+    text-decoration: none;
+    margin: 0 10px;
+  }
+  
+  .category-nav a:hover {
+    background-color: #0064FF;
+    color: white;
+  }
+  
+  .overlay-text {
+    position: absolute; /* 부모 기준으로 절대 위치 설정 */
+    top: 40%; /* 컨테이너의 세로 중심 */
+    left: 50%; /* 컨테이너의 가로 중심 */
+    transform: translate(-50%, -50%); /* 정확히 중앙으로 이동 */
+    color: white; /* 텍스트 색상 */
+    font-size: 1.5rem; /* 텍스트 크기 */
+    font-weight: bold; /* 텍스트 굵기 */
+    text-align: center; /* 텍스트 가운데 정렬 */
+    background-color: rgba(0, 0, 0, 0.5); /* 텍스트 배경 반투명 설정 */
+    padding: 10px; /* 텍스트 주변 여백 추가 */
+    border-radius: 5px; /* 배경의 모서리 둥글게 처리 (선택 사항) */
+  }
 </style>
 <body>
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
@@ -102,7 +102,7 @@
           </div>
         </c:otherwise>
       </c:choose>
-
+      
       <c:if test="${paging.totalRows > 6}">
         <div class="mt-3">
           <ul class="pagination justify-content-center">
@@ -111,7 +111,7 @@
                  onclick="changePage(${paging.prevPage}, event)"
                  href="javascript:void(0)"><<</a>
             </li>
-
+            
             <c:forEach var="num" begin="${paging.beginPage }" end="${paging.endPage }">
               <li class="page-item ${paging.page eq num ? 'active' : '' }">
                 <a class="page-link"
@@ -119,7 +119,7 @@
                    href="javascript:void(0)">${num }</a>
               </li>
             </c:forEach>
-
+            
             <li class="page-item ${paging.last ? 'disabled' : '' }">
               <a class="page-link"
                  onclick="changePage(${paging.nextPage}, event)"
@@ -128,7 +128,7 @@
           </ul>
         </div>
       </c:if>
-
+      
       <div class="row p-3 d-flex justify-content-left">
         <div class="col-2">
           <select class="form-control" name="opt">
@@ -147,7 +147,7 @@
           <button class="btn btn-outline-primary" onclick="searchKeyword()">검색</button>
         </div>
         <div class="col d-flex justify-content-center">
-
+        
         </div>
         <security:authorize access="isAuthenticated()">
           <security:authentication property="principal" var="loginUser"/>
@@ -163,28 +163,28 @@
   <%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
 <script>
-    function changeCategory(category) {
-        let form = document.querySelector("#form-search");
-        let catInput = document.querySelector("#categoryInput");
-        let pageInput = document.querySelector("input[name=page]");
-
-        catInput.value = category;
-        pageInput.value = 1;
-
-        form.submit();
-    }
-
-    function changePage(page, event) {
-        event.preventDefault();
-        let form = document.querySelector("#form-search");
-        let pageInput = form.querySelector("input[name=page]");
-        pageInput.value = page;
-        form.submit();
-    }
-
-    function searchKeyword() {
-        pageInput.value = 1;
-        form.submit();
-    }
+  function changeCategory(category) {
+    let form = document.querySelector("#form-search");
+    let catInput = document.querySelector("#categoryInput");
+    let pageInput = document.querySelector("input[name=page]");
+    
+    catInput.value = category;
+    pageInput.value = 1;
+    
+    form.submit();
+  }
+  
+  function changePage(page, event) {
+    event.preventDefault();
+    let form = document.querySelector("#form-search");
+    let pageInput = form.querySelector("input[name=page]");
+    pageInput.value = page;
+    form.submit();
+  }
+  
+  function searchKeyword() {
+    pageInput.value = 1;
+    form.submit();
+  }
 </script>
 </html>
