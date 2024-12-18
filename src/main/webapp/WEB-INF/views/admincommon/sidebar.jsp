@@ -90,10 +90,10 @@
         <h6 class="collapse-header">커뮤니티</h6>
         <a class="collapse-item" href="../community/board/main">커뮤니티 바로가기</a>
         <a class="collapse-item" href="../community/crew/main">크루 바로가기</a>
-        <a class="collapse-item" href="../admin/notice">공지사항</a>
-        <a class="collapse-item" href="../admin/marathon">마라톤</a>
-        <a class="collapse-item" href="report">신고글 보기</a>
-        <a class="collapse-item" href="qna">1:1 문의사항</a>
+        <a class="collapse-item" href="../notice">공지사항</a>
+        <a class="collapse-item" href="../marathon">마라톤</a>
+        <a class="collapse-item" href="/admin/report">신고글 보기</a>
+        <a class="collapse-item" href="/admin/qna">1:1 문의사항</a>
       </div>
     </div>
   </li>
