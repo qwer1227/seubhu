@@ -79,7 +79,7 @@ public class BoardReplyService {
     }
 
     public int getCheckLike(int replyNo
-            , @AuthenticationPrincipal LoginUser loginUser) {
+                            , @AuthenticationPrincipal LoginUser loginUser) {
 
         return boardReplyMapper.hasUserLikedReply(replyNo, loginUser.getNo());
     }

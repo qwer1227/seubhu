@@ -140,7 +140,7 @@
                         <td>${order.orderStatus}</td>
                         <td>${order.deliveryStatus}</td>
                         <td>
-                            <a href="/product/detail/${order.orderNo}" class="btn btn-reviews">리뷰작성</a>
+                            <a href="/product/detail?no=${order.productNo}&colorNo=${order.colorNo}" class="btn btn-reviews">리뷰작성</a>
                             <button type="button" class="btn btn-cancel" onclick="confirmCancel(${order.orderNo})">
                                 주문취소
                             </button>
