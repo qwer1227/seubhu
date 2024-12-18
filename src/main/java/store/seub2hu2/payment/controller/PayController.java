@@ -7,26 +7,32 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import store.seub2hu2.lesson.dto.LessonDto;
-import store.seub2hu2.lesson.dto.ReadyResponse;
+import store.seub2hu2.lesson.dto.*;
 import store.seub2hu2.lesson.enums.ReservationStatus;
 import store.seub2hu2.lesson.service.LessonFileService;
-import store.seub2hu2.lesson.service.LessonReservationService;
 import store.seub2hu2.lesson.service.LessonService;
 import store.seub2hu2.lesson.vo.LessonReservation;
 import store.seub2hu2.mypage.dto.OrderResultDto;
+import store.seub2hu2.mypage.dto.PaymentsDTO;
+import store.seub2hu2.mypage.dto.ResponseDTO;
+import store.seub2hu2.order.exception.PaymentAmountMismatchException;
 import store.seub2hu2.order.mapper.OrderMapper;
 import store.seub2hu2.order.service.OrderService;
-import store.seub2hu2.payment.dto.ApproveResponse;
-import store.seub2hu2.payment.dto.CancelResponse;
+import store.seub2hu2.order.vo.Order;
+import store.seub2hu2.order.vo.OrderItem;
 import store.seub2hu2.payment.dto.PaymentDto;
 import store.seub2hu2.payment.mapper.PayMapper;
 import store.seub2hu2.payment.service.KakaoPayService;
+import store.seub2hu2.lesson.service.LessonReservationService;
+import store.seub2hu2.payment.dto.ApproveResponse;
+import store.seub2hu2.payment.dto.CancelResponse;
 import store.seub2hu2.payment.service.PaymentService;
 import store.seub2hu2.payment.vo.Payment;
+import store.seub2hu2.product.dto.ProdDetailDto;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.util.SessionUtils;
 
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -152,17 +158,13 @@ public class PayController {
                            , @AuthenticationPrincipal LoginUser loginUser
             , Model model) {
 
-        if (paymentDto.getType().equals("레슨")){
-
+        if ("레슨".equals(paymentDto.getType())){
 
             String paymentId= paymentDto.getPaymentId();
-
             // 예약 정보 조회
             LessonReservation lessonReservation = lessonReservationService.getLessonReservationByPayId(paymentId);
-
             // 카카오 결제 취소하기
             CancelResponse cancelResponse = kakaoPayService.payCancel(paymentDto, paymentId);
-
             // 예약 상태 변경
             if (lessonReservation != null) {
                 lessonReservationService.cancelReservation(paymentId, ReservationStatus.CANCELLED, paymentDto.getLessonNo());
@@ -170,6 +172,7 @@ public class PayController {
 
             model.addAttribute("cancelResponse", cancelResponse);
             return "redirect:/lesson/reservation";
+
         } else if ("상품".equals(paymentDto.getType())) {
 
             // 주문관련 정보 수정

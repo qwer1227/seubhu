@@ -76,7 +76,7 @@ public class QnaService {
         System.out.println("이름:" +user.getNickname());
 
         // 검색 조건에 맞는 전체 데이터 개수를 조회하는 기능
-        int totalRows = qnaMapper.getTotalRows(requestParamsDto,user.getNickname());
+        int totalRows = qnaMapper.getTotalRows(requestParamsDto,user.getNickname(), userNo);
 
         // Pagination 객체를 생성한다
         int page = requestParamsDto.getPage();
@@ -89,7 +89,7 @@ public class QnaService {
 
         // ProdListDto 타입의 데이터를 담는 ListDto객체를 생성한다
         // 질문 목록 ListDto(QnaReponse), 페이징처리 정보(Pagination)을 담는다
-        List<QnaResponse> qnas = qnaMapper.getQnas(requestParamsDto, user.getNickname());
+        List<QnaResponse> qnas = qnaMapper.getQnas(requestParamsDto, user.getNickname(), userNo);
         System.out.println(qnas);
         ListDto<QnaResponse> dto = new ListDto<>(qnas,pagination);
 
