@@ -55,12 +55,12 @@
         <c:if test="${not empty reply.image}">
           <img
               src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/images/userImage/${reply.image}"
-              style="width: 40px" class="rounded-circle">
+              style="width: 40px; height: 40px" class="rounded-circle">
         </c:if>
         <c:if test="${empty reply.image}">
           <img
               src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/images/userImage/primaryImage.jpg"
-              style="width: 40px" class="rounded-circle">
+              style="width: 40px; height: 40px" class="rounded-circle">
         </c:if>
       </div>
       <div class="col" style="text-align: start">
@@ -134,7 +134,7 @@
         <div class="col">
           <button type="button" onclick="addComment(${reply.no})" class="btn btn-success d-flex align-items-center justify-content-center"
                   style="font-size: 15px; width: 70px;">
-            submit
+            답글
           </button>
         </div>
       </div>

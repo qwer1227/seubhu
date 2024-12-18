@@ -140,8 +140,8 @@
             data: formData,
             processData: false,
             contentType: false,
-            success: function (board) {
-                window.location.href = "detail?no=" + board.no;
+            success: function (boardNo) {
+                window.location.href = "detail?no=" + boardNo;
             }
         })
     });

@@ -141,9 +141,7 @@ public class NoticeController {
             }
             noticeService.updateNotice(form);
 
-            String redirectUrl = "/community/notice/detail?no=" + form.getNo();
-
-            return ResponseEntity.ok(redirectUrl);
+            return ResponseEntity.ok().body(form.getNo());
         } catch (Exception e) {
             // 예외 처리 및 로그 남기기
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("글 수정 중 오류 발생: " + e.getMessage());
