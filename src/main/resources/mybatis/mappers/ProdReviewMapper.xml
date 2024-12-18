@@ -41,13 +41,13 @@
 
 
     <!--
-        void deleteProdReview(@Param("review") ProdReview prodReview);
+       void deleteProdReview(@Param("reviewNo") int reviewNo);
     -->
     <update id="deleteProdReview">
         UPDATE PROD_REVIEWS
         SET
-            ISDELEDED = 'Y'
-        WHERE REVIEW_NO = #{review.no}
+            ISDELETED = 'Y'
+        WHERE REVIEW_NO = #{reviewNo}
     </update>
 
     <resultMap id="ProdReviewDtoResultMap" type="store.seub2hu2.product.dto.ProdReviewDto">
@@ -123,5 +123,11 @@
         FROM PROD_REVIEWS
         WHERE REVIEW_NO = #{reviewNo}
         AND ISDELETED = 'N'
+    </select>
+
+    <select id="calculateAverageRatingByProdNo" resultType="java.lang.Double">
+        SELECT COALESCE(AVG(REVIEW_RATING), 0)
+        FROM PROD_REVIEWS
+        WHERE PROD_NO = #{prodNo};
     </select>
 </mapper>

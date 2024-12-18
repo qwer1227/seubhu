@@ -247,8 +247,14 @@
                             </div>
 
                             <div class="col-2 text-end">
+                            <c:if test="${review.userNo == user.no}">
                                 <button type="button" class="btn btn-warning btn-sm" id="editReviewBtn" onclick="openEditModal(${review.reviewNo})">수정</button>
-                                <button type="button" class="btn btn-danger btn-sm">삭제</button>
+                                <button type="button" class="btn btn-danger btn-sm" onclick="deleteReview(${review.reviewNo})">삭제</button>
+                            </c:if>
+                            <c:if test="${review.userNo != user.no}">
+                                    <button type="button" class="btn btn-warning btn-sm" id="editReviewBtn" onclick="openEditModal(${review.reviewNo})" disabled>수정</button>
+                                <button type="button" class="btn btn-danger btn-sm" disabled>삭제</button>
+                            </c:if>
                             </div>
                         </div>
                     </div>
@@ -269,18 +275,18 @@
             <div class="modal-body">
                 <!-- 수정 폼 -->
                 <form id="editReviewForm">
-                    <input type="hidden" id="reviewNo" name="reviewNo">
+                    <input type="hidden" id="reviewNo" name="no">
 
                     <!-- 리뷰 제목 -->
                     <div class="mb-3">
                         <label for="reviewTitle" class="form-label">제목</label>
-                        <input type="text" id="reviewTitle" name="reviewTitle" class="form-control">
+                        <input type="text" id="reviewTitle" name="title" class="form-control">
                     </div>
 
                     <!-- 리뷰 내용 -->
                     <div class="mb-3">
                         <label for="reviewContent" class="form-label">내용</label>
-                        <textarea id="reviewContent" name="reviewContent" rows="4" class="form-control"></textarea>
+                        <textarea id="reviewContent" name="content" rows="4" class="form-control"></textarea>
                     </div>
 
                     <!-- 별점 -->
@@ -475,8 +481,8 @@
 
 
     // 별점 요소와 hidden input을 가져옵니다.
-    const stars = document.querySelectorAll('.star-rating .star');
-    const ratingInput = document.querySelector('#commentRating');
+    let stars = document.querySelectorAll('.star-rating .star');
+    let ratingInput = document.querySelector('#commentRating');
 
     // 각 별점을 클릭했을 때 이벤트 처리
     stars.forEach(star => {
@@ -507,6 +513,17 @@
         let colorName = $("input[name=colorName]").val(); // 색상 이름
         let userNickname = $("input[name=userNickname]").val();
         let files = $("#reviewFile")[0].files; // 파일 목록 가져오기
+
+        // 값이 하나라도 비어 있으면 예외 처리
+        if (!title || !content || !rating) {
+            alert("모든 리뷰 필드를 작성해주세요.");
+            return false; // 폼 제출을 막음
+        }
+
+        if (files.length === 0) {
+            alert("리뷰 이미지를 첨부해주세요.");
+            return false; // 이미지가 없으면 예외 처리
+        }
 
         let formData = new FormData();
         formData.append("prodNo", prodNo);
@@ -603,9 +620,9 @@
             })
             .then(data => {
                 // 가져온 데이터를 모달 폼에 채우기
-                document.querySelector('#form-modal input[name="reviewNo"]').value = data.no;
-                document.querySelector('#form-modal input[name="reviewTitle"]').value = data.title;
-                document.querySelector('#form-modal textarea[name="reviewContent"]').value = data.content;
+                document.querySelector('#form-modal input[name="no"]').value = data.no;
+                document.querySelector('#form-modal input[name="title"]').value = data.title;
+                document.querySelector('#form-modal textarea[name="content"]').value = data.content;
                 setRatingStars(data.rating);
 
                 // 모달 열기
@@ -626,7 +643,7 @@
 
         // rating 값에 맞는 별을 선택
         $('#commentStarRating-edit .star').each(function() {
-            var starValue = $(this).data('value');
+            let starValue = $(this).data('value');
             if (starValue <= rating) {
                 $(this).addClass('selected'); // 선택된 별
             }
@@ -638,12 +655,53 @@
 
     // 별 클릭 시 별점 변경
     $('#commentStarRating-edit .star').on('click', function() {
-        var rating = $(this).data('value');
+        let rating = $(this).data('value');
 
         // 선택된 별을 표시
         setRatingStars(rating);
     });
 
+    // 리뷰 수정
+    function submitEditReview() {
+        let formData = new FormData($("#editReviewForm")[0]);
+
+        $.ajax({
+            url: '/product/reviews/edit',
+            type: 'POST',
+            data: formData,
+            contentType: false,  // Content-Type을 자동으로 설정하지 않음
+            processData: false,  // 데이터 처리 방식을 자동으로 설정하지 않음
+            success: function(response) {
+                alert(response); // 성공 메시지 출력
+                location.reload(); // 페이지 새로고침 (리뷰 목록 갱신)
+            },
+            error: function(xhr) {
+                alert("리뷰 수정 실패: " + xhr.responseText);
+            }
+        });
+    }
+
+    // 리뷰 삭제
+    function deleteReview(reviewNo) {
+        if (confirm('정말로 이 리뷰를 삭제하시겠습니까?')) {
+            $.ajax({
+                url: '/product/review/delete/' + reviewNo,  // 삭제 요청을 보낼 URL
+                type: 'POST',  // POST 방식으로 요청
+                success: function(response) {
+                    if (response.success) {
+                        alert('리뷰가 삭제되었습니다.');
+                        // 페이지 새로고침 또는 삭제된 항목 제거
+                        location.reload(); // 예: 페이지 새로고침
+                    } else {
+                        alert('리뷰 삭제에 실패했습니다.');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    alert('에러 발생: ' + error);
+                }
+            });
+        }
+    }
 </script>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>

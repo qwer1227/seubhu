@@ -84,9 +84,14 @@ public class ProductController {
                          Model model) {
 
 
-        User user = userService.findbyUserId(loginUser.getId());
-
-        model.addAttribute("user", user);
+        // 로그인 상태 확인 후 처리
+        User user = null;
+        if (loginUser != null) {
+            user = userService.findbyUserId(loginUser.getId());
+            model.addAttribute("user", user); // 로그인된 사용자 정보
+        } else {
+            model.addAttribute("user", null); // 비회원인 경우 null 전달
+        }
 
         ProdDetailDto prodDetailDto = productService.getProductByNo(no);
         model.addAttribute("prodDetailDto", prodDetailDto);
@@ -132,5 +137,68 @@ public class ProductController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+    }
+
+    @PostMapping("reviews/edit")
+    public ResponseEntity<String> editReview(@ModelAttribute ProdReview prodReview
+                                            ,@AuthenticationPrincipal LoginUser loginUser) {
+        try {
+            int loggedUserNo = loginUser.getNo();
+
+            if(prodReview.getUserNo() != loggedUserNo) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("자신의 리뷰만 수정할 수 있습니다.");
+            }
+
+            prodReviewService.updateProdReview(prodReview);
+            return ResponseEntity.ok("리뷰 수정이 완료되었습니다.");
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("리뷰 수정 중 오류 발생");
+        }
+    }
+
+    @PostMapping("review/delete/{reviewNo}")
+    @ResponseBody
+    public Map<String, Object> deleteReview(@PathVariable("reviewNo") int reviewNo
+                                                , @AuthenticationPrincipal LoginUser loginUser ) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            // 로그인한 사용자의 userNo 가져오기
+            int loggedInUserNo = loginUser.getNo();
+
+            // 리뷰 작성자의 userNo 조회
+            ProdReview review = prodReviewService.getProdReviewByNo(reviewNo);
+
+            if (review == null) {
+                response.put("success", false);
+                response.put("message", "해당 리뷰가 존재하지 않습니다.");
+                return response;
+            }
+
+            // 로그인한 사용자와 리뷰 작성자 비교
+            if (review.getUserNo() != loggedInUserNo) {
+                response.put("success", false);
+                response.put("message", "권한이 없습니다. 본인이 작성한 리뷰만 삭제할 수 있습니다.");
+                return response;
+            }
+
+            // 삭제 처리
+            boolean isDeleted = prodReviewService.deleteProdReview(reviewNo);
+            response.put("success", isDeleted);
+
+            if (isDeleted) {
+                response.put("message", "리뷰가 성공적으로 삭제되었습니다.");
+            } else {
+                response.put("message", "리뷰 삭제에 실패했습니다.");
+            }
+
+        } catch (Exception ex) {
+            response.put("success", false);
+            response.put("message", "서버 오류가 발생했습니다.");
+            ex.printStackTrace();
+        }
+
+        return response;
     }
 }

@@ -12,11 +12,8 @@ import java.util.Map;
 @Mapper
 public interface ProductMapper {
 
-    // 특정 상품의 리뷰 평균 평점을 계산
-    double calculateAverageRatingByProdNo(@Param("prodNo") int prodNo);
-    
     // 평점 증가
-    void updateRating(@Param("product") Product product);
+    void updateProductAvgRating(@Param("prodNo") int prodNo, @Param("avgRating") Double avgRating);
 
     // 수량 증감
     void updateAmount(@Param("size") Size size);
