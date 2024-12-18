@@ -203,7 +203,7 @@
             <div class="modal-dialog modal-lg" style="max-width: 30%;">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="addressListModalLabel">배송지 목록</h5>
+                        <h5 class="modal-title" id="addressListModalLabel">최근 배송지</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body" style="max-height: 600px; overflow-y: auto;">
