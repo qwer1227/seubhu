@@ -83,90 +83,98 @@
 				</div>
 				<!-- Search -->
 				
-				<div class="row g-3 d-flex">
-					<div class="col-2 mb-4 pt-2">
-						<select class="form-control" name="rows" onchange="changeRows()">
-							<option value="all" ${empty param.category or param.category eq 'all' ? "selected" : ""}>전체</option>
-							<option value="Y" ${param.category eq 'Y' ? "selected" : ""}>진행중</option>
-							<option value="N" ${param.category eq 'N' ? "selected" : ""}>마감</option>
-						</select>
-					</div>
-					
-					<div class="col-2 mb-4 pt-2">
-						<select class="form-control" name="opt">
-							<option value="all" ${param.opt eq 'all' ? 'selected' : ''}> 제목+내용</option>
-							<option value="title" ${param.opt eq 'title' ? 'selected' : ''}> 제목</option>
-							<option value="content" ${param.opt eq 'content' ? 'selected' : ''}> 내용</option>
-							<option value="organ" ${param.opt eq 'organ' ? 'selected' : ''}> 주최/주관 기관</option>
-						</select>
-					</div>
-					<div class="col-4 pt-2">
-						<%@include file="/WEB-INF/views/admincommon/searchbar.jsp" %>
-					</div>
+				<form id="form-search" method="get" action="marathon">
+		<input type="hidden" name="page" value="${param.page != null ? param.page : 1}">
+		<input type="hidden" name="category" id="categoryInput" value="${param.category }">
+		
+		<div class="category-nav d-flex justify-content-center mb-4">
+			<a href="marathon">전체</a>
+			<a href="javascript:void(0)" onclick="changeCategory('진행중')">진행중</a>
+			<a href="javascript:void(0)" onclick="changeCategory('종료')">종료</a>
+		</div>
+		
+		<c:choose>
+			<c:when test="${empty marathons}">
+				<div class="col p-5" style="justify-content: center; text-align: center;">
+					<strong>해당 검색 조건에 해당하는 마라톤 정보가 없습니다.</strong>
 				</div>
-				
-				<div class="row p-3 justify-content-center">
-					<div class="col mb-3">
-						<c:choose>
-							<c:when test="${empty marathons}">
-								<div class="col p-5" style="justify-content: center; text-align: center;">
-									<strong>해당 검색 조건에 해당하는 마라톤 정보가 없습니다.</strong>
+			</c:when>
+			<c:otherwise>
+				<div class="row row-cols-1 row-cols-md-3 g-4">
+					<!-- 카드 1 -->
+					<c:forEach var="marathon" items="${marathons}">
+						<div class="col">
+							<a href="/community/marathon/hit?no=${marathon.no}" style="text-decoration-line: none">
+								<div class="card">
+									<img src="${marathon.thumbnail}" class="card-img-top" alt="마라톤 이미지"
+											 style="height: 250px; filter: ${marathon.marathonDate.time > now.time ? 'grayscale(0%)' : 'grayscale(100%)'};">
+									<c:if test="${marathon.marathonDate.time < now.time}">
+										<div class="overlay-text ">종료</div>
+									</c:if>
+									<div class="card-body text-center">
+										<h5 class="card-title">${marathon.title}</h5>
+										<p class="card-text"><fmt:formatDate value="${marathon.marathonDate}" pattern="yyyy-MM-dd"/></p>
+									</div>
 								</div>
-							</c:when>
-							<c:otherwise>
-								<div class="row row-cols-1 row-cols-md-3 g-4">
-									<!-- 카드 1 -->
-									<c:forEach var="marathon" items="${marathons}">
-										<div class="col">
-											<a href="../community/marathon/detail?no=${marathon.no}" style="text-decoration-line: none">
-												<div class="card">
-													<img src="${marathon.thumbnail}" class="card-img-top" alt="마라톤 이미지"
-															 style="height: 250px; filter: ${marathon.marathonDate.time > now.time ? 'grayscale(0%)' : 'grayscale(100%)'};">
-													<c:if test="${marathon.marathonDate.time < now.time}">
-														<div class="overlay-text ">종료</div>
-													</c:if>
-													<div class="card-body text-center">
-														<h5 class="card-title">${marathon.title}</h5>
-														<p class="card-text"><fmt:formatDate value="${marathon.marathonDate}"
-																																 pattern="yyyy-MM-dd"/></p>
-													</div>
-												</div>
-											</a>
-										</div>
-									</c:forEach>
-								</div>
-							</c:otherwise>
-						</c:choose>
-					</div>
-				</div>
-				
-				<c:if test="${not empty marathons}">
-					<div class="row mb-3">
-						<div class="col-12">
-							<nav>
-								<ul class="pagination justify-content-center">
-									<li class="page-item ${paging.first ? 'disabled' : '' }">
-										<a class="page-link"
-											 onclick="changePage(${paging.prevPage}, event)"
-											 href="marathon?page=${paging.prevPage}">이전</a>
-									</li>
-									<c:forEach var="num" begin="${paging.beginPage }" end="${paging.endPage }">
-										<li class="page-item ${paging.page eq num ? 'active' : '' }">
-											<a class="page-link"
-												 onclick="changePage(${num }, event)"
-												 href="marathon?page=${num }">${num }</a>
-										</li>
-									</c:forEach>
-									<li class="page-item ${paging.last ? 'disabled' : '' }">
-										<a class="page-link"
-											 onclick="changePage(${paging.nextPage}, event)"
-											 href="marathon?page=${paging.nextPage}">다음</a>
-									</li>
-								</ul>
-							</nav>
+							</a>
 						</div>
-					</div>
-				</c:if>
+					</c:forEach>
+				</div>
+			</c:otherwise>
+		</c:choose>
+		
+		<c:if test="${paging.totalRows > 6}">
+			<div class="mt-3">
+				<ul class="pagination justify-content-center">
+					<li class="page-item ${paging.first ? 'disabled' : '' }">
+						<a class="page-link"
+							 onclick="changePage(${paging.prevPage}, event)"
+							 href="javascript:void(0)">이전</a>
+					</li>
+					
+					<c:forEach var="num" begin="${paging.beginPage }" end="${paging.endPage }">
+						<li class="page-item ${paging.page eq num ? 'active' : '' }">
+							<a class="page-link"
+								 onclick="changePage(${num }, event)"
+								 href="javascript:void(0)">${num }</a>
+						</li>
+					</c:forEach>
+					
+					<li class="page-item ${paging.last ? 'disabled' : '' }">
+						<a class="page-link"
+							 onclick="changePage(${paging.nextPage}, event)"
+							 href="javascript:void(0)">다음</a>
+					</li>
+				</ul>
+			</div>
+		</c:if>
+		
+		<div class="row p-3 d-flex justify-content-left">
+			<div class="col-2">
+				<select class="form-control" name="opt">
+					<option value="all" ${param.opt eq 'all' ? 'selected' : ''}> 제목+내용</option>
+					<option value="title" ${param.opt eq 'title' ? 'selected' : ''}> 제목</option>
+					<option value="content" ${param.opt eq 'content' ? 'selected' : ''}> 내용</option>
+					<option value="organ" ${param.opt eq 'organ' ? 'selected' : ''}> 주최/주관 기관</option>
+				</select>
+			</div>
+			<div class="col-4">
+				<input type="text" class="form-control" name="keyword" value="${param.keyword}">
+			</div>
+			<div class="col-1">
+				<button class="btn btn-outline-primary" onclick="searchKeyword()">검색</button>
+			</div>
+			<div class="col d-flex justify-content-center"></div>
+			<div class="col d-flex justify-content-end">
+				<security:authorize access="isAuthenticated()">
+					<security:authentication property="principal" var="loginUser"/>
+					<c:if test="${loginUser.nickname eq '관리자'}">
+						<a href="form" type="button" class="btn btn-primary">글쓰기</a>
+					</c:if>
+				</security:authorize>
+			</div>
+		</div>
+	</form>
 			</div>
 			<!-- end Page Content -->
 		</div>
@@ -199,9 +207,8 @@
         form.submit();
     }
 
-    // 검색어를 입력하고 검색버튼을 클릭했을 때
-    function searchValue() {
-        pageInput.value = 1;		// 정렬방식이 바뀌면
+    function searchKeyword() {
+        pageInput.value = 1;
         form.submit();
     }
 </script>
