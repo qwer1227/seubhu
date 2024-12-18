@@ -44,7 +44,7 @@
                 </tr>
                 <tr>
                     <th>결제금액</th>
-                    <td><fmt:formatNumber value="${lessonReservation.lesson.price}" pattern="#,###"/></td>
+                    <td><fmt:formatNumber value="${lessonReservation.lesson.price}" pattern="#,###"/>원</td>
                 </tr>
                 <tr>
                     <th>예약상태</th>
