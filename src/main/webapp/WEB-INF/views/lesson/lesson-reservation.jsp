@@ -90,7 +90,7 @@
                 <tr>
                     <td>${loop.index + 1}</td>
                     <td><a href="/lesson/reservation/detail?reservationNo=${reservation.no}"
-                           style="text-decoration:none">${reservation.lesson.title}</a></td>
+                            style="text-decoration:none">${reservation.lesson.title}</a></td>
                     <td>${reservation.lesson.lecturer.name}</td>
                     <td><fmt:formatNumber value="${reservation.lesson.price}" pattern="#,###"/></td>
                     <td>${reservation.lesson.status}</td>
