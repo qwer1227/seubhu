@@ -45,6 +45,9 @@ import java.util.Map;
 @Service
 public class KakaoPayService {
 
+    @Value("${server.ip}")
+    private String serverIp;
+
     @Autowired
     private ProductMapper productMapper;
     // 주문 맵퍼 인터페이스(주문, 주문상품)
@@ -81,7 +84,7 @@ public class KakaoPayService {
             parameters.put("item_code", String.valueOf(paymentDto.getLessonNo()));
             parameters.put("total_amount", String.valueOf(paymentDto.getTotalAmount()));
 
-            parameters.put("approval_url", "http://localhost/pay/completed?type=" + paymentDto.getType()
+            parameters.put("approval_url", serverIp + "/pay/completed?type=" + paymentDto.getType()
                     + "&lessonNo=" + paymentDto.getLessonNo());
         }
 
@@ -216,7 +219,7 @@ public class KakaoPayService {
                 parameters.put("item_name", itemName);
                 parameters.put("item_code", String.valueOf(orderNo));
                 parameters.put("total_amount", String.valueOf(paymentDto.getFinalTotalPrice()));
-                parameters.put("approval_url", "http://localhost/pay/completed?type=" + paymentDto.getType()
+                parameters.put("approval_url", serverIp + "/pay/completed?type=" + paymentDto.getType()
                         + "&orderNo=" + orderNo);
             } catch (Exception ex) {
                 throw new PaymentSystemException("결제 준비 API 호출 중 오류 발생", ex);
