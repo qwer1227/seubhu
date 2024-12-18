@@ -150,10 +150,13 @@
     </security:authorize>
 
     <!-- 검색창 -->
-    <div class="search-bar mt-4 mb-4">
-        <form method="get" action="/mypage">
-            <input type="text" id="userName" name="userName"  class="form-control" placeholder="사용자 닉네임을 입력하세요...">
-            <button class="btn btn-primary mt-2" id="searchButton">검색</button>
+    <div class="search-bar mt-4 mb-4" style="display: flex; justify-content: center; flex-direction: column; align-items: center;">
+        <form method="get" action="/mypage" style="text-align: center;">
+            <div class="mb-2">
+                <input type="text" id="userName" name="userName" class="form-control"
+                       placeholder="사용자 닉네임" style="width: 200px; display: inline-block;">
+            </div>
+            <button class="btn btn-primary" id="searchButton" type="submit">검색</button>
         </form>
     </div>
 
