@@ -84,8 +84,6 @@
                         <td class="text-end">
                             <span id="price-${item.size.no}" data-price="${item.product.price}"><fmt:formatNumber
                                     value="${item.product.price * item.stock}"/> 원</span>
-                            <button type="button" class="btn btn-lg delete-button"
-                                    data-target-id="#item-${item.size.no}}"><i class="bi bi-x"></i></button>
                         </td>
                     </tr>
                 </c:forEach>
@@ -776,12 +774,22 @@
         });
     });
 
+    // 주문 취소 버튼 클릭시
     $(document).ready(function () {
         $('#cancelOrderBtn').click(function () {
             if (confirm('정말 주문을 취소하시겠습니까?')) {
-                window.location.href = 'http://localhost/mypage/cart';
+                window.location.href = '/mypage/cart';
             }
         });
+    });
+
+    // 주문상품이 없으면
+    $(document).ready(function () {
+        // 주문 상품이 있는지 확인
+        if ($("#order-items tr").length === 0) {
+            alert("주문 상품이 없습니다. 장바구니로 이동합니다.");
+            window.location.href = "/mypage/cart"; // 장바구니 페이지 URL
+        }
     });
 
 </script>

@@ -80,6 +80,7 @@
                 success: function(response) {
                     alert('장바구니에 추가되었습니다.');
                     // 성공적으로 추가된 후 UI 변경 (예: 버튼 상태 변경)
+                    location.reload();
                 },
                 error: function(error) {
                     alert('장바구니 추가에 실패했습니다.');
