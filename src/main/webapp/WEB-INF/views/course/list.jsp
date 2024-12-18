@@ -66,7 +66,7 @@
                     <div class="col-1">
                         지역
                         <select class="form-control" name="region" style="appearance: auto;">
-                            <option value="si" ${param.region eq 'si' ? 'selected' : ''}>시</option>
+                            <option value="si" ${param.region eq 'si' ? 'selected' : ''}>시/도</option>
                             <option value="gu" ${param.region eq 'gu' ? 'selected' : ''}>구</option>
                             <option value="dong" ${param.region eq 'dong' ? 'selected' : ''}>동</option>
                         </select>
