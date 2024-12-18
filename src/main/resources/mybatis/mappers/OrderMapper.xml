@@ -249,7 +249,9 @@
             op.SIZE_NO as sizeNo,
             o.order_status AS orderStatus,
             d.deli_status AS deliveryStatus,
-            d.deli_no AS deliveryNo
+            d.deli_no AS deliveryNo,
+            p.prod_no AS productNo,
+            pc.color_no AS colorNo
         FROM
             ORDERS o
                 JOIN
@@ -258,7 +260,8 @@
             PRODUCTS p ON op.PROD_NO = p.PROD_NO
                 JOIN
             DELIVERIES d ON o.ORDER_NO = d.ORDER_NO
-
+                JOIN
+            PROD_COLORS pc on p.prod_no = pc.prod_no
         WHERE
             o.USER_NO = #{userNo}
     </select>

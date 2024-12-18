@@ -175,11 +175,19 @@
   <div class="payment-info">
     <div class="info-title">결제 정보</div>
     <div class="info-content">
-      <p><span>상품 금액:</span> ${order.orders.orderPrice}원</p>
-      <p><span>할인 금액:</span> ${order.orders.disPrice}원</p>
-      <p><span>배송비:</span> ${order.orders.delPayment}원</p>
-      <p><span>결제 금액:</span> ${totalPrice}원</p>
-      <p><span>결제 방법:</span> ${order.payments.payMethod}</p>
+      <p><span>상품 금액:</span>
+   <fmt:formatNumber value="${order.orders.orderPrice}" pattern="#,###" />원
+</p>
+<p><span>할인 금액:</span>
+   <fmt:formatNumber value="${order.orders.disPrice}" pattern="#,###" />원
+</p>
+<p><span>배송비:</span>
+   <fmt:formatNumber value="${order.orders.delPayment}" pattern="#,###" />원
+</p>
+<p><span>결제 금액:</span>
+   <fmt:formatNumber value="${totalPrice}" pattern="#,###" />원
+</p>
+<p><span>결제 방법:</span> ${order.payments.payMethod}</p>
     </div>
   </div>
 </div>

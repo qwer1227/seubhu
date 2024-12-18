@@ -83,7 +83,7 @@ public class MyPageController {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private BoardReplyService replyService;
+    private ReplyService replyService;
 
     @Autowired
     private ScrapService scrapService;
@@ -249,7 +249,8 @@ public class MyPageController {
             model.addAttribute("Scrapped", scrapResult);
 
             for (Reply reply : replyList) {
-                int replyResult = replyService.getCheckLike(reply.getNo(), loginUser);
+                int replyResult = replyService.getCheckLike(reply.getNo(), "board", loginUser);
+
                 model.addAttribute("replyLiked", replyResult);
             }
         }
@@ -377,7 +378,7 @@ public class MyPageController {
         form.setContent(replyContent);
         form.setUserNo(loginUser.getNo());
 
-        replyService.updateReply(form);
+        replyService.updateReply(form, loginUser);
 
         return "redirect:detail?no=" + form.getBoardNo();
     }
@@ -413,7 +414,7 @@ public class MyPageController {
             , @RequestParam("rno") int replyNo
             , @AuthenticationPrincipal LoginUser loginUser){
 
-        replyService.updateReplyLike(replyNo, loginUser);
+        replyService.updateReplyLike(replyNo, "reply", loginUser);
         return "redirect:detail?no=" + boardNo;
     }
 
@@ -422,7 +423,7 @@ public class MyPageController {
             , @RequestParam("rno") int replyNo
             , @AuthenticationPrincipal LoginUser loginUser){
 
-        replyService.deleteReplyLike(replyNo, loginUser);
+        replyService.deleteReplyLike(replyNo, "reply", loginUser);
         return "redirect:detail?no=" + boardNo;
     }
 
