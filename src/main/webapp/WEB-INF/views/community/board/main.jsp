@@ -4,13 +4,13 @@
 <html lang="ko">
 <head>
     <%@include file="/WEB-INF/views/common/common.jsp" %>
-</head>
 <style>
     #content-title:hover {
         text-decoration: underline;
         font-weight: bold;
     }
 </style>
+</head>
 <body>
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
 <div class="container-xxl text-center" id="wrap">
