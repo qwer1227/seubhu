@@ -70,7 +70,7 @@
 	<h2> 크루모임 글 상세페이지 </h2>
 	<input type="hidden" id="location" value="${crew.location}">
 	<input type="hidden" id="typeNo" value="${crew.no}">
-	<input type="hidden" id="typeNo" value="crew">
+	<input type="hidden" id="type" value="crew">
 	<div>
 		<div class="col d-flex d-flex justify-content-between">
 			<div>
@@ -243,7 +243,6 @@
                 // 신고한 내역이 없으면 모달창 보이기
                 document.querySelector(".modal input[name=type]").value = type;
                 document.querySelector(".modal input[name=no]").value = no;
-                document.querySelector(".modal input[name=typeNo]").value = ${crew.no};
 
                 if (type === 'crew') {
                     $(".modal form").attr('action', 'report-crew');
