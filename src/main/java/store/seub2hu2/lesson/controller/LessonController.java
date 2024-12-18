@@ -44,9 +44,6 @@ import java.util.Map;
 @Slf4j
 public class LessonController {
 
-    @Value("${file.upload-dir}")
-    private String saveDirectory;
-
     private final LessonReservationService lessonReservationService;
     private final LessonService lessonService;
     private final LessonFileService lessonFileService;

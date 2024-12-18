@@ -229,8 +229,8 @@ public class KakaoPayService {
 
         parameters.put("tax_free_amount", "0");
 
-        parameters.put("cancel_url", "http://localhost/pay/cancel");
-        parameters.put("fail_url", "http://localhost/pay/fail");
+        parameters.put("cancel_url", serverIp + "/pay/cancel");
+        parameters.put("fail_url", serverIp + "/pay/fail");
 
 
         // HttpEntity : HTTP 요청 또는 응답에 해당하는 Http Header와 Http Body를 포함하는 클래스
