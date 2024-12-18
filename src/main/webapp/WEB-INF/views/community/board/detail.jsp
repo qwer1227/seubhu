@@ -163,14 +163,12 @@
 			<div class="row comments rounded mb-4" style="margin-left: 2px; width: 100%; background-color: #f2f2f2">
 				<!--댓글 내용 -->
 					<c:forEach var="reply" items="${replies}">
-					<%@include file="../reply-list.jsp" %>
+					<%@include file="../reply-lists.jsp" %>
 					</c:forEach>
 			</div>
 		</c:if>
 	</div>
-</div>
-
-<!-- 인기 게시글 -->
+	<!-- 인기 게시글 -->
 <div class="rounded border" style="padding: 10px; background-color: #f2f2f2">
 	<table style="width: 100%">
 		<colgroup>
@@ -202,6 +200,7 @@
 		</c:forEach>
 		</tbody>
 	</table>
+</div>
 </div>
 
 <!-- 신고 모달 창 -->

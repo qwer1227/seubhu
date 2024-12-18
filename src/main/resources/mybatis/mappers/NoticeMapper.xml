@@ -51,7 +51,7 @@
     , notice_content      as content
     , notice_created_date as createdDate
     , notice_first        as `first`
-    , notice_view_cnt          as viewCnt
+    , notice_view_cnt     as viewCnt
     from NOTICES
     where is_deleted = 'N') n
     where rn between #{condition.begin} and #{condition.end}
