@@ -16,7 +16,7 @@ public class ReservationSearchCondition {
 
     private String searchKeyword;
     private String searchCondition;
-    private String lessonStatus;
+    private String reservationStatus;
     private String lessonSubject;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate start;

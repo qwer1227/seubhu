@@ -25,15 +25,15 @@ public interface LessonMapper {
     public void deleteLessonByNo(@Param("lesson") Lesson lesson);
 
     // 레슨 수정
-    public void updateLesson(@Param("dto") LessonUpdateForm dto);
+    public void updateLesson(@Param("Form") LessonUpdateForm Form);
 
     // 레슨 수강생 수 수정
-    public void updateLessonParticipant(@Param("dto") LessonUpdateForm dto);
+    public void updateLessonParticipant(@Param("Form") LessonUpdateForm Form);
 
     // 레슨 상태 변경
-    public void updateLessonStatus(@Param("dto") LessonUpdateForm dto);
+    public void updateLessonStatus(@Param("Form") LessonUpdateForm Form);
 
     // 이미 지난 기간의 레슨 상태 변경, 스케줄러 사용
-    public void updatePastLessonStatus(@Param("dto") LessonUpdateForm dto);
+    public void updatePastLessonStatus(@Param("Form") LessonUpdateForm Form);
 
 }

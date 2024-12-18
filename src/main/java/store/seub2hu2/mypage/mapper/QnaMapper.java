@@ -17,8 +17,8 @@ public interface QnaMapper {
     void insertQna(@Param("qna") QnaCreateRequest qnaCreateRequest);
     void deleteQna(@Param("qnaNo") int qnaNo);
     void updateQna(@Param("qnaNo") int qnaNo, @Param("qna") QnaCreateRequest qnaCreateRequest);
-    int getTotalRows(@Param("req")RequestParamsDto requestParamsDto, @Param("admin") String adminName);
-    List<QnaResponse> getQnas(@Param("req") RequestParamsDto requestParamsDto, @Param("admin") String adminName);
+    int getTotalRows(@Param("req")RequestParamsDto requestParamsDto, @Param("admin") String adminName, @Param("userNo") int userNo);
+    List<QnaResponse> getQnas(@Param("req") RequestParamsDto requestParamsDto, @Param("admin") String adminName, @Param("userNo") int userNo);
     void updateAnswer(@Param("answer")AnswerDTO answerDTO, @Param("userNo") int userNo);
 
 }

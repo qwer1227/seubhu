@@ -21,8 +21,6 @@
             rel="stylesheet">
     <!-- Bootstrap CSS 링크 예시 페이지네이션-->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
-    <!-- 모달창 x표시(아이콘 같은) 보임 대신 select option 화살표 표시 안보이고 courselist radio버튼 문제 생김-->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom styles for this template-->
     <link href="${pageContext.request.contextPath}/resources/css/sb-admin-2.min.css" rel="stylesheet">
 
@@ -164,8 +162,6 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h1 class="modal-title fs-5" id="modal-title-preview-user">회원정보 미리보기</h1>
-                    <button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close">
-                    </button>
                 </div>
                 <div class="modal-body">
                     <table class="table">

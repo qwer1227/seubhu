@@ -61,7 +61,9 @@
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                         <li><a class="dropdown-item" href="/community/board/main">커뮤니티 홈</a></li>
                         <li><a class="dropdown-item" href="/community/crew/main">크루 모임</a></li>
+                        <li><a class="dropdown-item" href="/community/notice/main">공지사항</a></li>
                         <li><a class="dropdown-item" href="/community/marathon/main">마라톤 정보</a></li>
+                        <li><a class="dropdown-item" href="/community/notice/main">공지사항</a></li>
                     </ul>
                 </div>
                 <div class="divider" style="border-left: 1px solid #0e0d0d; margin: 0 7px;"></div>
