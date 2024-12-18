@@ -185,7 +185,7 @@
     function addComment(replyNo) {
 
         let prevNo = document.querySelector(`form#box-comments-\${replyNo} input[name=prevNo]`).value;
-        let no = document.querySelector(`form#box-comments-\${replyNo} input[name=rno]`).value;
+        let no = document.querySelector(`form#box-comments-\${replyNo} input[name=no]`).value;
         let type = document.querySelector(`form#box-comments-\${replyNo} input[name=type]`).value;
         let typeNo = document.querySelector(`form#box-comments-\${replyNo} input[name=typeNo]`).value;
         let content = document.querySelector(`form#box-comments-\${replyNo} textarea[name=content]`).value.trim();
