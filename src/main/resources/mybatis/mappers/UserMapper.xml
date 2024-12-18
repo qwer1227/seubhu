@@ -90,6 +90,22 @@
         WHERE ROLE_NAME = #{roleName} <!-- 역할 이름으로 역할 조회 -->
     </select>
 
+    <select id="countById" parameterType="string" resultType="int">
+        SELECT COUNT(*)
+        FROM USERS
+        WHERE USER_ID = #{id}
+    </select>
+    <select id="countByEmail" parameterType="string" resultType="int">
+        SELECT COUNT(*)
+        FROM USERS
+        WHERE USER_EMAIL = #{email}
+    </select>
+    <select id="countByNickname" parameterType="string" resultType="int">
+        SELECT COUNT(*)
+        FROM USERS
+        WHERE USER_NICKNAME = #{nickname}
+    </select>
+
     <!-- 사용자 번호로 사용자 정보 조회 -->
     <select id="getUserByNo" resultMap="UserResultMap">
         SELECT

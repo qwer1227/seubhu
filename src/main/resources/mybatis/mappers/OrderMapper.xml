@@ -91,7 +91,7 @@
         JOIN PROD_IMGS PI
         ON PC.COLOR_NO = PI.COLOR_NO
         JOIN CARTS C
-        ON P.PROD_NO = C.PROD_NO
+        ON P.PROD_NO = C.PROD_NO AND C.SIZE_NO = PS.SIZE_NO
         JOIN USERS U
         ON C.USER_NO = U.USER_NO
         WHERE U.USER_NO = #{userNo}

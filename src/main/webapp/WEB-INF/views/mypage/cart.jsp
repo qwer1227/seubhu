@@ -116,7 +116,7 @@
             </div>
             <div class="col-4">
                 <div class="bg-light p-4 mb-2">
-                    <p><strong class="fs-3">총 결재금액</strong></p>
+                    <p><strong class="fs-3">총 결제금액</strong></p>
                     <p><strong class="text-danger fs-2" id="final-total-price">0</strong> 원</p>
                 </div>
                 <div class="d-grid gap-2">

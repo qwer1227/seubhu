@@ -125,7 +125,7 @@
             </table>
         </div>
     </div>
-    <button type="button" class="btn btn-outline-info">주문내역으로</button>
+    <a href="/mypage/orderhistory" class="col btn btn-dark" role="button">주문 내역으로</a>
 </div>
 <script>
     $(document).ready(function() {

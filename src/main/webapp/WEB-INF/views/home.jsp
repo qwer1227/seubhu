@@ -152,7 +152,7 @@
                                         <!-- 가격과 평점 한 줄로 배치 -->
                                         <div class="d-flex justify-content-between">
                                             <p class="card-text fw-bold mb-0">￦${product.price}</p> <!-- 가격 -->
-                                            <p class="mb-0">${product.brand.name}</p> <!-- 평점 -->
+                                            <p class="mb-0 fw-bold text-warning">★${product.rating}</p> <!-- 평점 -->
                                         </div>
                                     </div>
                                 </div>
@@ -169,7 +169,7 @@
                             <div class="col-md-3">
                                 <div class="card position-relative border-0">
                                     <a href="/product/hit?no=${product.no}&colorNo=${product.colorNum}">
-                                        <img src="${product.imgThum}" class="card-img-top" alt="상품 5">
+                                        <img src="${product.imgThum}" class="card-img-top" alt="상품 1">
                                     </a>
                                     <div class="card-body">
                                         <!-- 상품명과 순위 한 줄로 배치 -->
@@ -187,7 +187,7 @@
                                         <!-- 가격과 평점 한 줄로 배치 -->
                                         <div class="d-flex justify-content-between">
                                             <p class="card-text fw-bold mb-0">￦${product.price}</p> <!-- 가격 -->
-                                            <p class="mb-0">${product.brand.name}</p> <!-- 평점 -->
+                                            <p class="mb-0 fw-bold text-warning">★${product.rating}</p> <!-- 평점 -->
                                         </div>
                                     </div>
                                 </div>
