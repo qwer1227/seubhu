@@ -137,7 +137,6 @@
                   <col width="8%">
                   <col width="8%">
                   <col width="8%">
-                  <col width="8%">
                 </colgroup>
                 <thead class="text-center">
                   <tr>
@@ -148,7 +147,6 @@
                     <th>신고 사유</th>
                     <th>날짜</th>
                     <th>접수시간</th>
-                    <th>처리날짜</th>
                     <th>처리상태</th>
                     <th>신고</th>
                   </tr>
@@ -163,7 +161,6 @@
                       <td>${d.reportReason}</td>
                       <td>${d.reportDate}</td>
                       <td>${d.reportTime}</td>
-                      <td></td>
                       <td>${d.isComplete}</td>
                       <td>
                         <form action="/admin/updateReport" method="post">
