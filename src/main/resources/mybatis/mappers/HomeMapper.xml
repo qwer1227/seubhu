@@ -13,6 +13,7 @@
         P.PROD_COLOR_NUM AS colorNum,
         P.PROD_STATUS AS status,
         P.PROD_CNT AS cnt,
+        P.PROD_RATING AS rating,
         B.BRAND_NAME AS "brand.name"  <!-- 브랜드명 추가 -->
         FROM PRODUCTS P
         JOIN PROD_BRANDS B ON P.BRAND_NO = B.BRAND_NO  <!-- BRAND_NO로 조인 -->
