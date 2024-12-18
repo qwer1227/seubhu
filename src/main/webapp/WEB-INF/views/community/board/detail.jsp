@@ -3,6 +3,45 @@
 <%@include file="/WEB-INF/views/common/tags.jsp" %>
 <!doctype html>
 <html lang="ko">
+<head>
+	<%@include file="/WEB-INF/views/common/common.jsp" %>
+</head>
+<style>
+    /* 툴팁 스타일 (처음에는 숨겨져 있음) */
+    #hover-box {
+        display: none; /* 기본적으로 툴팁 숨김 */
+        position: absolute;
+        top: 100%; /* 버튼 바로 아래에 위치 */
+        right: 0%;
+        transform: translateX(-50%); /* 툴팁을 버튼의 중앙에 맞춤 */
+        background-color: rgba(0, 0, 0, 0.7); /* 배경 색상 */
+        color: white; /* 글씨 색상 */
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 12px;
+        white-space: nowrap; /* 내용이 길어도 줄바꿈 하지 않음 */
+        z-index: 10; /* 툴팁을 다른 요소 위에 표시 */
+    }
+
+    /* 버튼에 마우스를 올렸을 때 툴팁 표시 */
+    .btn-outline-primary:hover + #hover-box {
+        display: block;
+    }
+
+    /* 툴팁이 나타날 때 다른 콘텐츠가 영향을 받지 않도록 */
+    #fileDown:hover {
+        z-index: 20; /* 버튼과 툴팁 위로 다른 요소들이 오지 않도록 설정 */
+        position: relative; /* 툴팁을 버튼을 기준으로 설정 */
+    }
+
+    #content-title:hover {
+        font-weight: bold;
+    }
+
+    table td {
+        padding: 5px 0; /* 위아래 간격 10px */
+    }
+</style>
 <body>
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
 <div class="container-xxl text-center" id="wrap">
@@ -37,7 +76,7 @@
             <span>
                 ${board.user.nickname} | <fmt:formatDate value="${board.createdDate}" pattern="yyyy.MM.dd hh:mm:ss"/>
             </span>
-			<span>
+            <span>
                 <i class="bi bi-eye"></i> ${board.viewCnt}
                 <i class="bi bi-bookmark"></i> ${board.scrapCnt}
                 <i class="bi bi-hand-thumbs-up"></i> ${board.like}
@@ -123,49 +162,49 @@
 		<c:if test="${not empty board.reply}">
 			<div class="row comments rounded mb-4" style="margin-left: 2px; width: 100%; background-color: #f2f2f2">
 				<!--댓글 내용 -->
-				<c:forEach var="reply" items="${replies}">
+					<c:forEach var="reply" items="${replies}">
 					<%@include file="../reply-lists.jsp" %>
-				</c:forEach>
+					</c:forEach>
 			</div>
 		</c:if>
+	</div>
 	<!-- 인기 게시글 -->
-	<div class="rounded border" style="padding: 10px; background-color: #f2f2f2">
-		<table style="width: 100%">
-			<colgroup>
-				<col width="15%">
-				<col width="*">
-				<col width="20%">
-				<col width="5%">
-				<col width="5%">
-				<col width="5%">
-			</colgroup>
-			<tbody>
+<div class="rounded border" style="padding: 10px; background-color: #f2f2f2">
+	<table style="width: 100%">
+		<colgroup>
+			<col width="15%">
+			<col width="*">
+			<col width="20%">
+			<col width="5%">
+			<col width="5%">
+			<col width="5%">
+		</colgroup>
+		<tbody>
+		<tr>
+			<td colspan="6">
+				<div>
+					<strong>[ 실시간 인기 커뮤니티 글 ]</strong>
+				</div>
+			</td>
+		</tr>
+		<c:forEach items="${boards}" var="b">
 			<tr>
-				<td colspan="6">
-					<div>
-						<strong>[ 실시간 인기 커뮤니티 글 ]</strong>
-					</div>
+				<td>${b.catName}</td>
+				<td style="text-align: start">
+					<a id="content-title" style="text-decoration: none" href="hit?no=${b.no}">${b.title}</a>
 				</td>
+				<td>${b.user.nickname}</td>
+				<td><i class="bi bi-eye"></i>${b.viewCnt}</td>
+				<td><i class="bi bi-hand-thumbs-up"></i>${b.like}</td>
 			</tr>
-			<c:forEach items="${boards}" var="b">
-				<tr>
-					<td>${b.catName}</td>
-					<td style="text-align: start">
-						<a id="content-title" style="text-decoration: none" href="hit?no=${b.no}">${b.title}</a>
-					</td>
-					<td>${b.user.nickname}</td>
-					<td><i class="bi bi-eye"></i>${b.viewCnt}</td>
-					<td><i class="bi bi-hand-thumbs-up"></i>${b.like}</td>
-				</tr>
-			</c:forEach>
-			</tbody>
-		</table>
-	</div>
-	</div>
-	<!-- 신고 모달 창 -->
-	<%@include file="../report-modal.jsp" %>
+		</c:forEach>
+		</tbody>
+	</table>
+</div>
 </div>
 
+<!-- 신고 모달 창 -->
+<%@include file="../report-modal.jsp" %>
 
 <script type="text/javascript">
     let formData = new FormData();
@@ -246,45 +285,7 @@
         }
     }
 </script>
-</body>
-<head>
-	<%@include file="/WEB-INF/views/common/common.jsp" %>
-</head>
-<style>
-    /* 툴팁 스타일 (처음에는 숨겨져 있음) */
-    #hover-box {
-        display: none; /* 기본적으로 툴팁 숨김 */
-        position: absolute;
-        top: 100%; /* 버튼 바로 아래에 위치 */
-        right: 0%;
-        transform: translateX(-50%); /* 툴팁을 버튼의 중앙에 맞춤 */
-        background-color: rgba(0, 0, 0, 0.7); /* 배경 색상 */
-        color: white; /* 글씨 색상 */
-        padding: 5px 10px;
-        border-radius: 5px;
-        font-size: 12px;
-        white-space: nowrap; /* 내용이 길어도 줄바꿈 하지 않음 */
-        z-index: 10; /* 툴팁을 다른 요소 위에 표시 */
-    }
 
-    /* 버튼에 마우스를 올렸을 때 툴팁 표시 */
-    .btn-outline-primary:hover + #hover-box {
-        display: block;
-    }
-
-    /* 툴팁이 나타날 때 다른 콘텐츠가 영향을 받지 않도록 */
-    #fileDown:hover {
-        z-index: 20; /* 버튼과 툴팁 위로 다른 요소들이 오지 않도록 설정 */
-        position: relative; /* 툴팁을 버튼을 기준으로 설정 */
-    }
-
-    #content-title:hover {
-        font-weight: bold;
-    }
-
-    table td {
-        padding: 5px 0; /* 위아래 간격 10px */
-    }
-</style>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
+</body>
 </html>
