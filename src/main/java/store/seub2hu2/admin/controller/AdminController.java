@@ -14,6 +14,10 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import store.seub2hu2.admin.dto.*;
 import store.seub2hu2.admin.service.AdminService;
+import store.seub2hu2.community.service.MarathonService;
+import store.seub2hu2.community.service.NoticeService;
+import store.seub2hu2.community.vo.Marathon;
+import store.seub2hu2.community.vo.Notice;
 import store.seub2hu2.course.service.CourseService;
 import store.seub2hu2.course.service.UserCourseService;
 import store.seub2hu2.course.vo.Course;
@@ -58,6 +62,8 @@ public class AdminController {
     private final UserService userService;
     private final QnaService qnaService;
     private final UserCourseService userCourseService;
+    private final MarathonService marathonService;
+    private final NoticeService noticeService;
 
     @GetMapping("/home")
     public String home() {
@@ -1085,5 +1091,64 @@ public class AdminController {
     public String community() {
 
         return "admin/community";
+    }
+
+    @GetMapping("/notice")
+    public String notice(@RequestParam(name = "page", required = false, defaultValue = "1") int page
+            , @RequestParam(name = "rows", required = false, defaultValue = "10") int rows
+            , @RequestParam(name = "sort", required = false, defaultValue = "import") String sort
+            , @RequestParam(name = "opt", required = false) String opt
+            , @RequestParam(name = "keyword", required = false) String keyword
+            , Model model) {
+
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("page", page);
+        condition.put("rows", rows);
+        condition.put("sort", sort);
+
+        if (StringUtils.hasText(keyword)) {
+            condition.put("opt", opt);
+            condition.put("keyword", keyword);
+        }
+
+        ListDto<Notice> dto = noticeService.getNotices(condition);
+
+        model.addAttribute("notices", dto.getData());
+        model.addAttribute("paging", dto.getPaging());
+
+
+        return "admin/notice";
+    }
+
+    @GetMapping("/marathon")
+    public String marathon(@RequestParam(name = "page", required = false, defaultValue = "1") int page
+            , @RequestParam(name = "rows", required = false, defaultValue = "6") int rows
+            , @RequestParam(name = "opt", required = false) String opt
+            , @RequestParam(name = "category", required = false) String category
+            , @RequestParam(name = "keyword", required = false) String keyword
+            , Model model) {
+
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("page", page);
+        condition.put("rows", rows);
+
+        // 카테고리 필터링 처리
+        if (StringUtils.hasText(category)) {
+            condition.put("category", category);
+        }
+
+        // 검색
+        if (StringUtils.hasText(keyword)) {
+            condition.put("opt", opt);
+            condition.put("keyword", keyword);
+        }
+
+        ListDto<Marathon> dto = marathonService.getMarathons(condition);
+
+        model.addAttribute("marathons", dto.getData());
+        model.addAttribute("paging", dto.getPaging());
+        model.addAttribute("now", new Date());
+
+        return "admin/marathon";
     }
 }

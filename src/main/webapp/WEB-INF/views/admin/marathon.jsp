@@ -1,9 +1,29 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="/WEB-INF/views/common/tags.jsp" %>
-<!doctype html>
-<html lang="ko">
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
-	<%@include file="/WEB-INF/views/common/common.jsp" %>
+	
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	
+	<title>SB Admin 2 - Dashboard</title>
+	
+	<!-- Custom fonts for this template-->
+	<link href="${pageContext.request.contextPath}/resources/vendor/fontawesome-free/css/all.min.css" rel="stylesheet"
+				type="text/css">
+	<link
+		href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+		rel="stylesheet">
+	<!-- Bootstrap CSS 링크 예시 페이지네이션-->
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+	<!-- Custom styles for this template-->
+	<link href="${pageContext.request.contextPath}/resources/css/sb-admin-2.min.css" rel="stylesheet">
+
 </head>
 <style>
     .category-nav a {
@@ -36,18 +56,39 @@
         border-radius: 5px; /* 배경의 모서리 둥글게 처리 (선택 사항) */
     }
 </style>
-<body>
-<%@include file="/WEB-INF/views/common/nav.jsp" %>
-<div class="container-xxl text-center" id="wrap">
+<body id="page-top">
+
+<!-- Page Wrapper -->
+<div id="wrapper">
 	
-	<h2> 마라톤 정보 </h2>
+	<!-- Sidebar -->
+	<%@include file="/WEB-INF/views/admincommon/sidebar.jsp" %>
+	<!-- End of Sidebar -->
 	
-	<form id="form-search" method="get" action="main">
+	<!-- Content Wrapper -->
+	<div id="content-wrapper" class="d-flex flex-column">
+		
+		<!-- Main Content -->
+		<div id="content">
+			
+			<!-- Topbar -->
+			<%@include file="/WEB-INF/views/admincommon/topbar.jsp" %>
+			<!-- End of Topbar -->
+			
+			<!-- Begin Page Content -->
+			<div class="container-fluid">
+				<!-- Page Heading -->
+				<div class="d-sm-flex align-items-center justify-content-between mb-4">
+					<h1 class="h3 mb-0 text-gray-800">마라톤</h1>
+				</div>
+				<!-- Search -->
+				
+				<form id="form-search" method="get" action="marathon">
 		<input type="hidden" name="page" value="${param.page != null ? param.page : 1}">
 		<input type="hidden" name="category" id="categoryInput" value="${param.category }">
 		
 		<div class="category-nav d-flex justify-content-center mb-4">
-			<a href="main">전체</a>
+			<a href="marathon">전체</a>
 			<a href="javascript:void(0)" onclick="changeCategory('진행중')">진행중</a>
 			<a href="javascript:void(0)" onclick="changeCategory('종료')">종료</a>
 		</div>
@@ -63,10 +104,10 @@
 					<!-- 카드 1 -->
 					<c:forEach var="marathon" items="${marathons}">
 						<div class="col">
-							<a href="hit?no=${marathon.no}" style="text-decoration-line: none">
+							<a href="/community/marathon/hit?no=${marathon.no}" style="text-decoration-line: none">
 								<div class="card">
 									<img src="${marathon.thumbnail}" class="card-img-top" alt="마라톤 이미지"
-											 style="height: 200px; filter: ${marathon.marathonDate.time > now.time ? 'grayscale(0%)' : 'grayscale(100%)'};">
+											 style="height: 250px; filter: ${marathon.marathonDate.time > now.time ? 'grayscale(0%)' : 'grayscale(100%)'};">
 									<c:if test="${marathon.marathonDate.time < now.time}">
 										<div class="overlay-text ">종료</div>
 									</c:if>
@@ -88,7 +129,7 @@
 					<li class="page-item ${paging.first ? 'disabled' : '' }">
 						<a class="page-link"
 							 onclick="changePage(${paging.prevPage}, event)"
-							 href="javascript:void(0)"><<</a>
+							 href="javascript:void(0)">이전</a>
 					</li>
 					
 					<c:forEach var="num" begin="${paging.beginPage }" end="${paging.endPage }">
@@ -102,7 +143,7 @@
 					<li class="page-item ${paging.last ? 'disabled' : '' }">
 						<a class="page-link"
 							 onclick="changePage(${paging.nextPage}, event)"
-							 href="javascript:void(0)">>></a>
+							 href="javascript:void(0)">다음</a>
 					</li>
 				</ul>
 			</div>
@@ -134,8 +175,17 @@
 			</div>
 		</div>
 	</form>
+			</div>
+			<!-- end Page Content -->
+		</div>
+	</div>
 </div>
-<%@include file="/WEB-INF/views/common/footer.jsp" %>
+<!-- Footer -->
+<%@include file="/WEB-INF/views/admincommon/footer.jsp" %>
+<!-- End of Footer -->
+
+<%@include file="/WEB-INF/views/admincommon/common.jsp" %>
+
 </body>
 <script>
     function changeCategory(category) {
@@ -163,3 +213,4 @@
     }
 </script>
 </html>
+

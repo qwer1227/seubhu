@@ -105,11 +105,15 @@
 			<div class="col-1">
 				<button class="btn btn-outline-primary" onclick="searchKeyword()">검색</button>
 			</div>
-			<div class="col d-flex justify-content-center">
+			<div class="col d-flex justify-content-center"></div>
 			
-			</div>
 			<div class="col d-flex justify-content-end">
-				<a href="form" type="button" class="btn btn-primary">글쓰기</a>
+				<security:authorize access="isAuthenticated()">
+					<security:authentication property="principal" var="loginUser"/>
+					<c:if test="${loginUser.nickname eq '관리자'}">
+						<a href="form" type="button" class="btn btn-primary">글쓰기</a>
+					</c:if>
+				</security:authorize>
 			</div>
 		</div>
 		

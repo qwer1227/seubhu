@@ -69,7 +69,7 @@
     and f.file_save_name = c.crew_thumbnail
     and f.is_deleted = 'N'), null) as "thumbnail.saveName"
     , c.crew_view_cnt as viewCnt
-    , (select count(*) from CREW_REPLIES cr where c.crew_no = cr.crew_no) as replyCnt
+    , (select count(*) from REPLIES cr where c.crew_no = cr.reply_type_no) as replyCnt
     from CREWS c join CREW_MEMBERS cm
     on c.crew_no = cm.crew_no
     join USERS u
@@ -130,7 +130,7 @@
   </select>
 
   <!-- List<CrewMember> getCrewMembers(@Param("no") int crewNo);); -->
-  <select id="getCrewMembers" resultType="int" >
+  <select id="getCrewMembers" resultType="int">
     select cm.user_no
     from CREW_MEMBERS cm
     where cm.is_join = 'Y'
@@ -139,11 +139,12 @@
 
   <!-- int getTotalRowsForCrew(@Param("condition") Map<String, Object> condition); -->
   <select id="getTotalRowsForCrew" resultType="int">
-    select count(*)
+    select count(distinct c.crew_no)
     from CREWS c
+    join CREW_MEMBERS cm on cm.crew_no = c.crew_no
+    join USERS u on cm.user_no = u.user_no
     <if test="condition.opt == 'reply'">
-      join REPLIES r
-      on c.crew_no = r.reply_type_no
+      join REPLIES r on c.crew_no = r.reply_type_no
     </if>
     where c.is_deleted = 'N'
     <if test="condition.category != null">
@@ -158,14 +159,17 @@
         <when test="condition.opt == 'title'">
           and c.crew_title like concat ('%', #{condition.keyword}, '%')
         </when>
-        <when test="condition.opt == 'content'">
+        <when test="condition.opt == 'description'">
           and c.crew_description like concat('%', #{condition.keyword}, '%')
         </when>
         <when test="condition.opt == 'name'">
           and c.crew_name like concat('%', #{condition.keyword}, '%')
         </when>
         <when test="condition.opt == 'reply'">
-          and r.reply_content like concat ('%', #{condition.keyword}, '%')
+          and r.reply_content like concat('%', #{condition.keyword}, '%')
+        </when>
+        <when test="condition.opt == 'nickname'">
+          and u.user_nickname like concat ('%', #{condition.keyword}, '%')
         </when>
       </choose>
     </if>
