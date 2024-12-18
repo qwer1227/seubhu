@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="/WEB-INF/views/common/tags.jsp" %>
 <script type="text/javascript"
-        src="//dapi.kakao.com/v2/maps/sdk.js?appkey=3af1f449b9175825b32af2e204b65779&libraries=services,clusterer,drawing"></script>
+				src="//dapi.kakao.com/v2/maps/sdk.js?appkey=3af1f449b9175825b32af2e204b65779&libraries=services,clusterer,drawing"></script>
 
 <!doctype html>
 <html lang="ko">
@@ -49,103 +49,106 @@
     }
 </style>
 <head>
-  <%@include file="/WEB-INF/views/common/common.jsp" %>
+	<%@include file="/WEB-INF/views/common/common.jsp" %>
 </head>
 <body>
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
 <div class="container-xxl text-center" id="wrap">
-  
-  <h2> 마라톤 정보 상세페이지 </h2>
-  
-  <input type="hidden" id="location" value="${marathon.place}">
-  <div>
-    <div class="col d-flex justify-content-between align-items-center">
-      <div>
-        <a href="main" style="text-decoration-line: none">마라톤 정보</a>
-      </div>
-    </div>
-    <div class="title h4 d-flex justify-content-between align-items-center">
-      <div>
-        ${marathon.title}
-        <c:if test="${marathon.endDate.time < now.time}">
-          <span class="badge text-bg-secondary">마감</span>
-        </c:if>
-      </div>
-      <span><i class="bi bi-eye"></i> ${marathon.viewCnt}</span>
-    </div>
-    <div class="meta d-flex justify-content-between">
-      <fmt:formatDate value="${marathon.createdDate}" pattern="yyyy.MM.dd hh:mm:ss"/>
-    </div>
-    
-    <div style="margin-top: 10px; border-bottom: 1px solid #ccc; margin-bottom: 10px;"></div>
-    
-    <div class="row mt-1">
-      <table id="marathon-table" class="text-start">
-        <colgroup>
-          <col width="10%">
-          <col width="40%">
-          <col width="10%">
-          <col width="40%">
-        </colgroup>
-        <tbody>
-        <tr>
-          <th>일시</th>
-          <td><fmt:formatDate value="${marathon.marathonDate}" pattern="yyyy년 MM월 dd일"/></td>
-          <th>접수기간</th>
-          <td><fmt:formatDate value="${marathon.startDate}" pattern="yyyy년 MM월 dd일"/> ~ <fmt:formatDate
-              value="${marathon.endDate}" pattern="yyyy년 MM월 dd일"/></td>
-        </tr>
-        <tr>
-          <th>주최</th>
-          <td>${host}</td>
-          <th>주관</th>
-          <td>${organizer}</td>
-        </tr>
-        <tr>
-          <th>홈페이지</th>
-          <td><a href="https://${marathon.url}" target="_blank">${marathon.url}</a></td>
-        </tr>
-        <tr>
-          <th>장소</th>
-          <td colspan="3">${marathon.place}</td>
-        </tr>
-        </tbody>
-      </table>
-      
-      <div class="content m-3">
-        <div>
-          <img src="${marathon.thumbnail}" style="height: 350px">
-        </div>
-        <div id="marathon-content">
-          <p>${marathon.content}</p>
-        </div>
-        <div class=" d-flex justify-content-center">
-          <div class="col-6 mb-2" id="map" style="height: 250px; width: 500px"></div>
-        </div>
-      </div>
-    </div>
-    
-    <div style="border-bottom: 1px solid #ccc; margin-bottom: 10px;"></div>
-    
-    <div class="row">
-      <div class="col d-flex justify-content-between">
-        <!-- 로그인 여부를 체크하기 위해 먼저 선언 -->
-        <security:authorize access="isAuthenticated()">
-          <div class="d-flex justify-content-start">
-            <!-- principal 프로퍼티 안의 loginUser 정보를 가져옴 -->
-            <!-- loginUser.no를 가져와서 조건문 실행 -->
-            <button class="btn btn-warning" onclick="updateMarathon(${marathon.no})" style="margin-right: 10px;">수정
-            </button>
-            <button class="btn btn-danger" onclick="deleteMarathon(${marathon.no})" style="margin-right: 10px;">삭제
-            </button>
-          </div>
-        </security:authorize>
-        <div class="d-flex justify-content-end">
-          <a type="button" href="main" class="btn btn-secondary">목록</a>
-        </div>
-      </div>
-    </div>
-  </div>
+	
+	<h2> 마라톤 정보 상세페이지 </h2>
+	
+	<input type="hidden" id="location" value="${marathon.place}">
+	<div>
+		<div class="col d-flex justify-content-between align-items-center">
+			<div>
+				<a href="main" style="text-decoration-line: none">마라톤 정보</a>
+			</div>
+		</div>
+		<div class="title h4 d-flex justify-content-between align-items-center">
+			<div>
+				${marathon.title}
+				<c:if test="${marathon.endDate.time < now.time}">
+					<span class="badge text-bg-secondary">마감</span>
+				</c:if>
+			</div>
+			<span><i class="bi bi-eye"></i> ${marathon.viewCnt}</span>
+		</div>
+		<div class="meta d-flex justify-content-between">
+			<fmt:formatDate value="${marathon.createdDate}" pattern="yyyy.MM.dd hh:mm:ss"/>
+		</div>
+		
+		<div style="margin-top: 10px; border-bottom: 1px solid #ccc; margin-bottom: 10px;"></div>
+		
+		<div class="row mt-1">
+			<table id="marathon-table" class="text-start">
+				<colgroup>
+					<col width="10%">
+					<col width="40%">
+					<col width="10%">
+					<col width="40%">
+				</colgroup>
+				<tbody>
+				<tr>
+					<th>일시</th>
+					<td><fmt:formatDate value="${marathon.marathonDate}" pattern="yyyy년 MM월 dd일"/></td>
+					<th>접수기간</th>
+					<td><fmt:formatDate value="${marathon.startDate}" pattern="yyyy년 MM월 dd일"/> ~ <fmt:formatDate
+						value="${marathon.endDate}" pattern="yyyy년 MM월 dd일"/></td>
+				</tr>
+				<tr>
+					<th>주최</th>
+					<td>${host}</td>
+					<th>주관</th>
+					<td>${organizer}</td>
+				</tr>
+				<tr>
+					<th>홈페이지</th>
+					<td><a href="https://${marathon.url}" target="_blank">${marathon.url}</a></td>
+				</tr>
+				<tr>
+					<th>장소</th>
+					<td colspan="3">${marathon.place}</td>
+				</tr>
+				</tbody>
+			</table>
+			
+			<div class="content m-3">
+				<div>
+					<img src="${marathon.thumbnail}" style="height: 350px">
+				</div>
+				<div id="marathon-content">
+					<p>${marathon.content}</p>
+				</div>
+				<div class=" d-flex justify-content-center">
+					<div class="col-6 mb-2" id="map" style="height: 250px; width: 500px"></div>
+				</div>
+			</div>
+		</div>
+		
+		<div style="border-bottom: 1px solid #ccc; margin-bottom: 10px;"></div>
+		
+		<div class="row">
+			<div class="col d-flex justify-content-between">
+				<!-- 로그인 여부를 체크하기 위해 먼저 선언 -->
+				<div class="d-flex justify-content-start">
+					<security:authorize access="isAuthenticated()">
+					<security:authentication property="principal" var="loginUser"/>
+						<!-- principal 프로퍼티 안의 loginUser 정보를 가져옴 -->
+						<!-- loginUser.no를 가져와서 조건문 실행 -->
+						<c:if test="${loginUser.nickname eq '관리자'}">
+							<button class="btn btn-warning" onclick="updateMarathon(${marathon.no})" style="margin-right: 10px;">수정
+							</button>
+							<button class="btn btn-danger" onclick="deleteMarathon(${marathon.no})" style="margin-right: 10px;">삭제
+							</button>
+						</c:if>
+					</security:authorize>
+				</div>
+				<div class="d-flex justify-content-end">
+					<a type="button" href="main" class="btn btn-secondary">목록</a>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>

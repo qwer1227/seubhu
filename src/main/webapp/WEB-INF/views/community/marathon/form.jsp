@@ -105,7 +105,7 @@
         let thumbnail = document.querySelector("input[name=thumbnail]").value.trim();
 
         let cleanedContent = content.replace(/<p><br><\/p>/g, "").trim();
-        
+
         if (!title) {
             alert("제목을 입력해주세요.");
             return;
