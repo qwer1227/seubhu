@@ -70,7 +70,7 @@
                           type="date"
                           name="day"
                           id="dateInput"
-                          value="<%= currentDate %>"
+                          value="${param.day != null ? param.day : currentDate}"
                           class="form-control form-control-sm rounded-pill border-gray"
                   />
                 </div>

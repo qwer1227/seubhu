@@ -18,5 +18,6 @@ public class LessonUsersDto {
     private String nickname;
     private String email;
     private String tel;
+    private String lessonStatus;
 
 }
