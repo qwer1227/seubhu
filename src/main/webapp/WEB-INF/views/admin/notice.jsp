@@ -149,7 +149,7 @@
               <security:authorize access="isAuthenticated()">
                 <security:authentication property="principal" var="loginUser"/>
                 <c:if test="${loginUser.nickname eq '관리자'}">
-                  <a href="form" type="button" class="btn btn-primary">글쓰기</a>
+                  <a href="../community/notice/form" type="button" class="btn btn-primary">글쓰기</a>
                 </c:if>
               </security:authorize>
             </div>
