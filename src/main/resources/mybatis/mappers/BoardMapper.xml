@@ -110,6 +110,7 @@
     </if>
     ) as board
     where rn between #{condition.begin} and #{condition.end}
+    group by board.no
     order by rn
 
   </select>
