@@ -129,16 +129,17 @@
                 <!-- 전화번호 입력 필드 -->
                 <input type="text" class="form-control me-2" id="tel" name="tel" maxlength="13" placeholder="전화번호"
                        required="required" onblur="formatPhoneNumber(event)"/>
-                <!-- 본인인증 버튼 -->
-                <input type="button" onclick="smsCheck()" class="btn btn-outline-dark" value="본인인증">
+                <!-- 본인인증 버튼
+                <input type="button" onclick="smsCheck()" class="btn btn-outline-dark" value="본인인증">-->
             </div>
-            <ul class="txtInfo gBlank5 mt-1" id="sendVerifyCode" style="display: none;">
+            <!--<ul class="txtInfo gBlank5 mt-1" id="sendVerifyCode" style="display: none;">
                 <li>인증번호가 발송되었습니다.</li>
                 <li>인증번호를 받지 못하셨다면 휴대폰 번호를 확인해 주세요.</li>
-            </ul>
+            </ul>-->
 
+            <!--주소-->
             <div class="form-group d-flex align-items-center mb-3">
-                <input type="text" name="postcode" class="form-control me-2" id="postcode" placeholder="우편번호"
+                <input type="text" name="postcode" class="form-control me-2" id="postcode" placeholder="우편번호*"
                        required readonly>
                 <input type="button" onclick="openPostcode()" class="btn btn-dark" value="우편번호 검색">
             </div>
@@ -527,7 +528,5 @@
 
 
 </script>
-
-
 </body>
 </html>

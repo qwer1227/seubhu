@@ -232,8 +232,6 @@
                     </div>
                     <div class="modal-footer">
                         <div class="d-flex justify-content-end w-100">
-                            <button type="button" class="btn btn-warning me-2" onclick="editAddress()">수정</button>
-                            <button type="button" class="btn btn-danger me-2" onclick="deleteAddress()">삭제</button>
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
                         </div>
                     </div>
