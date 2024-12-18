@@ -76,7 +76,7 @@
             <span>
                 ${board.user.nickname} | <fmt:formatDate value="${board.createdDate}" pattern="yyyy.MM.dd hh:mm:ss"/>
             </span>
-            <span>
+			<span>
                 <i class="bi bi-eye"></i> ${board.viewCnt}
                 <i class="bi bi-bookmark"></i> ${board.scrapCnt}
                 <i class="bi bi-hand-thumbs-up"></i> ${board.like}
@@ -162,46 +162,45 @@
 		<c:if test="${not empty board.reply}">
 			<div class="row comments rounded mb-4" style="margin-left: 2px; width: 100%; background-color: #f2f2f2">
 				<!--댓글 내용 -->
-					<c:forEach var="reply" items="${replies}">
+				<c:forEach var="reply" items="${replies}">
 					<%@include file="../reply-list.jsp" %>
-					</c:forEach>
+				</c:forEach>
 			</div>
 		</c:if>
 	</div>
-</div>
-
-<!-- 인기 게시글 -->
-<div class="rounded border" style="padding: 10px; background-color: #f2f2f2">
-	<table style="width: 100%">
-		<colgroup>
-			<col width="15%">
-			<col width="*">
-			<col width="20%">
-			<col width="5%">
-			<col width="5%">
-			<col width="5%">
-		</colgroup>
-		<tbody>
-		<tr>
-			<td colspan="6">
-				<div>
-					<strong>[ 실시간 인기 커뮤니티 글 ]</strong>
-				</div>
-			</td>
-		</tr>
-		<c:forEach items="${boards}" var="b">
+	<!-- 인기 게시글 -->
+	<div class="rounded border" style="padding: 10px; background-color: #f2f2f2">
+		<table style="width: 100%">
+			<colgroup>
+				<col width="15%">
+				<col width="*">
+				<col width="20%">
+				<col width="5%">
+				<col width="5%">
+				<col width="5%">
+			</colgroup>
+			<tbody>
 			<tr>
-				<td>${b.catName}</td>
-				<td style="text-align: start">
-					<a id="content-title" style="text-decoration: none" href="hit?no=${b.no}">${b.title}</a>
+				<td colspan="6">
+					<div>
+						<strong>[ 실시간 인기 커뮤니티 글 ]</strong>
+					</div>
 				</td>
-				<td>${b.user.nickname}</td>
-				<td><i class="bi bi-eye"></i>${b.viewCnt}</td>
-				<td><i class="bi bi-hand-thumbs-up"></i>${b.like}</td>
 			</tr>
-		</c:forEach>
-		</tbody>
-	</table>
+			<c:forEach items="${boards}" var="b">
+				<tr>
+					<td>${b.catName}</td>
+					<td style="text-align: start">
+						<a id="content-title" style="text-decoration: none" href="hit?no=${b.no}">${b.title}</a>
+					</td>
+					<td>${b.user.nickname}</td>
+					<td><i class="bi bi-eye"></i>${b.viewCnt}</td>
+					<td><i class="bi bi-hand-thumbs-up"></i>${b.like}</td>
+				</tr>
+			</c:forEach>
+			</tbody>
+		</table>
+	</div>
 </div>
 
 <!-- 신고 모달 창 -->
