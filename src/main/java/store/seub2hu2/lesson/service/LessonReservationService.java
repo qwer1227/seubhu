@@ -91,6 +91,7 @@ public class LessonReservationService {
                 lessonMapper.updateLessonStatus(lessonUpdateForm);
             }
             log.info("참가자 수 업데이트 할 lesson = {}", lesson);
+            log.info("참가자 수 업데이트 할 lessonUpdateForm = {}", lessonUpdateForm);
             lessonMapper.updateLessonParticipant(lessonUpdateForm); // 업데이트 후 커밋
 
             log.info("레슨 예약 저장 완료: {}", paymentDto);

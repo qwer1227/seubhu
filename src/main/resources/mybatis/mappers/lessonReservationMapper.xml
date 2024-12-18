@@ -45,7 +45,8 @@
                  INNER JOIN USERS U
                             ON
                                 L.USER_ID = U.USER_ID
-        where R.USER_ID = #{userNo}
+        where R.USER_ID = #{userId}
+        ORDER BY LESSON_RESERVATION_CREATED_DATE ASC;
     </select>
 
     <!--    -->
@@ -142,6 +143,7 @@
             AND L.LESSON_SUBJECT = #{condition.lessonSubject}
         </if>
         AND R.LESSON_RESERVATION_CREATED_DATE BETWEEN #{condition.start} AND CONCAT(#{condition.end}, ' 23:59:59')
+        ORDER BY LESSON_RESERVATION_CREATED_DATE DESC;
     </select>
 
     <insert id="insertLessonReservation">
