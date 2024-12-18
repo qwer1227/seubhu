@@ -145,7 +145,17 @@
     });
   });
 
+  window.onload = function() {
+    <%-- 성공 메시지 확인 --%>
+    <c:if test="${not empty successMessage}">
+    alert("${successMessage}");
+    </c:if>
 
+    <%-- 에러 메시지 확인 --%>
+    <c:if test="${not empty errorMessage}">
+    alert("${errorMessage}");
+    </c:if>
+  }
 
 
 </script>
