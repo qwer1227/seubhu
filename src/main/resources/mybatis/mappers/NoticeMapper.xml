@@ -88,9 +88,19 @@
     select count(*)
     from NOTICES
     where is_deleted = "N"
-    <if test="condition.keyword != null">
-      and notice_title like concat ('%', #{condition.keyword}, '%')
-      || notice_content like concat ('%', #{condition.keyword}, '%')
+    <if test="condition.opt != null">
+      <choose>
+        <when test="condition.opt == 'all'">
+          and notice_title like concat ('%', #{condition.keyword}, '%')
+          || notice_content like concat('%', #{condition.keyword}, '%')
+        </when>
+        <when test="condition.opt == 'title'">
+          and notice_title like concat ('%', #{condition.keyword}, '%')
+        </when>
+        <when test="condition.opt == 'content'">
+          and notice_content like concat('%', #{condition.keyword}, '%')
+        </when>
+      </choose>
     </if>
   </select>
 
