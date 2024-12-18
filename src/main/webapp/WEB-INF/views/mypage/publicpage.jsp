@@ -253,7 +253,7 @@
                         <hr>
                         <p id="detailPostContent"></p>
                         <p id="detailCreatedDate"></p>
-                        <button class="btn btn-outline-primary">좋아요</button>
+
 
                         <!-- 댓글 섹션 -->
                         <div class="mt-3">
