@@ -129,7 +129,19 @@
 <%@include file="/WEB-INF/views/admincommon/common.jsp" %>
 
 </body>
+<script type="text/javascript">
+    window.onload = function() {
+        <%-- 성공 메시지 확인 후 alert 출력 --%>
+        <c:if test="${not empty successMessage}">
+        alert("${successMessage}");
+        </c:if>
 
+        <%-- 에러 메시지 확인 후 alert 출력 --%>
+        <c:if test="${not empty errorMessage}">
+        alert("${errorMessage}");
+        </c:if>
+    }
+</script>
 </html>
 
 

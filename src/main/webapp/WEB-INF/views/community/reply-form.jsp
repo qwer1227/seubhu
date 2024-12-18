@@ -18,7 +18,7 @@
   <form method="post" action="add-reply">
     <input type="hidden" name="userNo" value="${loginUser.no}">
     <input type="hidden" name="type" value="board">
-    <input type="hidden" name="typeNo" value="${board.no}">
+    <input type="hidden" name="typeNo" value="${crew.no}">
     <div class="row">
       <c:choose>
         <c:when test="${empty loginUser}">
@@ -53,7 +53,6 @@
   
   /* 댓글 등록 */
   document.querySelector("#addReply").addEventListener("click", function () {
-      let no = document.querySelector("input[name=no]").value;
       let type = document.querySelector("input[name=type]").value;
       let typeNo = document.querySelector("input[name=typeNo]").value;
       let content = document.querySelector("textarea[name=content]").value.trim();
@@ -66,7 +65,6 @@
           return;
       }
 
-      formData.append("no", no);
       formData.append("type", type);
       formData.append("typeNo", typeNo);
       formData.append("content", content);

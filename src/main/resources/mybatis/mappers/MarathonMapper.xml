@@ -65,10 +65,10 @@
     <if test="condition.category != null">
       <choose>
         <when test="condition.category == '진행중'">
-          and DATE(m.marathon_date) > DATE(now())
+          and DATE(m.apply_end_date) > DATE(now())
         </when>
         <otherwise>
-          and DATE(m.marathon_date) &lt; DATE(now())
+          and DATE(m.apply_end_date) &lt; DATE(now())
         </otherwise>
       </choose>
     </if>
