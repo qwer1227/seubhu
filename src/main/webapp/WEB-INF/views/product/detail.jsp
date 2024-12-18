@@ -275,6 +275,7 @@
             <div class="modal-body">
                 <!-- 수정 폼 -->
                 <form id="editReviewForm">
+                    <input type="hidden" name="userNo" value="${user.no}">
                     <input type="hidden" id="reviewNo" name="no">
 
                     <!-- 리뷰 제목 -->
@@ -520,9 +521,10 @@
             return false; // 폼 제출을 막음
         }
 
-        if (files.length === 0) {
-            alert("리뷰 이미지를 첨부해주세요.");
-            return false; // 이미지가 없으면 예외 처리
+        // rating 최소값 체크
+        if (rating < 1 || rating > 5) {
+            alert("별점은 최소 1점에서 최대 5점 사이여야 합니다.");
+            return false;
         }
 
         let formData = new FormData();
@@ -592,10 +594,12 @@
                 </div>
             </div>
         </div>
+        <br>
                 `;
 
                 // 새 리뷰를 #wrapper-reviews에 추가
                 $("#wrapper-reviews").prepend(reviewHtml);
+                location.reload();
 
 
             },
@@ -664,6 +668,8 @@
     // 리뷰 수정
     function submitEditReview() {
         let formData = new FormData($("#editReviewForm")[0]);
+        let userNo = $("input[name=userNo]").val();
+        formData.append("userNo", userNo);
 
         $.ajax({
             url: '/product/reviews/edit',
