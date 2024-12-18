@@ -64,15 +64,11 @@
     , b.board_like_cnt as `like`
     , b.is_deleted as deleted
     , b.board_created_date as createdDate
-    <if test="condition.opt == 'nickname'">
     , u.user_nickname as "user.nickname"
-    </if>
     , (select count(*) from REPLIES r where r.reply_type_no = b.board_no) as replyCnt
     from BOARDS b
-    <if test="condition.opt == 'nickname'">
       join USERS u
       on b.user_no = u.user_no
-    </if>
     <if test="condition.opt == 'reply'">
       join REPLIES r
       on b.board_no = r.reply_type_no
