@@ -67,7 +67,7 @@ public class BoardReplyService {
 
     public void deleteReply(int replyNo) {
         Reply reply = boardReplyMapper.getReplyByReplyNo(replyNo);
-        reply.setTypeNo(reply.getTypeNo());
+        reply.setTypeNo(reply.getNo());
         boardReplyMapper.deleteReplyByNo(replyNo);
     }
 
@@ -79,7 +79,7 @@ public class BoardReplyService {
     }
 
     public int getCheckLike(int replyNo
-                            , @AuthenticationPrincipal LoginUser loginUser) {
+            , @AuthenticationPrincipal LoginUser loginUser) {
 
         return boardReplyMapper.hasUserLikedReply(replyNo, loginUser.getNo());
     }

@@ -99,6 +99,7 @@
             </when>
             <otherwise>
                 uq.qna_isdeleted = 'N'
+                and uq.question_user_no = #{userNo}
             </otherwise>
         </choose>
         <if test="req.category != null">
@@ -149,8 +150,11 @@
             </when>
             <otherwise>
                 uq.qna_isdeleted = 'N'
+                and
+                uq.question_user_no = #{userNo}
             </otherwise>
         </choose>
+
         <if test="req.category != null and req.category != ''">
             and qc.category_name = #{req.category}
         </if>
@@ -186,5 +190,7 @@
         set QNA_STATUS = #{answer.qnaStatus}, ANSWER_CONTENT = #{answer.answerContent}, ANSWER_CREATED_DATE = NOW(), ANSWER_USER_NO = #{userNo}
         where qna_no = #{answer.qnaNo}
     </update>
+
+
 
 </mapper>

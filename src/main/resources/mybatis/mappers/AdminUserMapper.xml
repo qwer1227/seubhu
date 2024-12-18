@@ -144,8 +144,8 @@
         </if>
         <if test="condition.day != null and condition.day != ''">
             AND (
-            DATE_FORMAT(O.order_date, '%Y-%m-%d') = #{condition.day}
-            OR DATE_FORMAT(O.order_date, '%Y-%m') = #{condition.day}
+            DATE_FORMAT(R.REPORT_CREATED_DATE, '%Y-%m-%d') = #{condition.day}
+            OR DATE_FORMAT(R.REPORT_CREATED_DATE, '%Y-%m') = #{condition.day}
             )
         </if>
         ) AS SUBQUERY
@@ -218,8 +218,8 @@
         </if>
         <if test="condition.day != null and condition.day != ''">
             AND (
-            DATE_FORMAT(R.REPORT_DATE, '%Y-%m-%d') = #{condition.day}
-            OR DATE_FORMAT(R.REPORT_DATE, '%Y-%m') = #{condition.day}
+            DATE_FORMAT(R.REPORT_CREATED_DATE, '%Y-%m-%d') = #{condition.day}
+            OR DATE_FORMAT(R.REPORT_CREATED_DATE, '%Y-%m') = #{condition.day}
             )
         </if>
         ) AS SUBQUERY

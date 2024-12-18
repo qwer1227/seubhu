@@ -79,7 +79,7 @@
             <h3><a href="/mypage/participatingcrew">참여크루</a></h3>
         </div>
         <div class="item">
-            <h3><a href="/lesson/reservation">레슨예약내역</a></h3>
+            <h3><a href="/lesson/reservation?userId=${userId}">레슨예약내역</a></h3>
         </div>
     </div>
 </div>

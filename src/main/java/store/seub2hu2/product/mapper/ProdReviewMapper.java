@@ -21,5 +21,8 @@ public interface ProdReviewMapper {
 
     void updateProdReview(@Param("review") ProdReview prodReview);
 
-    void deleteProdReview(@Param("review") ProdReview prodReview);
+    void deleteProdReview(@Param("reviewNo") int reviewNo);
+
+    // 특정 상품의 리뷰 평균 평점을 계산
+    double calculateAverageRatingByProdNo(@Param("prodNo") int prodNo);
 }

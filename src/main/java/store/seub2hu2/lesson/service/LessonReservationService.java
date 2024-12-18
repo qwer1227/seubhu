@@ -2,6 +2,8 @@ package store.seub2hu2.lesson.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Param;
+import org.apache.xmlbeans.impl.xb.xsdschema.Attribute;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +23,7 @@ import store.seub2hu2.user.vo.User;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.List;
 
 @Service
@@ -123,38 +126,6 @@ public class LessonReservationService {
         log.info("시간 테스트 = {}", LocalDateTime.now());
 
         // MyBatis 매퍼 호출
-        return lessonReservationMapper.getReservationByCondition(condition, userId);
-    }
-
-    /**
-     * 기본 날짜를 설정하고 예약 목록을 반환하는 메소드
-     *
-     * @param condition 검색 조건
-     * @param userId    사용자 ID
-     * @return 예약 목록
-     */
-    public List<LessonReservation> getLessonReservationsWithDefaults(ReservationSearchCondition condition, String userId) {
-        LocalDate now = LocalDate.now();
-
-        // 기본 날짜 설정
-        if (condition.getStart() == null && condition.getEnd() == null) {
-            condition.setEnd(now); // 기본 종료 날짜: 오늘
-            condition.setStart(now.minusMonths(1)); // 기본 시작 날짜: 한 달 전
-        } else {
-            if (condition.getEnd() == null) {
-                condition.setEnd(now); // 종료 날짜 기본값
-            }
-            if (condition.getStart() == null) {
-                condition.setStart(now.minusMonths(1)); // 시작 날짜 기본값
-            }
-        }
-
-        // 유효성 검사: 시작 날짜가 종료 날짜보다 이후인 경우 예외 발생
-        if (condition.getStart().isAfter(condition.getEnd())) {
-            throw new IllegalArgumentException("시작 날짜는 종료 날짜보다 이후일 수 없습니다.");
-        }
-
-        // 조건에 맞는 예약 목록 조회
         return lessonReservationMapper.getReservationByCondition(condition, userId);
     }
 
