@@ -46,7 +46,7 @@ public class ReplyService {
         return reply;
     }
 
-    public void addNewComment(ReplyForm form
+    public Reply addNewComment(ReplyForm form
             , @AuthenticationPrincipal LoginUser loginUser) {
         Reply reply = new Reply();
         reply.setPrevNo(form.getPrevNo());
@@ -60,6 +60,8 @@ public class ReplyService {
         reply.setUser(user);
 
         replyMapper.insertComment(reply);
+
+        return reply;
     }
 
     public Reply getReplyDetail(int replyNo){
@@ -82,6 +84,7 @@ public class ReplyService {
             , @AuthenticationPrincipal LoginUser loginUser) {
         Reply reply = replyMapper.getReplyByReplyNo(form.getNo());
 
+        reply.setNo(form.getNo());
         reply.setType(form.getType());
         reply.setTypeNo(form.getTypeNo());
         reply.setContent(form.getContent());

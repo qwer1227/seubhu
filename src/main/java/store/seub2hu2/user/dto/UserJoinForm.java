@@ -28,7 +28,7 @@ public class UserJoinForm {
     @Email(message = "유효한 이메일 형식이 아닙니다.")
     private String email;
 
-    @Pattern(regexp = "^[가-힣a-z0-9]{2,}$", message = "닉네임은 한글, 영소문자, 숫자 조합으로 2글자 이상이어야 합니다.")
+    @Pattern(regexp = "^[가-힣a-z0-9]{2,}$", message = "닉네임은 2글자 이상이어야 합니다.")
     private String nickname;
 
     @NotBlank(message = "전화번호는 필수 입력값입니다.")

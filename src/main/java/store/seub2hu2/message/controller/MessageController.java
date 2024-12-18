@@ -13,7 +13,6 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-//import store.seub2hu2.community.view.FileDownloadView;
 import store.seub2hu2.community.vo.Board;
 import store.seub2hu2.message.dto.MessageForm;
 import store.seub2hu2.message.dto.MessageReceived;
@@ -49,7 +48,6 @@ public class MessageController {
 
     @Autowired
     private UserService userService;
-
 
     // 받은 메시지 목록 조회
     @GetMapping("/list")
@@ -164,7 +162,7 @@ public class MessageController {
 
 
     // 개별 삭제
-    @PostMapping("/delete")
+    @GetMapping("/delete")
     public String deleteMessage(@RequestParam("messageNo") int messageNo) {
         messageService.deleteMessage(messageNo);
         return "redirect:/message/sent";
@@ -185,13 +183,13 @@ public class MessageController {
 
     @GetMapping("/deleteMultiple")
     public String deleteMultiple(@RequestParam("messageNo") List<Integer> messageNo, @AuthenticationPrincipal LoginUser loginUser) {
-        messageService.deleteMessages(messageNo, loginUser.getNo());
+        messageService.deleteMessageRcvs(messageNo, loginUser.getNo());
         return "redirect:/message/list"; // 메시지 리스트 페이지로 리다이렉트
     }
 
     @GetMapping("/markMultipleAsRead")
     public String markMultipleAsRead(@RequestParam("messageNo") List<Integer> messageNos, @AuthenticationPrincipal LoginUser loginUser ) {
-        messageService.markMultipleAsRead(messageNos, loginUser.getNo());
+        messageService.updateReadMarkMessageRcvs(messageNos, loginUser.getNo());
         return "redirect:/message/list";
     }
 

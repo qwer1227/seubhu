@@ -51,21 +51,26 @@
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
                     <h1 class="h3 mb-0 text-gray-800">레슨 수정</h1>
                 </div>
-                <div class="container my-3">
-                    <div class="row mb-3">
-                        <div class="col">
-                            <div class="border p-2 bg-dark text-white fw-bold">레슨 수정 폼</div>
+                <form:form method="post" id="form-edit" modelAttribute="form"
+                           enctype="multipart/form-data">
+                    <div class="container my-3">
+                        <div class="row mb-3">
+                            <div class="col">
+                                <div class="border p-2 bg-dark text-white fw-bold">레슨 수정 폼</div>
+                            </div>
                         </div>
-                    </div>
-                    <form name="dto" action="/admin/lesson-edit-form" method="post" enctype="multipart/form-data">
-                        <input type="hidden" name="lessonNo" value="${lesson.lessonNo}">
+                        <form:input type="hidden" path="lessonNo" value="${lesson.lessonNo}"/>
                         <div class="row mb-3">
                             <div class="col-12">
+
                                 <div class="row p-3">
                                     <div class="col-6">
                                         <label for="title">레슨명</label>
-                                        <input type="text" class="form-control" name="title" id="title"
-                                               value="${lesson.title}">
+                                        <form:input type="text" class="form-control" path="title" id="title"
+                                        />
+                                        <div class="text-danger">
+                                            <form:errors path="title"/>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row p-3">
@@ -79,24 +84,25 @@
                                     </div>
                                     <div class="col-2">
                                         <label for="status">상태</label>
-                                        <select name="status" class="form-control" id="status">
+                                        <form:select path="status" class="form-control" id="status">
                                             <option ${lesson.status == '모집중' ? 'selected' : ''}>모집중</option>
                                             <option ${lesson.status == '마감' ? 'selected' : ''}>마감</option>
                                             <option ${lesson.status == '취소' ? 'selected' : ''}>취소</option>
-                                        </select>
+                                        </form:select>
                                     </div>
                                     <div class="col-2">
                                         <label for="lecturerName">강사명</label>
-                                        <select name="lecturerId" class="form-control" id="lecturerName">
-                                            <c:forEach var="lecturer" items="${lecturers}">
-                                                <option value="${lecturer.id}" ${lecturer.id eq lesson.lecturer.id ? 'selected' : '' }>${lecturer.name}</option>
-                                            </c:forEach>
-                                        </select>
+                                        <form:select path="lecturerId" class="form-control" id="lecturerName">
+                                            <form:options items="${lecturers}" itemValue="id" itemLabel="name"/>
+                                        </form:select>
                                     </div>
                                     <div class="col-2">
                                         <label for="price">가격</label>
-                                        <input type="number" class="form-control" name="price" id="price"
-                                               value="${lesson.price}">
+                                        <form:input type="number" class="form-control" path="price" id="price"
+                                                    value="${lesson.price}"/>
+                                        <div class="text-danger">
+                                            <form:errors path="price"/>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row row-cols-1 p-3">
@@ -104,70 +110,86 @@
                                         게시글
                                     </div>
                                     <div class="col">
-                                    <textarea class="form-control" rows="10" cols="10"
-                                              name="plan">${lesson.plan}</textarea>
+                                    <form:textarea class="form-control" rows="10" cols="10"
+                                              path="plan"></form:textarea>
+                                    </div>
+                                    <div class="text-danger">
+                                        <form:errors path="plan"/>
                                     </div>
                                 </div>
                                 <div class="row p-3">
                                     <div class="col-3">
-                                        <label>시작 시간</label><br>
-                                        <label>기존</label>
+                                        <label for="startDate">시작 시간</label>
                                         <input type="datetime-local" class="form-control" name="start" id="startDate"
                                                value="${lesson.start}" timeZone="GMT">
+                                        <div class="text-danger">
+                                            <form:errors path="start"/>
+                                        </div>
                                     </div>
                                     <div class="col-3">
-                                        <label>종료 시간</label><br>
-                                        <label>기존</label>
+                                        <label for="endDate">종료 시간</label>
                                         <input type="datetime-local" class="form-control" name="end" id="endDate"
                                                value="${lesson.end}" timeZone="GMT">
+                                        <div class="text-danger">
+                                            <form:errors path="end"/>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="row p-3 ">
-                                    <div class="col-5 ">
-                                        <c:if test="${not empty images['THUMBNAIL']}">
-                                            <img src="${s3}/resources/images/lesson/${images['THUMBNAIL']}"
-                                                 alt="Thumbnail" id="previewThumbnail" class="p-3"
-                                                 style="width: 100%;"/>
-                                        </c:if>
-                                        <label for="thumbnail">썸네일 이미지</label>
-                                        <input type="file" class="form-control" name="thumbnail" id="thumbnail"
-                                               accept="image/*"/>
-                                    </div>
-                                </div>
-                                <div class="row p-3 ">
-                                    <div class="col-5">
-                                        <c:if test="${not empty images.MAIN_IMAGE}">
-                                            <img src="${s3}/resources/images/lesson/${images['MAIN_IMAGE']}"
-                                                 alt="Main Image" id="previewMainImage" class="p-3"
-                                                 style="width: 100%;"/>
-                                        </c:if>
-                                        <img
-                                                id="previewMainImage"
-                                                alt="Main Image Preview"
-                                                class="p-3"
-                                                style="width: 100%; height: 1000px; display: none;"
-                                        />
-                                        <label for="mainImage">본문 이미지</label>
-                                        <input type="file" class="form-control" name="mainImage" id="mainImage"
-                                               accept="image/*"/>
-                                    </div>
-                                </div>
-                                <div class="row p-3">
-                                    <div class="col d-flex justify-content-end">
-                                        <a href="/admin/lesson" class="btn btn-secondary m-1">취소</a>
-                                        <a href="/admin/lesson-edit-form?lessonNo=${lessonNo}">
-                                            <button type="submit" class="btn btn-primary m-1">수정</button>
-                                        </a>
+                                    <div class="text-danger" id="endDateError" style="display:none;">
+                                        종료 날짜는 시작 날짜 이후이어야 합니다.
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </form>
-                </div>
+                        <div class="row p-3 ">
+                            <div class="col-5 ">
+                                <c:if test="${not empty images['THUMBNAIL']}">
+                                    <img src="${s3}/resources/images/lesson/${images['THUMBNAIL']}"
+                                         alt="Thumbnail" id="previewThumbnail" class="p-3"
+                                         style="width: 100%;"/>
+                                </c:if>
+                                <label for="thumbnail">썸네일 이미지</label>
+                                <form:input type="file" class="form-control" path="thumbnail" id="thumbnail"
+                                            accept="image/*"/>
+                                <div class="text-danger">
+                                    <form:errors path="thumbnail"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row p-3 ">
+                            <div class="col-5">
+                                <c:if test="${not empty images.MAIN_IMAGE}">
+                                    <img src="${s3}/resources/images/lesson/${images['MAIN_IMAGE']}"
+                                         alt="Main Image" id="previewMainImage" class="p-3"
+                                         style="width: 100%;"/>
+                                </c:if>
+                                <img
+                                        id="previewMainImage"
+                                        alt="Main Image Preview"
+                                        class="p-3"
+                                        style="width: 100%; height: 1000px; display: none;"
+                                />
+                                <label for="mainImage">본문 이미지</label>
+                                <input type="file" class="form-control" name="mainImage" id="mainImage"
+                                       accept="image/*"/>
+                                <form:errors path="mainImage" cssClass="text-danger"/>
+                            </div>
+                        </div>
+                        <div class="row p-3">
+                            <div class="col d-flex justify-content-end">
+                                <a href="/admin/lesson" class="btn btn-secondary m-1">취소</a>
+                                <a href="/admin/lesson-edit-form?lessonNo=${lessonNo}">
+                                    <button type="submit" class="btn btn-primary m-1">수정</button>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </form:form>
             </div>
-            <!-- end Page Content -->
         </div>
     </div>
+    <!-- end Page Content -->
+</div>
+</div>
 </div>
 <!-- Footer -->
 <%@include file="/WEB-INF/views/admincommon/footer.jsp" %>
@@ -202,6 +224,44 @@
         } else {
             previewImage.style.display = "none"; // 파일이 없으면 이미지 숨김
         }
+    });
+
+    document.querySelector("#form-edit").addEventListener("submit", function (event) {
+        // 날짜 입력값 가져오기
+        const startDate = document.getElementById("startDate").value;
+        const endDate = document.getElementById("endDate").value;
+
+        console.log("Start Date:", startDate);  // 디버깅용 로그
+        console.log("End Date:", endDate);      // 디버깅용 로그
+
+        // 오류 메시지 요소
+        const endDateError = document.getElementById("endDateError");
+
+        // 오류 초기화 (숨김 처리)
+        endDateError.style.display = "none";
+
+        // 날짜 비교 로직
+        if (startDate && endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+
+            console.log("Parsed Start Date:", start);  // 디버깅용 로그
+            console.log("Parsed End Date:", end);      // 디버깅용 로그
+
+            if (start >= end) {
+                // 시작 날짜가 종료 날짜보다 늦을 때 오류 처리
+                endDateError.style.display = "block";
+
+                // 오류가 발생한 위치로 스크롤 이동
+                endDateError.scrollIntoView({behavior: "smooth", block: "center"});
+
+                event.preventDefault(); // 폼 제출 중단
+                return;
+            }
+        }
+
+        // 폼 제출
+        document.querySelector("#form-edit").submit();
     });
 
 </script>

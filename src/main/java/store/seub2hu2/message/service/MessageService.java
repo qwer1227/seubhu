@@ -85,8 +85,6 @@ public class MessageService {
             if (user != null) {
                 // MESSAGE_RECEIVERS 테이블에 수신자 정보 저장
                 messageMapper.insertMessageReceiver(message.getMessageNo(), user.getNo());
-            } else {
-                throw new IllegalArgumentException("수신자 '" + nickname.trim() + "'은(는) 존재하지 않습니다.");
             }
         }
     }
@@ -94,20 +92,21 @@ public class MessageService {
 
     private ListDto<MessageReceived> getMessages(Map<String, Object> condition, boolean isReceived) {
         // 검색 조건에 맞는 데이터 전체 갯수 조회
-        int totalRows = messageMapper.getTotalRows(condition);
-
+        int totalRows = isReceived
+            ? messageMapper.getMessageRcvTotalRows(condition)
+                : messageMapper.getMessageTotalRows(condition);
         // pagination 객체 생성
         int page = (Integer) condition.getOrDefault("page", 1);
         int rows = (Integer) condition.getOrDefault("rows", 10);
         Pagination pagination = new Pagination(page, totalRows, rows);
 
-        // 데이터 검색범위를 조회해서 Map에 저장
+        // 데이터 검색��위를 조회해서 Map에 저장
         condition.put("offset", pagination.getOffset());
         condition.put("rows", pagination.getRowsPerPage());
 
-        // 받은 메시지 또는 보낸 메시지 조회
+        // 받은 메시지 또는 ����� 메시지 조회
         List<MessageReceived> messages = isReceived
-                ? messageMapper.getReceivedMessages(condition)
+               ? messageMapper.getReceivedMessages(condition)
                 : messageMapper.getSentMessages(condition);
 
         // 각 메시지별 파일 존재 여부 확인 후 설정
@@ -141,25 +140,31 @@ public class MessageService {
     // 단일 메시지 읽음 처리
     public void markAsRead(int messageNo, int userNo) {
         // 읽음 상태 업데이트
-        messageMapper.updateReceiveMessageReadStatus(messageNo, userNo);
-        messageMapper.updateMessageReadStatus(messageNo);
+        messageMapper.updateReadMarkMessageRcv(messageNo, userNo);
+        messageMapper.updateReadMarkMessage(messageNo);
     }
 
 
     // 단일 메시지 삭제
     public void deleteMessage ( int messageNo){
+
         messageMapper.deleteMessage(messageNo);
     }
 
     // 다중 메시지 삭제
-    public void deleteMessages (List < Integer > messageNo, int userNo) {
-        messageMapper.deleteMessages(messageNo, userNo);
+    public void deleteMessageRcvs (List < Integer > messageNos, int userNo) {
+        for (int messageNo : messageNos) {
+            messageMapper.deleteMessageRcv(messageNo, userNo);
+        }
     }
 
 
     // 다중 메시지 읽음 처리
-    public void markMultipleAsRead (List < Integer > messageNo, int userNo) {
-        messageMapper.updateReadStatuses(messageNo, userNo);
+    public void updateReadMarkMessageRcvs (List < Integer > messageNos, int userNo) {
+        for (int messageNo : messageNos) {
+            messageMapper.updateReadMarkMessageRcv(messageNo, userNo);
+        }
+
     }
 
 

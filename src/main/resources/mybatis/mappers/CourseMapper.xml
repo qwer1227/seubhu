@@ -30,6 +30,8 @@
         select count(*)
         from COURSES c, COURSE_REGION r
         where c.region_no = r.region_no
+        and
+            is_deleted = 'N'
         <include refid="CoursesFilterCondition" />
     </select>
 
@@ -51,6 +53,8 @@
         from COURSES c
         inner join COURSE_REGION r
         on c.region_no = r.region_no
+        where
+            is_deleted = 'N'
     </select>
 
     <!--
@@ -90,6 +94,8 @@
                    </if>
               from COURSES c, COURSE_REGION r
               where c.region_no = r.region_no
+              and
+                  is_deleted = 'N'
               <include refid="CoursesFilterCondition" />
               ) cr
         where rn between #{condition.begin} and #{condition.end}
@@ -123,8 +129,18 @@
         <if test="condition.level != null">
             and c.course_level = #{condition.level}
         </if>
-        <if test="condition.keyword != null">
-            and r.region_gu like concat('%', #{condition.keyword}, '%')
+        <if test="condition.region != null">
+            <choose>
+                <when test="condition.region == 'si'">
+                    and r.region_si like concat('%', #{condition.keyword}, '%')
+                </when>
+                <when test="condition.region == 'gu'">
+                    and r.region_gu like concat('%', #{condition.keyword}, '%')
+                </when>
+                <when test="condition.region == 'dong'">
+                    and r.region_dong like concat('%', #{condition.keyword}, '%')
+                </when>
+            </choose>
         </if>
     </sql>
 </mapper>

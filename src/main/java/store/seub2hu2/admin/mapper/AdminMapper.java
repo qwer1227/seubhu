@@ -120,11 +120,37 @@ public interface AdminMapper {
 
     int getTotalProdRun(@Param("day")String day);
 
-    List<ProdListDto> getStockProducts(@Param("condition")Map<String, Object> condition);
+    List<ProdListDto> getStockProducts(@Param("condition") Map<String, Object> condition);
 
-    int getDeliveryTotalRows(Map<String, Object> condition);
+    int getDeliveryTotalRows(@Param("condition")Map<String, Object> condition);
 
-    List<orderDeliveryDto> getOrderDeliveries(Map<String, Object> condition);
+    List<orderDeliveryDto> getOrderDeliveries(@Param("condition") Map<String, Object> condition);
+
+    void getDeletedProds(@Param("condition") Map<String, Object> condition);
+
+    void getUpdateShows(@Param("condition") Map<String, Object> condition);
+
+    void getDeletedCourses(@Param("courseNo")int courseNo);
+
+    void getUpdateDeliverySetReady(@Param("condition") Map<String, Object> condition);
+
+    void getUpdateDeliverySetShipped(@Param("condition") Map<String, Object> condition);
+
+    void getUpdateDeliverySetDelivered(@Param("condition") Map<String, Object> condition);
+
+    int getReportTotalRows(@Param("condition") Map<String, Object> condition);
+
+    List<ReportDto> getReports(@Param("condition") Map<String, Object> condition);
+
+    void updateBoardStatus(@Param("condition") Map<String, Object> condition);
+
+    void updateBoardReplyStatus(@Param("condition") Map<String, Object> condition);
+
+    void updateCrewStatus(@Param("condition") Map<String, Object> condition);
+
+    void updateCrewReplyStatus(@Param("condition") Map<String, Object> condition);
+
+    void updateReportStatus(@Param("condition") Map<String, Object> condition);
 
 
 

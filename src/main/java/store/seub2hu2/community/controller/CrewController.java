@@ -18,7 +18,6 @@ import org.springframework.web.servlet.ModelAndView;
 import store.seub2hu2.community.dto.CrewForm;
 import store.seub2hu2.community.dto.ReplyForm;
 import store.seub2hu2.community.dto.ReportForm;
-import store.seub2hu2.community.service.CrewReplyService;
 import store.seub2hu2.community.service.CrewService;
 import store.seub2hu2.community.service.ReplyService;
 import store.seub2hu2.community.service.ReportService;
@@ -106,14 +105,11 @@ public class CrewController {
         crew.setReply(replyList);
         int replyCnt = replyService.getReplyCnt(crewNo);
 
-        List<CrewMember> members = crewService.getCrewMembers(crewNo);
-//        crew.setMember(members);
         int memberCnt = crewService.getEnterMemberCnt(crewNo);
 
         model.addAttribute("crew", crew);
         model.addAttribute("replies", replyList);
         model.addAttribute("replyCnt", replyCnt);
-//        model.addAttribute("members", members);
         model.addAttribute("memberCnt", memberCnt);
 
         if (loginUser != null) {
@@ -123,15 +119,10 @@ public class CrewController {
 
                 Reply prev = replyService.getReplyDetail(reply.getNo());
                 model.addAttribute("prev", prev);
-            }
 
-            boolean isExists = false;
-            for (CrewMember member : members) {
-                if (member.getUser().getNo()== loginUser.getNo()) {
-                    isExists = true;
-                    break;
-                }
+
             }
+            boolean isExists = crewService.isExistCrewMember(crewNo, loginUser);
             model.addAttribute("isExists", isExists);
         }
 
@@ -208,12 +199,12 @@ public class CrewController {
         Crew crew = crewService.getCrewDetail(crewNo);
 
         try {
-            String originalFileName = crew.getUploadFile().getOriginalName();
+            String originalFileName = crew.getUploadFile().getSaveName();
             String savedFilename = crew.getUploadFile().getSaveName();
 
             ByteArrayResource byteArrayResource = s3Service.downloadFile(bucketName, fileSaveDirectory, savedFilename);
 
-            String encodedFileName = URLEncoder.encode(originalFileName, "UTF-8");
+            String encodedFileName = URLEncoder.encode(savedFilename.substring(13), "UTF-8");
 
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + encodedFileName + "\"")
@@ -233,21 +224,23 @@ public class CrewController {
 
     @PostMapping("/add-reply")
     @PreAuthorize("isAuthenticated()")
-    public String addReply(ReplyForm form
+    @ResponseBody
+    public Reply addReply(ReplyForm form
             , @AuthenticationPrincipal LoginUser loginUser) {
 
-        replyService.addNewReply(form, loginUser);
+        Reply reply = replyService.addNewReply(form, loginUser);
 
-        return "redirect:detail?no=" + form.getTypeNo();
+        return reply;
     }
 
     @PostMapping("/add-comment")
     @PreAuthorize("isAuthenticated()")
-    public String addComment(ReplyForm form
+    @ResponseBody
+    public Reply addComment(ReplyForm form
             , @AuthenticationPrincipal LoginUser loginUser){
 
-        replyService.addNewComment(form, loginUser);
-        return "redirect:detail?no=" + form.getCrewNo();
+        Reply reply = replyService.addNewComment(form, loginUser);
+        return reply;
     }
 
     @PostMapping("/modify-reply")
@@ -255,22 +248,27 @@ public class CrewController {
     public String modifyReply(ReplyForm form
             , @AuthenticationPrincipal LoginUser loginUser){
 
-        replyService.updateReply(form, loginUser);
-
-        return "redirect:detail?no=" + form.getCrewNo();
+//        try{
+            Reply reply = replyService.updateReply(form, loginUser);
+//            return reply;
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return null;
+//        }
+        return "redirect:detail?no=" + reply.getTypeNo();
     }
 
     @GetMapping("/delete-reply")
     @PreAuthorize("isAuthenticated()")
     public String deleteReply(@RequestParam("rno") int replyNo,
-                              @RequestParam("cno") int crewNo){
+                              @RequestParam("no") int crewNo){
 
         ReplyForm form = new ReplyForm();
         form.setNo(replyNo);
         form.setCrewNo(crewNo);
         replyService.deleteReply(replyNo);
 
-        return "redirect:detail?no=" + form.getCrewNo();
+        return "redirect:detail?no=" + crewNo;
     }
 
     @PostMapping("/update-reply-like")
@@ -283,7 +281,7 @@ public class CrewController {
         return "redirect:detail?no=" + crewNo;
     }
 
-    @GetMapping("/delete-reply-like")
+    @PostMapping("/delete-reply-like")
     public String updateReplyUnlike(@RequestParam("no") int crewNo
             , @RequestParam("rno") int replyNo
             , @AuthenticationPrincipal LoginUser loginUser){
@@ -293,6 +291,7 @@ public class CrewController {
     }
 
     @PostMapping("/report-crew")
+    @PreAuthorize("isAuthenticated()")
     public String reportCrew(ReportForm form
             , @AuthenticationPrincipal LoginUser loginUser){
         boolean isReported = reportService.isReported(form.getType(), form.getNo(), loginUser);
@@ -305,6 +304,7 @@ public class CrewController {
     }
 
     @PostMapping("report-reply")
+    @PreAuthorize("isAuthenticated()")
     public String reportReply(ReportForm form
             , @AuthenticationPrincipal LoginUser loginUser){
         boolean isReported = reportService.isReported(form.getType(), form.getNo(), loginUser);
@@ -317,7 +317,7 @@ public class CrewController {
         return "redirect:detail?no=" + reply.getTypeNo();
     }
 
-    @PostMapping("/enter-crew")
+    @GetMapping("/enter-crew")
     public String enterCrew(@RequestParam("no") int crewNo
             , @AuthenticationPrincipal LoginUser loginUser){
         crewService.enterCrew(crewNo, loginUser);

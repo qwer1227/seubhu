@@ -120,7 +120,51 @@
         let url = document.querySelector("input[name=url]").value;
         let place = document.querySelector("input[name=place]").value;
         let thumbnail = document.querySelector("input[name=thumbnail]").value;
-        
+
+
+        let cleanedContent = content.replace(/<p><br><\/p>/g, "").trim();
+
+        if (!title) {
+            alert("제목을 입력해주세요.");
+            return;
+        }
+        if (!marathonDate) {
+            alert("마라톤 일정을 선택해주세요.");
+            return;
+        }
+        if (!startDate) {
+            alert("마라톤 모집 시작일을 선택해주세요.");
+            return;
+        }
+        if (!endDate) {
+            alert("마라톤 모집 마감일을 선택해주세요.");
+            return;
+        }
+        if (!place) {
+            alert("마라톤 장소를 입력해주세요.");
+            return;
+        }
+        if (!host) {
+            alert("주최 기관을 입력해주세요.");
+            return;
+        }
+        if (!organizer) {
+            alert("주관 기관을 입력해주세요.");
+            return;
+        }
+        if (!url) {
+            alert("마라톤 홈페이지 주소를 입력해주세요.");
+            return;
+        }
+        if (!cleanedContent) {
+            alert("내용을 입력해주세요.");
+            return;
+        }
+        if (!thumbnail) {
+            alert("마라톤 썸네일 이미지 링크를 입력해주세요.");
+            return;
+        }
+
         formData.append("no", no);
         formData.append("title", title);
         formData.append("content", content);
@@ -132,7 +176,7 @@
         formData.append("url", url);
         formData.append("place", place);
         formData.append("thumbnail", thumbnail);
-        
+
         $.ajax({
             method: "post",
             url: "/community/marathon/modify",
@@ -144,7 +188,7 @@
             }
         })
     });
-    
+
     function abort(marathonNo) {
         let result = confirm("수정 중이던 글을 취소하시겠습니까?");
         if (result) {

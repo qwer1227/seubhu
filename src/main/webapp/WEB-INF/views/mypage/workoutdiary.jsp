@@ -35,6 +35,7 @@
             color: blue;
             text-decoration: none;
         }
+
     </style>
 </head>
 <body>
@@ -55,6 +56,13 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="eventCategory" class="form-label">운동 카테고리:</label>
+                        <select id="eventCategory" name="category" class="form-select" required>
+                            <option value="1">무산소</option>
+                            <option value="2">유산소</option>
+                        </select>
+                    </div>
                     <form id="eventForm">
                         <div class="mb-3">
                             <label for="eventTitle" class="form-label">운동 제목:</label>
@@ -98,24 +106,47 @@
             initialView: 'dayGridMonth',
             selectable: true,
             editable: true,
-            events: '/mypage/getworkout',
+            // events 옵션을 AJAX 호출을 통해 가져오는 함수로 수정
+            events: function (fetchInfo, successCallback, failureCallback) {
+                $.ajax({
+                    url: '/mypage/getworkout',
+                    type: 'GET',
+                    success: function (data) {
+                        let events = data.map(function (workout) {
+                            return {
+                                id: workout.id,
+                                title: workout.title,
+                                start: workout.start,
+                                end: workout.end,
+                                className: workout.categoryNo === 1 ? 'anaerobic' : 'aerobic' // 카테고리에 따라 색상 클래스 설정
+                            };
+                        });
+                        successCallback(events); // 이벤트 데이터를 FullCalendar에 전달
+                    },
+                    error: function () {
+                        failureCallback(); // 실패 시 콜백
+                    }
+                });
+            },
             displayEventTime: false,
+            locale: 'ko',
+            dayHeaderFormat: { weekday: 'short'},
             dateClick: function (info) {
                 openModal(info.dateStr);
             },
             eventClick: function (info) {
                 // 이벤트 클릭 시 서버에서 상세 정보 가져오기
                 $.ajax({
-                    url: '/mypage/getworkoutdetail' + info.event.id, // 이벤트 ID를 사용해 서버 요청
+                    url: '/mypage/getworkoutdetail/' + info.event.id, // 이벤트 ID를 사용해 서버 요청
                     type: 'GET',
                     success: function (response) {
                         if (response.message === "성공") {
-                            // 서버에서 가져온 데이터로 모달을 채움
                             let workoutDetail = response.workoutDetail;
 
                             // 모달 내용 설정
                             $('#eventTitle').val(workoutDetail.title);
                             $('#eventDescription').val(workoutDetail.description);
+                            $('#eventCategory').val(workoutDetail.categoryNo); // 카테고리 설정
                             $('#deleteEvent').show();
 
                             // 모달 표시
@@ -126,6 +157,7 @@
                             $('#saveEvent').off('click').on('click', function () {
                                 let title = $('#eventTitle').val();
                                 let description = $('#eventDescription').val();
+                                let categoryNo = $('#eventCategory').val();
 
                                 // 수정 요청
                                 $.ajax({
@@ -134,7 +166,8 @@
                                     contentType: 'application/json',
                                     data: JSON.stringify({
                                         title: title,
-                                        description: description
+                                        description: description,
+                                        categoryNo: categoryNo
                                     }),
                                     success: function () {
                                         calendar.refetchEvents(); // 이벤트 갱신
@@ -188,41 +221,43 @@
             $('#saveEvent').off('click').on('click', function () {
                 let title = $('#eventTitle').val();
                 let description = $('#eventDescription').val();
+                let categoryNo = $('#eventCategory').val(); // 카테고리 값 추가
 
                 if (event) {
                     event.setProp('title', title);
                     event.setExtendedProp('description', description);
 
-                // 수정 요청
-                $.ajax({
-                    url: '/mypage/putworkout/' + event.id, // 이벤트 ID를 통해 수정
-                    type: 'PUT',
-                    contentType: 'application/json',
-                    data: JSON.stringify({
-                        title: title,
-                        description: description
-                    }),
-                    success: function () {
-                        calendar.refetchEvents(); // 서버 데이터 재로드
-                    }
-                });
-            } else {
-                // 새로운 이벤트 추가
-                $.ajax({
-                    url: '/mypage/postworkout',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({
-                        title: title,
-                        startDate: date,
-                        description: description
-                    }),
-                    success: function (response) {
-                        date.response
-                        calendar.refetchEvents(); // 서버 데이터 재로드
-                    }
-                });
-            }
+                    // 수정 요청
+                    $.ajax({
+                        url: '/mypage/putworkout/' + event.id, // 이벤트 ID를 통해 수정
+                        type: 'PUT',
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            title: title,
+                            description: description,
+                            categoryNo: categoryNo // 카테고리 정보도 전송
+                        }),
+                        success: function () {
+                            calendar.refetchEvents(); // 서버 데이터 재로드
+                        }
+                    });
+                } else {
+                    // 새로운 이벤트 추가
+                    $.ajax({
+                        url: '/mypage/postworkout',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            title: title,
+                            startDate: date,
+                            description: description,
+                            categoryNo: categoryNo // 카테고리 정보도 전송
+                        }),
+                        success: function (response) {
+                            calendar.refetchEvents(); // 서버 데이터 재로드
+                        }
+                    });
+                }
 
                 myModal.hide();
             });

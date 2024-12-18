@@ -3,9 +3,9 @@ package store.seub2hu2.user.service;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,10 +16,7 @@ import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.dto.UserJoinForm;
 import store.seub2hu2.user.exception.AlreadyUsedIdException;
 import store.seub2hu2.user.mapper.UserMapper;
-import store.seub2hu2.user.vo.Addr;
-import store.seub2hu2.user.vo.Role;
-import store.seub2hu2.user.vo.User;
-import store.seub2hu2.user.vo.UserRole;
+import store.seub2hu2.user.vo.*;
 
 import java.util.List;
 
@@ -35,22 +32,6 @@ public class UserService {
 
     @Autowired
     private UserMapper userMapper;
-
-    // 아이디 중복 체크
-    public boolean isIdExists(String id) {
-        return userMapper.getUserById(id) != null;
-    }
-
-    // 닉네임 중복 체크
-    public boolean isNicknameExists(String nickname) {
-        return userMapper.getUserByNickname(nickname) != null;
-    }
-
-    // 이메일 중복 체크
-    public boolean isEmailExists(String email) {
-        return userMapper.getUserByEmail(email) != null;
-    }
-
 
     /**
      * 신규 사용자 정보를 전달받아서 회원가입 시키는 서비스
@@ -99,7 +80,6 @@ public class UserService {
         userLevel.setLevel(1);             // 기본 레벨 설정 (예: 1)
         userMapper.insertUserLevel(userLevel);  // 사용자 레벨 등록
     }
-
 
     /**
      * 사용자번호, 권한이름을 전달받아서 권한을 추가하는 서비스
@@ -151,6 +131,11 @@ public class UserService {
         user.setTel(userInfoReq.getPhone());
         user.setEmail(userInfoReq.getEmail());
 
+        if(userInfoReq.getAddrNo() != 0){
+            userMapper.updateIsAddrHomeToN(user.getNo());
+            userMapper.updateAddr(userInfoReq);
+        }
+
         // 이전비밀번호 중복입력검증
         if (userInfoReq.getPassword().equals(user.getPassword())) {
             return 1;
@@ -182,18 +167,29 @@ public class UserService {
         return findUsers;
     }
 
+    public LoginUser authenticateUser(String id, String password) throws BadCredentialsException {
+        // userMapper를 통해 아이디로 사용자 조회
+        User user = userMapper.getUserById(id);
+        if (user == null) {
+            throw new BadCredentialsException("아이디가 존재하지 않습니다.");
+        }
 
-    public LoginUser authenticateUser(String id, String password) throws AuthenticationException {
-        // 인증을 시도하고, 인증에 성공하면 인증된 사용자 정보를 반환
+        // 비밀번호가 일치하지 않으면
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new BadCredentialsException("비밀번호가 맞지 않습니다.");
+        }
+
+        // 인증 처리
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(id, password)
         );
 
-        // 인증 성공 시, 인증 정보를 SecurityContext에 저장
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         return (LoginUser) authentication.getPrincipal();
     }
+
+
 
     public List<User> searchUsersByNickname(String nickname) {
         return userMapper.findUsersByNickname(nickname);
@@ -219,9 +215,27 @@ public class UserService {
 
         User user = findbyUserNo(userNo);
 
-        if(user.getPassword().equals(password)){
+        if(passwordEncoder.matches(password, user.getPassword())){
+            return true;
+        } else {
             return false;
         }
-        return true;
     }
+
+    public List<Addr> findAddrByUserNo(int userNo){
+
+        return userMapper.findAddrByUserNo(userNo);
+
+    }
+
+    public UserImage findImageByUserNo(int userNo){
+
+        return userMapper.findImageByUserNo(userNo);
+    }
+
+    public User findByNickname(String userName){
+
+        return userMapper.getUserByNickname(userName);
+    }
+
 }

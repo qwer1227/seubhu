@@ -66,7 +66,7 @@ public class BoardController {
 
     @GetMapping("/main")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page
-            , @RequestParam(name = "rows", required = false, defaultValue = "10") int rows
+            , @RequestParam(name = "rows", defaultValue = "10") int rows
             , @RequestParam(name = "sort", required = false, defaultValue = "date") String sort
             , @RequestParam(name = "opt", required = false) String opt
             , @RequestParam(name = "keyword", required = false) String keyword
@@ -215,7 +215,7 @@ public class BoardController {
 
         Board board = boardService.getBoardDetail(boardNo);
         try {
-            String filename = board.getOriginalFileName();
+            String filename = board.getUploadFile().getSaveName();
             ByteArrayResource byteArrayResource = s3Service.downloadFile(bucketName, saveDirectory, filename);
 
             String encodedFileName = URLEncoder.encode(filename.substring(13), "UTF-8");
@@ -238,20 +238,22 @@ public class BoardController {
 
     @PostMapping("/add-reply")
     @PreAuthorize("isAuthenticated()")
-    public String addReply(ReplyForm form
+    @ResponseBody
+    public Reply addReply(ReplyForm form
             , @AuthenticationPrincipal LoginUser loginUser) {
 
-        replyService.addNewReply(form, loginUser);
-        return "redirect:detail?no=" + form.getTypeNo();
+        Reply reply = replyService.addNewReply(form, loginUser);
+        return reply;
     }
 
     @PostMapping("/add-comment")
     @PreAuthorize("isAuthenticated()")
-    public String addComment(ReplyForm form
+    @ResponseBody
+    public Reply addComment(ReplyForm form
             , @AuthenticationPrincipal LoginUser loginUser) {
 
-        replyService.addNewComment(form, loginUser);
-        return "redirect:detail?no=" + form.getTypeNo();
+        Reply reply = replyService.addNewComment(form, loginUser);
+        return reply;
     }
 
     @PostMapping("/modify-reply")

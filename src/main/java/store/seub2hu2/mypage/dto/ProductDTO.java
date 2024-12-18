@@ -16,4 +16,5 @@ public class ProductDTO {
     private int orderQty;
     private int prodPrice;
     private String prodImgUrl;
+    private String orderStatus;
 }

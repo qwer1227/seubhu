@@ -4,7 +4,7 @@
 <html lang="ko">
 <head>
     <%@include file="/WEB-INF/views/common/common.jsp" %>
-</head>
+    <title>쪽지 작성</title></head>
 <body>
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
 <div class="container-xxl text-center" id="wrap">
@@ -22,23 +22,27 @@
                 ${message.title}
             </div>
         </div>
-        <div class="meta d-flex justify-content-left mb-3" >
-            <span>보낸사람: ${message.senderNickname}</span> /
+        <!-- 보낸사람과 날짜 사이에 공백 추가 -->
+        <div class="meta d-flex justify-content-left mb-3">
+            <span>보낸사람: ${message.senderNickname}</span>
+            <span class="mx-2">/</span> <!-- 공백 역할을 하는 클래스 추가 -->
             <span>날짜: <fmt:formatDate value="${message.createdDate}" pattern="yyyy-MM-dd"/></span>
         </div>
 
-        <div class="content mb-4">
+        <!-- 내용 좌측 정렬 -->
+        <div class="content mb-4 text-start">
             <p>${message.content}</p>
         </div>
-        <c:if test="${not empty message.messageFile.savedName}">
-            <div class="content mb-4">
-                첨부파일: ${message.messageFile.originalName}
-            </div>
-            <a href="/message/download?no=${message.messageNo}" class="btn btn-outline-dark btn-sm">
-                다운로드
-            </a>
-        </c:if>
 
+        <!-- 첨부파일과 다운로드 버튼을 한 줄로 배치 -->
+        <c:if test="${not empty message.messageFile.savedName}">
+            <div class="content mb-4 text-start d-flex align-items-center">
+                <span>첨부파일: ${message.messageFile.originalName}</span>
+                <a href="/message/download?no=${message.messageNo}" class="btn btn-outline-dark btn-sm ms-2">
+                    다운로드
+                </a>
+            </div>
+        </c:if>
 
         <div class="actions d-flex justify-content-end mb-4">
             <div>
@@ -56,8 +60,9 @@
                 <a type="button" href="/message/list" class="btn btn-dark">목록</a>
             </div>
         </div>
-
     </div>
-    <%@include file="/WEB-INF/views/common/footer.jsp" %>
+
+</div>
+<%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
 </html>

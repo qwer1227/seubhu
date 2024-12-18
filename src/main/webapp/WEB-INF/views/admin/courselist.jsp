@@ -27,6 +27,39 @@
         .card img {
             height: 250px; /* 모든 이미지가 같은 높이가 되도록 설정 */
         }
+    /* 거리 슬라이더 스타일 */
+    .form-range {
+
+        height: 8px;
+        border-radius: 5px;
+    }
+    .form-range::-webkit-slider-thumb {
+        background-color: #0064FF;
+        border: none;
+        height: 16px;
+        width: 16px;
+        border-radius: 50%;
+    }
+    .form-range::-moz-range-thumb {
+        background-color: #0064FF;
+        border: none;
+        height: 16px;
+        width: 16px;
+        border-radius: 50%;
+    }
+
+    /* 버튼 스타일 */
+    .btn-outline-primary {
+
+        background-color: transparent;
+    }
+
+
+
+    /* 슬라이더 값 표시 */
+    .row .col {
+        font-size: 12px;
+    }
     </style>
 </head>
 
@@ -57,19 +90,21 @@
         </div>
         <!-- 5-10-20개씩 보기 최신순 이름순 -->
         <div class="row row-cols-1 row-cols-md-1 g-4 mt-3 mb-3">
-        <div class="col" style="border: 1px solid rgb(78, 115, 223); padding: 20px">
+        <div class="col">
             <form id="form-search" method="get" action="/admin/course">
                 <input type="hidden" name="page"/>
                 <div class="row g-3 d-flex justify-content-center">
-                    <div class="row col-2 text-start">
-                        <label for="customRange2" class="col-5 form-label text-end mt-3">추천순</label>
-                        <input type="checkbox"  class="col-1 form-check mb-1" name="sort" value="like" ${param.sort eq 'like' ? 'checked' : ''}>
+                    <!-- 추천순 -->
+                    <div class="row col-1 text-start">
+                        <label for="customRange2" class="col-8 form-label text-end pt-3 mt-2">추천순</label>
+                        <input type="checkbox" class="col-2 form-check mt-1" name="sort" value="like" ${param.sort eq 'like' ? 'checked' : ''}>
                     </div>
+                    <!-- 거리 슬라이더 -->
                     <div class="col-4">
-                        <label id="slider" for="customRange2" class="form-label">거리</label>
+                        <label for="customRange2" class="form-label">거리</label>
                         <input type="range" class="form-range" min="0" max="10" id="customRange2" name="distance"
-                               value="${empty param.distance ? '10' : param.distance}">
-                        <div class="row">
+                            value="${empty param.distance ? '10' : param.distance}" style="accent-color: #0064FF; width: 100%;"/>
+                        <div class="row text-center">
                             <div class="col">0</div>
                             <div class="col">1</div>
                             <div class="col">2</div>
@@ -83,18 +118,22 @@
                             <div class="col">10</div>
                         </div>
                     </div>
+                    <!-- 난이도 -->
                     <div class="col-1">
-                        난이도
+                        <label for="level">난이도</label>
                         <select class="form-control form-select" name="level">
-                            <option value=""> 전체</option>
+                            <option value="">전체</option>
                             <c:forEach var="num" begin="1" end="5">
-                                <option value="${num }" ${param.level eq num ? "selected" : ""}> ${num }단계</option>
+                                <option value="${num}" ${param.level eq num ? "selected" : ""}>${num}단계</option>
                             </c:forEach>
                         </select>
                     </div>
+                    <!-- 지역 검색 -->
                     <div class="col-2">
-                        지역(구) 검색<input type="text" class="form-control" name="keyword" value="${param.keyword }">
+                        <label for="keyword">지역(구) 검색</label>
+                        <input type="text" class="form-control" name="keyword" value="${param.keyword}">
                     </div>
+                    <!-- 검색 버튼 -->
                     <div class="col-1 pt-4">
                         <button type="button" class="btn btn-outline-primary" onclick="searchKeyword()">검색</button>
                     </div>

@@ -27,7 +27,8 @@
         <collection property="postComment" ofType="store.seub2hu2.mypage.vo.PostComment">
             <id property="no" column="comment_no"/>
             <result property="commentRequest.postComment" column="comment_text"/>
-            <result property="userName" column="comment_user_name"/>
+            <result property="userName" column="comment_user_nickname"/>
+            <result property="commentRequest.replyToCommentNo" column="comment_no2"/>
         </collection>
     </resultMap>
 
@@ -46,7 +47,8 @@
             i.image_url,
             c.comment_no,
             c.comment_text,
-            cu.user_name AS comment_user_name
+            c.comment_no2,
+            cu.user_nickname AS comment_user_nickname
         FROM
             POSTS p
             LEFT JOIN USERS u ON p.user_no = u.user_no  -- 사용자 정보
@@ -68,7 +70,7 @@
             p.post_deleted,
             p.created_date,
             u.user_no,
-            u.user_name,
+            u.user_nickname,
             i.image_no,
             i.image_url
         FROM
@@ -144,7 +146,7 @@
 
     <select id="findByUserNo" resultType="String">
         select
-            USER_NAME
+            USER_NICKNAME
         from
             USERS
         where

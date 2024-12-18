@@ -31,4 +31,6 @@ public class Reply {
     private int replyLiked; // 댓글 좋아요 클릭 여부
     private String deleted;
     private String image;
+    private int boardNo;
+    private String reader;
 }

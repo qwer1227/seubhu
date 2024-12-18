@@ -17,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 import store.seub2hu2.admin.dto.RequestParamsDto;
 import store.seub2hu2.cart.dto.CartItemDto;
 import store.seub2hu2.cart.dto.CartRegisterForm;
+import store.seub2hu2.cart.vo.Cart;
 import store.seub2hu2.community.dto.BoardForm;
 import store.seub2hu2.community.dto.ReplyForm;
 import store.seub2hu2.community.dto.ReportForm;
@@ -26,16 +27,21 @@ import store.seub2hu2.community.vo.Crew;
 import store.seub2hu2.community.vo.Reply;
 import store.seub2hu2.lesson.view.FileDownloadView;
 import store.seub2hu2.mypage.dto.*;
-import store.seub2hu2.mypage.service.CartService;
-import store.seub2hu2.mypage.service.PostService;
-import store.seub2hu2.mypage.service.QnaService;
-import store.seub2hu2.mypage.service.WorkoutService;
+import store.seub2hu2.mypage.service.*;
 import store.seub2hu2.mypage.vo.Post;
 import store.seub2hu2.order.service.OrderService;
+import store.seub2hu2.order.vo.Order;
+import store.seub2hu2.product.vo.Color;
+import store.seub2hu2.product.vo.Product;
+import store.seub2hu2.product.vo.Size;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.user.service.UserService;
+import store.seub2hu2.user.vo.Addr;
 import store.seub2hu2.user.vo.User;
+import store.seub2hu2.user.vo.UserImage;
 import store.seub2hu2.util.ListDto;
+import store.seub2hu2.wish.dto.WishItemDto;
+import store.seub2hu2.wish.vo.WishList;
 
 import java.io.File;
 import java.net.URLEncoder;
@@ -48,7 +54,7 @@ import java.util.Map;
 @RequestMapping("/mypage")
 public class MyPageController {
 
-    @Value("${upload.directory.userImage}")
+    @Value("upload.directory.userImage")
     private String saveDirectory;
 
     @Autowired
@@ -73,7 +79,7 @@ public class MyPageController {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private ReplyService replyService;
+    private BoardReplyService replyService;
 
     @Autowired
     private ScrapService scrapService;
@@ -86,17 +92,41 @@ public class MyPageController {
 
     @Autowired
     private FileDownloadView fileDownloadView;
+
     @Autowired
     private CrewService crewService;
 
+    @Autowired
+    private WishListService wishListService;
+
     // URL localhost/mypage 입력 시 유저의 No를 활용해 그 유저의 페이지를 보여줌
     @GetMapping("")
-    public String myPageList(Model model, @AuthenticationPrincipal LoginUser loginUser) {
-        List<Post> posts = postService.getPostsByNo(loginUser.getNo());
-        User user = userService.findbyUserId(loginUser.getId());
+    public String myPageList(Model model, @AuthenticationPrincipal LoginUser loginUser, @RequestParam(value = "userName", required = false) String userName) {
+
+        User user = null;
+        UserImage userImage = null;
+        List<Post> posts = null;
+
+        try {
+            if (userName != null && !userName.isEmpty()) {
+                // userName이 파라미터로 제공되면 해당 닉네임으로 사용자 정보를 조회
+                user = userService.findByNickname(userName);
+                userImage = userService.findImageByUserNo(user.getNo());
+                posts = postService.getPostsByNo(user.getNo());
+            } else {
+                posts = postService.getPostsByNo(loginUser.getNo());
+                user = userService.findbyUserId(loginUser.getId());
+                userImage = userService.findImageByUserNo(loginUser.getNo());
+
+                System.out.println(posts);
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
 
         model.addAttribute("posts",posts);
         model.addAttribute("user",user);
+        model.addAttribute("userimage",userImage);
 
         return "mypage/publicpage";
     }
@@ -134,7 +164,11 @@ public class MyPageController {
 
     // 내 정보 수정 폼
     @GetMapping("/edit")
-    public String userEdit(){
+    public String userEdit(Model model, @AuthenticationPrincipal LoginUser loginUser){
+
+        List<Addr> addr = userService.findAddrByUserNo(loginUser.getNo());
+
+        model.addAttribute("addr", addr);
 
         return "mypage/edit";
     }
@@ -207,7 +241,7 @@ public class MyPageController {
             model.addAttribute("Scrapped", scrapResult);
 
             for (Reply reply : replyList) {
-                int replyResult = replyService.getCheckLike(reply.getNo(), "board", loginUser);
+                int replyResult = replyService.getCheckLike(reply.getNo(), loginUser);
                 model.addAttribute("replyLiked", replyResult);
             }
         }
@@ -311,7 +345,7 @@ public class MyPageController {
 
         replyService.addNewReply(form, loginUser);
 
-        return "redirect:detail?no=" + form.getTypeNo();
+        return "redirect:detail?no=" + form.getBoardNo();
     }
 
     @PostMapping("/add-comment")
@@ -320,7 +354,7 @@ public class MyPageController {
             , @AuthenticationPrincipal LoginUser loginUser){
         replyService.addNewComment(form, loginUser);
 
-        return "redirect:detail?no=" + form.getTypeNo();
+        return "redirect:detail?no=" + form.getBoardNo();
     }
 
     @PostMapping("/modify-reply")
@@ -330,14 +364,14 @@ public class MyPageController {
             , @RequestParam("content") String replyContent
             , @AuthenticationPrincipal LoginUser loginUser){
         ReplyForm form = new ReplyForm();
-        form.setNo(replyNo);
-        form.setTypeNo(boardNo);
+        form.setId(replyNo);
+        form.setBoardNo(boardNo);
         form.setContent(replyContent);
         form.setUserNo(loginUser.getNo());
 
-        replyService.updateReply(form, loginUser);
+        replyService.updateReply(form);
 
-        return "redirect:detail?no=" + form.getTypeNo();
+        return "redirect:detail?no=" + form.getBoardNo();
     }
 
     @GetMapping("/delete-reply")
@@ -345,11 +379,11 @@ public class MyPageController {
     public String deleteReply(@RequestParam("rno") int replyNo,
                               @RequestParam("bno") int boardNo){
         ReplyForm form = new ReplyForm();
-        form.setNo(replyNo);
-        form.setTypeNo(boardNo);
+        form.setId(replyNo);
+        form.setBoardNo(boardNo);
         replyService.deleteReply(replyNo);
 
-        return "redirect:detail?no=" + form.getTypeNo();
+        return "redirect:detail?no=" + form.getBoardNo();
     }
 
     @GetMapping("/update-board-like")
@@ -367,11 +401,11 @@ public class MyPageController {
     }
 
     @GetMapping("/update-reply-like")
-    public String updateReplyLike(@RequestParam("no") int boardNo
+    public String updateReplyLke(@RequestParam("no") int boardNo
             , @RequestParam("rno") int replyNo
             , @AuthenticationPrincipal LoginUser loginUser){
 
-        replyService.updateReplyLike(replyNo, "boardReply", loginUser);
+        replyService.updateReplyLike(replyNo, loginUser);
         return "redirect:detail?no=" + boardNo;
     }
 
@@ -380,7 +414,7 @@ public class MyPageController {
             , @RequestParam("rno") int replyNo
             , @AuthenticationPrincipal LoginUser loginUser){
 
-        replyService.deleteReplyLike(replyNo, "boardReply", loginUser);
+        replyService.deleteReplyLike(replyNo, loginUser);
         return "redirect:detail?no=" + boardNo;
     }
 
@@ -474,17 +508,104 @@ public class MyPageController {
         return "redirect:cart";
     }
 
+    @PostMapping("/add-to-cart")
+    @ResponseBody
+    public String addToCart(@RequestParam("wishNo") int wishNo
+                            ,@RequestParam("prodNo") int prodNo
+                            ,@RequestParam("colorNo") int colorNo
+                            ,@RequestParam("sizeNo") int sizeNo
+                            ,@AuthenticationPrincipal LoginUser loginUser) {
+
+        // 로그인된 사용자의 정보를 가져오기
+        User user = User.builder().no(loginUser.getNo()).build();
+
+        // 위시리스트에서 해당 상품을 찾고, 장바구니에 추가
+        Cart cart = new Cart();
+        cart.setUser(user);
+
+        // Product, Color, Size 세팅
+        Product product = new Product();
+        product.setNo(prodNo);
+        cart.setProduct(product);
+
+        Color color = new Color();
+        color.setNo(colorNo);
+        cart.setColor(color);
+
+        Size size = new Size();
+        size.setNo(sizeNo);
+        cart.setSize(size);
+
+        cartService.addToCart(cart);
+
+        wishListService.deleteWishListItemByNo(wishNo);
+
+        return "redirect:/cart";
+    }
+
     // 위시리스트 화면으로 간다.
     @GetMapping("/wish")
-    public String wish() {
+    public String wish(@AuthenticationPrincipal LoginUser loginUser
+                        , Model model) {
+
+        User user = User.builder().no(loginUser.getNo()).build();
+
+        List<WishItemDto> wishItemDtoList = wishListService.getWishListByUserNo(user.getNo());
+
+        model.addAttribute("wishItemDtoList",wishItemDtoList);
 
         return "mypage/wish";
     }
 
+    @PostMapping("/delete-wish")
+    @ResponseBody
+    public String deleteWish(@RequestParam("wishNo") int wishNo) {
+
+        // 삭제
+        wishListService.deleteWishListItemByNo(wishNo);
+        return "삭제 성공";
+    }
+
     // Post 방식으로
     @PostMapping("/wish")
-    public String addWish() {
-        return "mypage/wish";
+    public String addWish(@RequestParam("sizeNo") List<Integer> sizeNo
+                            ,@RequestParam("prodNo") List<Integer> prodNo
+                            ,@RequestParam("colorNo") List<Integer> colorNo
+                            ,@AuthenticationPrincipal LoginUser loginUser
+                            , Model model){
+
+        List<WishList> wishLists = new ArrayList<>();
+
+        for (int i = 0; i < sizeNo.size(); i++) {
+            WishList wish = new WishList();
+
+            // Product 설정
+            Product product = new Product();
+            product.setNo(prodNo.get(i));
+            wish.setProduct(product);
+
+            // Color 설정
+            Color color = new Color();
+            color.setNo(colorNo.get(i));
+            wish.setColor(color);
+
+            // Size 설정
+            Size size = new Size();
+            size.setNo(sizeNo.get(i));
+            wish.setSize(size);
+
+            // User 설정
+            User user = User.builder().no(loginUser.getNo()).build();
+            wish.setUser(user);
+
+            // WishList에 추가
+            wishLists.add(wish);
+        }
+
+        // Service로 데이터 전달
+        wishListService.insertWishItems(wishLists);
+
+        return "redirect:wish";
     }
 
     // 주문내역 화면으로 간다.
@@ -526,10 +647,10 @@ public class MyPageController {
     @PostMapping("/order")
     public String addOrder(@RequestParam("sizeNo") List<Integer> sizeNoList
             ,@RequestParam("stock") List<Integer> stock
+            , @AuthenticationPrincipal LoginUser loginUser
             ,Model model) {
 
-
-        List<CartItemDto> orderItems = orderService.getOrderItemBySizeNo(sizeNoList, stock);
+        List<CartItemDto> orderItems = orderService.getOrderItemBySizeNo(sizeNoList, stock, loginUser.getNo());
         model.addAttribute("orderItems", orderItems);
 
         return "mypage/order";
@@ -547,8 +668,8 @@ public class MyPageController {
 //    }
     
     // 레슨예약내역 화면으로 간다
-    @GetMapping("/reservation/{userId}")
-    public String reservation(@PathVariable("userId") String userId , @AuthenticationPrincipal LoginUser loginUser){
+    @GetMapping("/reservation")
+    public String reservation(){
 
         return "lesson/lesson-reservation";
     }
@@ -557,7 +678,7 @@ public class MyPageController {
     @GetMapping("/qna")
     public String qna(Model model, @AuthenticationPrincipal LoginUser loginUser, RequestParamsDto requestParamsDto){
 
-        ListDto<QnaResponse> qnaDto = qnaService.getQnas2(requestParamsDto);
+        ListDto<QnaResponse> qnaDto = qnaService.getQnas(requestParamsDto, loginUser.getNo());
         
         model.addAttribute("qna", qnaDto.getData());
         model.addAttribute("pagination", qnaDto.getPaging());
@@ -596,11 +717,20 @@ public class MyPageController {
 
     // 문의삭제 기능 POST
     @PostMapping("/qna/delete/{qnaNo}")
-    public String postQnaDelete(@PathVariable("qnaNo") int qnaNo){
+    public String postQnaDelete(@PathVariable("qnaNo") int qnaNo, @AuthenticationPrincipal LoginUser loginUser){
+
+        String userName = loginUser.getNickname();
+
+        boolean isAdmin = "관리자".equals(userName);
 
         qnaService.deleteQna(qnaNo);
 
-        return "redirect:/mypage/qna";
+        // 역할에 따른 리다이렉트 분류
+        if(isAdmin){
+            return "redirect:/admin/qna";
+        } else {
+            return "redirect:/mypage/qna";
+        }
     }
 
     // 문의수정 화면
@@ -637,6 +767,8 @@ public class MyPageController {
 
         List<Crew> crews = crewService.getCrewByUserNo(loginUser.getNo());
         model.addAttribute("crews", crews);
+
+
 
         return "mypage/participatingcrew";
     }

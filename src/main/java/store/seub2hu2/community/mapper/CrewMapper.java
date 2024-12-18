@@ -17,14 +17,16 @@ public interface CrewMapper {
     void insertCrewMember(@Param("member") CrewMember member);
     List<Crew> getCrews(@Param("condition") Map<String, Object> condition);
     List<Crew> getCrewsTopFive(@Param("condition") Map<String, Object> condition);
-    List<CrewMember> getCrewMembers(@Param("no") int crewNo);
+    List<Integer> getCrewMembers(@Param("no") int crewNo);
+    List<CrewMember> getByCrewNo(@Param("no") int crewNo);
     List<Crew> getCrewByUserNo(@Param("userNo") int userNo);
     int getTotalRowsForCrew(@Param("condition") Map<String, Object> condition);
     Crew getCrewDetailByNo(@Param("no") int crewNo);
     void updateCrewCnt(@Param("crew") Crew crew);
-
     void updateCrew(@Param("crew") Crew crew);
     void updateCrewCondition(@Param("no") int crewNo, @Param("condition") String condition);
     void updateCrewMember(@Param("member") CrewMember member);
     int getCrewMemberCnt(@Param("no") int crewNo);
+    void updateReader(@Param("userNo") int userNo, @Param("crewNo") int crewNo );
+    void exitCrew(@Param("readerNo") int readerNo, @Param("crewNo") int crewNo);
 }

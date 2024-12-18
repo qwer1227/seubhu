@@ -81,6 +81,7 @@
                                             <!-- 삭제 버튼 -->
                                             <form action="/mypage/qna/delete/${qna.qnaNo}" method="post" style="display:inline;" onsubmit="return confirm('정말 삭제하시겠습니까?')">
                                                 <button type="submit" class="btn btn-sm btn-danger">삭제</button>
+
                                             </form>
                                         </td>
                                     </tr>
