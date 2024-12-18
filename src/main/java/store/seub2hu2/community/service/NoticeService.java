@@ -15,6 +15,7 @@ import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.util.FileUtils;
 import store.seub2hu2.util.ListDto;
 import store.seub2hu2.util.Pagination;
+import store.seub2hu2.util.S3Service;
 
 import java.util.List;
 import java.util.Map;
@@ -22,8 +23,14 @@ import java.util.Map;
 @Service
 public class NoticeService {
 
-    @Value("C:/files/notice")
+    @Value("${upload.directory.notice.files}")
     private String saveDirectory;
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucketName;
+
+    @Autowired
+    private S3Service s3Service;
 
     @Autowired
     private NoticeMapper noticeMapper;
@@ -44,7 +51,7 @@ public class NoticeService {
         if (multipartFile != null && !multipartFile.isEmpty()) {
             String originalFilename = multipartFile.getOriginalFilename();
             String filename = System.currentTimeMillis() + originalFilename;
-            FileUtils.saveMultipartFile(multipartFile, saveDirectory, filename);
+            s3Service.uploadFile(multipartFile, bucketName, saveDirectory, filename);
 
             UploadFile uploadFile = new UploadFile();
             uploadFile.setOriginalName(originalFilename);
@@ -126,7 +133,7 @@ public class NoticeService {
 
             String originalFilename = multipartFile.getOriginalFilename();
             String filename = System.currentTimeMillis() + originalFilename;
-            FileUtils.saveMultipartFile(multipartFile, saveDirectory, filename);
+            s3Service.uploadFile(multipartFile, bucketName, saveDirectory, filename);
 
             UploadFile uploadFile = new UploadFile();
             uploadFile.setOriginalName(originalFilename);

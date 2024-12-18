@@ -4,7 +4,7 @@
 <!doctype html>
 <html lang="ko">
 <head>
-	<%@include file="/WEB-INF/views/common/common.jsp" %>
+  <%@include file="/WEB-INF/views/common/common.jsp" %>
 </head>
 <style>
     #notice-table th {
@@ -18,77 +18,77 @@
 <body>
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
 <div class="container-xxl text-center" id="wrap">
-	
-	<h2>공지사항 글 수정</h2>
-	
-	<div class="row p-3">
-		<form method="post" action="modify" enctype="multipart/form-data">
-			<input type="hidden" name="no" value="${notice.no}">
-			<input type="hidden" name="fileNo" id="fileNo" value="${notice.uploadFile.no}">
-			<table id="notice-table" style="width: 98%">
-				<colgroup>
-					<col width="20%">
-					<col width="*">
-				</colgroup>
-				<tbody>
-				<tr>
-					<th>상위 노출 여부</th>
-					<td>
-						<div class="form-check form-switch">
-							<input class="form-check-input" checked type="checkbox" role="switch"
-										 id="first-check" onclick="changeFirst()">
-							<input type="hidden" id="first" name="first" value="true">
-							<label class="form-check-label"></label>
-						</div>
-					</td>
-				</tr>
-				<tr>
-					<th>글제목</th>
-					<td colspan="3"><input type="text" id="title" name="title" style="width: 100%" value="${notice.title}"></td>
-				</tr>
-				<tr>
-					<th>글내용</th>
-					<td colspan="3">
-						<form method="get" action="modify">
-							<textarea name="ir1" id="ir1" style="display:none;">${notice.content}</textarea>
-						</form>
-				</tr>
-				<c:if test="${not empty notice.uploadFile}">
-					<c:if test="${notice.uploadFile.deleted eq 'N'}">
-						<tr class="form-group">
-							<th>
-								<label class="form-label">기존파일명</label>
-							</th>
-							<td colspan="3" style="text-align: start">
-									${notice.uploadFile.originalName}
-								<button type="button" class="btn btn-outline-dark"
-												onclick="deleteUploadFile(${notice.no}, ${notice.uploadFile.no})">
-									삭제
-								</button>
-							</td>
-						</tr>
-					</c:if>
-				</c:if>
-				<tr>
-					<th>첨부파일</th>
-					<td colspan="3">
-						<input type="file" class="form-control" name="upfile"/>
-					</td>
-				</tr>
-				</tbody>
-			</table>
-		</form>
-	</div>
-	<div class="row p-3">
-		<div class="col d-flex justify-content-between">
-			<div class="col d-flex" style="text-align: start">
-				<button type="button" class="btn btn-secondary m-1" onclick="abort(${notice.no})">취소</button>
-			</div>
-			<div class="col d-flex justify-content-end">
-				<button type="button" id="submit" class="btn btn-primary m-1">등록</button>
-			</div>
-		</div>
-	</div>
+  
+  <h2>공지사항 글 수정</h2>
+  
+  <div class="row p-3">
+    <form method="post" action="modify" enctype="multipart/form-data">
+      <input type="hidden" name="no" value="${notice.no}">
+      <input type="hidden" name="fileNo" id="fileNo" value="${notice.uploadFile.no}">
+      <table id="notice-table" style="width: 98%">
+        <colgroup>
+          <col width="20%">
+          <col width="*">
+        </colgroup>
+        <tbody>
+        <tr>
+          <th>상위 노출 여부</th>
+          <td>
+            <div class="form-check form-switch">
+              <input class="form-check-input" checked type="checkbox" role="switch"
+                     id="first-check" onclick="changeFirst()">
+              <input type="hidden" id="first" name="first" value="true">
+              <label class="form-check-label"></label>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <th>글제목</th>
+          <td colspan="3"><input type="text" id="title" name="title" style="width: 100%" value="${notice.title}"></td>
+        </tr>
+        <tr>
+          <th>글내용</th>
+          <td colspan="3">
+            <form method="get" action="modify">
+              <textarea name="ir1" id="ir1" style="display:none;">${notice.content}</textarea>
+            </form>
+        </tr>
+        <c:if test="${not empty notice.uploadFile}">
+          <c:if test="${notice.uploadFile.deleted eq 'N'}">
+            <tr class="form-group">
+              <th>
+                <label class="form-label">기존파일명</label>
+              </th>
+              <td colspan="3" style="text-align: start">
+                  ${notice.uploadFile.originalName}
+                <button type="button" class="btn btn-outline-dark"
+                        onclick="deleteUploadFile(${notice.no}, ${notice.uploadFile.no})">
+                  삭제
+                </button>
+              </td>
+            </tr>
+          </c:if>
+        </c:if>
+        <tr>
+          <th>첨부파일</th>
+          <td colspan="3">
+            <input type="file" class="form-control" name="upfile"/>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </form>
+  </div>
+  <div class="row p-3">
+    <div class="col d-flex justify-content-between">
+      <div class="col d-flex" style="text-align: start">
+        <button type="button" class="btn btn-secondary m-1" onclick="abort(${notice.no})">취소</button>
+      </div>
+      <div class="col d-flex justify-content-end">
+        <button type="button" id="submit" class="btn btn-primary m-1">등록</button>
+      </div>
+    </div>
+  </div>
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>

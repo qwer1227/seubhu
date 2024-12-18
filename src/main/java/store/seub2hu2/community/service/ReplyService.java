@@ -108,8 +108,8 @@ public class ReplyService {
     }
 
     public int getCheckLike(int replyNo
-                            , String type
-                            , @AuthenticationPrincipal LoginUser loginUser) {
+            , String type
+            , @AuthenticationPrincipal LoginUser loginUser) {
         if (loginUser != null) {
             return replyMapper.hasUserLikedReply(replyNo, type, loginUser.getNo());
         } else {
@@ -118,8 +118,8 @@ public class ReplyService {
     }
 
     public void updateReplyLike(int replyNo
-                                , String type
-                                , @AuthenticationPrincipal LoginUser loginUser) {
+            , String type
+            , @AuthenticationPrincipal LoginUser loginUser) {
         replyMapper.insertReplyLike(replyNo, type, loginUser.getNo());
 
         Reply reply = replyMapper.getReplyByReplyNo(replyNo);
@@ -128,8 +128,8 @@ public class ReplyService {
     }
 
     public void deleteReplyLike(int replyNo
-                                , String type
-                                , @AuthenticationPrincipal LoginUser loginUser) {
+            , String type
+            , @AuthenticationPrincipal LoginUser loginUser) {
         replyMapper.deleteReplyLike(replyNo, type, loginUser.getNo());
 
         Reply reply = replyMapper.getReplyByReplyNo(replyNo);

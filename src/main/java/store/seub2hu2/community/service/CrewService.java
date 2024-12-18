@@ -33,7 +33,7 @@ public class CrewService {
     @Value("${upload.directory.crew.images}")
     private String saveImageDirectory;
 
-    @Value("upload.directory.crew.files")
+    @Value("${upload.directory.crew.files}")
     private String saveFileDirectory;
 
     @Value("${cloud.aws.s3.bucket}")
@@ -89,7 +89,6 @@ public class CrewService {
             String filename = System.currentTimeMillis() + originalFileName;
 
             s3Service.uploadFile(upfile, bucketName, saveFileDirectory, filename);
-            //FileUtils.saveMultipartFile(upfile, saveFileDirectory, filename);
 
             UploadFile uploadFile = new UploadFile();
             uploadFile.setOriginalName(originalFileName);
