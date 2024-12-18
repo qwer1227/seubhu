@@ -134,6 +134,13 @@
     function submitForm() {
         document.getElementById('searchForm').submit();
     }
+
+    function confirmCancel() {
+        var confirmResult = confirm("예약을 취소하시겠습니까?");
+        if (confirmResult) {
+            document.getElementById("cancel-form").submit();
+        }
+    }
 </script>
 </body>
 </html>
