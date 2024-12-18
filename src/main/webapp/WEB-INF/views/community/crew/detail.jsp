@@ -64,143 +64,145 @@
 
 </style>
 <body>
-<%@include file="/WEB-INF/views/common/nav.jsp" %>
-<div class="container-xxl text-center" id="wrap">
-	
-	<h2> 크루모임 글 상세페이지 </h2>
-	<input type="hidden" id="location" value="${crew.location}">
-	<input type="hidden" id="typeNo" value="${crew.no}">
-	<input type="hidden" id="type" value="crew">
-	<div>
-		<div class="col d-flex d-flex justify-content-between">
-			<div>
-				<a href="main?category=${crew.entered}">${crew.entered eq 'Y' ? '모집중' : '모집마감'}</a>
+<div>
+	<%@include file="/WEB-INF/views/common/nav.jsp" %>
+	<div class="container-xxl text-center" id="wrap">
+		
+		<h2> 크루모임 글 상세페이지 </h2>
+		<input type="hidden" id="location" value="${crew.location}">
+		<input type="hidden" id="typeNo" value="${crew.no}">
+		<input type="hidden" id="type" value="crew">
+		<div>
+			<div class="col d-flex d-flex justify-content-between">
+				<div>
+					<a href="main?category=${crew.entered}">${crew.entered eq 'Y' ? '모집중' : '모집마감'}</a>
+				</div>
 			</div>
-		</div>
-		<div class="title h4 d-flex justify-content-between align-items-center">
-			<div>
-				${crew.title}
-			</div>
-			<span class="h5">
+			<div class="title h4 d-flex justify-content-between align-items-center">
+				<div>
+					${crew.title}
+				</div>
+				<span class="h5">
           <i class="bi bi-eye"></i> ${crew.viewCnt}
           <i class="bi bi-chat-square-text"></i> ${replyCnt}
         </span>
-		</div>
-		<div class="meta d-flex justify-content-between mb-3">
+			</div>
+			<div class="meta d-flex justify-content-between mb-3">
       <span>
          ${crew.user.nickname} | <fmt:formatDate value="${crew.createdDate}" pattern="yyyy.MM.dd hh:mm:ss"/>
       </span>
-			<div class="meta d-flex justify-content-between">
-				<c:if test="${not empty crew.uploadFile.originalName}">
-					<div class="content mb-4" id="fileDown" style="text-align: end">
-						<a href="filedown?no=${crew.no}" class="btn btn-outline-primary btn-sm">첨부파일 다운로드</a>
-						<span id="hover-box">${crew.uploadFile.originalName}</span>
-					</div>
-				</c:if>
+				<div class="meta d-flex justify-content-between">
+					<c:if test="${not empty crew.uploadFile.originalName}">
+						<div class="content mb-4" id="fileDown" style="text-align: end">
+							<a href="filedown?no=${crew.no}" class="btn btn-outline-primary btn-sm">첨부파일 다운로드</a>
+							<span id="hover-box">${crew.uploadFile.originalName}</span>
+						</div>
+					</c:if>
+				</div>
 			</div>
-		</div>
-		<div class="content mb-3" style="text-align: start">
-			<div class="row">
-				<div class="col-6 mb-2" id="map" style="height: 250px; width: 500px"></div>
-				<div class="col-6">
-					<table style="width: 100%">
-						<colgroup>
-							<col width="15%">
-							<col width="*">
-						</colgroup>
-						<tbody>
-						<tr>
-							<th>크루명</th>
-							<td>: ${crew.name}</td>
-						</tr>
-						<tr>
-							<th>크루장</th>
-							<td>: ${crew.user.nickname}</td>
-						</tr>
-						<tr>
-							<th>일 시</th>
-							<td>: ${crew.schedule}</td>
-						</tr>
-						<tr>
-							<th>장 소</th>
-							<td>: ${crew.location}</td>
-						</tr>
-						<tr>
-							<th>가 입</th>
-							<td>: ${memberCnt} / 5
-								<c:if test="${memberCnt == 5}">
-									<button class="btn btn-secondary">모임 마감</button>
-								</c:if>
-								<security:authorize access="isAuthenticated()">
-									<security:authentication property="principal" var="loginUser"/>
-									<c:if test="${loginUser.no ne crew.user.no}">
-										<c:choose>
-											<c:when test="${isExists}">
-												<button id="btn-crew-leave" class="btn btn-danger btn-sm" onclick="crewLeaveButton(${crew.no})">
-													모임 탈퇴
-												</button>
-											</c:when>
-											<c:otherwise>
-												<button id="btn-crew_join" class="btn btn-primary btn-sm" onclick="crewJoinButton(${crew.no})">
-													모임 가입
-												</button>
-											</c:otherwise>
-										</c:choose>
+			<div class="content mb-3" style="text-align: start">
+				<div class="row">
+					<div class="col-6 mb-2" id="map" style="height: 250px; width: 500px"></div>
+					<div class="col-6">
+						<table style="width: 100%">
+							<colgroup>
+								<col width="15%">
+								<col width="*">
+							</colgroup>
+							<tbody>
+							<tr>
+								<th>크루명</th>
+								<td>: ${crew.name}</td>
+							</tr>
+							<tr>
+								<th>크루장</th>
+								<td>: ${crew.user.nickname}</td>
+							</tr>
+							<tr>
+								<th>일 시</th>
+								<td>: ${crew.schedule}</td>
+							</tr>
+							<tr>
+								<th>장 소</th>
+								<td>: ${crew.location}</td>
+							</tr>
+							<tr>
+								<th>가 입</th>
+								<td>: ${memberCnt} / 5
+									<c:if test="${memberCnt == 5}">
+										<button class="btn btn-secondary">모임 마감</button>
 									</c:if>
-								</security:authorize></td>
-						</tr>
-						</tbody>
-					</table>
-				</div>
-				<div>
-					<p>${crew.description}</p>
+									<security:authorize access="isAuthenticated()">
+										<security:authentication property="principal" var="loginUser"/>
+										<c:if test="${loginUser.no ne crew.user.no}">
+											<c:choose>
+												<c:when test="${isExists}">
+													<button id="btn-crew-leave" class="btn btn-danger btn-sm"
+																	onclick="crewLeaveButton(${crew.no})">
+														모임 탈퇴
+													</button>
+												</c:when>
+												<c:otherwise>
+													<button id="btn-crew_join" class="btn btn-primary btn-sm"
+																	onclick="crewJoinButton(${crew.no})">
+														모임 가입
+													</button>
+												</c:otherwise>
+											</c:choose>
+										</c:if>
+									</security:authorize></td>
+							</tr>
+							</tbody>
+						</table>
+					</div>
+					<div>
+						<p>${crew.description}</p>
+					</div>
 				</div>
 			</div>
+			
+			<div class="row actions mb-4">
+				
+				<!-- 로그인 여부를 체크하기 위해 먼저 선언 -->
+				
+				<div class="col-6 d-flex justify-content-start">
+					<security:authorize access="isAuthenticated()">
+						<!-- principal 프로퍼티 안의 loginUser 정보를 가져옴 -->
+						<!-- loginUser.no를 가져와서 조건문 실행 -->
+						<div>
+							<c:if test="${loginUser.no eq crew.user.no}">
+								<button class="btn btn-warning" onclick="updateCrew(${crew.no})">수정</button>
+								<button class="btn btn-danger" style="margin-left: 5px" onclick="deleteCrew(${crew.no})">삭제</button>
+							</c:if>
+							<c:if test="${loginUser.no ne crew.user.no}">
+								<button type="button" class="btn btn-danger" onclick="report('crew', ${crew.no})">신고</button>
+							</c:if>
+						</div>
+					</security:authorize>
+				</div>
+				<div class="col-6 d-flex justify-content-end">
+					<a type="button" href="main" class="btn btn-secondary">목록</a>
+				</div>
+			</div>
+		
 		</div>
 		
-		<div class="row actions mb-4">
-			
-			<!-- 로그인 여부를 체크하기 위해 먼저 선언 -->
-			
-			<div class="col-6 d-flex justify-content-start">
-				<security:authorize access="isAuthenticated()">
-					<!-- principal 프로퍼티 안의 loginUser 정보를 가져옴 -->
-					<!-- loginUser.no를 가져와서 조건문 실행 -->
-					<div>
-						<c:if test="${loginUser.no eq crew.user.no}">
-							<button class="btn btn-warning" onclick="updateCrew(${crew.no})">수정</button>
-							<button class="btn btn-danger" style="margin-left: 5px" onclick="deleteCrew(${crew.no})">삭제</button>
-						</c:if>
-						<c:if test="${loginUser.no ne crew.user.no}">
-							<button type="button" class="btn btn-danger" onclick="report('crew', ${crew.no})">신고</button>
-						</c:if>
-					</div>
-				</security:authorize>
+		<!-- 댓글 작성 -->
+		<%@include file="../reply-form.jsp" %>
+		
+		<!-- 댓글 목록 -->
+		<c:if test="${not empty crew.reply}">
+		
+			<div class="row comments rounded" style="background-color: #f2f2f2">
+				<!--댓글 내용 -->
+				<c:forEach var="reply" items="${replies}">
+					<%@include file="../reply-lists.jsp" %>
+				</c:forEach>
 			</div>
-			<div class="col-6 d-flex justify-content-end">
-				<a type="button" href="main" class="btn btn-secondary">목록</a>
-			</div>
-		</div>
+		</c:if>
 	
-	</div>
-	
-	<!-- 댓글 작성 -->
-	<%@include file="../reply-form.jsp" %>
-	
-	<!-- 댓글 목록 -->
-	<c:if test="${not empty crew.reply}">
-		<div class="row comments rounded" style="background-color: #f2f2f2">
-			<!--댓글 내용 -->
-			<c:forEach var="reply" items="${replies}">
-				<%@include file="../reply-lists.jsp" %>
-			</c:forEach>
-		</div>
-	</c:if>
-</div>
-
-<!-- 신고 모달 창 -->
-<%@include file="/WEB-INF/views/community/report-modal.jsp" %>
-
+	<!-- 신고 모달 창 -->
+	<%@include file="/WEB-INF/views/community/report-modal.jsp" %>
 </div>
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
