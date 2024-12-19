@@ -1,6 +1,8 @@
 package store.seub2hu2.lesson.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,22 +21,30 @@ import java.util.Date;
 @Setter
 public class LessonRegisterForm {
 
+    @NotBlank(message = "레슨명을 입력해 주세요")
     private String title;
-    private int price;
+    @NotNull(message = "가격을 입력해 주세요")
+    private Integer price;
     private int lecturerNo;
     private String lecturerId;
     private String subject;
     private String lecturerName;
     private int group;
+
+    @NotNull(message = "장소를 입력해 주세요")
     private String place;
     private String status;
     private String plan;
     private MultipartFile thumbnail;
     private MultipartFile mainImage;
 
+
+    @NotBlank(message = "시작 날짜는 필수입니다.")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     private String startDate;
+
+    @NotBlank(message = "종료 날짜는 필수입니다.")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     private String endDate;

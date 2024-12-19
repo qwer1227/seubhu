@@ -22,7 +22,7 @@ public class LessonUpdateForm {
 
     private int lessonNo;
 
-    @NotBlank(message = "레슨명을 입력해주세요")
+    @NotBlank(message = "레슨명을 입력해 주세요")
     private String title;
 
     private String lecturerId;
@@ -33,7 +33,7 @@ public class LessonUpdateForm {
 
     private String plan;
 
-    @NotNull(message = "가격을 입력해주세요")
+    @NotNull(message = "가격을 입력해 주세요")
     @Min(value=1, message = "가격은 최소 1 이상이어야 합니다.")
     private Integer price;
 
@@ -41,12 +41,12 @@ public class LessonUpdateForm {
 
     private MultipartFile mainImage;
 
-    @NotNull(message = "종료 날짜는 필수입니다.")
+    @NotBlank(message = "시작 날짜는 필수입니다.")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     private String start;
 
-    @NotNull(message = "종료 날짜는 필수입니다.")
+    @NotBlank(message = "종료 날짜는 필수입니다.")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     private String end;
