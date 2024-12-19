@@ -40,7 +40,7 @@
     </section>
     <div>
         <a href="/lesson/schedule" class="btn btn-success rounded-pill mb-3 text-center align-content-center"
-           style="width: 100%; height:50px;">레슨 일정 보러가기</a>
+           style="width: 100%; height:50px;">레슨 일정 보러 가기</a>
     </div>
     <!-- Breathing Section -->
     <section class="mb-5">
