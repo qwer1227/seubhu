@@ -883,7 +883,7 @@
         and P2.pay_id = R2.lesson_reservation_pay_id
         and R2.lesson_no = L2.lesson_no
         and P2.pay_type = '레슨'
-        and P2.PAY_STATUS = '결제확정'
+        and P2.PAY_STATUS &lt;&gt; '취소'
         <if test="condition.day != null">
             and (
             DATE_FORMAT(P2.pay_date, '%Y-%m-%d') = #{condition.day}
@@ -955,7 +955,7 @@
         and P2.pay_id = R2.lesson_reservation_pay_id
         and R2.lesson_no = L2.lesson_no
         and P2.pay_type = '레슨'
-        and P2.PAY_STATUS = '결제확정'
+        and P2.PAY_STATUS &lt;&gt; '취소'
             <if test="condition.day != null">
                 and (
                 DATE_FORMAT(P2.pay_date, '%Y-%m-%d') = #{condition.day}
@@ -1684,7 +1684,7 @@
           and
             LR.USER_ID = U.USER_ID
           and
-            LR.LESSON_RESERVATION_STATUS = '예약'
+            LR.LESSON_RESERVATION_STATUS &lt;&gt; '취소'
           and
             L.LESSON_NO = #{lessonNo}
     </select>

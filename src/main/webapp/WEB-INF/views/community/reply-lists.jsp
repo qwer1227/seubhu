@@ -134,7 +134,7 @@
 				<div class="col">
 					<button type="button" onclick="addComment(${reply.no})" class="btn btn-success d-flex align-items-center justify-content-center"
 									style="font-size: 15px; width: 70px;">
-						submit
+						답글
 					</button>
 				</div>
 			</div>

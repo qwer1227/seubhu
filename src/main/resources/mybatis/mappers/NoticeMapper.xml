@@ -51,7 +51,7 @@
     , notice_content      as content
     , notice_created_date as createdDate
     , notice_first        as `first`
-    , notice_view_cnt          as viewCnt
+    , notice_view_cnt     as viewCnt
     from NOTICES
     where is_deleted = 'N') n
     where rn between #{condition.begin} and #{condition.end}
@@ -88,9 +88,19 @@
     select count(*)
     from NOTICES
     where is_deleted = "N"
-    <if test="condition.keyword != null">
-      and notice_title like concat ('%', #{condition.keyword}, '%')
-      || notice_content like concat ('%', #{condition.keyword}, '%')
+    <if test="condition.opt != null">
+      <choose>
+        <when test="condition.opt == 'all'">
+          and notice_title like concat ('%', #{condition.keyword}, '%')
+          || notice_content like concat('%', #{condition.keyword}, '%')
+        </when>
+        <when test="condition.opt == 'title'">
+          and notice_title like concat ('%', #{condition.keyword}, '%')
+        </when>
+        <when test="condition.opt == 'content'">
+          and notice_content like concat('%', #{condition.keyword}, '%')
+        </when>
+      </choose>
     </if>
   </select>
 

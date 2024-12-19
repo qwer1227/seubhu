@@ -58,10 +58,10 @@
         <!-- 로그인 폼 -->
         <form name="loginForm" method="post" action="login" onsubmit="return validateForm()">
             <div class="mb-3">
-                <input type="text" class="form-control" placeholder="아이디" name="id" value="qwer12341">
+                <input type="text" class="form-control" placeholder="아이디" name="id" value="">
             </div>
             <div class="mb-3">
-                <input type="password" class="form-control" placeholder="비밀번호" name="password" value="zxcv1234!@">
+                <input type="password" class="form-control" placeholder="비밀번호" name="password" value="">
             </div>
             <button type="submit" class="btn btn-dark w-100 mb-3">아이디로 로그인</button>
 

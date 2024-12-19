@@ -282,7 +282,6 @@
   </select>
 
   <!-- List<CrewMember> getByCrewNo(@Param("no") int crewNo); -->
-
   <select id="getByCrewNo" resultType="store.seub2hu2.community.vo.CrewMember">
     select
       cm.crew_no as crewNo
@@ -302,8 +301,6 @@
       and
       cm.is_join = 'Y'
   </select>
-
-
   <!-- void updateReader(@Param("userNo") int userNo); -->
   <update id="updateReader">
     update CREW_MEMBERS
@@ -311,7 +308,6 @@
     where user_no = #{userNo}
       and crew_no = #{crewNo}
   </update>
-
   <!-- void exitCrew(@Param("readerNo") int readerNo); -->
   <update id="exitCrew">
     update CREW_MEMBERS
@@ -319,5 +315,4 @@
     where user_no = #{readerNo}
       and crew_no = #{crewNo}
   </update>
-
 </mapper>

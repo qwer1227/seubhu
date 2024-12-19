@@ -7,13 +7,13 @@
   <%@include file="/WEB-INF/views/common/common.jsp" %>
 </head>
 <style>
-    #marathon-table th {
-        text-align: center;
-    }
-
-    #marathon-table tr {
-        height: 50px;
-    }
+  #marathon-table th {
+    text-align: center;
+  }
+  
+  #marathon-table tr {
+    height: 50px;
+  }
 </style>
 <body>
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
@@ -94,112 +94,112 @@
 <%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
 <script>
-    var oEditors = [];
-    nhn.husky.EZCreator.createInIFrame({
-        oAppRef: oEditors,
-        elPlaceHolder: "ir1",
-        sSkinURI: "/resources/se2/SmartEditor2Skin_ko_KR.html",
-        fCreator: "createSEditor2"
-    });
-
-    let formData = new FormData();
-
-    // 등록 버튼 클릭 시, 폼에 있는 값을 전달(이미지는 슬라이싱할 때 전달했기 때문에 따로 추가 설정 안해도 됨)
-    document.querySelector("#submit").addEventListener("click", function () {
-
-        oEditors.getById["ir1"].exec("UPDATE_CONTENTS_FIELD", []);
-
-        let no = document.querySelector("input[name=no]").value;
-        let title = document.querySelector("input[name=title]").value;
-        let content = document.querySelector("textarea[name=ir1]").value;
-        let marathonDate = document.querySelector("input[name=marathonDate]").value;
-        let startDate = document.querySelector("input[name=startDate]").value;
-        let endDate = document.querySelector("input[name=endDate]").value;
-        let host = document.querySelector("input[name=host]").value;
-        let organizer = document.querySelector("input[name=organizer]").value;
-        let url = document.querySelector("input[name=url]").value;
-        let place = document.querySelector("input[name=place]").value;
-        let thumbnail = document.querySelector("input[name=thumbnail]").value;
-
-
-        let cleanedContent = content.replace(/<p><br><\/p>/g, "").trim();
-
-        if (!title) {
-            alert("제목을 입력해주세요.");
-            return;
-        }
-        if (!marathonDate) {
-            alert("마라톤 일정을 선택해주세요.");
-            return;
-        }
-        if (!startDate) {
-            alert("마라톤 모집 시작일을 선택해주세요.");
-            return;
-        }
-        if (!endDate) {
-            alert("마라톤 모집 마감일을 선택해주세요.");
-            return;
-        }
-        if (!place) {
-            alert("마라톤 장소를 입력해주세요.");
-            return;
-        }
-        if (!host) {
-            alert("주최 기관을 입력해주세요.");
-            return;
-        }
-        if (!organizer) {
-            alert("주관 기관을 입력해주세요.");
-            return;
-        }
-        if (!url) {
-            alert("마라톤 홈페이지 주소를 입력해주세요.");
-            return;
-        }
-        if (!cleanedContent) {
-            alert("내용을 입력해주세요.");
-            return;
-        }
-        if (!thumbnail) {
-            alert("마라톤 썸네일 이미지 링크를 입력해주세요.");
-            return;
-        }
-
-        formData.append("no", no);
-        formData.append("title", title);
-        formData.append("content", content);
-        formData.append("marathonDate", marathonDate);
-        formData.append("startDate", startDate);
-        formData.append("endDate", endDate);
-        formData.append("host", host);
-        formData.append("organizer", organizer);
-        formData.append("url", url);
-        formData.append("place", place);
-        formData.append("thumbnail", thumbnail);
-
-        $.ajax({
-            method: "post",
-            url: "/community/marathon/modify",
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (board) {
-                window.location.href = "detail?no=" + board.no;
-            }
-        })
-    });
-
-    function abort(marathonNo) {
-        let result = confirm("수정 중이던 글을 취소하시겠습니까?");
-        if (result) {
-            window.location.href = "detail?no=" + marathonNo;
-        }
+  var oEditors = [];
+  nhn.husky.EZCreator.createInIFrame({
+    oAppRef: oEditors,
+    elPlaceHolder: "ir1",
+    sSkinURI: "/resources/se2/SmartEditor2Skin_ko_KR.html",
+    fCreator: "createSEditor2"
+  });
+  
+  let formData = new FormData();
+  
+  // 등록 버튼 클릭 시, 폼에 있는 값을 전달(이미지는 슬라이싱할 때 전달했기 때문에 따로 추가 설정 안해도 됨)
+  document.querySelector("#submit").addEventListener("click", function () {
+    
+    oEditors.getById["ir1"].exec("UPDATE_CONTENTS_FIELD", []);
+    
+    let no = document.querySelector("input[name=no]").value;
+    let title = document.querySelector("input[name=title]").value;
+    let content = document.querySelector("textarea[name=ir1]").value;
+    let marathonDate = document.querySelector("input[name=marathonDate]").value;
+    let startDate = document.querySelector("input[name=startDate]").value;
+    let endDate = document.querySelector("input[name=endDate]").value;
+    let host = document.querySelector("input[name=host]").value;
+    let organizer = document.querySelector("input[name=organizer]").value;
+    let url = document.querySelector("input[name=url]").value;
+    let place = document.querySelector("input[name=place]").value;
+    let thumbnail = document.querySelector("input[name=thumbnail]").value;
+    
+    
+    let cleanedContent = content.replace(/<p><br><\/p>/g, "").trim();
+    
+    if (!title) {
+      alert("제목을 입력해주세요.");
+      return;
     }
-    function deleteUploadFile(marathonNo, fileNo) {
-        let result = confirm("기존에 등록된 첨부파일을 삭제하시겠습니까?");
-        if (result) {
-            window.location.href = `delete-file?no=\${marathonNo}&fileNo=\${fileNo}`;
-        }
+    if (!marathonDate) {
+      alert("마라톤 일정을 선택해주세요.");
+      return;
     }
+    if (!startDate) {
+      alert("마라톤 모집 시작일을 선택해주세요.");
+      return;
+    }
+    if (!endDate) {
+      alert("마라톤 모집 마감일을 선택해주세요.");
+      return;
+    }
+    if (!place) {
+      alert("마라톤 장소를 입력해주세요.");
+      return;
+    }
+    if (!host) {
+      alert("주최 기관을 입력해주세요.");
+      return;
+    }
+    if (!organizer) {
+      alert("주관 기관을 입력해주세요.");
+      return;
+    }
+    if (!url) {
+      alert("마라톤 홈페이지 주소를 입력해주세요.");
+      return;
+    }
+    if (!cleanedContent) {
+      alert("내용을 입력해주세요.");
+      return;
+    }
+    if (!thumbnail) {
+      alert("마라톤 썸네일 이미지 링크를 입력해주세요.");
+      return;
+    }
+    
+    formData.append("no", no);
+    formData.append("title", title);
+    formData.append("content", content);
+    formData.append("marathonDate", marathonDate);
+    formData.append("startDate", startDate);
+    formData.append("endDate", endDate);
+    formData.append("host", host);
+    formData.append("organizer", organizer);
+    formData.append("url", url);
+    formData.append("place", place);
+    formData.append("thumbnail", thumbnail);
+    
+    $.ajax({
+      method: "post",
+      url: "/community/marathon/modify",
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function (board) {
+        window.location.href = "detail?no=" + board.no;
+      }
+    })
+  });
+  
+  function abort(marathonNo) {
+    let result = confirm("수정 중이던 글을 취소하시겠습니까?");
+    if (result) {
+      window.location.href = "detail?no=" + marathonNo;
+    }
+  }
+  function deleteUploadFile(marathonNo, fileNo) {
+    let result = confirm("기존에 등록된 첨부파일을 삭제하시겠습니까?");
+    if (result) {
+      window.location.href = `delete-file?no=\${marathonNo}&fileNo=\${fileNo}`;
+    }
+  }
 </script>
 </html>
