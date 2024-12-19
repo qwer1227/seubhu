@@ -49,9 +49,9 @@
                 </div>
 
                 <div class="divider" style="border-left: 1px solid #0e0d0d; margin: 0 7px;"></div>
-                <a class="nav-link fw-bolder" href="/course/list">코스</a>
+                <a class="nav-link" href="/course/list">코스</a>
                 <div class="divider" style="border-left: 1px solid #0e0d0d; margin: 0 7px;"></div>
-                <a class="nav-link fw-bolder" href="/lesson">레슨</a>
+                <a class="nav-link" href="/lesson">레슨</a>
                 <div class="divider" style="border-left: 1px solid #0e0d0d; margin: 0 7px;"></div>
                                 <div class="dropdown">
                     <a class="btn dropdown-toggle" href="#" role="button" id="dropdownCommunityMenu"
@@ -71,7 +71,7 @@
                 </security:authorize>
 
                 <security:authorize access="!isAuthenticated()">
-                    <a class="nav-link fw-bolder" href="/login">로그인</a>
+                    <a class="nav-link" href="/login">로그인</a>
                 </security:authorize>
                 <security:authorize access="isAuthenticated()">
                 <span class="navbar-text">

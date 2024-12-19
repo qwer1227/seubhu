@@ -24,10 +24,10 @@ public class HomeController {
     // 메인 홈 페이지
     @GetMapping("/home")
     public String home(Model model) {
-        // 주간 베스트 상품 - 별점 순
-        List<ProdListDto> bestByRating = homeService.getWeeklyBestProductsByRating();
-        // 주간 베스트 상품 - 조회수 순 (러닝화 기준)
-        List<ProdListDto> bestByViewCount = homeService.getWeeklyBestProductsByViewCount();
+        // 베스트 상품 - 별점 순
+        List<ProdListDto> bestByRating = homeService.getBestProductsByRating();
+        // 베스트 상품 - 조회수 순 (러닝화 기준)
+        List<ProdListDto> bestByViewCount = homeService.getBestProductsByViewCount();
 
         List<Board> topViewedBoards  = homeService.getTopViewedBoards();
 

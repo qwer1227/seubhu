@@ -3,8 +3,8 @@
 <mapper namespace="store.seub2hu2.home.HomeMapper">
 
 
-    <!-- 주간 베스트 상품 - 별점 순으로 조회 -->
-    <select id="getWeeklyBestProductsByRating" resultType="store.seub2hu2.product.dto.ProdListDto">
+    <!-- 베스트 상품 - 평점 순으로 조회 -->
+    <select id="getBestProductsByRating" resultType="store.seub2hu2.product.dto.ProdListDto">
         SELECT
         P.PROD_NO AS no,
         P.PROD_NAME AS name,
@@ -24,8 +24,8 @@
     </select>
 
 
-    <!-- 주간 베스트 상품 - 조회수 순으로 조회 (러닝화 기준) -->
-    <select id="getWeeklyBestProductsByViewCount" resultType="store.seub2hu2.product.dto.ProdListDto">
+    <!-- 베스트 상품 - 평점 순으로 조회 (러닝화 기준) -->
+    <select id="getBestProductsByViewCount" resultType="store.seub2hu2.product.dto.ProdListDto">
         SELECT PROD_NO        AS no,
         PROD_NAME        AS name,
         PROD_PRICE        AS price,
