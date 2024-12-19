@@ -14,10 +14,10 @@ import java.util.Map;
 public interface HomeMapper {
 
     // 주간 베스트 상품 - 별점 순으로 조회
-   List<ProdListDto> getWeeklyBestProductsByRating();
+   List<ProdListDto> getBestProductsByRating();
 
     // 주간 베스트 상품 - 조회수 순으로 조회 (러닝화 기준)
-   List<ProdListDto> getWeeklyBestProductsByViewCount();
+   List<ProdListDto> getBestProductsByViewCount();
 
     // 최신 글 5개 조회
     List<Board> getTopViewedBoards();
