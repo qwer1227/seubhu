@@ -30,7 +30,7 @@
             <!-- 버튼들: 홈으로, 로그인 -->
             <div class="mt-4">
                 <a href="/home" class="btn btn-outline-dark me-2">홈으로</a>
-                <a href="/user/login-form" class="btn btn-dark">로그인</a>
+                <a href="/login" class="btn btn-dark">로그인</a>
             </div>
         </div>
     </div>
