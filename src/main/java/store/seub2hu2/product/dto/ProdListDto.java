@@ -26,10 +26,13 @@ public class ProdListDto {
     private String status; // 상품상태
     private Date createdAt; // 상품 등록 날짜
     private String imgThum; // 대표 이미지 URL
+    private double rating;
     private Category category; // 카테고리 객체
     private Brand brand; // 브랜드 객체
     private Color color;
     private String isDeleted;
     private String isShow;
+    private int rankChange; // 순위 변동
+    private int cnt;
 
 }

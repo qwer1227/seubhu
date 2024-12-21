@@ -4,7 +4,7 @@
 <html lang="ko">
 <head>
     <%@include file="/WEB-INF/views/common/common.jsp" %>
-</head>
+    <title>쪽지 작성</title></head>
 <body>
 <%@include file="/WEB-INF/views/common/nav.jsp" %>
 <div class="container-xxl text-center" id="wrap">
@@ -14,7 +14,7 @@
     <div>
         <div class="col d-flex justify-content-left">
             <div>
-                <a href="" style="text-decoration-line: none">받은 쪽지</a>
+                <a href="" style="text-decoration-line: none">쪽지 상세</a>
             </div>
         </div>
         <div class="title h4 d-flex justify-content-left">
@@ -62,6 +62,7 @@
         </div>
     </div>
 
-    <%@include file="/WEB-INF/views/common/footer.jsp" %>
+</div>
+<%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
 </html>

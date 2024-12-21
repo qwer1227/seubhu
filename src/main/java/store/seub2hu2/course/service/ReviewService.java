@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import store.seub2hu2.admin.mapper.AdminMapper;
-import store.seub2hu2.course.dto.ReviewForm;
+import store.seub2hu2.course.dto.AddReviewForm;
 import store.seub2hu2.course.exception.CourseReviewException;
 import store.seub2hu2.course.mapper.ReviewMapper;
 import store.seub2hu2.course.vo.Course;
@@ -28,7 +28,7 @@ public class ReviewService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucketName;
 
-    @Value("resources/images/courseReviewImages")
+    @Value("${upload.directory.course}")
     private String folder;
 
     @Autowired
@@ -80,7 +80,7 @@ public class ReviewService {
      * @param userNo 사용자 번호
      * @return 입력한 리뷰 정보
      */
-    public Review addNewReview(ReviewForm form, int userNo) {
+    public Review addNewReview(AddReviewForm form, int userNo) {
         // 1. 등록할 리뷰 정보를 리뷰 객체에 저장한다.
         Review review = new Review();
         review.setTitle(form.getTitle());

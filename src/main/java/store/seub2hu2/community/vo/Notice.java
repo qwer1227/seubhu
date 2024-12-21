@@ -21,6 +21,7 @@ public class Notice {
     private String deleted;
     private int viewCnt;
     private UploadFile uploadFile;
+    private int rn;
 
     public String getOriginalFileName() {
         if(uploadFile == null){

@@ -26,13 +26,14 @@
                     <option value="운동" <c:if test="${condition.lessonSubject == '운동'}">selected</c:if>>운동</option>
                 </select>
             </div>
-            <div class="col-1">
+            <div class="col-2">
                 <label for="status">예약상태</label>
-                <select name="lessonStatus" class="form-select" id="status" onchange="submitForm()">
-                    <option value="" <c:if test="${empty condition.lessonStatus}">selected</c:if>>모두</option>
-                    <option value="예약" <c:if test="${condition.lessonStatus == '예약'}">selected</c:if>>예약</option>
-                    <option value="수료" <c:if test="${condition.lessonStatus == '수료'}">selected</c:if>>수료</option>
-                    <option value="취소" <c:if test="${condition.lessonStatus == '취소'}">selected</c:if>>취소</option>
+                <select name="reservationStatus" class="form-select" id="status" onchange="submitForm()">
+                    <option value="" <c:if test="${empty condition.reservationStatus}">selected</c:if>>모두</option>
+                    <option value="예약" <c:if test="${condition.reservationStatus == '예약'}">selected</c:if>>예약</option>
+                    <option value="수강종료" <c:if test="${condition.reservationStatus == '수강종료'}">selected</c:if>>수강종료
+                    </option>
+                    <option value="취소" <c:if test="${condition.reservationStatus == '취소'}">selected</c:if>>취소</option>
                 </select>
             </div>
             <div class="col-2">
@@ -89,7 +90,7 @@
                 <tr>
                     <td>${loop.index + 1}</td>
                     <td><a href="/lesson/reservation/detail?reservationNo=${reservation.no}"
-                           style="text-decoration:none">${reservation.lesson.title}</a></td>
+                            style="text-decoration:none">${reservation.lesson.title}</a></td>
                     <td>${reservation.lesson.lecturer.name}</td>
                     <td><fmt:formatNumber value="${reservation.lesson.price}" pattern="#,###"/></td>
                     <td>${reservation.lesson.status}</td>
@@ -126,6 +127,18 @@
                     </td>
                 </tr>
             </c:forEach>
+            <c:if test="${empty lessonReservations}">
+                <tr>
+                    <td colspan="8">
+                        <div class="row justify-content-center mb-2">
+                            선택하신 예약 상태의 레슨이 존재하지 않습니다.
+                        </div>
+                        <div class="row justify-content-center">
+                            <a href="schedule" class="btn btn-primary btn-sm" style="width: 50%">레슨 일정 보러가기</a>
+                        </div>
+                    </td>
+                </tr>
+            </c:if>
         </table>
     </div>
 </div>
@@ -133,6 +146,13 @@
 <script>
     function submitForm() {
         document.getElementById('searchForm').submit();
+    }
+
+    function confirmCancel() {
+        var confirmResult = confirm("예약을 취소하시겠습니까?");
+        if (confirmResult) {
+            document.getElementById("cancel-form").submit();
+        }
     }
 </script>
 </body>

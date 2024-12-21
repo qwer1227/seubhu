@@ -19,7 +19,7 @@
       <h2> 커뮤니티 </h2>
     </div>
   </div>
-  
+
   <div class="row">
     <div class="col-4 border" style="margin: 15px; background-color: #f2f2f2; height: 190px">
       <table>
@@ -45,7 +45,7 @@
         </tbody>
       </table>
     </div>
-    
+
     <div class="col-4 border" style="margin: 15px; background-color: #f2f2f2; height: 190px">
       <table>
         <tbody>
@@ -98,7 +98,7 @@
         </div>
       </div>
     </div>
-    
+
     <!-- 게시글 정렬 기능 -->
     <form id="form-search" method="get" action="main">
       <input type="hidden" name="page" value="${param.page != null ? param.page : 1}">
@@ -126,7 +126,7 @@
              href="javascript:void(0)" onclick="changeCategory('훈련일지')">훈련일지</a>
         </div>
       </div>
-      
+
       <div class="p-1 col d-flex justify-content-end">
         <div class="form-check form-check-inline">
           <input class="form-check-input" type="radio" name="sort" value="date" onchange="changeSort()"
@@ -152,7 +152,7 @@
           </select>
         </div>
       </div>
-      
+
       <!--  게시글 목록 -->
       <div class="row p-3">
         <table class="table">
@@ -205,7 +205,7 @@
           </tbody>
         </table>
       </div>
-      
+
       <!-- 검색 및 글쓰기 기능 -->
       <div class="row p-3 d-flex justify-content-left">
         <div class="col-2">
@@ -214,8 +214,7 @@
             <option value="title" ${param.opt eq 'title' ? 'selected' : ''}> 제목</option>
             <option value="content" ${param.opt eq 'content' ? 'selected' : ''}> 내용</option>
             <option value="reply" ${param.opt eq 'reply' ? 'selected' : ''}> 댓글</option>
-            <option value="nickname" ${param.opt eq 'nickname' ? 'selected' : ''}> 닉네임</option>
-            <%--        <option value="hashtag"> 해시태그</option>--%>
+            <option value="nickname" ${param.opt eq 'nickname' ? 'selected' : ''}> 작성자</option>
           </select>
         </div>
         <div class="col-4">
@@ -224,7 +223,7 @@
         <div class="col-1">
           <button class="btn btn-outline-primary" onclick="searchKeyword()">검색</button>
         </div>
-        
+
         <security:authorize access="isAuthenticated()">
           <security:authentication property="principal" var="loginUser"/>
           <div class="col d-flex justify-content-end">
@@ -234,9 +233,9 @@
           </div>
         </security:authorize>
       </div>
-      
+
       <!-- 페이징처리 -->
-      <c:if test="${paging.totalRows > 10}">
+      <c:if test="${paging.totalRows ne 0}">
       <div>
         <ul class="pagination justify-content-center">
           <li class="page-item ${paging.first ? 'disabled' : '' }">
@@ -244,7 +243,7 @@
                onclick="changePage(${paging.prevPage}, event)"
                href="javascript:void(0)"><<</a>
           </li>
-          
+
           <c:forEach var="num" begin="${paging.beginPage }" end="${paging.endPage }">
             <li class="page-item ${paging.page eq num ? 'active' : '' }">
               <a class="page-link"
@@ -252,7 +251,7 @@
                  href="javascript:void(0)">${num }</a>
             </li>
           </c:forEach>
-          
+
           <li class="page-item ${paging.last ? 'disabled' : '' }">
             <a class="page-link"
                onclick="changePage(${paging.nextPage}, event)"
@@ -263,6 +262,7 @@
       </c:if>
     </form>
   </div>
+</div>
   <%@include file="/WEB-INF/views/common/footer.jsp" %>
 </body>
 <script type="text/javascript">

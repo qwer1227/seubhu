@@ -138,6 +138,20 @@ public interface AdminMapper {
 
     void getUpdateDeliverySetDelivered(@Param("condition") Map<String, Object> condition);
 
+    int getReportTotalRows(@Param("condition") Map<String, Object> condition);
+
+    List<ReportDto> getReports(@Param("condition") Map<String, Object> condition);
+
+    void updateBoardStatus(@Param("condition") Map<String, Object> condition);
+
+    void updateBoardReplyStatus(@Param("condition") Map<String, Object> condition);
+
+    void updateCrewStatus(@Param("condition") Map<String, Object> condition);
+
+    void updateCrewReplyStatus(@Param("condition") Map<String, Object> condition);
+
+    void updateReportStatus(@Param("condition") Map<String, Object> condition);
+
 
 
 

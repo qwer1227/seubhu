@@ -76,9 +76,9 @@
                     <col width="5%">
                     <col width="10%">
                     <col width="*%">
+                    <col width="10%">
                     <col width="5%">
-                    <col width="5%">
-                    <col width="5%">
+                    <col width="10%">
                     <col width="5%">
                 </colgroup>
                 <thead class="text-center">
@@ -186,7 +186,7 @@
     </form>
 </div>
 
-
+<%@include file="/WEB-INF/views/common/footer.jsp" %>
 <script>
     function deleteMultiple() {
         let form = document.querySelector("#form-search");

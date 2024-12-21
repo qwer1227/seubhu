@@ -338,31 +338,28 @@
         $('#showModal').modal('show');  // 배송 상태 변경 모달을 열기
     }
 
-    // 배송 상태를 '배송준비중'으로 설정
-    document.getElementById('setReady').addEventListener('click', function() {
+    function changeDeliveryStatus(status) {
         if (currentForm) {
-            currentForm.querySelector('input[name="deliStatus"]').value = "배송준비중";  // 배송 상태 값 설정
+            currentForm.querySelector('input[name="deliStatus"]').value = status;  // 배송 상태 값 설정
             currentForm.submit();  // 폼 전송
+            alert("상태가 변경되었습니다.");  // 상태 변경 알림 창 표시
         }
         $('#showModal').modal('hide');  // 모달 닫기
+    }
+
+    // 배송 상태를 '배송준비중'으로 설정
+    document.getElementById('setReady').addEventListener('click', function() {
+        changeDeliveryStatus("배송준비중");
     });
 
     // 배송 상태를 '배송출발'로 설정
     document.getElementById('setShipped').addEventListener('click', function() {
-        if (currentForm) {
-            currentForm.querySelector('input[name="deliStatus"]').value = "배송출발";  // 배송 상태 값 설정
-            currentForm.submit();  // 폼 전송
-        }
-        $('#showModal').modal('hide');  // 모달 닫기
+        changeDeliveryStatus("배송출발");
     });
 
     // 배송 상태를 '배송완료'로 설정
     document.getElementById('setDelivered').addEventListener('click', function() {
-        if (currentForm) {
-            currentForm.querySelector('input[name="deliStatus"]').value = "배송완료";  // 배송 상태 값 설정
-            currentForm.submit();  // 폼 전송
-        }
-        $('#showModal').modal('hide');  // 모달 닫기
+        changeDeliveryStatus("배송완료");
     });
 
 </script>

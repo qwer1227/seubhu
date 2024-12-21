@@ -32,29 +32,42 @@
   <!-- List<Notice> getNotices(@Param("condition") Map<String, String> condition); -->
   <select id="getNotices" resultType="store.seub2hu2.community.vo.Notice">
     select *
-    from (select row_number() over(order by notice_first desc, notice_created_date desc) rn
-               , notice_no as no
-               , notice_title as title
-               , notice_content      as content
-               , notice_created_date as createdDate
-               , notice_first        as `first`
-               , notice_view_cnt          as viewCnt
-          from NOTICES
-          where is_deleted = 'N') n
+    from (select
+    <if test="condition.sort != null">
+      <choose>
+        <when test="condition.sort == 'import'">
+          row_number() over(order by notice_first desc, notice_created_date desc) rn
+        </when>
+        <when test="condition.sort == 'date'">
+          row_number() over(order by notice_created_date desc) rn
+        </when>
+        <when test="condition.sort == 'viewCnt'">
+          row_number() over(order by notice_view_cnt desc) rn
+        </when>
+      </choose>
+    </if>
+    , notice_no as no
+    , notice_title as title
+    , notice_content      as content
+    , notice_created_date as createdDate
+    , notice_first        as `first`
+    , notice_view_cnt     as viewCnt
+    from NOTICES
+    where is_deleted = 'N') n
     where rn between #{condition.begin} and #{condition.end}
     <if test="condition.opt != null">
-    <choose>
-      <when test="condition.opt == 'all'">
-        and title like concat ('%', #{condition.keyword}, '%')
-        || content like concat('%', #{condition.keyword}, '%')
-      </when>
-      <when test="condition.opt == 'title'">
-        and title like concat ('%', #{condition.keyword}, '%')
-      </when>
-      <when test="condition.opt == 'content'">
-        and content like concat('%', #{condition.keyword}, '%')
-      </when>
-    </choose>
+      <choose>
+        <when test="condition.opt == 'all'">
+          and title like concat ('%', #{condition.keyword}, '%')
+          || content like concat('%', #{condition.keyword}, '%')
+        </when>
+        <when test="condition.opt == 'title'">
+          and title like concat ('%', #{condition.keyword}, '%')
+        </when>
+        <when test="condition.opt == 'content'">
+          and content like concat('%', #{condition.keyword}, '%')
+        </when>
+      </choose>
     </if>
     order by rn
   </select>
@@ -75,9 +88,19 @@
     select count(*)
     from NOTICES
     where is_deleted = "N"
-    <if test="condition.keyword != null">
-      and notice_title like concat ('%', #{condition.keyword}, '%')
-      || notice_content like concat ('%', #{condition.keyword}, '%')
+    <if test="condition.opt != null">
+      <choose>
+        <when test="condition.opt == 'all'">
+          and notice_title like concat ('%', #{condition.keyword}, '%')
+          || notice_content like concat('%', #{condition.keyword}, '%')
+        </when>
+        <when test="condition.opt == 'title'">
+          and notice_title like concat ('%', #{condition.keyword}, '%')
+        </when>
+        <when test="condition.opt == 'content'">
+          and notice_content like concat('%', #{condition.keyword}, '%')
+        </when>
+      </choose>
     </if>
   </select>
 
@@ -113,5 +136,28 @@
     update NOTICES
     set notice_view_cnt = #{notice.viewCnt}
     where notice_no = #{notice.no}
+  </update>
+
+  <!-- int getTopNoticeCnt(); -->
+  <select id="getTopNoticeCnt">
+    select count(*)
+    from NOTICES
+    where is_deleted = 'N'
+      and notice_first = 1
+  </select>
+
+  <!-- void updateTopNoticeToNotFirst(); -->
+  <update id="updateTopNoticeToNotFirst">
+    update NOTICES
+    set notice_first = '0'
+    where notice_no = (
+      select no from (
+      select notice_no as no
+      from NOTICES
+      where notice_first = '1' and is_deleted = 'N'
+      order by notice_created_date asc
+      limit 1
+      ) temp
+      )
   </update>
 </mapper>

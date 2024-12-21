@@ -34,6 +34,7 @@
 
     <div class="mt-3">
         <h4>최단 기록 순위</h4>
+        <h6>코스 별로 모든 사용자의 최단 완주 기록 순위를 확인할 수 있습니다.</h6>
     </div>
 
     <%-- 코스를 선택하면, 해당 코스에 대한 완주자 기록 목록이 화면에 나타난다. --%>
@@ -69,7 +70,7 @@
             </sec:authorize>
 
             <c:choose>
-                <%-- 로그인했다면, 나의 코스 완주 기록을 화면에 표시한다. --%>
+                <%-- 로그인한 경우, 나의 코스 완주 기록 혹은 안내 문구를 화면에 표시한다. --%>
                 <c:when test="${not empty loginUser}">
                     <c:choose>
                         <%-- 나의 코스 완주 기록이 존재하면, 나의 코스 완주 기록을 화면에 표시한다. --%>
@@ -78,20 +79,20 @@
                                 <tr>
                                     <th scope="row">${record.no}</th>
                                     <td>${record.user.nickname}</td>
-                                    <td><fmt:formatDate value="${record.finishedDate}" pattern="yyyy년 M월 d일" /> </td>
-                                    <td>${record.finishedTime}분</td>
+                                    <td><fmt:formatDate value="${record.finishedDate}" pattern="yyyy년 MM월 dd일 HH시 mm분" /> </td>
+                                    <td><c:if test="${record.hour != 0}">${record.hour}시간</c:if> ${record.minute}분 ${record.second}초</td>
                                 </tr>
                             </c:forEach>
                         </c:when>
-                        <%-- 나의 코스 완주 기록이 존재하지 않다면, 문구를 표시한다. --%>
+                        <%-- 나의 코스 완주 기록이 존재하지 않다면, 안내 문구를 표시한다. --%>
                         <c:otherwise>
                             <tr>
-                                <th colspan="4">해당 코스를 완주한 적이 없어서 기록이 존재하지 않습니다.</th>
+                                <th colspan="4">기록이 존재하지 않습니다.</th>
                             </tr>
                         </c:otherwise>
                     </c:choose>
                 </c:when>
-                <%-- 로그인하지 않았다면, 문구를 표시한다. --%>
+                <%-- 로그인하지 않은 경우, 안내 문구를 표시한다. --%>
                 <c:otherwise>
                     <tr>
                         <th colspan="4">로그인하여 기록을 확인할 수 있습니다.</th>
@@ -144,16 +145,18 @@
         </thead>
         <tbody>
             <c:choose>
+                <%-- 코스에 대한 모든 사용자의 코스 완주 기록이 있다면, 코스를 완주한 모든 사용자의 기록 목록을 표시한다. --%>
                 <c:when test="${not empty records}">
                     <c:forEach var="record" items="${records}">
                         <tr>
                             <th scope="row">${record.no}</th>
                             <td>${record.user.nickname}</td>
-                            <td><fmt:formatDate value="${record.finishedDate}" pattern="yyyy년 M월 d일" /> </td>
-                            <td>${record.finishedTime}분</td>
+                            <td><fmt:formatDate value="${record.finishedDate}" pattern="yyyy년 MM월 dd일 HH시 mm분" /> </td>
+                            <td><c:if test="${record.hour != 0}">${record.hour}시간</c:if> ${record.minute}분 ${record.second}초</td>
                         </tr>
                     </c:forEach>
                 </c:when>
+                <%-- 코스에 대한 모든 사용자의 코스 완주 기록이 없다면, 안내 문구를 표시한다. --%>
                 <c:otherwise>
                     <tr>
                         <th colspan="4">기록이 존재하지 않습니다.</th>

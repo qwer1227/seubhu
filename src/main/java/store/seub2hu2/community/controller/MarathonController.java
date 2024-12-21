@@ -1,6 +1,7 @@
 package store.seub2hu2.community.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -123,7 +124,7 @@ public class MarathonController {
     }
 
     @PostMapping("/modify")
-    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
     public Marathon update(MarathonForm form) {
         Marathon marathon = marathonService.updateMarathon(form);
         return marathon;

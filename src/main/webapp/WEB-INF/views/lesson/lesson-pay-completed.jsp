@@ -16,7 +16,7 @@
             <img src="${s3}/resources/images/lesson/${images['THUMBNAIL']}"
                  alt="Thumbnail" id="Thumbnail" style="width: 100%; height: 300px;"/>
         </div>
-        <div class="col-5 border border-dark border">
+        <div class="col-5">
             <table class="table">
                 <colgroup>
                     <col width="15%">

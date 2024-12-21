@@ -2,10 +2,14 @@ package store.seub2hu2.community.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,11 +19,11 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import store.seub2hu2.community.dto.NoticeForm;
 import store.seub2hu2.community.service.NoticeService;
-import store.seub2hu2.community.view.FileDownloadView;
 import store.seub2hu2.community.vo.Board;
 import store.seub2hu2.community.vo.Notice;
 import store.seub2hu2.security.user.LoginUser;
 import store.seub2hu2.util.ListDto;
+import store.seub2hu2.util.S3Service;
 
 import java.io.File;
 import java.net.URLEncoder;
@@ -31,18 +35,23 @@ import java.util.Map;
 @RequestMapping("/community/notice")
 public class NoticeController {
 
-    @Value("C:/files/notice")
+    @Value("${upload.directory.notice.files}")
     private String saveDirectory;
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucketName;
+
+    @Autowired
+    private S3Service s3Service;
 
     @Autowired
     public NoticeService noticeService;
 
-    @Autowired
-    public FileDownloadView fileDownloadView;
 
     @GetMapping("/main")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page
             , @RequestParam(name = "rows", required = false, defaultValue = "10") int rows
+            , @RequestParam(name = "sort", required = false, defaultValue = "import") String sort
             , @RequestParam(name = "opt", required = false) String opt
             , @RequestParam(name = "keyword", required = false) String keyword
             , Model model) {
@@ -50,6 +59,7 @@ public class NoticeController {
         Map<String, Object> condition = new HashMap<>();
         condition.put("page", page);
         condition.put("rows", rows);
+        condition.put("sort", sort);
 
         if (StringUtils.hasText(keyword)) {
             condition.put("opt", opt);
@@ -93,35 +103,24 @@ public class NoticeController {
     }
 
     @GetMapping("/filedown")
-    public ModelAndView download(@RequestParam("no") int noticeNo) {
+    public ResponseEntity<ByteArrayResource> download(@RequestParam("no") int noticeNo) {
 
         Notice notice = noticeService.getNoticeDetail(noticeNo);
 
-        ModelAndView mav = new ModelAndView();
+        try {
+            String filename = notice.getUploadFile().getSaveName();
+            ByteArrayResource byteArrayResource = s3Service.downloadFile(bucketName, saveDirectory, filename);
 
-        mav.setView(fileDownloadView);
-        mav.addObject("directory", saveDirectory);
-        mav.addObject("filename", notice.getUploadFile().getSaveName());
-        mav.addObject("originalFilename", notice.getOriginalFileName());
+            String encodedFileName = URLEncoder.encode(filename.substring(13), "UTF-8");
 
-        return mav;
-    }
-
-    @GetMapping("/download")
-    public ResponseEntity<Resource> downloadFile(int noticeNo) throws Exception {
-
-        Notice notice = noticeService.getNoticeDetail(noticeNo);
-
-        String fileName = notice.getUploadFile().getSaveName();
-        String originalFileName = notice.getOriginalFileName();
-        originalFileName = URLEncoder.encode(originalFileName, "UTF-8");
-
-        File file = new File(new File(saveDirectory), fileName);
-        FileSystemResource resource = new FileSystemResource(file);
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + originalFileName)
-                .body(resource);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + encodedFileName + "\"")
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .contentLength(byteArrayResource.contentLength())
+                    .body(byteArrayResource);
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     @GetMapping("/modify")
@@ -133,9 +132,22 @@ public class NoticeController {
 
     @PostMapping("/modify")
     @ResponseBody
-    public Notice update(NoticeForm form) {
-        Notice notice = noticeService.updateNotice(form);
-        return notice;
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> update(NoticeForm form, @AuthenticationPrincipal LoginUser loginUser) {
+        try {
+            // 첨부파일이 없는 경우 처리
+            if (form.getUpfile() != null && form.getUpfile().getName() == null) {
+                form.setUpfile(null); // Null 처리
+            }
+            noticeService.updateNotice(form);
+
+            String redirectUrl = "/community/notice/detail?no=" + form.getNo();
+
+            return ResponseEntity.ok(redirectUrl);
+        } catch (Exception e) {
+            // 예외 처리 및 로그 남기기
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("글 수정 중 오류 발생: " + e.getMessage());
+        }
     }
 
     @GetMapping("/delete")
@@ -146,7 +158,7 @@ public class NoticeController {
 
     @GetMapping("/delete-file")
     public String deleteUploadFile(@RequestParam("no") int noticeNo
-                            , @RequestParam("fileNo") int fileNo){
+            , @RequestParam("fileNo") int fileNo){
         noticeService.deleteNoticeFile(noticeNo, fileNo);
 
         return "redirect:modify?no=" + noticeNo;

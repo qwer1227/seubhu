@@ -20,7 +20,7 @@ public class BoardReplyService {
     public void addNewReply(ReplyForm form
             , @AuthenticationPrincipal LoginUser loginUser) {
         Reply reply = new Reply();
-        reply.setBoardNo(form.getBoardNo());
+        reply.setTypeNo(form.getTypeNo());
         reply.setContent(form.getContent());
         reply.setDeleted("N");
 
@@ -39,7 +39,7 @@ public class BoardReplyService {
     public void addNewComment(ReplyForm form
             , @AuthenticationPrincipal LoginUser loginUser) {
         Reply reply = new Reply();
-        reply.setBoardNo(form.getBoardNo());
+        reply.setTypeNo(form.getTypeNo());
         reply.setContent(form.getContent());
         reply.setDeleted("N");
 
@@ -67,12 +67,12 @@ public class BoardReplyService {
 
     public void deleteReply(int replyNo) {
         Reply reply = boardReplyMapper.getReplyByReplyNo(replyNo);
-        reply.setBoardNo(reply.getBoardNo());
+        reply.setTypeNo(reply.getNo());
         boardReplyMapper.deleteReplyByNo(replyNo);
     }
 
     public void updateReply(ReplyForm form) {
-        Reply reply = boardReplyMapper.getReplyByReplyNo(form.getId());
+        Reply reply = boardReplyMapper.getReplyByReplyNo(form.getNo());
         reply.setContent(form.getContent());
 
         boardReplyMapper.updateReply(reply);
@@ -80,9 +80,6 @@ public class BoardReplyService {
 
     public int getCheckLike(int replyNo
                             , @AuthenticationPrincipal LoginUser loginUser) {
-
-        System.out.println("getCheckLike replyNo:" + replyNo);
-        System.out.println("getCheckLike loginUser:" + loginUser.getNo());
 
         return boardReplyMapper.hasUserLikedReply(replyNo, loginUser.getNo());
     }

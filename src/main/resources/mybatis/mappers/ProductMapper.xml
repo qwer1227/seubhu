@@ -9,11 +9,21 @@
     </update>
 
     <!--
-
+        void incrementViewCount(@Param("product") Product product);
     -->
     <update id="incrementViewCount">
         UPDATE PRODUCTS
         SET PROD_CNT = #{product.cnt}
+        WHERE PROD_NO = #{product.no}
+    </update>
+
+    <!--
+       void updateProductAvgRating(@Param("prodNo") int prodNo, @Param("avgRating") Double avgRating);
+    -->
+    <update id="updateProductAvgRating" parameterType="map">
+        UPDATE PRODUCTS
+        SET PROD_RATING = #{avgRating}
+        WHERE PROD_NO = #{prodNo};
     </update>
 
     <!--
@@ -190,7 +200,7 @@
         JOIN PROD_SIZES PS
         ON PC.COLOR_NO = PS.COLOR_NO
         WHERE PS.COLOR_NO = #{colorNo}
-        ORDER BY PS.PROD_SIZE ASC
+        AND PS.DELETED_SIZE = 'N'
     </select>
 
     <!--
@@ -272,5 +282,4 @@
         WHERE P.PROD_NO = #{prodNo}
           AND PC.COLOR_NO = #{colorNo}
     </select>
-
 </mapper>

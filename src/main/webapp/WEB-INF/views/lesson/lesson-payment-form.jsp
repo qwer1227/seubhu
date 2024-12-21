@@ -55,7 +55,7 @@
                 </tr>
                 <tr>
                     <th>결제금액</th>
-                    <td><fmt:formatNumber value="${lessonDto.price}" pattern="#,###"/></td>
+                    <td><fmt:formatNumber value="${lessonDto.price}" pattern="#,###"/>원</td>
                 </tr>
             </table>
         </div>

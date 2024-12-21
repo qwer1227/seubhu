@@ -129,8 +129,16 @@
                         </select>
                     </div>
                     <!-- 지역 검색 -->
+                    <div class="col-1">
+                        지역
+                        <select class="form-control mt-2" name="region" style="appearance: auto;">
+                            <option value="si" ${param.region eq 'si' ? 'selected' : ''}>시</option>
+                            <option value="gu" ${param.region eq 'gu' ? 'selected' : ''}>구</option>
+                            <option value="dong" ${param.region eq 'dong' ? 'selected' : ''}>동</option>
+                        </select>
+                    </div>
                     <div class="col-2">
-                        <label for="keyword">지역(구) 검색</label>
+                        <label for="keyword">지역 검색</label>
                         <input type="text" class="form-control" name="keyword" value="${param.keyword}">
                     </div>
                     <!-- 검색 버튼 -->
@@ -143,12 +151,15 @@
     </div>
 
         <div class="container-xxl text-center" id="wrap">
-          <div class="row row-cols-1 row-cols-md-3 g-4 mt-5 mb-5">
+          <div class="row row-cols-1 row-cols-md-4 g-4 mt-5 mb-5">
         <c:forEach var="course" items="${courses }">
-            <div class="col mb-3">
+            <div class="col-3 mb-3">
                 <div class="card h-100">
                     <a class="text-decoration-none" href="course-detail?no=${course.no }">
-                        <img src="${s3}/resources/images/course/${course.filename }" class="card-img-top" alt="...">
+                        <div class="main_image" style="position: relative;">
+                            <img src="${s3}/resources/images/course/${course.filename }" class="card-img-top" alt="..."
+                                 width="200" height="200">
+                        </div>
                     </a>
                     <div class="card-body">
                         <h5 class="card-title">${course.name }</h5>

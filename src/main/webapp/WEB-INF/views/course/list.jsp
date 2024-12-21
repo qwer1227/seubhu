@@ -63,8 +63,17 @@
                             </c:forEach>
                         </select>
                     </div>
-                    <div class="col-3">
-                        지역(구) 검색<input type="text" class="form-control" name="keyword" value="${param.keyword }">
+                    <div class="col-1">
+                        지역
+                        <select class="form-control" name="region" style="appearance: auto;">
+                            <option value="si" ${param.region eq 'si' ? 'selected' : ''}>시/도</option>
+                            <option value="gu" ${param.region eq 'gu' ? 'selected' : ''}>구</option>
+                            <option value="dong" ${param.region eq 'dong' ? 'selected' : ''}>동</option>
+                        </select>
+                    </div>
+                    <div class="col-2">
+                        지역 검색
+                        <input type="text" class="form-control" name="keyword" value="${param.keyword}">
                     </div>
                     <div class="col-1 pt-4">
                         <button type="button" class="btn btn-outline-primary" onclick="searchKeyword()">검색 버튼</button>
@@ -88,8 +97,9 @@
                 <div class="card h-100">
                     <a class="text-decoration-none" href="detail?no=${course.no }">
                         <div class="main_image" style="position: relative;">
-                            <img src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/images/course/${course.filename }" class="card-img-top" alt="...">
-                            <%-- 해당 코스 완주를 성공한 사용자라면, 완주 성공 문구를 표시한다. --%>
+                            <img src="https://2404-bucket-team-1.s3.ap-northeast-2.amazonaws.com/resources/images/course/${course.filename }"
+                                class="card-img-top" alt="..." width="200" height="200">
+                            <%-- 해당 코스 완주를 성공한 사용자라면, 안내 문구를 표시한다. --%>
                             <c:if test="${course.successWhether.courseNo == '1'}">
                                 <span class="badge bg-primary main_image_text"
                                       style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 20px;">
@@ -107,7 +117,7 @@
                         </a>
                             <sec:authorize access="isAuthenticated()">
                                 <c:choose>
-                                    <%-- 현재 도전 가능한 단계(난이도)가 코스 난이도보다 적으면, 도전 불가능 문구를 표시한다. --%>
+                                    <%-- 현재 도전 가능한 단계(난이도)가 코스 난이도보다 적으면, 안내 문구를 표시한다. --%>
                                     <c:when test="${currentUserLevel < course.level}">
                                         <button class="btn btn-danger disabled">아직 도전할 수 없습니다</button>
                                     </c:when>
@@ -140,7 +150,7 @@
     </div>
 </div>
 
-<!-- 페이징 내비게이션 -->
+<!-- 코스 목록 - 페이징 내비게이션 -->
 <div class="row mb-3">
     <div class="col-12">
         <nav>

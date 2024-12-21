@@ -4,6 +4,230 @@
 <mapper namespace="store.seub2hu2.admin.mapper.AdminMapper">
 
     <!--
+        void updateReportStatus(@Param("condition") Map<String, Object> condition);
+    -->
+    <update id="updateReportStatus">
+        update
+            REPORTS
+        set
+            iscomplete = '처리완료'
+        where
+            report_type = #{condition.reportType}
+        and
+            report_no = #{condition.reportNo}
+    </update>
+
+    <!--
+        void updateBoardStatus(@Param("condition") Map<String, Object> condition);
+    -->
+    <update id="updateBoardStatus">
+        update
+        <if test="condition.reportType == 'board'">
+            BOARDS
+        </if>
+        set
+            is_report = 'Y'
+        where
+        <if test="condition.reportType == 'board'">
+            board_no = #{condition.reportNo}
+        </if>
+    </update>
+    <!--
+        void updateBoardReplyStatus(@Param("condition") Map<String, Object> condition);
+    -->
+    <update id="updateBoardReplyStatus">
+        update
+        <if test="condition.reportType == 'boardReply'">
+            REPLIES
+        </if>
+        set
+            is_report = 'Y'
+        where
+        <if test="condition.reportType == 'boardReply'">
+            reply_no = #{condition.reportNo}
+        </if>
+    </update>
+    <!--
+         void updateCrewStatus(@Param("condition") Map<String, Object> condition);
+    -->
+    <update id="updateCrewStatus">
+        update
+        <if test="condition.reportType == 'crew'">
+            CREWS
+        </if>
+        set
+            is_report = 'Y'
+        where
+        <if test="condition.reportType == 'crew'">
+            crew_no = #{condition.reportNo}
+        </if>
+    </update>
+    <!--
+        void updateCrewReplyStatus(@Param("condition") Map<String, Object> condition);
+    -->
+    <update id="updateCrewReplyStatus">
+        update
+        <if test="condition.reportType == 'crewReply'">
+            CREW_REPLIES
+        </if>
+        set
+            is_report = 'Y'
+        where
+        <if test="condition.reportType == 'crewReply'">
+            reply_no = #{condition.reportNo}
+        </if>
+    </update>
+    <!--
+        int getReportTotalRows(@Param("condition") Map<String, Object> condition);
+    -->
+    <select id="getReportTotalRows" resultType="int">
+        select
+           count(*)
+        from
+        (
+        select
+        <if test="condition.sort != null">
+            <choose>
+                <when test="condition.sort == 'latest'">
+                    ROW_NUMBER() OVER (ORDER BY R.REPORT_ID DESC) RN,
+                </when>
+                <when test="condition.sort == 'oldest'">
+                    ROW_NUMBER() OVER (ORDER BY R.REPORT_ID ASC) RN,
+                </when>
+            </choose>
+        </if>
+        R.REPORT_ID                 as reportId
+        , R.REPORT_TYPE            as reportType
+        , R.REPORT_NO              as reportNo
+        , U.USER_NAME              as userName
+        , U.USER_NICKNAME          as userNickname
+        , R.REPORT_CREATED_DATE    as reportDate
+        , R.REPORT_RESOLVED_DATE   as reportResolveDate
+        , R.REPORT_REASON          as reportReason
+        , R.ISCOMPLETE             as isComplete
+        from
+        REPORTS R
+        JOIN USERS U ON R.USER_NO = U.USER_NO
+        where
+            1 = 1
+        <if test="condition.keyword != null">
+            <choose>
+                <when test="condition.keyword == 'all'">
+
+                </when>
+                <when test="condition.keyword == 'name'">
+                    and U.USER_NAME like CONCAT('%',#{condition.value},'%')
+                </when>
+                <when test="condition.keyword == 'nickName'">
+                    and U.USER_NICKNAME like CONCAT('%',#{condition.value},'%')
+                </when>
+            </choose>
+        </if>
+        <if test="condition.opt != null">
+            <choose>
+                <when test="condition.opt == 'all'">
+
+                </when>
+                <when test="condition.opt == 'board'">
+                    and R.REPORT_TYPE = 'board'
+                </when>
+                <when test="condition.opt == 'boardRe'">
+                    and R.REPORT_TYPE = 'boardReply'
+                </when>
+                <when test="condition.opt == 'crew'">
+                    and R.REPORT_TYPE = 'crew'
+                </when>
+                <when test="condition.opt == 'crewRe'">
+                    and R.REPORT_TYPE = 'crewReply'
+                </when>
+            </choose>
+        </if>
+        <if test="condition.day != null and condition.day != ''">
+            AND (
+            DATE_FORMAT(R.REPORT_CREATED_DATE, '%Y-%m-%d') = #{condition.day}
+            OR DATE_FORMAT(R.REPORT_CREATED_DATE, '%Y-%m') = #{condition.day}
+            )
+        </if>
+        ) AS SUBQUERY
+    </select>
+
+    <!--
+        List<ReportDto> getReports(@Param("condition") Map<String, Object> condition);
+    -->
+    <select id="getReports" resultType="store.seub2hu2.admin.dto.ReportDto">
+    select
+        *
+    from
+        (
+        select
+            <if test="condition.sort != null">
+                <choose>
+                    <when test="condition.sort == 'latest'">
+                        ROW_NUMBER() OVER (ORDER BY R.REPORT_ID DESC) RN,
+                    </when>
+                    <when test="condition.sort == 'oldest'">
+                        ROW_NUMBER() OVER (ORDER BY R.REPORT_ID ASC) RN,
+                    </when>
+                </choose>
+            </if>
+            R.REPORT_ID                 as reportId
+             , R.REPORT_TYPE            as reportType
+             , R.REPORT_NO              as reportNo
+             , U.USER_NAME              as userName
+             , U.USER_NICKNAME          as userNickname
+             , R.REPORT_CREATED_DATE    as reportDate
+             , R.REPORT_RESOLVED_DATE   as reportResolveDate
+             , R.REPORT_REASON          as reportReason
+             , R.ISCOMPLETE             as isComplete
+        from
+            REPORTS R
+                JOIN USERS U ON R.USER_NO = U.USER_NO
+        where
+            1 = 1
+        <if test="condition.keyword != null">
+            <choose>
+                <when test="condition.keyword == 'all'">
+
+                </when>
+                <when test="condition.keyword == 'name'">
+                    and U.USER_NAME like CONCAT('%',#{condition.value},'%')
+                </when>
+                <when test="condition.keyword == 'nickName'">
+                    and U.USER_NICKNAME like CONCAT('%',#{condition.value},'%')
+                </when>
+            </choose>
+        </if>
+        <if test="condition.opt != null">
+            <choose>
+                <when test="condition.opt == 'all'">
+
+                </when>
+                <when test="condition.opt == 'board'">
+                    and R.REPORT_TYPE = 'board'
+                </when>
+                <when test="condition.opt == 'boardRe'">
+                    and R.REPORT_TYPE = 'boardReply'
+                </when>
+                <when test="condition.opt == 'crew'">
+                    and R.REPORT_TYPE = 'crew'
+                </when>
+                <when test="condition.opt == 'crewRe'">
+                    and R.REPORT_TYPE = 'crewReply'
+                </when>
+            </choose>
+        </if>
+        <if test="condition.day != null and condition.day != ''">
+            AND (
+            DATE_FORMAT(R.REPORT_CREATED_DATE, '%Y-%m-%d') = #{condition.day}
+            OR DATE_FORMAT(R.REPORT_CREATED_DATE, '%Y-%m') = #{condition.day}
+            )
+        </if>
+        ) AS SUBQUERY
+    where
+        RN BETWEEN #{condition.begin} AND #{condition.end}
+    </select>
+
+    <!--
         void getUpdateDeliverySetDelivered(@Param("condition") Map<String, Object> condition);
     -->
     <update id="getUpdateDeliverySetDelivered">
@@ -18,6 +242,7 @@
         WHERE
             DELI_NO = #{condition.deliNo}
     </update>
+
     <!--
         void getUpdateDeliverySetShipped(@Param("condition") Map<String, Object> condition);
     -->
@@ -658,7 +883,7 @@
         and P2.pay_id = R2.lesson_reservation_pay_id
         and R2.lesson_no = L2.lesson_no
         and P2.pay_type = '레슨'
-        and P2.PAY_STATUS = '결제확정'
+        and P2.PAY_STATUS &lt;&gt; '취소'
         <if test="condition.day != null">
             and (
             DATE_FORMAT(P2.pay_date, '%Y-%m-%d') = #{condition.day}
@@ -730,7 +955,7 @@
         and P2.pay_id = R2.lesson_reservation_pay_id
         and R2.lesson_no = L2.lesson_no
         and P2.pay_type = '레슨'
-        and P2.PAY_STATUS = '결제확정'
+        and P2.PAY_STATUS &lt;&gt; '취소'
             <if test="condition.day != null">
                 and (
                 DATE_FORMAT(P2.pay_date, '%Y-%m-%d') = #{condition.day}
@@ -1022,20 +1247,20 @@
             SELECT *
             FROM(
             SELECT
-            <if test="condition != null">
-            <choose>
-                <when test="condition.sort == 'date'">
-                    ROW_NUMBER() OVER(ORDER BY P.PROD_CREATED_AT DESC) AS RN
-                </when>
-                <when test="condition.sort == 'name'">
-                    ROW_NUMBER() OVER(ORDER BY P.PROD_NAME ASC) AS RN
-                </when>
-                <when test="condition.sort == 'price'">
-                    ROW_NUMBER() OVER(ORDER BY P.PROD_PRICE ASC) AS RN
-                </when>
-            </choose>
+            <if test="condition.sort != null">
+                <choose>
+                    <when test="condition.sort == 'date'">
+                        ROW_NUMBER() OVER(ORDER BY P.PROD_CREATED_AT DESC) AS RN ,
+                    </when>
+                    <when test="condition.sort == 'name'">
+                        ROW_NUMBER() OVER(ORDER BY P.PROD_NAME ASC) AS RN ,
+                    </when>
+                    <when test="condition.sort == 'price'">
+                        ROW_NUMBER() OVER(ORDER BY P.PROD_PRICE ASC) AS RN ,
+                    </when>
+                </choose>
             </if>
-            , P.PROD_NO AS no,
+            P.PROD_NO AS no,
             P.PROD_NAME AS name,
             P.PROD_PRICE AS price,
             P.PROD_STATUS AS status,
@@ -1445,18 +1670,6 @@
     -->
     <select id="getLessonUserByNo" parameterType="Integer" resultType="store.seub2hu2.admin.dto.LessonUsersDto">
         select
-/*            L.LESSON_NO                     as "no"
-             , L.USER_ID                    as "lesson.lecturer.id"
-             , L.LESSON_TITLE               as "lesson.title"
-             , L.LESSON_PRICE               as "lesson.price"
-             , L.LESSON_STATUS              as "lesson.status"
-             , L.LESSON_PLAN                as "lesson.plan"
-             , L.LESSON_START_DATE          as "lesson.start"
-             , L.LESSON_SUBJECT             as "lesson.subject"
-             , L.LESSON_DELETED             as "lesson.status"
-             , L.LESSON_PLACE               as "lesson.place"
-             , LR.LESSON_RESERVATION_STATUS as "status"
-             , */
               L.PARTICIPANT                as "participant"
              , LR.USER_ID                   as "id"
              , U.USER_NO                    as "no"
@@ -1471,7 +1684,7 @@
           and
             LR.USER_ID = U.USER_ID
           and
-            LESSON_RESERVATION_STATUS = '예약'
+            LR.LESSON_RESERVATION_STATUS &lt;&gt; '취소'
           and
             L.LESSON_NO = #{lessonNo}
     </select>

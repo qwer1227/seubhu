@@ -6,22 +6,26 @@ public class NaverOAuth2UserInfo extends OAuth2UserInfo {
 
     public NaverOAuth2UserInfo(Map<String, Object> attributes) {
         super(attributes);
+        System.out.println(attributes);
     }
 
     @Override
     public String getId() {
-        return (String) getAttributes().get("id");
+        Map<String, Object> response = (Map<String, Object>) getAttributes().get("response");
+        return (String) response.get("id");
     }
 
 
     @Override
     public String getName() {
-        return (String) getAttributes().get("name");
+        Map<String, Object> response = (Map<String, Object>) getAttributes().get("response");
+        return (String) response.get("name");
     }
 
     @Override
     public String getEmail() {
-        return (String) getAttributes().get("email");
+        Map<String, Object> response = (Map<String, Object>) getAttributes().get("response");
+        return (String) response.get("email");
     }
 
 }

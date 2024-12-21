@@ -32,7 +32,7 @@
         <tbody>
         <tr>
           <th>마라톤 이름</th>
-          <td colspan="3"><input type="text" name="title" value="test" style="width: 100%"></td>
+          <td colspan="3"><input type="text" name="title" value="" style="width: 100%"></td>
         </tr>
         <tr>
           <th>일시</th>
@@ -46,17 +46,17 @@
         </tr>
         <tr>
           <th>장소</th>
-          <td colspan="3"><input type="text" name="place" value="test" style="width: 100%"></td>
+          <td colspan="3"><input type="text" name="place" value="" style="width: 100%"></td>
         </tr>
         <tr>
           <th>주최기관</th>
-          <td><input type="text" name="host" value="test" style="width: 100%"></td>
+          <td><input type="text" name="host" value="" style="width: 100%"></td>
           <th>주관기관</th>
-          <td><input type="text" name="organizer" value="test" style="width: 100%"></td>
+          <td><input type="text" name="organizer" value="" style="width: 100%"></td>
         </tr>
         <tr>
           <th>홈페이지</th>
-          <td colspan="3"><input type="text" name="url" value="test" style="width: 100%"></td>
+          <td colspan="3"><input type="text" name="url" value="" style="width: 100%"></td>
         </tr>
         <tr>
           <th>게시글</th>
@@ -66,7 +66,7 @@
         </tr>
         <tr>
           <th>썸네일</th>
-          <td colspan="3"><input type="text" name="thumbnail" value="https://pann.nate.com/attach/imageView?source_url=http%3A%2F%2Ffimg5.pann.com%2Fnew%2Fdownload.jsp%3FFileID%3D59236741&cate_cd=20028" style="width: 100%"></td>
+          <td colspan="3"><input type="text" name="thumbnail" value="" style="width: 100%"></td>
         </tr>
         </tbody>
       </table>
@@ -93,16 +93,59 @@
 
         oEditors.getById["ir1"].exec("UPDATE_CONTENTS_FIELD", []);
 
-        let title = document.querySelector("input[name=title]").value;
-        let content = document.querySelector("textarea[name=ir1]").value;
-        let marathonDate = document.querySelector("input[name=marathonDate]").value;
-        let startDate = document.querySelector("input[name=startDate]").value;
-        let endDate = document.querySelector("input[name=endDate]").value;
-        let host = document.querySelector("input[name=host]").value;
-        let organizer = document.querySelector("input[name=organizer]").value;
-        let url = document.querySelector("input[name=url]").value;
-        let place = document.querySelector("input[name=place]").value;
-        let thumbnail = document.querySelector("input[name=thumbnail]").value;
+        let title = document.querySelector("input[name=title]").value.trim();
+        let content = document.querySelector("textarea[name=ir1]").value.trim();
+        let marathonDate = document.querySelector("input[name=marathonDate]").value.trim();
+        let startDate = document.querySelector("input[name=startDate]").value.trim();
+        let endDate = document.querySelector("input[name=endDate]").value.trim();
+        let host = document.querySelector("input[name=host]").value.trim();
+        let organizer = document.querySelector("input[name=organizer]").value.trim();
+        let url = document.querySelector("input[name=url]").value.trim();
+        let place = document.querySelector("input[name=place]").value.trim();
+        let thumbnail = document.querySelector("input[name=thumbnail]").value.trim();
+
+        let cleanedContent = content.replace(/<p><br><\/p>/g, "").trim();
+
+        if (!title) {
+            alert("제목을 입력해주세요.");
+            return;
+        }
+        if (!marathonDate) {
+            alert("마라톤 일정을 선택해주세요.");
+            return;
+        }
+        if (!startDate) {
+            alert("마라톤 모집 시작일을 선택해주세요.");
+            return;
+        }
+        if (!endDate) {
+            alert("마라톤 모집 마감일을 선택해주세요.");
+            return;
+        }
+        if (!place) {
+            alert("마라톤 장소를 입력해주세요.");
+            return;
+        }
+        if (!host) {
+            alert("주최 기관을 입력해주세요.");
+            return;
+        }
+        if (!organizer) {
+            alert("주관 기관을 입력해주세요.");
+            return;
+        }
+        if (!url) {
+            alert("마라톤 홈페이지 주소를 입력해주세요.");
+            return;
+        }
+        if (!cleanedContent) {
+            alert("내용을 입력해주세요.");
+            return;
+        }
+        if (!thumbnail) {
+            alert("마라톤 썸네일 이미지 링크를 입력해주세요.");
+            return;
+        }
 
         formData.append("title", title);
         formData.append("content", content);

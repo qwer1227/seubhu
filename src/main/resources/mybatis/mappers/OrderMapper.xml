@@ -3,7 +3,7 @@
 <mapper namespace="store.seub2hu2.order.mapper.OrderMapper">
 
     <!--
-        List<OrderItem> insertOrderItems(@Param("orderItems") OrderItem orderItem);
+        void insertOrderItems(@Param("orderItems") List<OrderItem> orderItems);
     -->
     <insert id="insertOrderItems">
         INSERT INTO ORDER_PRODUCTS (
@@ -91,7 +91,7 @@
         JOIN PROD_IMGS PI
         ON PC.COLOR_NO = PI.COLOR_NO
         JOIN CARTS C
-        ON P.PROD_NO = C.PROD_NO
+        ON P.PROD_NO = C.PROD_NO AND C.SIZE_NO = PS.SIZE_NO
         JOIN USERS U
         ON C.USER_NO = U.USER_NO
         WHERE U.USER_NO = #{userNo}
@@ -121,6 +121,7 @@
             <result property="prodPrice" column="prod_price"/>
             <result property="prodImgUrl" column="prod_img_thum"/>
             <result property="orderQty" column="order_prod_amount"/>
+            <result property="orderStatus" column="deli_status" />
         </collection>
     </resultMap>
 
@@ -162,6 +163,7 @@
         <result property="prodPrice" column="prod_price"/>
         <result property="prodImgUrl" column="prod_img_thum"/>
         <result property="orderQty" column="order_prod_amount"/>
+        <result property="orderStatus" column="deli_status"/>
     </resultMap>
     
     <resultMap id="addrResultMap" type="store.seub2hu2.mypage.dto.AddrDto">
@@ -247,7 +249,9 @@
             op.SIZE_NO as sizeNo,
             o.order_status AS orderStatus,
             d.deli_status AS deliveryStatus,
-            d.deli_no AS deliveryNo
+            d.deli_no AS deliveryNo,
+            p.prod_no AS productNo,
+            pc.color_no AS colorNo
         FROM
             ORDERS o
                 JOIN
@@ -256,7 +260,8 @@
             PRODUCTS p ON op.PROD_NO = p.PROD_NO
                 JOIN
             DELIVERIES d ON o.ORDER_NO = d.ORDER_NO
-
+                JOIN
+            PROD_COLORS pc on p.prod_no = pc.prod_no
         WHERE
             o.USER_NO = #{userNo}
     </select>

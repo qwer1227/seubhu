@@ -44,9 +44,6 @@ import java.util.Map;
 @Slf4j
 public class LessonController {
 
-    @Value("${file.upload-dir}")
-    private String saveDirectory;
-
     private final LessonReservationService lessonReservationService;
     private final LessonService lessonService;
     private final LessonFileService lessonFileService;
@@ -151,22 +148,5 @@ public class LessonController {
     @GetMapping("/error-500")
     public void error500(HttpServletResponse response) throws IOException {
         response.sendError(500);
-    }
-
-
-    private void setDefaultDates(ReservationSearchCondition condition, LocalDate now) {
-        if (condition.getStart() == null && condition.getEnd() == null) {
-            condition.setEnd(now); // 기본 종료 날짜: 오늘
-            condition.setStart(now.minusMonths(1)); // 기본 시작 날짜: 한 달 전
-        } else {
-            // 종료 날짜가 null인 경우 기본값 설정
-            if (condition.getEnd() == null) {
-                condition.setEnd(now);
-            }
-            // 시작 날짜가 null인 경우 기본값 설정
-            if (condition.getStart() == null) {
-                condition.setStart(now.minusMonths(1));
-            }
-        }
     }
 }

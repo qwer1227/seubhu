@@ -85,7 +85,6 @@
         <button type="button" class="btn btn-secondary m-1" onclick="abort(${notice.no})">취소</button>
       </div>
       <div class="col d-flex justify-content-end">
-        <button type="button" class="btn btn-outline-primary m-1">보관</button>
         <button type="button" id="submit" class="btn btn-primary m-1">등록</button>
       </div>
     </div>
@@ -111,9 +110,21 @@
 
         let no = document.querySelector("input[name=no]").value;
         let first = document.querySelector("input[name=first]").value;
-        let title = document.querySelector("input[name=title]").value;
-        let content = document.querySelector("textarea[name=ir1]").value;
+        let title = document.querySelector("input[name=title]").value.trim();
+        let content = document.querySelector("textarea[name=ir1]").value.trim();
         let upfile = document.querySelector("input[name=upfile]")
+
+        let cleanedContent = content.replace(/<p><br><\/p>/g, "").trim();
+
+        // 입력값 검증
+        if (!title) {
+            alert("제목을 입력해주세요.");
+            return;
+        }
+        if (!cleanedContent) {
+            alert("내용을 입력해주세요.");
+            return;
+        }
 
         formData.append("no", no);
         formData.append("first", first);
