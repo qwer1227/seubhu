@@ -752,7 +752,7 @@
             $('#payBtn').click(function () {
                 // 카카오페이 결제 요청
                 $.ajax({
-                    url: '/pay/ready',
+                    url: '/order/ready',
                     method: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify(orderData),

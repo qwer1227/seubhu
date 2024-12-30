@@ -108,7 +108,7 @@ public class OrderService {
     }
 
     public ResponseDTO getOrderDetails(int orderNo){
-        System.out.println("테스트"+orderMapper.getOrderDetails(orderNo));
+
         return orderMapper.getOrderDetails(orderNo);
     }
 
